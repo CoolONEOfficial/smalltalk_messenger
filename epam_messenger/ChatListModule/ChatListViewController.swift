@@ -1,5 +1,5 @@
 //
-//  ChatsViewController.swift
+//  ChatListViewController.swift
 //  epam_messenger
 //
 //  Created by Anton Pryakhin on 07.03.2020.
@@ -7,8 +7,8 @@
 
 import UIKit
 
-class ChatsViewController: UIViewController {
-    var viewModel: ChatsViewModelProtocol!
+class ChatListViewController: UIViewController {
+    var viewModel: ChatListViewModelProtocol!
 
     @IBAction func touchGoToChat() {
         viewModel.goToChat()
@@ -17,6 +17,6 @@ class ChatsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        title = "Chats"
+        title = "ChatList"
     }
 }

@@ -15,7 +15,7 @@ struct AuthorizationViewModel: AuthorizationViewModelProtocol {
     let router: RouterProtocol
     
     func authorizeMe() {
-        router.showChats()
+        router.showChatList()
     }
     
     init(router: RouterProtocol) {

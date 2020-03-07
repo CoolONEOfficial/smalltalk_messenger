@@ -14,7 +14,7 @@ protocol RouterMain {
 
 protocol RouterProtocol: RouterMain {
     func initialViewController()
-    func showChats()
+    func showChatList()
     func showChat()
     func popToRoot()
 }
@@ -26,7 +26,7 @@ class Router: RouterProtocol {
     var isAuthorized = false
     
     var rootViewController: UIViewController? {
-        return isAuthorized ? assemblyBuilder?.createChatsModule(router: self) :
+        return isAuthorized ? assemblyBuilder?.createChatListModule(router: self) :
             assemblyBuilder?.createAuthorizationModule(router: self)
     }
     
@@ -36,9 +36,9 @@ class Router: RouterProtocol {
         }
     }
     
-    func showChats() {
+    func showChatList() {
         if let navigationController = navigationController {
-            guard let chatViewController = assemblyBuilder?.createChatsModule(router: self) else { return }
+            guard let chatViewController = assemblyBuilder?.createChatListModule(router: self) else { return }
             navigationController.viewControllers = [chatViewController]
         }
     }

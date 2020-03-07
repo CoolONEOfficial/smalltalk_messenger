@@ -17,9 +17,9 @@
 		E6B74984241433F500F00B29 /* AuthorizationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B74982241433F500F00B29 /* AuthorizationViewController.swift */; };
 		E6B74985241433F500F00B29 /* AuthorizationViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E6B74983241433F500F00B29 /* AuthorizationViewController.xib */; };
 		E6B749882414377500F00B29 /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B749872414377500F00B29 /* Router.swift */; };
-		E6B7498A2414382300F00B29 /* ChatsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B749892414382300F00B29 /* ChatsViewModel.swift */; };
-		E6B7498D2414387200F00B29 /* ChatsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B7498B2414387200F00B29 /* ChatsViewController.swift */; };
-		E6B7498E2414387200F00B29 /* ChatsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E6B7498C2414387200F00B29 /* ChatsViewController.xib */; };
+		E6B7498A2414382300F00B29 /* ChatListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B749892414382300F00B29 /* ChatListViewModel.swift */; };
+		E6B7498D2414387200F00B29 /* ChatListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B7498B2414387200F00B29 /* ChatListViewController.swift */; };
+		E6B7498E2414387200F00B29 /* ChatListViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E6B7498C2414387200F00B29 /* ChatListViewController.xib */; };
 		E6B74993241449C600F00B29 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B74991241449C600F00B29 /* ChatViewController.swift */; };
 		E6B74994241449C600F00B29 /* ChatViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E6B74992241449C600F00B29 /* ChatViewController.xib */; };
 		E6B7499624144A4F00F00B29 /* ChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B7499524144A4F00F00B29 /* ChatViewModel.swift */; };
@@ -40,9 +40,9 @@
 		E6B74982241433F500F00B29 /* AuthorizationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationViewController.swift; sourceTree = "<group>"; };
 		E6B74983241433F500F00B29 /* AuthorizationViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AuthorizationViewController.xib; sourceTree = "<group>"; };
 		E6B749872414377500F00B29 /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
-		E6B749892414382300F00B29 /* ChatsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatsViewModel.swift; sourceTree = "<group>"; };
-		E6B7498B2414387200F00B29 /* ChatsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatsViewController.swift; sourceTree = "<group>"; };
-		E6B7498C2414387200F00B29 /* ChatsViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ChatsViewController.xib; sourceTree = "<group>"; };
+		E6B749892414382300F00B29 /* ChatListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListViewModel.swift; sourceTree = "<group>"; };
+		E6B7498B2414387200F00B29 /* ChatListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListViewController.swift; sourceTree = "<group>"; };
+		E6B7498C2414387200F00B29 /* ChatListViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ChatListViewController.xib; sourceTree = "<group>"; };
 		E6B74991241449C600F00B29 /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		E6B74992241449C600F00B29 /* ChatViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ChatViewController.xib; sourceTree = "<group>"; };
 		E6B7499524144A4F00F00B29 /* ChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewModel.swift; sourceTree = "<group>"; };
@@ -94,7 +94,7 @@
 			children = (
 				E6B7497F2414332D00F00B29 /* Supporting Files */,
 				E6B749782414286000F00B29 /* AuthorizationModule */,
-				E6B749772414281F00F00B29 /* ChatsModule */,
+				E6B749772414281F00F00B29 /* ChatListModule */,
 				E6B74990241448A000F00B29 /* ChatModule */,
 				85BE9A6824118CF200E6643B /* AppDelegate.swift */,
 				E6B7499724144C5700F00B29 /* SceneDelegate.swift */,
@@ -114,14 +114,14 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		E6B749772414281F00F00B29 /* ChatsModule */ = {
+		E6B749772414281F00F00B29 /* ChatListModule */ = {
 			isa = PBXGroup;
 			children = (
-				E6B749892414382300F00B29 /* ChatsViewModel.swift */,
-				E6B7498B2414387200F00B29 /* ChatsViewController.swift */,
-				E6B7498C2414387200F00B29 /* ChatsViewController.xib */,
+				E6B749892414382300F00B29 /* ChatListViewModel.swift */,
+				E6B7498B2414387200F00B29 /* ChatListViewController.swift */,
+				E6B7498C2414387200F00B29 /* ChatListViewController.xib */,
 			);
-			path = ChatsModule;
+			path = ChatListModule;
 			sourceTree = "<group>";
 		};
 		E6B749782414286000F00B29 /* AuthorizationModule */ = {
@@ -214,7 +214,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E6B7498E2414387200F00B29 /* ChatsViewController.xib in Resources */,
+				E6B7498E2414387200F00B29 /* ChatListViewController.xib in Resources */,
 				85BE9A7524118CF200E6643B /* LaunchScreen.storyboard in Resources */,
 				E6B74994241449C600F00B29 /* ChatViewController.xib in Resources */,
 				E6B74985241433F500F00B29 /* AuthorizationViewController.xib in Resources */,
@@ -285,11 +285,11 @@
 				E6B749882414377500F00B29 /* Router.swift in Sources */,
 				E6B74984241433F500F00B29 /* AuthorizationViewController.swift in Sources */,
 				E6B74993241449C600F00B29 /* ChatViewController.swift in Sources */,
-				E6B7498D2414387200F00B29 /* ChatsViewController.swift in Sources */,
+				E6B7498D2414387200F00B29 /* ChatListViewController.swift in Sources */,
 				E6B74976241427C700F00B29 /* AssemblyBuilder.swift in Sources */,
 				E6B7499824144C5700F00B29 /* SceneDelegate.swift in Sources */,
 				E6B74981241433BF00F00B29 /* AuthorizationViewModel.swift in Sources */,
-				E6B7498A2414382300F00B29 /* ChatsViewModel.swift in Sources */,
+				E6B7498A2414382300F00B29 /* ChatListViewModel.swift in Sources */,
 				E6B7499624144A4F00F00B29 /* ChatViewModel.swift in Sources */,
 				85BE9A6924118CF200E6643B /* AppDelegate.swift in Sources */,
 			);

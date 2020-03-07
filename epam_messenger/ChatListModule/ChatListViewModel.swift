@@ -1,5 +1,5 @@
 //
-//  ChatsViewModel.swift
+//  ChatListViewModel.swift
 //  epam_messenger
 //
 //  Created by Anton Pryakhin on 07.03.2020.
@@ -7,11 +7,11 @@
 
 import Foundation
 
-protocol ChatsViewModelProtocol {
+protocol ChatListViewModelProtocol {
     func goToChat()
 }
 
-struct ChatsViewModel: ChatsViewModelProtocol {
+struct ChatListViewModel: ChatListViewModelProtocol {
     let router: RouterProtocol
     
     func goToChat() {
