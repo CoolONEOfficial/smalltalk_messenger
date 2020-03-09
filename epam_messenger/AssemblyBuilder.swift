@@ -23,7 +23,7 @@ class AssemblyBuilder: AssemblyBuilderProtocol {
     
     func createChatListModule(router: RouterProtocol) -> UIViewController {
         let view = ChatListViewController()
-        let viewModel = ChatListViewModel(router: router)
+        let viewModel = ChatListViewModel(router: router, viewController: view)
         view.viewModel = viewModel
         return view
     }
