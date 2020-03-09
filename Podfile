@@ -8,4 +8,5 @@ target 'epam_messenger' do
   # Pods for epam_messenger
   pod 'SwiftLint'
   pod 'Firebase/Analytics'
+  pod 'Firebase/Auth'
 end
