@@ -304,6 +304,7 @@ DEPENDENCIES:
   - Ballcap
   - Firebase/Analytics
   - Firebase/Auth
+  - Firebase/Firestore
   - IGListKit (~> 4.0.0)
   - Reusable
   - SwiftLint
@@ -369,6 +370,6 @@ SPEC CHECKSUMS:
   Reusable: 53a9acf5c536f229b31b5865782414b508252ddb
   SwiftLint: 55e96a4a4d537d4a3156859fc1c54bd24851a046
 
-PODFILE CHECKSUM: dee0170ed6897501919a5273d2651a13af20538b
+PODFILE CHECKSUM: 228d116b278dc0e13c8eeee5010996e7593b809d
 
 COCOAPODS: 1.9.0
