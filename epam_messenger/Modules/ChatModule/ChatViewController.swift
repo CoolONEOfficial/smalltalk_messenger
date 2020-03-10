@@ -247,9 +247,6 @@ extension ChatViewController: MessagesDisplayDelegate {
             avatarView.set(avatar: Avatar.init(image: image, initials: "Test initials"))
             avatarView.isHidden = isNextMessageSameSender(at: indexPath)
             avatarView.layer.borderWidth = 0
-//            avatarView.layer.borderColor = primaryColor.cgColor
-//            avatarView.layer.bounds = CGRect.init(x: 0, y: 0, width: 35, height: 35)
-//            avatarView.layer.cornerRadius = 35 / 2
         }
     }
 }

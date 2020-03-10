@@ -39,8 +39,6 @@ class ChatListViewController: UIViewController {
         super.viewDidLoad()
         viewModel.viewDidLoad()
         
-        title = "ChatList"
-        
         view.addSubview(collectionView)
         
         adapter.collectionView = collectionView
