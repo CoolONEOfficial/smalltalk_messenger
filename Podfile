@@ -9,4 +9,8 @@ target 'epam_messenger' do
   pod 'SwiftLint'
   pod 'Firebase/Analytics'
   pod 'Firebase/Auth'
+  pod 'Firebase/Firestore'
+  pod 'Ballcap'
+  pod 'Reusable'
+  pod 'IGListKit', '~> 4.0.0'
 end

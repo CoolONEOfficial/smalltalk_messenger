@@ -1,0 +1,6 @@
+framework module Ballcap {
+  umbrella header "Ballcap-umbrella.h"
+
+  export *
+  module * { export * }
+}
