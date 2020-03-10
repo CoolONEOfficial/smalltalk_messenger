@@ -13,4 +13,5 @@ target 'epam_messenger' do
   pod 'Ballcap'
   pod 'Reusable'
   pod 'IGListKit', '~> 4.0.0'
+  pod 'MessageKit'
 end

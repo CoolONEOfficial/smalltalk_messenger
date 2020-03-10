@@ -286,7 +286,10 @@ PODS:
   - IGListDiffKit (4.0.0)
   - IGListKit (4.0.0):
     - IGListDiffKit (= 4.0.0)
+  - InputBarAccessoryView (4.2.2)
   - leveldb-library (1.22)
+  - MessageKit (3.0.0):
+    - InputBarAccessoryView (~> 4.2.2)
   - nanopb (0.3.9011):
     - nanopb/decode (= 0.3.9011)
     - nanopb/encode (= 0.3.9011)
@@ -306,6 +309,7 @@ DEPENDENCIES:
   - Firebase/Auth
   - Firebase/Firestore
   - IGListKit (~> 4.0.0)
+  - MessageKit
   - Reusable
   - SwiftLint
 
@@ -334,7 +338,9 @@ SPEC REPOS:
     - GTMSessionFetcher
     - IGListDiffKit
     - IGListKit
+    - InputBarAccessoryView
     - leveldb-library
+    - MessageKit
     - nanopb
     - PromisesObjC
     - Reusable
@@ -364,12 +370,14 @@ SPEC CHECKSUMS:
   GTMSessionFetcher: cea130bbfe5a7edc8d06d3f0d17288c32ffe9925
   IGListDiffKit: 665d6cf43ce726e676013db9c7d6c4294259b6b2
   IGListKit: fd5a5d21935298f5849fa49d426843cff97b77c7
+  InputBarAccessoryView: 2b937602598e2fab3149f37f51dd7ad795653812
   leveldb-library: 55d93ee664b4007aac644a782d11da33fba316f7
+  MessageKit: e892a9ca49ebe6d82684d3a93ad84021fa23e2c6
   nanopb: 18003b5e52dab79db540fe93fe9579f399bd1ccd
   PromisesObjC: c119f3cd559f50b7ae681fa59dc1acd19173b7e6
   Reusable: 53a9acf5c536f229b31b5865782414b508252ddb
   SwiftLint: 55e96a4a4d537d4a3156859fc1c54bd24851a046
 
-PODFILE CHECKSUM: 228d116b278dc0e13c8eeee5010996e7593b809d
+PODFILE CHECKSUM: 7a8cac187610939301b52c3f460c43f46e15b1d1
 
 COCOAPODS: 1.9.0

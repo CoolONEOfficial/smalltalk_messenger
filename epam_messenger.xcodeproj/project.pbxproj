@@ -8,7 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		169B811410691C70C14B4A08 /* Pods_epam_messenger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F441FB6A6D812A19A67B8D4F /* Pods_epam_messenger.framework */; };
+		8526F3D32417907B00ED62E8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8526F3D22417907B00ED62E8 /* Assets.xcassets */; };
+		8526F3D52417B8C000ED62E8 /* MessageKit24HourDateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8526F3D42417B8C000ED62E8 /* MessageKit24HourDateFormatter.swift */; };
 		853FD19E24165EDE005A7985 /* FirestoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 853FD19D24165EDE005A7985 /* FirestoreService.swift */; };
+		853FD1AF2416A55A005A7985 /* InvertedCollectionViewFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 853FD1AE2416A55A005A7985 /* InvertedCollectionViewFlowLayout.swift */; };
 		856A9C1F2411B8D10039E977 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 856A9C1E2411B8D10039E977 /* GoogleService-Info.plist */; };
 		85BE9A6924118CF200E6643B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85BE9A6824118CF200E6643B /* AppDelegate.swift */; };
 		85BE9A7224118CF200E6643B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 85BE9A7124118CF200E6643B /* Assets.xcassets */; };
@@ -36,7 +39,10 @@
 /* Begin PBXFileReference section */
 		1447E47D98003B2188F3A79C /* Pods-epam_messenger.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-epam_messenger.release.xcconfig"; path = "Pods/Target Support Files/Pods-epam_messenger/Pods-epam_messenger.release.xcconfig"; sourceTree = "<group>"; };
 		8200E48EEFB5B1F1D143E5ED /* Pods-epam_messenger.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-epam_messenger.debug.xcconfig"; path = "Pods/Target Support Files/Pods-epam_messenger/Pods-epam_messenger.debug.xcconfig"; sourceTree = "<group>"; };
+		8526F3D22417907B00ED62E8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		8526F3D42417B8C000ED62E8 /* MessageKit24HourDateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageKit24HourDateFormatter.swift; sourceTree = "<group>"; };
 		853FD19D24165EDE005A7985 /* FirestoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreService.swift; sourceTree = "<group>"; };
+		853FD1AE2416A55A005A7985 /* InvertedCollectionViewFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvertedCollectionViewFlowLayout.swift; sourceTree = "<group>"; };
 		856A9C1E2411B8D10039E977 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		85BE9A6524118CF200E6643B /* epam_messenger.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = epam_messenger.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		85BE9A6824118CF200E6643B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -135,6 +141,7 @@
 				E6B74975241427C700F00B29 /* AssemblyBuilder.swift */,
 				E6B749872414377500F00B29 /* Router.swift */,
 				85BE9A7624118CF200E6643B /* Info.plist */,
+				8526F3D22417907B00ED62E8 /* Assets.xcassets */,
 				856A9C1E2411B8D10039E977 /* GoogleService-Info.plist */,
 			);
 			path = epam_messenger;
@@ -161,6 +168,8 @@
 		85FF256E24158CBC00A25D7A /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				853FD1AE2416A55A005A7985 /* InvertedCollectionViewFlowLayout.swift */,
+				8526F3D42417B8C000ED62E8 /* MessageKit24HourDateFormatter.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -289,6 +298,7 @@
 				E6B74994241449C600F00B29 /* ChatViewController.xib in Resources */,
 				E6B74985241433F500F00B29 /* AuthorizationViewController.xib in Resources */,
 				856A9C1F2411B8D10039E977 /* GoogleService-Info.plist in Resources */,
+				8526F3D32417907B00ED62E8 /* Assets.xcassets in Resources */,
 				85BE9A7224118CF200E6643B /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -358,11 +368,13 @@
 				E6B74993241449C600F00B29 /* ChatViewController.swift in Sources */,
 				E6B7498D2414387200F00B29 /* ChatListViewController.swift in Sources */,
 				85FF25752415976600A25D7A /* ViewModel.swift in Sources */,
+				8526F3D52417B8C000ED62E8 /* MessageKit24HourDateFormatter.swift in Sources */,
 				E6B74976241427C700F00B29 /* AssemblyBuilder.swift in Sources */,
 				E6B7499824144C5700F00B29 /* SceneDelegate.swift in Sources */,
 				85FF25772415AFC300A25D7A /* ChatListSectionController.swift in Sources */,
 				85FF25642414624B00A25D7A /* MessageModel.swift in Sources */,
 				853FD19E24165EDE005A7985 /* FirestoreService.swift in Sources */,
+				853FD1AF2416A55A005A7985 /* InvertedCollectionViewFlowLayout.swift in Sources */,
 				E6B74981241433BF00F00B29 /* AuthorizationViewModel.swift in Sources */,
 				E6B7498A2414382300F00B29 /* ChatListViewModel.swift in Sources */,
 				85FF256C2414DCDF00A25D7A /* ChatCell.swift in Sources */,
