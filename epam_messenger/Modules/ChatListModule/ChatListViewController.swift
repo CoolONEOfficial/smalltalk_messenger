@@ -54,6 +54,7 @@ class ChatListViewController: UIViewController {
 }
 
 extension ChatListViewController: ChatListViewControllerProtocol {
+    
     func performUpdates() {
         adapter.performUpdates(animated: true)
     }
@@ -61,6 +62,7 @@ extension ChatListViewController: ChatListViewControllerProtocol {
     func reloadCell(_ chatModel: ChatModel) {
         adapter.reloadObjects([chatModel])
     }
+    
 }
 
 extension ChatListViewController: ListAdapterDataSource {

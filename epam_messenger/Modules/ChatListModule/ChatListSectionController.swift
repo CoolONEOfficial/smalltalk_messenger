@@ -59,7 +59,12 @@ class ChatListSectionController: ListSectionController {
     }
     
     override func didSelectItem(at index: Int) {
-        viewModel.goToChat()
+        guard let chatModel = currentChatModel else {
+            debugPrint("currentChatModel is nil")
+            return
+        }
+        
+        viewModel.goToChat(chatModel)
     }
     
 }

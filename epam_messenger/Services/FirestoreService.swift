@@ -16,7 +16,8 @@ class FirestoreService {
     }()
     
     lazy var chatListQuery: Query = {
-        return db.collection("chats").whereField("users", arrayContains: 0)
+        return db.collection("chats")
+            .whereField("users", arrayContains: 0) // TODO: auth user id
     }()
     
     func loadChatList(
@@ -25,7 +26,7 @@ class FirestoreService {
     ) {
         chatListQuery.addSnapshotListener { querySnapshot, error in
             guard let query = querySnapshot else {
-                debugPrint("Error fetching query: \(error!)")
+                debugPrint("Error fetching chats query: \(error!)")
                 return
             }
             guard let data: [QueryDocumentSnapshot] = query.documents else {
@@ -54,10 +55,12 @@ class FirestoreService {
                         }
                         
                         if let message = messages.documents.first {
+                            let messageData = message.data()
                             let messageModel = MessageModel(
                                 documentId: message.documentID,
-                                text: message.data()["text"] as? String,
-                                userId: message.data()["userId"] as? Int
+                                text: messageData["text"] as? String,
+                                userId: messageData["userId"] as? Int,
+                                timestamp: messageData["timestamp"] as? Timestamp
                             )
                             
                             lastMessageListener(messageModel, index)
@@ -67,5 +70,52 @@ class FirestoreService {
         }
     }
     
+    func loadChat(
+        _ chatDocumentId: String,
+        messagesListener: @escaping ([MessageModel]) -> Void
+    ) {
+        db.collection("chats").document(chatDocumentId).collection("messages")
+            .order(by: "timestamp")
+            .addSnapshotListener { querySnapshot, error in
+                guard let query = querySnapshot else {
+                    debugPrint("Error fetching messages query: \(error!)")
+                    return
+                }
+                guard let data: [QueryDocumentSnapshot] = query.documents else {
+                    debugPrint("Documents data was empty.")
+                    return
+                }
+                
+                let parsedData = data.map { snapshot -> MessageModel in
+                    let messageData = snapshot.data()
+                    return MessageModel(
+                        documentId: snapshot.documentID,
+                        text: messageData["text"] as? String,
+                        userId: messageData["userId"] as? Int,
+                        timestamp: messageData["timestamp"] as? Timestamp
+                    )
+                }
+                
+                messagesListener(parsedData)
+        }
+    }
     
+    func sendMessage(
+        chatDocumentId: String,
+        messageModel: MessageModel,
+        completion: @escaping (Bool) -> Void
+    ) {
+        do {
+            try db.collection("chats")
+                .document(chatDocumentId)
+                .collection("messages")
+                .addDocument(from: messageModel)
+                .addSnapshotListener { _, _ in
+                    completion(true)
+            }
+        } catch let error {
+            debugPrint("error! \(error.localizedDescription)")
+            completion(false)
+        }
+    }
 }

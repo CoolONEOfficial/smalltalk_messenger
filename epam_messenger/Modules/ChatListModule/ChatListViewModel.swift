@@ -9,7 +9,7 @@ import Foundation
 import Firebase
 
 protocol ChatListViewModelProtocol: ViewModelProtocol {
-    func goToChat()
+    func goToChat(_ chatModel: ChatModel)
     func chatList() -> [ChatModel]
 }
 
@@ -32,8 +32,8 @@ class ChatListViewModel: ChatListViewModelProtocol {
         self.viewController = viewController
     }
     
-    func goToChat() {
-        router.showChat()
+    func goToChat(_ chatModel: ChatModel) {
+        router.showChat(chatModel)
     }
     
     func chatList() -> [ChatModel] {
