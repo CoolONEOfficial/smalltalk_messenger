@@ -7,76 +7,86 @@
 
 import UIKit
 import Firebase
-import Ballcap
-import IGListKit
+import FirebaseUI
+import CodableFirebase
+import Reusable
 
 protocol ChatListViewControllerProtocol {
-    func performUpdates()
-    func reloadCell(_ chatModel: ChatModel)
 }
 
 class ChatListViewController: UIViewController {
+    func batchedArray(_ array: FUIBatchedArray, didUpdateWith diff: FUISnapshotArrayDiff<DocumentSnapshot>) {
+        debugPrint("array : \(array)")
+    }
+    
+    func batchedArray(_ array: FUIBatchedArray, willUpdateWith diff: FUISnapshotArrayDiff<DocumentSnapshot>) {
+        debugPrint("array : \(array)")
+    }
+    
+    func batchedArray(_ array: FUIBatchedArray, queryDidFailWithError error: Error) {
+        debugPrint("array : \(array)")
+    }
+    
     var viewModel: ChatListViewModelProtocol!
     
-    let collectionView: UICollectionView = {
-        let view = UICollectionView(
-            frame: .zero,
-            collectionViewLayout: UICollectionViewFlowLayout()
-        )
-        view.backgroundColor = .none
-        
-        return view
-    }()
+    var bindDataSource: FUIFirestoreTableViewDataSource! {
+        didSet {
+            tableView.dataSource = bindDataSource
+        }
+    }
     
-    lazy var adapter: ListAdapter = {
-      return ListAdapter(
-      updater: ListAdapterUpdater(),
-      viewController: self,
-      workingRangeSize: 0)
-    }()
+    @IBOutlet var tableView: UITableView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        viewModel.viewDidLoad()
         
         title = "ChatList"
+        tableView.register(cellType: ChatCell.self)
+        tableView.delegate = self
         
-        view.addSubview(collectionView)
+        let rightItem = UIBarButtonItem(
+            title: "Edit",
+            style: .plain,
+            target: self,
+            action: #selector(toggleEditMode)
+        )
+        self.navigationItem.rightBarButtonItem = rightItem
         
-        adapter.collectionView = collectionView
-        adapter.dataSource = self
+        bindDataSource = self.tableView.bind(
+            toFirestoreQuery: viewModel.firestoreQuery()
+        ) { tableView, indexPath, snapshot in
+            let cell = tableView.dequeueReusableCell(for: indexPath, cellType: ChatCell.self)
+            
+            self.viewModel.didChatLoad(snapshot: snapshot, cell: cell)
+            
+            return cell
+        }
     }
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        collectionView.frame = view.bounds
+//    func tableView(
+//        _ tableView: UITableView,
+//        targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath,
+//        toProposedIndexPath proposedDestinationIndexPath: IndexPath
+//    ) -> IndexPath {
+//        let temp = bindDataSource.items[sourceIndexPath.item]
+//        bindDataSource.item
+//        bindDataSource.items.remove(at: sourceIndexPath.item)
+//        bindDataSource.items.insert(temp, at: proposedDestinationIndexPath.item)
+//    }
+    
+    @objc func toggleEditMode(_ sender: UIBarButtonItem) {
+        tableView.setEditing(!tableView.isEditing, animated: true)
+        sender.title = tableView.isEditing ? "Done" : "Edit"
     }
+    
 }
 
-extension ChatListViewController: ChatListViewControllerProtocol {
+extension ChatListViewController: UITableViewDelegate {
     
-    func performUpdates() {
-        adapter.performUpdates(animated: true)
-    }
-    
-    func reloadCell(_ chatModel: ChatModel) {
-        adapter.reloadObjects([chatModel])
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        viewModel.goToChat()
     }
     
 }
 
-extension ChatListViewController: ListAdapterDataSource {
-    
-    func objects(for listAdapter: ListAdapter) -> [ListDiffable] {
-        return viewModel.chatList()
-    }
-    
-    func listAdapter(_ listAdapter: ListAdapter, sectionControllerFor object: Any) -> ListSectionController {
-        return ChatListSectionController(viewModel: viewModel)
-    }
-    
-    func emptyView(for listAdapter: ListAdapter) -> UIView? {
-        return nil
-    }
-    
-}
+extension ChatListViewController: ChatListViewControllerProtocol {}

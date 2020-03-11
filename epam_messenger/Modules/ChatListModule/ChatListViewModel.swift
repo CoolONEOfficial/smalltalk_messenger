@@ -7,22 +7,18 @@
 
 import Foundation
 import Firebase
+import CodableFirebase
 
 protocol ChatListViewModelProtocol: ViewModelProtocol {
-    func goToChat(_ chatModel: ChatModel)
-    func chatList() -> [ChatModel]
+    func goToChat()
+    func firestoreQuery() -> Query
+    func didChatLoad(snapshot: DocumentSnapshot, cell: ChatCell) -> ChatModel?
 }
 
 class ChatListViewModel: ChatListViewModelProtocol {
     let router: RouterProtocol
     let viewController: ChatListViewControllerProtocol
     let firestoreService: FirestoreService = FirestoreService()
-    
-    var data: [ChatModel] = [] {
-        didSet {
-            viewController.performUpdates()
-        }
-    }
     
     init(
         router: RouterProtocol,
@@ -36,19 +32,27 @@ class ChatListViewModel: ChatListViewModelProtocol {
         router.showChat(chatModel)
     }
     
-    func chatList() -> [ChatModel] {
-        return data
+    func firestoreQuery() -> Query {
+        return firestoreService.chatListQuery
     }
     
-    func viewDidLoad() {
-        firestoreService.loadChatList(
-            chatListListener: { parsedData in
-                self.data = parsedData
-            },
-            lastMessageListener: { message, index in
-                self.data[index].lastMessage = message
-                self.viewController.reloadCell(self.data[index])
-            }
-        )
+    func didChatLoad(snapshot: DocumentSnapshot, cell: ChatCell) -> ChatModel? {
+        var data = snapshot.data() ?? [:]
+        data["documentId"] = snapshot.documentID
+        
+        do {
+            let chatModel = try! FirestoreDecoder()
+                .decode(
+                    ChatModel.self,
+                    from: data
+            )
+            
+            cell.loadChatModel(chatModel)
+            
+            return chatModel
+        } catch let err {
+            debugPrint("error while parse chat model: \(err)")
+            return nil
+        }
     }
 }

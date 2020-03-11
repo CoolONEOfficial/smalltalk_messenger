@@ -7,9 +7,8 @@
 
 import UIKit
 import Reusable
-import IGListKit
 
-class ChatCell: UICollectionViewCell {
+class ChatCell: UITableViewCell, NibReusable {
 
     @IBOutlet private var avatarImageView: UIImageView!
     @IBOutlet private var chatNameLabel: UILabel!
@@ -26,16 +25,16 @@ class ChatCell: UICollectionViewCell {
     func loadChatModel(
         _ chatModel: ChatModel
     ) {
-        if chatModel.users?.count ?? 0 > 2 {
+        if chatModel.users.count > 2 {
             chatNameLabel.isHidden = false
             loadGroupChatData(
-                chatName: chatModel.name ?? "",
-                lastMessage: chatModel.lastMessage ?? MessageModel()
+                chatName: chatModel.name,
+                lastMessage: chatModel.lastMessage ?? MessageModel.empty()
             )
         } else {
             chatNameLabel.isHidden = true
             loadChatData(
-                lastMessage: chatModel.lastMessage ?? MessageModel()
+                lastMessage: chatModel.lastMessage ?? MessageModel.empty()
             )
         }
     }
@@ -51,7 +50,7 @@ class ChatCell: UICollectionViewCell {
     private func loadChatData(
         lastMessage: MessageModel
     ) {
-        senderNameLabel.text = String(lastMessage.userId ?? 0) // load user name
+        senderNameLabel.text = String(lastMessage.userId) // load user name
         lastMessageLabel.text = lastMessage.text
     }
 
