@@ -57,25 +57,7 @@ class ChatListViewController: UIViewController {
         ) { tableView, indexPath, snapshot in
             let cell = tableView.dequeueReusableCell(for: indexPath, cellType: ChatCell.self)
             
-            if var chatModel = self.viewModel.didChatLoad(snapshot: snapshot, cell: cell) {
-                snapshot.reference.collection("messages")
-                    .order(by: "timestamp", descending: true)
-                    .limit(to: 1)
-                    .addSnapshotListener { messagesSnapshot, error in
-                        guard let messages = messagesSnapshot else {
-                            debugPrint("Error fetching messages: \(error!)")
-                            return
-                        }
-                        
-                        if let snapshot = messages.documents.first {
-                            self.viewModel.didLastMessageLoad(
-                                snapshot: snapshot,
-                                cell: cell,
-                                chatModel: &chatModel
-                            )
-                        }
-                }
-            }
+            self.viewModel.didChatLoad(snapshot: snapshot, cell: cell)
             
             return cell
         }

@@ -12,7 +12,6 @@ import CodableFirebase
 protocol ChatListViewModelProtocol: ViewModelProtocol {
     func goToChat()
     func firestoreQuery() -> Query
-    func didLastMessageLoad(snapshot: QueryDocumentSnapshot, cell: ChatCell, chatModel: inout ChatModel)
     func didChatLoad(snapshot: DocumentSnapshot, cell: ChatCell) -> ChatModel?
 }
 
@@ -37,30 +36,12 @@ class ChatListViewModel: ChatListViewModelProtocol {
         return firestoreService.chatListQuery
     }
     
-    func didLastMessageLoad(snapshot: QueryDocumentSnapshot, cell: ChatCell, chatModel: inout ChatModel) {
-        var data = snapshot.data()
-        data["documentId"] = snapshot.documentID
-        
-        do {
-            let messageModel = try FirestoreDecoder()
-                .decode(
-                    MessageModel.self,
-                    from: data
-            )
-            
-            chatModel.lastMessage = messageModel
-            cell.loadChatModel(chatModel)
-        } catch let err {
-            debugPrint("error while parse messagemodel \(err)")
-        }
-    }
-    
     func didChatLoad(snapshot: DocumentSnapshot, cell: ChatCell) -> ChatModel? {
         var data = snapshot.data() ?? [:]
         data["documentId"] = snapshot.documentID
         
         do {
-            let chatModel = try FirestoreDecoder()
+            let chatModel = try! FirestoreDecoder()
                 .decode(
                     ChatModel.self,
                     from: data

@@ -8,16 +8,12 @@
 import Foundation
 import Firebase
 
-struct MessageModel: AutoCodable {
+struct MessageModel: Codable {
     
-    var documentId: String
+    let documentId: String
     let text: String
     let userId: Int
     let timestamp: Timestamp
-    
-    enum SkipEncodingKeys {
-        case documentId
-    }
     
     static func empty() -> MessageModel {
         return MessageModel(documentId: "", text: "", userId: 0, timestamp: Timestamp.init())
