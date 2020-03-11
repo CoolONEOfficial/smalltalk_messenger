@@ -114,10 +114,18 @@ class FirestoreService {
                 .addSnapshotListener { _, _ in
                     completion(true)
             }
+
             do {
-                try db.collection("chats")
+                var lastMessage = try FirestoreEncoder().encode(messageModel)
+                let lastMessageTimestamp = lastMessage["timestamp"] as! [String: Any]
+                lastMessage["timestamp"] = Timestamp.init(
+                    seconds: lastMessageTimestamp["seconds"] as! Int64,
+                    nanoseconds: lastMessageTimestamp["nanoseconds"] as! Int32
+                )
+                
+                db.collection("chats")
                     .document(chatDocumentId).updateData([
-                        "lastMessage": try FirestoreEncoder().encode(messageModel)
+                        "lastMessage": lastMessage
                     ])
             } catch let err {
                 debugPrint("error while encode messagemodel: \(err)")
