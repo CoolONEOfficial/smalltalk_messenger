@@ -7,22 +7,19 @@
 
 import Foundation
 import Firebase
+import CodableFirebase
 
 protocol ChatListViewModelProtocol: ViewModelProtocol {
     func goToChat()
-    func chatList() -> [ChatModel]
+    func firestoreQuery() -> Query
+    func didLastMessageLoad(snapshot: QueryDocumentSnapshot, cell: ChatCell, chatModel: inout ChatModel)
+    func didChatLoad(snapshot: DocumentSnapshot, cell: ChatCell) -> ChatModel?
 }
 
 class ChatListViewModel: ChatListViewModelProtocol {
     let router: RouterProtocol
     let viewController: ChatListViewControllerProtocol
     let firestoreService: FirestoreService = FirestoreService()
-    
-    var data: [ChatModel] = [] {
-        didSet {
-            viewController.performUpdates()
-        }
-    }
     
     init(
         router: RouterProtocol,
@@ -36,19 +33,45 @@ class ChatListViewModel: ChatListViewModelProtocol {
         router.showChat()
     }
     
-    func chatList() -> [ChatModel] {
-        return data
+    func firestoreQuery() -> Query {
+        return firestoreService.chatListQuery
     }
     
-    func viewDidLoad() {
-        firestoreService.loadChatList(
-            chatListListener: { parsedData in
-                self.data = parsedData
-            },
-            lastMessageListener: { message, index in
-                self.data[index].lastMessage = message
-                self.viewController.reloadCell(self.data[index])
-            }
-        )
+    func didLastMessageLoad(snapshot: QueryDocumentSnapshot, cell: ChatCell, chatModel: inout ChatModel) {
+        var data = snapshot.data()
+        data["documentId"] = snapshot.documentID
+        
+        do {
+            let messageModel = try FirestoreDecoder()
+                .decode(
+                    MessageModel.self,
+                    from: data
+            )
+            
+            chatModel.lastMessage = messageModel
+            cell.loadChatModel(chatModel)
+        } catch let err {
+            debugPrint("error while parse messagemodel \(err)")
+        }
+    }
+    
+    func didChatLoad(snapshot: DocumentSnapshot, cell: ChatCell) -> ChatModel? {
+        var data = snapshot.data() ?? [:]
+        data["documentId"] = snapshot.documentID
+        
+        do {
+            let chatModel = try FirestoreDecoder()
+                .decode(
+                    ChatModel.self,
+                    from: data
+            )
+            
+            cell.loadChatModel(chatModel)
+            
+            return chatModel
+        } catch let err {
+            debugPrint("error while parse chat model: \(err)")
+            return nil
+        }
     }
 }
