@@ -44,6 +44,14 @@ class ChatListViewController: UIViewController {
         tableView.register(cellType: ChatCell.self)
         tableView.delegate = self
         
+        let rightItem = UIBarButtonItem(
+            title: "Edit",
+            style: .plain,
+            target: self,
+            action: #selector(toggleEditMode)
+        )
+        self.navigationItem.rightBarButtonItem = rightItem
+        
         bindDataSource = self.tableView.bind(
             toFirestoreQuery: viewModel.firestoreQuery()
         ) { tableView, indexPath, snapshot in
@@ -71,6 +79,22 @@ class ChatListViewController: UIViewController {
             
             return cell
         }
+    }
+    
+//    func tableView(
+//        _ tableView: UITableView,
+//        targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath,
+//        toProposedIndexPath proposedDestinationIndexPath: IndexPath
+//    ) -> IndexPath {
+//        let temp = bindDataSource.items[sourceIndexPath.item]
+//        bindDataSource.item
+//        bindDataSource.items.remove(at: sourceIndexPath.item)
+//        bindDataSource.items.insert(temp, at: proposedDestinationIndexPath.item)
+//    }
+    
+    @objc func toggleEditMode(_ sender: UIBarButtonItem) {
+        tableView.setEditing(!tableView.isEditing, animated: true)
+        sender.title = tableView.isEditing ? "Done" : "Edit"
     }
 }
 

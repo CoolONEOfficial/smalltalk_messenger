@@ -17,7 +17,9 @@ class FirestoreService {
     }()
     
     lazy var chatListQuery: Query = {
-        return db.collection("chats").whereField("users", arrayContains: 0)
+        return db.collection("chats")
+            .whereField("users", arrayContains: 0)
+            .order(by: "lastMessage.timestamp", descending: true)
     }()
 
 }
