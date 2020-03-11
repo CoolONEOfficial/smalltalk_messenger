@@ -78,6 +78,7 @@ class ChatListViewController: UIViewController {
         tableView.setEditing(!tableView.isEditing, animated: true)
         sender.title = tableView.isEditing ? "Done" : "Edit"
     }
+    
 }
 
 extension ChatListViewController: UITableViewDelegate {

@@ -28,8 +28,8 @@ class ChatListViewModel: ChatListViewModelProtocol {
         self.viewController = viewController
     }
     
-    func goToChat() {
-        router.showChat()
+    func goToChat(_ chatModel: ChatModel) {
+        router.showChat(chatModel)
     }
     
     func firestoreQuery() -> Query {

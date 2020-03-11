@@ -13,5 +13,6 @@ target 'epam_messenger' do
   pod 'Firebase/Firestore'
   pod 'CodableFirebase'
   pod 'Reusable'
+  pod 'MessageKit'
   pod 'FirebaseUI/Firestore', '~> 8.4.2'
 end

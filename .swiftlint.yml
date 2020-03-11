@@ -1,7 +1,7 @@
 disabled_rules:
 - trailing_whitespace
 - force_try
-- forced_cast
+- force_cast
 - identifier_name
 opt_in_rules:
 - empty_count
