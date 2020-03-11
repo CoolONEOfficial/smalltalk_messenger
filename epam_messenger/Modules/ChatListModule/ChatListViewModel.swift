@@ -10,9 +10,9 @@ import Firebase
 import CodableFirebase
 
 protocol ChatListViewModelProtocol: ViewModelProtocol {
-    func goToChat()
+    func goToChat(_ chatModel: ChatModel)
     func firestoreQuery() -> Query
-    func didChatLoad(snapshot: DocumentSnapshot, cell: ChatCell) -> ChatModel?
+    func didChatLoad(snapshot: DocumentSnapshot, cell: ChatCell)
 }
 
 class ChatListViewModel: ChatListViewModelProtocol {
@@ -36,23 +36,20 @@ class ChatListViewModel: ChatListViewModelProtocol {
         return firestoreService.chatListQuery
     }
     
-    func didChatLoad(snapshot: DocumentSnapshot, cell: ChatCell) -> ChatModel? {
+    func didChatLoad(snapshot: DocumentSnapshot, cell: ChatCell) {
         var data = snapshot.data() ?? [:]
         data["documentId"] = snapshot.documentID
         
         do {
-            let chatModel = try! FirestoreDecoder()
+            let chatModel = try FirestoreDecoder()
                 .decode(
                     ChatModel.self,
                     from: data
             )
             
             cell.loadChatModel(chatModel)
-            
-            return chatModel
         } catch let err {
             debugPrint("error while parse chat model: \(err)")
-            return nil
         }
     }
 }

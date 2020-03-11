@@ -29,24 +29,23 @@ class FirestoreService {
         messagesListener: @escaping ([MessageModel]) -> Void
     ) {
         db.collection("chats").document(chatDocumentId).collection("messages")
-            .order(by: "timestamp")
+            .order(by: "timestamp", descending: true)
+            .limit(to: 20)
             .addSnapshotListener { querySnapshot, error in
                 guard let query = querySnapshot else {
                     debugPrint("Error fetching messages query: \(error!)")
                     return
                 }
-                guard let data: [QueryDocumentSnapshot] = query.documents else {
-                    debugPrint("Documents data was empty.")
-                    return
-                }
+                let data = query.documents.reversed()
                 
                 let parsedData = data.map { snapshot -> MessageModel in
-                    let messageData = snapshot.data()
-                    return MessageModel(
-                        documentId: snapshot.documentID,
-                        text: messageData["text"] as? String,
-                        userId: messageData["userId"] as? Int,
-                        timestamp: messageData["timestamp"] as? Timestamp
+                    var messageData = snapshot.data()
+                    messageData["documentId"] = snapshot.documentID
+                    
+                    return try! FirestoreDecoder()
+                        .decode(
+                            MessageModel.self,
+                            from: messageData
                     )
                 }
                 
@@ -56,32 +55,33 @@ class FirestoreService {
     
     func sendMessage(
         chatDocumentId: String,
-        messageModel: MessageModel,
+        messageText: String,
         completion: @escaping (Bool) -> Void
     ) {
         do {
-            try db.collection("chats")
+            let messageModel = MessageModel(
+                documentId: nil,
+                text: messageText,
+                userId: 0, // TODO: user id
+                timestamp: Timestamp()
+            )
+            
+            var messageData = try FirestoreEncoder().encode(messageModel)
+            
+            db.collection("chats")
                 .document(chatDocumentId)
                 .collection("messages")
-                .addDocument(from: messageModel)
-                .addSnapshotListener { _, _ in
+                .addDocument(data: messageData)
+                .addSnapshotListener { snapshot, _ in
                     completion(true)
-            }
-
-            do {
-                var lastMessage = try FirestoreEncoder().encode(messageModel)
-                let lastMessageTimestamp = lastMessage["timestamp"] as! [String: Any]
-                lastMessage["timestamp"] = Timestamp.init(
-                    seconds: lastMessageTimestamp["seconds"] as! Int64,
-                    nanoseconds: lastMessageTimestamp["nanoseconds"] as! Int32
-                )
-                
-                db.collection("chats")
-                    .document(chatDocumentId).updateData([
-                        "lastMessage": lastMessage
-                    ])
-            } catch let err {
-                debugPrint("error while encode messagemodel: \(err)")
+                    
+                    messageData["documentId"] = snapshot?.documentID
+                    
+                    self.db.collection("chats")
+                        .document(chatDocumentId).updateData([
+                            "lastMessage": messageData
+                        ])
+                    
             }
         } catch let error {
             debugPrint("error! \(error.localizedDescription)")

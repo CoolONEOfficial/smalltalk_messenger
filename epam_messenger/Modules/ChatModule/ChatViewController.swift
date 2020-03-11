@@ -7,7 +7,6 @@
 
 import UIKit
 import Firebase
-import Ballcap
 import MessageKit
 import InputBarAccessoryView
 
@@ -247,9 +246,6 @@ extension ChatViewController: MessagesDisplayDelegate {
             avatarView.set(avatar: Avatar.init(image: image, initials: "Test initials"))
             avatarView.isHidden = isNextMessageSameSender(at: indexPath)
             avatarView.layer.borderWidth = 0
-//            avatarView.layer.borderColor = primaryColor.cgColor
-//            avatarView.layer.bounds = CGRect.init(x: 0, y: 0, width: 35, height: 35)
-//            avatarView.layer.cornerRadius = 35 / 2
         }
     }
 }
@@ -274,6 +270,7 @@ extension ChatViewController: ChatViewControllerProtocol {
             messagesCollectionView.reloadDataAndKeepOffset()
         } else {
             messagesCollectionView.reloadData()
+            messagesCollectionView.scrollToBottom()
         }
     }
     
@@ -323,13 +320,7 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
             return
         }
         
-        viewModel.sendMessage(
-            messageModel: MessageModel(
-                documentId: nil,
-                text: sendStr,
-                userId: 0,
-                timestamp: Timestamp()
-        )) { result in
+        viewModel.sendMessage(messageText: sendStr) { result in
             self.didSendMessage(result: result, components: components)
         }
         
