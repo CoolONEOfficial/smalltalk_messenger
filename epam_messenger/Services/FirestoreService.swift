@@ -8,6 +8,7 @@
 import Foundation
 import Firebase
 import FirebaseFirestore
+import CodableFirebase
 
 class FirestoreService {
     
@@ -112,6 +113,14 @@ class FirestoreService {
                 .addDocument(from: messageModel)
                 .addSnapshotListener { _, _ in
                     completion(true)
+            }
+            do {
+                try db.collection("chats")
+                    .document(chatDocumentId).updateData([
+                        "lastMessage": try FirestoreEncoder().encode(messageModel)
+                    ])
+            } catch let err {
+                debugPrint("error while encode messagemodel: \(err)")
             }
         } catch let error {
             debugPrint("error! \(error.localizedDescription)")

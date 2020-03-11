@@ -339,7 +339,6 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
         self.messageInputBar.sendButton.stopAnimating()
         self.messageInputBar.inputTextView.placeholder = "Aa"
         if result {
-            //            self.viewModel.insertMessages(components)
             self.messagesCollectionView.scrollToBottom(animated: true)
         }
     }
