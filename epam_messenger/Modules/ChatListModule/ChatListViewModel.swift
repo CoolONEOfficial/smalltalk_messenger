@@ -13,6 +13,7 @@ protocol ChatListViewModelProtocol: ViewModelProtocol {
     func goToChat(_ chatModel: ChatModel)
     func firestoreQuery() -> Query
     func didChatLoad(snapshot: DocumentSnapshot, cell: ChatCell)
+    func createChatPreview(_ chatModel: ChatModel) -> UIViewController
 }
 
 class ChatListViewModel: ChatListViewModelProtocol {
@@ -40,5 +41,9 @@ class ChatListViewModel: ChatListViewModelProtocol {
         if let chatModel = ChatModel.fromSnapshot(snapshot) {
             cell.loadChatModel(chatModel)
         }
+    }
+    
+    func createChatPreview(_ chatModel: ChatModel) -> UIViewController {
+        return AssemblyBuilder().createChatModule(router: router, chatModel: chatModel)
     }
 }

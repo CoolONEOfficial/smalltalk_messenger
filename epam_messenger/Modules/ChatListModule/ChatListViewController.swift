@@ -15,18 +15,6 @@ protocol ChatListViewControllerProtocol {
 }
 
 class ChatListViewController: UIViewController {
-    func batchedArray(_ array: FUIBatchedArray, didUpdateWith diff: FUISnapshotArrayDiff<DocumentSnapshot>) {
-        debugPrint("array : \(array)")
-    }
-    
-    func batchedArray(_ array: FUIBatchedArray, willUpdateWith diff: FUISnapshotArrayDiff<DocumentSnapshot>) {
-        debugPrint("array : \(array)")
-    }
-    
-    func batchedArray(_ array: FUIBatchedArray, queryDidFailWithError error: Error) {
-        debugPrint("array : \(array)")
-    }
-    
     var viewModel: ChatListViewModelProtocol!
     
     var bindDataSource: FUIFirestoreTableViewDataSource! {
@@ -77,6 +65,57 @@ extension ChatListViewController: UITableViewDelegate {
         
         if let chatModel = ChatModel.fromSnapshot(snapshot) {
             viewModel.goToChat(chatModel)
+        }
+    }
+    
+    private func chatAt(_ itemIndex: Int) -> ChatModel? {
+        let snapshot = bindDataSource.items[itemIndex]
+        var data = snapshot.data() ?? [:]
+        data["documentId"] = snapshot.documentID
+        
+        do {
+            return try FirestoreDecoder()
+                .decode(
+                    ChatModel.self,
+                    from: data
+            )
+        } catch let err {
+            debugPrint("error while parse chat model: \(err)")
+            return nil
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        if let chatModel = chatAt(indexPath.item) {
+            let identifier = NSString(string: String(indexPath.item))
+            let configuration = UIContextMenuConfiguration(identifier: identifier, previewProvider: { () -> UIViewController? in
+                // Return Preview View Controller here
+                return self.viewModel.createChatPreview(chatModel)
+            }) { _ -> UIMenu? in
+                let delete = UIAction(
+                    title: "Delete",
+                    image: UIImage(systemName: "trash.fill"),
+                    attributes: .destructive
+                ) { _ in
+                    // TODO: delete message
+                }
+                
+                return UIMenu(title: "", children: [delete])
+            }
+            return configuration
+        } else {
+            return nil
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating) {
+        guard let identifier = configuration.identifier as? String else { return }
+        guard let itemIndex = Int(identifier) else { return }
+        
+        if let chatModel = chatAt(itemIndex) {
+            animator.addCompletion {
+                self.viewModel.goToChat(chatModel)
+            }
         }
     }
     
