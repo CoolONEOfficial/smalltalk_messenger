@@ -1,6 +1,7 @@
 disabled_rules:
 - trailing_whitespace
-- forced_cast
+- force_try
+- force_cast
 - identifier_name
 opt_in_rules:
 - empty_count
@@ -9,6 +10,7 @@ excluded:
 - Carthage
 - Pods
 - SwiftLint/Common/3rdPartyLib
+- CodeGenerated
 line_length:
     warning: 150
     error: 200

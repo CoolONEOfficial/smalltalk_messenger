@@ -1,5 +1,5 @@
 # Uncomment the next line to define a global platform for your project
-# platform :ios, '9.0'
+platform :ios, '9.0'
 
 target 'epam_messenger' do
   # Comment the next line if you don't want to use dynamic frameworks
@@ -7,10 +7,12 @@ target 'epam_messenger' do
 
   # Pods for epam_messenger
   pod 'SwiftLint'
+  pod 'Sourcery'
   pod 'Firebase/Analytics'
   pod 'Firebase/Auth'
   pod 'Firebase/Firestore'
-  pod 'Ballcap'
+  pod 'CodableFirebase'
   pod 'Reusable'
-  pod 'IGListKit', '~> 4.0.0'
+  pod 'MessageKit'
+  pod 'FirebaseUI/Firestore', '~> 8.4.2'
 end

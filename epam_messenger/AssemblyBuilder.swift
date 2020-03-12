@@ -10,7 +10,7 @@ import UIKit
 protocol AssemblyBuilderProtocol {
     func createAuthorizationModule(router: RouterProtocol) -> UIViewController
     func createChatListModule(router: RouterProtocol) -> UIViewController
-    func createChatModule(router: RouterProtocol) -> UIViewController
+    func createChatModule(router: RouterProtocol, chatModel: ChatModel) -> UIViewController
 }
 
 class AssemblyBuilder: AssemblyBuilderProtocol {
@@ -28,9 +28,13 @@ class AssemblyBuilder: AssemblyBuilderProtocol {
         return view
     }
     
-    func createChatModule(router: RouterProtocol) -> UIViewController {
+    func createChatModule(router: RouterProtocol, chatModel: ChatModel) -> UIViewController {
         let view = ChatViewController()
-        let viewModel = ChatViewModel(router: router)
+        let viewModel = ChatViewModel(
+            router: router,
+            chatModel: chatModel,
+            viewController: view
+        )
         view.viewModel = viewModel
         return view
     }

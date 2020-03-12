@@ -7,45 +7,15 @@
 
 import Foundation
 import Firebase
-import Ballcap
-import IGListKit
 
-class MessageModel: Codable, Modelable {
-    required init() {}
+struct MessageModel: Codable {
     
-    init(
-        documentId: String,
-        text: String?,
-        userId: Int?
-    ) {
-        self.documentId = documentId
-        self.text = text
-        self.userId = userId
-    }
+    let documentId: String
+    let text: String
+    let userId: Int
+    let timestamp: Timestamp
     
-    var documentId: String?
-    var text: String?
-    var userId: Int?
-}
-
-extension MessageModel: Equatable {
-    static public func == (rhs: MessageModel, lhs: MessageModel) -> Bool {
-        return rhs.documentId == lhs.documentId
-    }
-}
-
-extension MessageModel: ListDiffable {
-    
-    public func diffIdentifier() -> NSObjectProtocol {
-        return NSString(string: documentId ?? "")
-    }
-    
-    public func isEqual(toDiffableObject object: ListDiffable?) -> Bool {
-        guard let object = object as? MessageModel else {
-            return false
-        }
-        
-        return self.documentId == object.documentId
-            && self.text == object.text
+    static func empty() -> MessageModel {
+        return MessageModel(documentId: "", text: "", userId: 0, timestamp: Timestamp.init())
     }
 }
