@@ -14,6 +14,7 @@ protocol RouterMain {
 
 protocol RouterProtocol: RouterMain {
     func initialViewController()
+    func showBottomBar()
     func showChatList()
     func showChat(_ chatModel: ChatModel)
     func popToRoot()
@@ -33,6 +34,13 @@ class Router: RouterProtocol {
     func initialViewController() {
         if let navigationController = navigationController, let rootViewController = rootViewController {
             navigationController.viewControllers = [rootViewController]
+        }
+    }
+    
+    func showBottomBar() {
+        if let navigationController = navigationController {
+            guard let chatViewController = assemblyBuilder?.createBottomBarModule(router: self) else { return }
+            navigationController.viewControllers = [chatViewController]
         }
     }
     
