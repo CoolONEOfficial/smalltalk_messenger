@@ -157,6 +157,53 @@ class ChatViewController: MessagesViewController {
                 than: 5.0 * 60.0
         )
     }
+    
+    // MARK: - Context menu
+    
+    @available(iOS 13.0, *)
+    public func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        let identifier = NSString(string: String(indexPath.section))
+        debugPrint("ident \(identifier) \(indexPath.section)")
+        let config = UIContextMenuConfiguration(identifier: identifier, previewProvider: nil) { _ in
+            let delete = UIAction(
+                title: "Delete",
+                image: UIImage(systemName: "trash.fill"),
+                attributes: .destructive
+            ) { _ in
+                // TODO: delete message
+            }
+            
+            return UIMenu(title: "", children: [delete])
+        }
+        
+        return config
+    }
+    
+    private func makeTargetedPreview(for configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+        guard let identifier = configuration.identifier as? String else { return nil }
+        guard let item = Int(identifier) else { return nil }
+        
+        switch messagesCollectionView.cellForItem(
+            at: .init(row: 0, section: item)
+        ) {
+        case let cell as TextMessageCell:
+            let parameters = UIPreviewParameters()
+            parameters.backgroundColor = cell.messageContainerView.backgroundColor
+            parameters.visiblePath = UIBezierPath(roundedRect: cell.messageLabel.bounds, cornerRadius: 18)
+            
+            return UITargetedPreview(view: cell.messageLabel, parameters: parameters)
+        default:
+            return nil
+        }
+    }
+    
+    public func collectionView(_ collectionView: UICollectionView, previewForHighlightingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+        return makeTargetedPreview(for: configuration)
+    }
+    
+    public func collectionView(_ collectionView: UICollectionView, previewForDismissingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+        return makeTargetedPreview(for: configuration)
+    }
 }
 
 public struct Sender: SenderType {
@@ -223,7 +270,7 @@ extension ChatViewController: MessagesDisplayDelegate {
         
         return isNextMessageSameSenderAndTime(at: indexPath)
             ? .bubble
-            : .bubbleTail(tail, .curved)
+            : .bubbleTail(tail, .pointedEdge)
     }
     
     func configureAvatarView(_ avatarView: AvatarView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
