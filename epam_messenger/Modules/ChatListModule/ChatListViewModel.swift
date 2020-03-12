@@ -13,6 +13,7 @@ protocol ChatListViewModelProtocol: ViewModelProtocol {
     func goToChat(_ chatModel: ChatModel)
     func firestoreQuery() -> Query
     func didChatLoad(snapshot: DocumentSnapshot, cell: ChatCell)
+    func createChatPreview(_ chatModel: ChatModel) -> UIViewController
 }
 
 class ChatListViewModel: ChatListViewModelProtocol {
@@ -51,5 +52,9 @@ class ChatListViewModel: ChatListViewModelProtocol {
         } catch let err {
             debugPrint("error while parse chat model: \(err)")
         }
+    }
+    
+    func createChatPreview(_ chatModel: ChatModel) -> UIViewController {
+        return AssemblyBuilder().createChatModule(router: router, chatModel: chatModel)
     }
 }
