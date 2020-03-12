@@ -11,9 +11,8 @@ import Firebase
 protocol ChatViewModelProtocol: ViewModelProtocol {
     func getChatModel() -> ChatModel
     func messageList() -> [MessageModel]
-    func insertMessages(_ data: [Any])
     func sendMessage(
-        messageModel: MessageModel,
+        messageText: String,
         completion: @escaping (Bool) -> Void
     )
 }
@@ -46,55 +45,24 @@ class ChatViewModel: ChatViewModelProtocol {
     }
     
     func viewDidLoad() {
-        guard let chatDocumentId = chatModel.documentId else {
-            debugPrint("chat document id not found")
-            return
-        }
-        
+        var firstLoad = true
         firestoreService.loadChat(
-            chatDocumentId,
+            chatModel.documentId,
             messagesListener: { parsedData in
-                let emptyData = self.data.isEmpty
-                
                 self.data = parsedData
-                
-                self.viewController.performUpdates(keepOffset: !emptyData)
+                self.viewController.performUpdates(keepOffset: !firstLoad)
+                firstLoad = false
         }
         )
     }
     
-    func insertMessages(_ data: [Any]) {
-        for component in data {
-            //let user = Sender(senderId: "test", displayName: "Noname")
-            if let str = component as? String {
-                let message = MessageModel(
-                    documentId: UUID().uuidString,
-                    text: str,
-                    userId: 0,
-                    timestamp: Timestamp.init()
-                )
-                insertMessage(message)
-            }
-        }
-    }
-    
-    func insertMessage(_ message: MessageModel) {
-        data.append(message)
-        viewController.didInsertMessage()
-    }
-    
     func sendMessage(
-        messageModel: MessageModel,
+        messageText: String,
         completion: @escaping (Bool) -> Void
     ) {
-        guard let chatDocumentId = chatModel.documentId else {
-             debugPrint("chat document id not found")
-             return
-         }
-        
         firestoreService.sendMessage(
-            chatDocumentId: chatDocumentId,
-            messageModel: messageModel,
+            chatDocumentId: chatModel.documentId,
+            messageText: messageText,
             completion: completion
         )
     }

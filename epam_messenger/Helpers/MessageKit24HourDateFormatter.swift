@@ -1,12 +1,11 @@
 //
-//  24HourDateFormatter.swift
+//  MessageKit24HourDateFormatter.swift
 //  epam_messenger
 //
-//  Created by Nickolay Truhin on 10.03.2020.
+//  Created by Nickolay Truhin on 11.03.2020.
 //
 
 import Foundation
-import MessageKit
 
 open class MessageKit24HourDateFormatter {
 
@@ -16,7 +15,7 @@ open class MessageKit24HourDateFormatter {
 
     private let dateFormatter = DateFormatter()
     private let timeFormatter: DateFormatter = {
-        let formatter = DateFormatter.init()
+        let formatter = DateFormatter()
         formatter.dateFormat = "H:mm"
         return formatter
     }()

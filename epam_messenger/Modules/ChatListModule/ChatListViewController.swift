@@ -63,17 +63,6 @@ class ChatListViewController: UIViewController {
         }
     }
     
-//    func tableView(
-//        _ tableView: UITableView,
-//        targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath,
-//        toProposedIndexPath proposedDestinationIndexPath: IndexPath
-//    ) -> IndexPath {
-//        let temp = bindDataSource.items[sourceIndexPath.item]
-//        bindDataSource.item
-//        bindDataSource.items.remove(at: sourceIndexPath.item)
-//        bindDataSource.items.insert(temp, at: proposedDestinationIndexPath.item)
-//    }
-    
     @objc func toggleEditMode(_ sender: UIBarButtonItem) {
         tableView.setEditing(!tableView.isEditing, animated: true)
         sender.title = tableView.isEditing ? "Done" : "Edit"
@@ -84,7 +73,23 @@ class ChatListViewController: UIViewController {
 extension ChatListViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        viewModel.goToChat()
+        let snapshot = bindDataSource.items[indexPath.item]
+        var data = snapshot.data() ?? [:]
+        data["documentId"] = snapshot.documentID
+        
+        do {
+            let chatModel = try FirestoreDecoder()
+                .decode(
+                    ChatModel.self,
+                    from: data
+            )
+            
+            viewModel.goToChat(chatModel)
+            
+        } catch let err {
+            debugPrint("error while parse chat model: \(err)")
+        }
+        
     }
     
 }

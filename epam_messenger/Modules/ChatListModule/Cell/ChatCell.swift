@@ -20,6 +20,8 @@ class ChatCell: UITableViewCell, NibReusable {
         // Initialization code
         
         chatNameLabel.isHidden = true
+        avatarImageView.image = #imageLiteral(resourceName: "Nathan-Tannar")
+        avatarImageView.layer.cornerRadius = avatarImageView.bounds.width / 2
     }
     
     func loadChatModel(
