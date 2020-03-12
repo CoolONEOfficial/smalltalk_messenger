@@ -8,6 +8,7 @@
 import Foundation
 import Firebase
 import FirebaseFirestore
+import CodableFirebase
 
 class FirestoreService {
     
@@ -17,82 +18,34 @@ class FirestoreService {
     
     lazy var chatListQuery: Query = {
         return db.collection("chats")
+            .whereField("users", arrayContains: 0)
+            .order(by: "lastMessage.timestamp", descending: true)
+        return db.collection("chats")
             .whereField("users", arrayContains: 0) // TODO: auth user id
     }()
-    
-    func loadChatList(
-        chatListListener: @escaping ([ChatModel]) -> Void,
-        lastMessageListener: @escaping (MessageModel, Int) -> Void
-    ) {
-        chatListQuery.addSnapshotListener { querySnapshot, error in
-            guard let query = querySnapshot else {
-                debugPrint("Error fetching chats query: \(error!)")
-                return
-            }
-            guard let data: [QueryDocumentSnapshot] = query.documents else {
-                debugPrint("Documents data was empty.")
-                return
-            }
-            
-            let parsedData = data.map { snapshot -> ChatModel in
-                return ChatModel(
-                    documentId: snapshot.documentID,
-                    users: snapshot.data()["users"] as? [Int],
-                    name: snapshot.data()["name"] as? String
-                )
-            }
-            
-            chatListListener(parsedData)
-            
-            for (index, snapshot) in data.enumerated() {
-                snapshot.reference.collection("messages")
-                    .order(by: "timestamp", descending: true)
-                    .limit(to: 1)
-                    .addSnapshotListener { messagesSnapshot, error in
-                        guard let messages = messagesSnapshot else {
-                            debugPrint("Error fetching messages: \(error!)")
-                            return
-                        }
-                        
-                        if let message = messages.documents.first {
-                            let messageData = message.data()
-                            let messageModel = MessageModel(
-                                documentId: message.documentID,
-                                text: messageData["text"] as? String,
-                                userId: messageData["userId"] as? Int,
-                                timestamp: messageData["timestamp"] as? Timestamp
-                            )
-                            
-                            lastMessageListener(messageModel, index)
-                        }
-                }
-            }
-        }
-    }
     
     func loadChat(
         _ chatDocumentId: String,
         messagesListener: @escaping ([MessageModel]) -> Void
     ) {
         db.collection("chats").document(chatDocumentId).collection("messages")
-            .order(by: "timestamp")
+            .order(by: "timestamp", descending: true)
+            .limit(to: 20)
             .addSnapshotListener { querySnapshot, error in
                 guard let query = querySnapshot else {
                     debugPrint("Error fetching messages query: \(error!)")
                     return
                 }
-                guard let data: [QueryDocumentSnapshot] = query.documents else {
-                    debugPrint("Documents data was empty.")
-                    return
-                }
+                let data = query.documents.reversed()
                 
                 let parsedData = data.map { snapshot -> MessageModel in
-                    let messageData = snapshot.data()
-                    return MessageModel(
-                        documentId: snapshot.documentID,
-                        text: messageData["text"] as? String,
-                        userId: messageData["userId"] as? Int,
-                        timestamp: messageData["timestamp"] as? Timestamp
+                    var messageData = snapshot.data()
+                    messageData["documentId"] = snapshot.documentID
+                    
+                    return try! FirestoreDecoder()
+                        .decode(
+                            MessageModel.self,
+                            from: messageData
                     )
                 }
                 
@@ -102,16 +55,33 @@ class FirestoreService {
     
     func sendMessage(
         chatDocumentId: String,
-        messageModel: MessageModel,
+        messageText: String,
         completion: @escaping (Bool) -> Void
     ) {
         do {
-            try db.collection("chats")
+            let messageModel = MessageModel(
+                documentId: nil,
+                text: messageText,
+                userId: 0, // TODO: user id
+                timestamp: Timestamp()
+            )
+            
+            var messageData = try FirestoreEncoder().encode(messageModel)
+            
+            db.collection("chats")
                 .document(chatDocumentId)
                 .collection("messages")
-                .addDocument(from: messageModel)
-                .addSnapshotListener { _, _ in
+                .addDocument(data: messageData)
+                .addSnapshotListener { snapshot, _ in
                     completion(true)
+                    
+                    messageData["documentId"] = snapshot?.documentID
+                    
+                    self.db.collection("chats")
+                        .document(chatDocumentId).updateData([
+                            "lastMessage": messageData
+                        ])
+                    
             }
         } catch let error {
             debugPrint("error! \(error.localizedDescription)")

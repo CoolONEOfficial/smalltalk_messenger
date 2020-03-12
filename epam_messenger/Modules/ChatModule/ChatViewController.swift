@@ -7,7 +7,6 @@
 
 import UIKit
 import Firebase
-import Ballcap
 import MessageKit
 import InputBarAccessoryView
 
@@ -271,6 +270,7 @@ extension ChatViewController: ChatViewControllerProtocol {
             messagesCollectionView.reloadDataAndKeepOffset()
         } else {
             messagesCollectionView.reloadData()
+            messagesCollectionView.scrollToBottom()
         }
     }
     
@@ -320,13 +320,7 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
             return
         }
         
-        viewModel.sendMessage(
-            messageModel: MessageModel(
-                documentId: nil,
-                text: sendStr,
-                userId: 0,
-                timestamp: Timestamp()
-        )) { result in
+        viewModel.sendMessage(messageText: sendStr) { result in
             self.didSendMessage(result: result, components: components)
         }
         
@@ -336,7 +330,6 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
         self.messageInputBar.sendButton.stopAnimating()
         self.messageInputBar.inputTextView.placeholder = "Aa"
         if result {
-            //            self.viewModel.insertMessages(components)
             self.messagesCollectionView.scrollToBottom(animated: true)
         }
     }
