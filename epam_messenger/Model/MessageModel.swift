@@ -38,5 +38,4 @@ extension MessageModel: MessageType {
         return .text(text)
     }
     
-    
 }

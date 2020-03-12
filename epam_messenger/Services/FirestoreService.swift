@@ -18,10 +18,8 @@ class FirestoreService {
     
     lazy var chatListQuery: Query = {
         return db.collection("chats")
-            .whereField("users", arrayContains: 0)
-            .order(by: "lastMessage.timestamp", descending: true)
-        return db.collection("chats")
             .whereField("users", arrayContains: 0) // TODO: auth user id
+            .order(by: "lastMessage.timestamp", descending: true)
     }()
     
     func loadChat(
