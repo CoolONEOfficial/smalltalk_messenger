@@ -11,25 +11,24 @@ import UIKit
 class BottomBarViewController: UITabBarController {
     var chatList: UIViewController! {
         didSet {
-            chatList.tabBarItem = .init(title: "Chats", image: #imageLiteral(resourceName: "ic_chat"), selectedImage: #imageLiteral(resourceName: "ic_chat_filled"))
+            chatList.tabBarItem = .init(title: "Chats", image: #imageLiteral(resourceName: "ic_chat"), selectedImage: #imageLiteral(resourceName: "ic_chat"))
             chatList.tabBarItem.tag = 1
         }
     }
-    var profile: UIViewController! {
+    var settings: UIViewController! {
         didSet {
-            profile.tabBarItem = .init(title: "Profile", image: #imageLiteral(resourceName: "ic_profile"), selectedImage: #imageLiteral(resourceName: "ic_profile_filled"))
-            profile.tabBarItem.tag = 2
+            settings.tabBarItem = .init(title: "Settings", image: #imageLiteral(resourceName: "ic_settings"), selectedImage: #imageLiteral(resourceName: "ic_settings"))
+            settings.tabBarItem.tag = 2
         }
     }
     var contacts: UIViewController! {
         didSet {
-            contacts.tabBarItem = .init(title: "Contacts", image: #imageLiteral(resourceName: "ic_contacts"), selectedImage: #imageLiteral(resourceName: "ic_contacts_filled"))
-            contacts.tabBarItem.tag = 0
+            contacts.tabBarItem = .init(tabBarSystemItem: .contacts, tag: 0)
         }
     }
     
     lazy var controllers: [UIViewController] = {
-        return [contacts, chatList, profile]
+        return [contacts, chatList, settings]
     }()
     
     override func viewDidLoad() {
