@@ -12,7 +12,6 @@ import CodableFirebase
 protocol ChatListViewModelProtocol: ViewModelProtocol {
     func goToChat(_ chatModel: ChatModel)
     func firestoreQuery() -> Query
-    func didChatLoad(snapshot: DocumentSnapshot, cell: ChatCell)
     func createChatPreview(_ chatModel: ChatModel) -> UIViewController
 }
 
@@ -35,23 +34,6 @@ class ChatListViewModel: ChatListViewModelProtocol {
     
     func firestoreQuery() -> Query {
         return firestoreService.chatListQuery
-    }
-    
-    func didChatLoad(snapshot: DocumentSnapshot, cell: ChatCell) {
-        var data = snapshot.data() ?? [:]
-        data["documentId"] = snapshot.documentID
-        
-        do {
-            let chatModel = try FirestoreDecoder()
-                .decode(
-                    ChatModel.self,
-                    from: data
-            )
-            
-            cell.loadChatModel(chatModel)
-        } catch let err {
-            debugPrint("error while parse chat model: \(err)")
-        }
     }
     
     func createChatPreview(_ chatModel: ChatModel) -> UIViewController {
