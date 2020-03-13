@@ -26,7 +26,7 @@ class AssemblyBuilder: AssemblyBuilderProtocol {
         let view = BottomBarViewController()
         view.chatList = createChatListModule(router: router)
         view.contacts = createChatListModule(router: router) // TODO: contacts
-        view.profile = createChatListModule(router: router) // TODO: profile
+        view.settings = createChatListModule(router: router) // TODO: settings
         return view
     }
     
