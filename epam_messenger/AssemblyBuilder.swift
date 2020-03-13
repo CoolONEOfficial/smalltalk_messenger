@@ -12,6 +12,7 @@ protocol AssemblyBuilderProtocol {
     func createBottomBarModule(router: RouterProtocol) -> UIViewController
     func createChatListModule(router: RouterProtocol) -> UIViewController
     func createChatModule(router: RouterProtocol, chatModel: ChatModel) -> UIViewController
+    func createUserSettingsModule(router: RouterProtocol) -> UIViewController
 }
 
 class AssemblyBuilder: AssemblyBuilderProtocol {
@@ -26,7 +27,7 @@ class AssemblyBuilder: AssemblyBuilderProtocol {
         let view = BottomBarViewController()
         view.chatList = createChatListModule(router: router)
         view.contacts = createChatListModule(router: router) // TODO: contacts
-        view.profile = createChatListModule(router: router) // TODO: profile
+        view.userSettings = createUserSettingsModule(router: router)
         return view
     }
     
@@ -44,6 +45,13 @@ class AssemblyBuilder: AssemblyBuilderProtocol {
             chatModel: chatModel,
             viewController: view
         )
+        view.viewModel = viewModel
+        return view
+    }
+    
+    func createUserSettingsModule(router: RouterProtocol) -> UIViewController {
+        let view = UserSettingsViewController()
+        let viewModel = UserSettingsViewModel(router: router)
         view.viewModel = viewModel
         return view
     }
