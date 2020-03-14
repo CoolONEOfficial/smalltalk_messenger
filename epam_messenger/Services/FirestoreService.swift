@@ -22,33 +22,12 @@ class FirestoreService {
             .order(by: "lastMessage.timestamp", descending: true)
     }()
     
-    func loadChat(
-        _ chatDocumentId: String,
-        messagesListener: @escaping ([MessageModel]) -> Void
-    ) {
-        db.collection("chats").document(chatDocumentId).collection("messages")
-            .order(by: "timestamp", descending: true)
+    func createChatQuery(_ chatModel: ChatModel) -> Query {
+        return db.collection("chats")
+            .document(chatModel.documentId)
+            .collection("messages")
             .limit(to: 20)
-            .addSnapshotListener { querySnapshot, error in
-                guard let query = querySnapshot else {
-                    debugPrint("Error fetching messages query: \(error!)")
-                    return
-                }
-                let data = query.documents.reversed()
-                
-                let parsedData = data.map { snapshot -> MessageModel in
-                    var messageData = snapshot.data()
-                    messageData["documentId"] = snapshot.documentID
-                    
-                    return try! FirestoreDecoder()
-                        .decode(
-                            MessageModel.self,
-                            from: messageData
-                    )
-                }
-                
-                messagesListener(parsedData)
-        }
+            .order(by: "timestamp", descending: true)
     }
     
     func sendMessage(

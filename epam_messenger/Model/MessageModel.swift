@@ -7,7 +7,7 @@
 
 import Foundation
 import Firebase
-import MessageKit
+import CodableFirebase
 
 struct MessageModel: Codable {
     
@@ -19,23 +19,20 @@ struct MessageModel: Codable {
     static func empty() -> MessageModel {
         return MessageModel(documentId: "", text: "", userId: 0, timestamp: Timestamp.init())
     }
-}
-
-extension MessageModel: MessageType {
-    var sender: SenderType {
-        return Sender(senderId: String(userId), displayName: "123")
-    }
     
-    var messageId: String {
-        return documentId!
+    static func fromSnapshot(_ snapshot: DocumentSnapshot) -> MessageModel? {
+        var data = snapshot.data() ?? [:]
+        data["documentId"] = snapshot.documentID
+        
+        do {
+            return try FirestoreDecoder()
+                .decode(
+                    MessageModel.self,
+                    from: data
+            )
+        } catch let err {
+            debugPrint("error while parse message model: \(err)")
+            return nil
+        }
     }
-    
-    var sentDate: Date {
-        return timestamp.dateValue()
-    }
-    
-    var kind: MessageKind {
-        return .text(text)
-    }
-    
 }

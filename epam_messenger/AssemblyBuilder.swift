@@ -41,8 +41,7 @@ class AssemblyBuilder: AssemblyBuilderProtocol {
         let view = ChatViewController()
         let viewModel = ChatViewModel(
             router: router,
-            chatModel: chatModel,
-            viewController: view
+            chatModel: chatModel
         )
         view.viewModel = viewModel
         return view

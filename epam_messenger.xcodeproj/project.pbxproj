@@ -9,11 +9,17 @@
 /* Begin PBXBuildFile section */
 		79C1009E595A11E0BD8273FD /* Pods_epam_messenger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FBF8FAED7B1C0D473E35E1B0 /* Pods_epam_messenger.framework */; };
 		851553F0241983E500C89534 /* MessageKit24HourDateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 851553EF241983E500C89534 /* MessageKit24HourDateFormatter.swift */; };
+		851F5815241BE93800D04F92 /* MessageTextCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 851F5813241BE93800D04F92 /* MessageTextCell.swift */; };
+		851F5816241BE93800D04F92 /* MessageTextCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 851F5814241BE93800D04F92 /* MessageTextCell.xib */; };
+		851F581B241D792A00D04F92 /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = 851F581A241D792A00D04F92 /* Array.swift */; };
+		851F581E241D7E2900D04F92 /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 851F581D241D7E2900D04F92 /* Date.swift */; };
+		851F5821241D81D400D04F92 /* ChatTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 851F5820241D81D400D04F92 /* ChatTableView.swift */; };
+		851F5823241D824E00D04F92 /* ChatTableViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 851F5822241D824E00D04F92 /* ChatTableViewDataSource.swift */; };
 		8526F3D32417907B00ED62E8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8526F3D22417907B00ED62E8 /* Assets.xcassets */; };
 		853FD19E24165EDE005A7985 /* FirestoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 853FD19D24165EDE005A7985 /* FirestoreService.swift */; };
 		856A9C1F2411B8D10039E977 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 856A9C1E2411B8D10039E977 /* GoogleService-Info.plist */; };
-		859330032417CD9C00F1F32E /* BottomBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 859330022417CD9C00F1F32E /* BottomBarViewController.swift */; };
 		857D7CC32418F0C300932457 /* FirestoreCodableInterfaces.swift in Sources */ = {isa = PBXBuildFile; fileRef = 857D7CC22418F0C300932457 /* FirestoreCodableInterfaces.swift */; };
+		859330032417CD9C00F1F32E /* BottomBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 859330022417CD9C00F1F32E /* BottomBarViewController.swift */; };
 		85BE9A6924118CF200E6643B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85BE9A6824118CF200E6643B /* AppDelegate.swift */; };
 		85BE9A7224118CF200E6643B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 85BE9A7124118CF200E6643B /* Assets.xcassets */; };
 		85BE9A7524118CF200E6643B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 85BE9A7324118CF200E6643B /* LaunchScreen.storyboard */; };
@@ -44,13 +50,19 @@
 /* Begin PBXFileReference section */
 		26AB94EEBFA053FBB610059A /* Pods-epam_messenger.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-epam_messenger.release.xcconfig"; path = "Target Support Files/Pods-epam_messenger/Pods-epam_messenger.release.xcconfig"; sourceTree = "<group>"; };
 		851553EF241983E500C89534 /* MessageKit24HourDateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageKit24HourDateFormatter.swift; sourceTree = "<group>"; };
+		851F5813241BE93800D04F92 /* MessageTextCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageTextCell.swift; sourceTree = "<group>"; };
+		851F5814241BE93800D04F92 /* MessageTextCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MessageTextCell.xib; sourceTree = "<group>"; };
+		851F581A241D792A00D04F92 /* Array.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Array.swift; sourceTree = "<group>"; };
+		851F581D241D7E2900D04F92 /* Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
+		851F5820241D81D400D04F92 /* ChatTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatTableView.swift; sourceTree = "<group>"; };
+		851F5822241D824E00D04F92 /* ChatTableViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatTableViewDataSource.swift; sourceTree = "<group>"; };
 		8526F3D22417907B00ED62E8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8526F3D42417B8C000ED62E8 /* MessageKit24HourDateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageKit24HourDateFormatter.swift; sourceTree = "<group>"; };
 		853FD19D24165EDE005A7985 /* FirestoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreService.swift; sourceTree = "<group>"; };
 		853FD1AE2416A55A005A7985 /* InvertedCollectionViewFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvertedCollectionViewFlowLayout.swift; sourceTree = "<group>"; };
 		856A9C1E2411B8D10039E977 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		859330022417CD9C00F1F32E /* BottomBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomBarViewController.swift; sourceTree = "<group>"; };
 		857D7CC22418F0C300932457 /* FirestoreCodableInterfaces.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreCodableInterfaces.swift; sourceTree = "<group>"; };
+		859330022417CD9C00F1F32E /* BottomBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomBarViewController.swift; sourceTree = "<group>"; };
 		85BE9A6524118CF200E6643B /* epam_messenger.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = epam_messenger.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		85BE9A6824118CF200E6643B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		85BE9A7124118CF200E6643B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -111,6 +123,56 @@
 			name = "Recovered References";
 			sourceTree = "<group>";
 		};
+		851F580C241BE7E400D04F92 /* Cell */ = {
+			isa = PBXGroup;
+			children = (
+				851F580D241BE7EF00D04F92 /* Message */,
+			);
+			path = Cell;
+			sourceTree = "<group>";
+		};
+		851F580D241BE7EF00D04F92 /* Message */ = {
+			isa = PBXGroup;
+			children = (
+				851F580E241BE8D900D04F92 /* Text */,
+			);
+			path = Message;
+			sourceTree = "<group>";
+		};
+		851F580E241BE8D900D04F92 /* Text */ = {
+			isa = PBXGroup;
+			children = (
+				851F5813241BE93800D04F92 /* MessageTextCell.swift */,
+				851F5814241BE93800D04F92 /* MessageTextCell.xib */,
+			);
+			path = Text;
+			sourceTree = "<group>";
+		};
+		851F5819241D791700D04F92 /* Standart */ = {
+			isa = PBXGroup;
+			children = (
+				851F581A241D792A00D04F92 /* Array.swift */,
+			);
+			path = Standart;
+			sourceTree = "<group>";
+		};
+		851F581C241D7E1E00D04F92 /* Foundation */ = {
+			isa = PBXGroup;
+			children = (
+				851F581D241D7E2900D04F92 /* Date.swift */,
+			);
+			path = Foundation;
+			sourceTree = "<group>";
+		};
+		851F581F241D81C400D04F92 /* TableView */ = {
+			isa = PBXGroup;
+			children = (
+				851F5820241D81D400D04F92 /* ChatTableView.swift */,
+				851F5822241D824E00D04F92 /* ChatTableViewDataSource.swift */,
+			);
+			path = TableView;
+			sourceTree = "<group>";
+		};
 		853FD19B24165E87005A7985 /* Services */ = {
 			isa = PBXGroup;
 			children = (
@@ -162,7 +224,7 @@
 		85BE9A6724118CF200E6643B /* epam_messenger */ = {
 			isa = PBXGroup;
 			children = (
-				85FD2A0824182DCD0035AC13 /* Helpers */,
+				85FD2A0824182DCD0035AC13 /* Common */,
 				E6B7497F2414332D00F00B29 /* Supporting Files */,
 				85FF25732415974900A25D7A /* MVVM */,
 				853FD19B24165E87005A7985 /* Services */,
@@ -188,14 +250,16 @@
 			path = Templates;
 			sourceTree = "<group>";
 		};
-		85FD2A0824182DCD0035AC13 /* Helpers */ = {
+		85FD2A0824182DCD0035AC13 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				851F581C241D7E1E00D04F92 /* Foundation */,
+				851F5819241D791700D04F92 /* Standart */,
 				85FD2A0924182DED0035AC13 /* SourceryInterfaces.swift */,
 				857D7CC22418F0C300932457 /* FirestoreCodableInterfaces.swift */,
 				851553EF241983E500C89534 /* MessageKit24HourDateFormatter.swift */,
 			);
-			path = Helpers;
+			path = Common;
 			sourceTree = "<group>";
 		};
 		85FF25602414621C00A25D7A /* Model */ = {
@@ -257,6 +321,8 @@
 		E6B74990241448A000F00B29 /* ChatModule */ = {
 			isa = PBXGroup;
 			children = (
+				851F581F241D81C400D04F92 /* TableView */,
+				851F580C241BE7E400D04F92 /* Cell */,
 				E6B7499524144A4F00F00B29 /* ChatViewModel.swift */,
 				E6B74991241449C600F00B29 /* ChatViewController.swift */,
 				E6B74992241449C600F00B29 /* ChatViewController.xib */,
@@ -346,6 +412,7 @@
 			files = (
 				85FF256D2414DCDF00A25D7A /* ChatCell.xib in Resources */,
 				85BE9A7524118CF200E6643B /* LaunchScreen.storyboard in Resources */,
+				851F5816241BE93800D04F92 /* MessageTextCell.xib in Resources */,
 				E6B74994241449C600F00B29 /* ChatViewController.xib in Resources */,
 				85FD29FA2417FC130035AC13 /* ChatListViewController.xib in Resources */,
 				E6B74985241433F500F00B29 /* AuthorizationViewController.xib in Resources */,
@@ -439,14 +506,18 @@
 			buildActionMask = 2147483647;
 			files = (
 				E6B749882414377500F00B29 /* Router.swift in Sources */,
+				851F5821241D81D400D04F92 /* ChatTableView.swift in Sources */,
 				E6B74984241433F500F00B29 /* AuthorizationViewController.swift in Sources */,
 				85FD2A0524182BD70035AC13 /* AutoEquatable.generated.swift in Sources */,
 				85FD29F92417FC130035AC13 /* ChatListViewController.swift in Sources */,
 				85FF25622414623200A25D7A /* ChatModel.swift in Sources */,
 				857D7CC32418F0C300932457 /* FirestoreCodableInterfaces.swift in Sources */,
+				851F581B241D792A00D04F92 /* Array.swift in Sources */,
+				851F5815241BE93800D04F92 /* MessageTextCell.swift in Sources */,
 				E6B74993241449C600F00B29 /* ChatViewController.swift in Sources */,
 				85FF25752415976600A25D7A /* ViewModel.swift in Sources */,
 				E6B74976241427C700F00B29 /* AssemblyBuilder.swift in Sources */,
+				851F5823241D824E00D04F92 /* ChatTableViewDataSource.swift in Sources */,
 				E6B7499824144C5700F00B29 /* SceneDelegate.swift in Sources */,
 				85FF25642414624B00A25D7A /* MessageModel.swift in Sources */,
 				853FD19E24165EDE005A7985 /* FirestoreService.swift in Sources */,
@@ -455,6 +526,7 @@
 				851553F0241983E500C89534 /* MessageKit24HourDateFormatter.swift in Sources */,
 				E6B7498A2414382300F00B29 /* ChatListViewModel.swift in Sources */,
 				85FD2A0A24182DED0035AC13 /* SourceryInterfaces.swift in Sources */,
+				851F581E241D7E2900D04F92 /* Date.swift in Sources */,
 				85FF256C2414DCDF00A25D7A /* ChatCell.swift in Sources */,
 				85FD2A0724182CE80035AC13 /* AutoCodable.generated.swift in Sources */,
 				E6B7499624144A4F00F00B29 /* ChatViewModel.swift in Sources */,

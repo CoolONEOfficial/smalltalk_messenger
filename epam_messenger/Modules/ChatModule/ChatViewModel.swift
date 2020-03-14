@@ -10,6 +10,7 @@ import Firebase
 
 protocol ChatViewModelProtocol: ViewModelProtocol {
     func getChatModel() -> ChatModel
+    func firestoreQuery() -> Query
     func messageList() -> [MessageModel]
     func sendMessage(
         messageText: String,
@@ -19,7 +20,6 @@ protocol ChatViewModelProtocol: ViewModelProtocol {
 
 class ChatViewModel: ChatViewModelProtocol {
     let router: RouterProtocol
-    let viewController: ChatViewControllerProtocol
     let firestoreService: FirestoreService = FirestoreService()
     
     let chatModel: ChatModel
@@ -28,12 +28,10 @@ class ChatViewModel: ChatViewModelProtocol {
     
     init(
         router: RouterProtocol,
-        chatModel: ChatModel,
-        viewController: ChatViewControllerProtocol
+        chatModel: ChatModel
     ) {
         self.router = router
         self.chatModel = chatModel
-        self.viewController = viewController
     }
     
     func getChatModel() -> ChatModel {
@@ -44,16 +42,8 @@ class ChatViewModel: ChatViewModelProtocol {
         return data
     }
     
-    func viewDidLoad() {
-        var firstLoad = true
-        firestoreService.loadChat(
-            chatModel.documentId,
-            messagesListener: { parsedData in
-                self.data = parsedData
-                self.viewController.performUpdates(keepOffset: !firstLoad)
-                firstLoad = false
-        }
-        )
+    func firestoreQuery() -> Query {
+        return firestoreService.createChatQuery(chatModel)
     }
     
     func sendMessage(
