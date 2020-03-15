@@ -18,12 +18,6 @@ class ChatTableView: UITableView {
     
     internal var lastSectionsChange: (type: ChatTableViewDataSource.ChangeType, change: IndexSet)?
     
-    // MARK: - Default transform
-    
-    override func layoutSubviews() {
-        transform = CGAffineTransform(rotationAngle: -(CGFloat)(Double.pi))
-    }
-    
     // MARK: - Override TableView
     
     override func reloadRows(at indexPaths: [IndexPath], with animation: UITableView.RowAnimation) {

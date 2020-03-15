@@ -27,7 +27,7 @@ class FirestoreService {
             .document(chatModel.documentId)
             .collection("messages")
             .limit(to: 20)
-            .order(by: "timestamp", descending: true)
+            .order(by: "timestamp", descending: false)
     }
     
     func sendMessage(

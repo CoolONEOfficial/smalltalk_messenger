@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="MessageTextContent" customModule="epam_messenger" customModuleProvider="target">
+            <connections>
+                <outlet property="contentView" destination="iN0-l3-epB" id="UgE-hw-RcL"/>
+                <outlet property="textLabel" destination="rKC-gl-euR" id="16m-Vk-mEQ"/>
+                <outlet property="timeLabel" destination="HY6-yo-DQJ" id="hT8-1E-bxH"/>
+                <outlet property="usernameLabel" destination="bhs-yG-zyS" id="hwX-Et-tcz"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB">
+            <rect key="frame" x="0.0" y="0.0" width="425" height="148"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="zFe-3x-wIq">
+                    <rect key="frame" x="0.0" y="0.0" width="425" height="148"/>
+                    <subviews>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="User Userov" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bhs-yG-zyS" userLabel="Username">
+                            <rect key="frame" x="0.0" y="0.0" width="425" height="15"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="15" id="Tu4-Gp-4mZ"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="12"/>
+                            <nil key="textColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Text" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.80000000000000004" translatesAutoresizingMaskIntoConstraints="NO" id="rKC-gl-euR">
+                            <rect key="frame" x="0.0" y="15" width="425" height="118"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                            <nil key="textColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="20:20" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HY6-yo-DQJ" userLabel="Time label">
+                            <rect key="frame" x="0.0" y="133" width="425" height="15"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="15" id="4xc-6y-xZ4"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" type="system" weight="light" pointSize="12"/>
+                            <nil key="textColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                    </subviews>
+                </stackView>
+            </subviews>
+            <constraints>
+                <constraint firstItem="zFe-3x-wIq" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="7B2-fp-P45"/>
+                <constraint firstAttribute="trailing" secondItem="zFe-3x-wIq" secondAttribute="trailing" id="bEt-qA-FO1"/>
+                <constraint firstAttribute="bottom" secondItem="zFe-3x-wIq" secondAttribute="bottom" id="lDm-To-pR7"/>
+                <constraint firstItem="zFe-3x-wIq" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="tZ2-fo-pIg"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <point key="canvasLocation" x="145.6521739130435" y="-97.767857142857139"/>
+        </view>
+    </objects>
+</document>

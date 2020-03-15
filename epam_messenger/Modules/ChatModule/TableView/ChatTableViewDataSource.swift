@@ -64,7 +64,7 @@ class ChatTableViewDataSource: FUIFirestoreTableViewDataSource {
         return tableView as! ChatTableView
     }
     
-    internal var messageItems: [(key: Date, value: [MessageModel])] = []
+    internal var messageItems: [(key: Date, value: [MessageProtocol])] = []
     
     internal var oldSectionCounts: [Int]!
     
@@ -80,18 +80,6 @@ class ChatTableViewDataSource: FUIFirestoreTableViewDataSource {
         return messageItems[section].value.count
     }
     
-    override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-        return MessageKit24HourDateFormatter.shared.string(from: messageItems[section].key)
-    }
-    
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = super.tableView(tableView, cellForRowAt: indexPath)
-        
-        cell.transform = CGAffineTransform(rotationAngle: CGFloat(Double.pi))
-        
-        return cell
-    }
-    
     // MARK: - Functions
     
     internal func updateMessages() {
@@ -102,7 +90,7 @@ class ChatTableViewDataSource: FUIFirestoreTableViewDataSource {
         messageItems = Dictionary(grouping: messages) { mMessage in
             return mMessage.timestamp.dateValue().midnight
         }.sorted { l, r in
-            return (l.key as Date).compare(r.key as Date) == .orderedDescending
+            return (l.key as Date).compare(r.key as Date) == .orderedAscending
         }
     }
     

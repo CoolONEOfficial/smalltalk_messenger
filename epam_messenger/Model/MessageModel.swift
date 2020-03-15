@@ -36,3 +36,13 @@ struct MessageModel: Codable {
         }
     }
 }
+
+extension MessageModel: TextMessageProtocol {
+    var date: Date {
+        return timestamp.dateValue()
+    }
+    
+    var isIncoming: Bool {
+        return userId != 0 // TODO: auth user id
+    }
+}

@@ -8,17 +8,24 @@
 
 /* Begin PBXBuildFile section */
 		79C1009E595A11E0BD8273FD /* Pods_epam_messenger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FBF8FAED7B1C0D473E35E1B0 /* Pods_epam_messenger.framework */; };
-		851553F0241983E500C89534 /* MessageKit24HourDateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 851553EF241983E500C89534 /* MessageKit24HourDateFormatter.swift */; };
-		851F5815241BE93800D04F92 /* MessageTextCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 851F5813241BE93800D04F92 /* MessageTextCell.swift */; };
-		851F5816241BE93800D04F92 /* MessageTextCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 851F5814241BE93800D04F92 /* MessageTextCell.xib */; };
+		851553F0241983E500C89534 /* Message24HourDateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 851553EF241983E500C89534 /* Message24HourDateFormatter.swift */; };
 		851F581B241D792A00D04F92 /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = 851F581A241D792A00D04F92 /* Array.swift */; };
 		851F581E241D7E2900D04F92 /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 851F581D241D7E2900D04F92 /* Date.swift */; };
 		851F5821241D81D400D04F92 /* ChatTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 851F5820241D81D400D04F92 /* ChatTableView.swift */; };
 		851F5823241D824E00D04F92 /* ChatTableViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 851F5822241D824E00D04F92 /* ChatTableViewDataSource.swift */; };
+		851F5827241D92A600D04F92 /* TextMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 851F5826241D92A600D04F92 /* TextMessage.swift */; };
+		851F5829241D92AE00D04F92 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 851F5828241D92AE00D04F92 /* Message.swift */; };
+		851F582C241D987300D04F92 /* DateHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 851F582B241D987300D04F92 /* DateHeader.swift */; };
+		851F582E241D990900D04F92 /* ChatTableViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 851F582D241D990900D04F92 /* ChatTableViewDelegate.swift */; };
 		8526F3D32417907B00ED62E8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8526F3D22417907B00ED62E8 /* Assets.xcassets */; };
 		853FD19E24165EDE005A7985 /* FirestoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 853FD19D24165EDE005A7985 /* FirestoreService.swift */; };
 		856A9C1F2411B8D10039E977 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 856A9C1E2411B8D10039E977 /* GoogleService-Info.plist */; };
 		857D7CC32418F0C300932457 /* FirestoreCodableInterfaces.swift in Sources */ = {isa = PBXBuildFile; fileRef = 857D7CC22418F0C300932457 /* FirestoreCodableInterfaces.swift */; };
+		85814040241E2B59004884FD /* MessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8581403E241E2B59004884FD /* MessageCell.swift */; };
+		85814041241E2B59004884FD /* MessageCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8581403F241E2B59004884FD /* MessageCell.xib */; };
+		8581404D241E358D004884FD /* MessageTextContent.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8581404C241E358D004884FD /* MessageTextContent.xib */; };
+		8581404F241E35B0004884FD /* MessageTextContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8581404E241E35B0004884FD /* MessageTextContent.swift */; };
+		85814054241EA660004884FD /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85814053241EA660004884FD /* UIColor.swift */; };
 		859330032417CD9C00F1F32E /* BottomBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 859330022417CD9C00F1F32E /* BottomBarViewController.swift */; };
 		85BE9A6924118CF200E6643B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85BE9A6824118CF200E6643B /* AppDelegate.swift */; };
 		85BE9A7224118CF200E6643B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 85BE9A7124118CF200E6643B /* Assets.xcassets */; };
@@ -49,19 +56,26 @@
 
 /* Begin PBXFileReference section */
 		26AB94EEBFA053FBB610059A /* Pods-epam_messenger.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-epam_messenger.release.xcconfig"; path = "Target Support Files/Pods-epam_messenger/Pods-epam_messenger.release.xcconfig"; sourceTree = "<group>"; };
-		851553EF241983E500C89534 /* MessageKit24HourDateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageKit24HourDateFormatter.swift; sourceTree = "<group>"; };
-		851F5813241BE93800D04F92 /* MessageTextCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageTextCell.swift; sourceTree = "<group>"; };
-		851F5814241BE93800D04F92 /* MessageTextCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MessageTextCell.xib; sourceTree = "<group>"; };
+		851553EF241983E500C89534 /* Message24HourDateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message24HourDateFormatter.swift; sourceTree = "<group>"; };
 		851F581A241D792A00D04F92 /* Array.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Array.swift; sourceTree = "<group>"; };
 		851F581D241D7E2900D04F92 /* Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
 		851F5820241D81D400D04F92 /* ChatTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatTableView.swift; sourceTree = "<group>"; };
 		851F5822241D824E00D04F92 /* ChatTableViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatTableViewDataSource.swift; sourceTree = "<group>"; };
+		851F5826241D92A600D04F92 /* TextMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextMessage.swift; sourceTree = "<group>"; };
+		851F5828241D92AE00D04F92 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
+		851F582B241D987300D04F92 /* DateHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateHeader.swift; sourceTree = "<group>"; };
+		851F582D241D990900D04F92 /* ChatTableViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatTableViewDelegate.swift; sourceTree = "<group>"; };
 		8526F3D22417907B00ED62E8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8526F3D42417B8C000ED62E8 /* MessageKit24HourDateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageKit24HourDateFormatter.swift; sourceTree = "<group>"; };
 		853FD19D24165EDE005A7985 /* FirestoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreService.swift; sourceTree = "<group>"; };
 		853FD1AE2416A55A005A7985 /* InvertedCollectionViewFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvertedCollectionViewFlowLayout.swift; sourceTree = "<group>"; };
 		856A9C1E2411B8D10039E977 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		857D7CC22418F0C300932457 /* FirestoreCodableInterfaces.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreCodableInterfaces.swift; sourceTree = "<group>"; };
+		8581403E241E2B59004884FD /* MessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCell.swift; sourceTree = "<group>"; };
+		8581403F241E2B59004884FD /* MessageCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MessageCell.xib; sourceTree = "<group>"; };
+		8581404C241E358D004884FD /* MessageTextContent.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MessageTextContent.xib; sourceTree = "<group>"; };
+		8581404E241E35B0004884FD /* MessageTextContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageTextContent.swift; sourceTree = "<group>"; };
+		85814053241EA660004884FD /* UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
 		859330022417CD9C00F1F32E /* BottomBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomBarViewController.swift; sourceTree = "<group>"; };
 		85BE9A6524118CF200E6643B /* epam_messenger.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = epam_messenger.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		85BE9A6824118CF200E6643B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -135,6 +149,8 @@
 			isa = PBXGroup;
 			children = (
 				851F580E241BE8D900D04F92 /* Text */,
+				8581403E241E2B59004884FD /* MessageCell.swift */,
+				8581403F241E2B59004884FD /* MessageCell.xib */,
 			);
 			path = Message;
 			sourceTree = "<group>";
@@ -142,8 +158,8 @@
 		851F580E241BE8D900D04F92 /* Text */ = {
 			isa = PBXGroup;
 			children = (
-				851F5813241BE93800D04F92 /* MessageTextCell.swift */,
-				851F5814241BE93800D04F92 /* MessageTextCell.xib */,
+				8581404E241E35B0004884FD /* MessageTextContent.swift */,
+				8581404C241E358D004884FD /* MessageTextContent.xib */,
 			);
 			path = Text;
 			sourceTree = "<group>";
@@ -167,10 +183,31 @@
 		851F581F241D81C400D04F92 /* TableView */ = {
 			isa = PBXGroup;
 			children = (
+				851F582A241D985800D04F92 /* Header */,
+				851F580C241BE7E400D04F92 /* Cell */,
 				851F5820241D81D400D04F92 /* ChatTableView.swift */,
 				851F5822241D824E00D04F92 /* ChatTableViewDataSource.swift */,
+				851F582D241D990900D04F92 /* ChatTableViewDelegate.swift */,
 			);
 			path = TableView;
+			sourceTree = "<group>";
+		};
+		851F5824241D925D00D04F92 /* Message */ = {
+			isa = PBXGroup;
+			children = (
+				851553EF241983E500C89534 /* Message24HourDateFormatter.swift */,
+				851F5826241D92A600D04F92 /* TextMessage.swift */,
+				851F5828241D92AE00D04F92 /* Message.swift */,
+			);
+			path = Message;
+			sourceTree = "<group>";
+		};
+		851F582A241D985800D04F92 /* Header */ = {
+			isa = PBXGroup;
+			children = (
+				851F582B241D987300D04F92 /* DateHeader.swift */,
+			);
+			path = Header;
 			sourceTree = "<group>";
 		};
 		853FD19B24165E87005A7985 /* Services */ = {
@@ -190,6 +227,14 @@
 				E6B74990241448A000F00B29 /* ChatModule */,
 			);
 			path = Modules;
+			sourceTree = "<group>";
+		};
+		85814052241EA656004884FD /* UIKit */ = {
+			isa = PBXGroup;
+			children = (
+				85814053241EA660004884FD /* UIColor.swift */,
+			);
+			path = UIKit;
 			sourceTree = "<group>";
 		};
 		859330012417CD7F00F1F32E /* BottomBarModule */ = {
@@ -253,11 +298,12 @@
 		85FD2A0824182DCD0035AC13 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				85814052241EA656004884FD /* UIKit */,
+				851F5824241D925D00D04F92 /* Message */,
 				851F581C241D7E1E00D04F92 /* Foundation */,
 				851F5819241D791700D04F92 /* Standart */,
 				85FD2A0924182DED0035AC13 /* SourceryInterfaces.swift */,
 				857D7CC22418F0C300932457 /* FirestoreCodableInterfaces.swift */,
-				851553EF241983E500C89534 /* MessageKit24HourDateFormatter.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -322,7 +368,6 @@
 			isa = PBXGroup;
 			children = (
 				851F581F241D81C400D04F92 /* TableView */,
-				851F580C241BE7E400D04F92 /* Cell */,
 				E6B7499524144A4F00F00B29 /* ChatViewModel.swift */,
 				E6B74991241449C600F00B29 /* ChatViewController.swift */,
 				E6B74992241449C600F00B29 /* ChatViewController.xib */,
@@ -412,9 +457,10 @@
 			files = (
 				85FF256D2414DCDF00A25D7A /* ChatCell.xib in Resources */,
 				85BE9A7524118CF200E6643B /* LaunchScreen.storyboard in Resources */,
-				851F5816241BE93800D04F92 /* MessageTextCell.xib in Resources */,
 				E6B74994241449C600F00B29 /* ChatViewController.xib in Resources */,
 				85FD29FA2417FC130035AC13 /* ChatListViewController.xib in Resources */,
+				8581404D241E358D004884FD /* MessageTextContent.xib in Resources */,
+				85814041241E2B59004884FD /* MessageCell.xib in Resources */,
 				E6B74985241433F500F00B29 /* AuthorizationViewController.xib in Resources */,
 				85FD29FE241818B70035AC13 /* AutoCodable.swifttemplate in Resources */,
 				85FD2A00241825840035AC13 /* AutoEquatable.stencil in Resources */,
@@ -508,22 +554,28 @@
 				E6B749882414377500F00B29 /* Router.swift in Sources */,
 				851F5821241D81D400D04F92 /* ChatTableView.swift in Sources */,
 				E6B74984241433F500F00B29 /* AuthorizationViewController.swift in Sources */,
+				851F582C241D987300D04F92 /* DateHeader.swift in Sources */,
 				85FD2A0524182BD70035AC13 /* AutoEquatable.generated.swift in Sources */,
+				85814054241EA660004884FD /* UIColor.swift in Sources */,
 				85FD29F92417FC130035AC13 /* ChatListViewController.swift in Sources */,
+				851F5827241D92A600D04F92 /* TextMessage.swift in Sources */,
+				85814040241E2B59004884FD /* MessageCell.swift in Sources */,
 				85FF25622414623200A25D7A /* ChatModel.swift in Sources */,
 				857D7CC32418F0C300932457 /* FirestoreCodableInterfaces.swift in Sources */,
 				851F581B241D792A00D04F92 /* Array.swift in Sources */,
-				851F5815241BE93800D04F92 /* MessageTextCell.swift in Sources */,
+				851F582E241D990900D04F92 /* ChatTableViewDelegate.swift in Sources */,
 				E6B74993241449C600F00B29 /* ChatViewController.swift in Sources */,
 				85FF25752415976600A25D7A /* ViewModel.swift in Sources */,
+				8581404F241E35B0004884FD /* MessageTextContent.swift in Sources */,
 				E6B74976241427C700F00B29 /* AssemblyBuilder.swift in Sources */,
+				851F5829241D92AE00D04F92 /* Message.swift in Sources */,
 				851F5823241D824E00D04F92 /* ChatTableViewDataSource.swift in Sources */,
 				E6B7499824144C5700F00B29 /* SceneDelegate.swift in Sources */,
 				85FF25642414624B00A25D7A /* MessageModel.swift in Sources */,
 				853FD19E24165EDE005A7985 /* FirestoreService.swift in Sources */,
 				859330032417CD9C00F1F32E /* BottomBarViewController.swift in Sources */,
 				E6B74981241433BF00F00B29 /* AuthorizationViewModel.swift in Sources */,
-				851553F0241983E500C89534 /* MessageKit24HourDateFormatter.swift in Sources */,
+				851553F0241983E500C89534 /* Message24HourDateFormatter.swift in Sources */,
 				E6B7498A2414382300F00B29 /* ChatListViewModel.swift in Sources */,
 				85FD2A0A24182DED0035AC13 /* SourceryInterfaces.swift in Sources */,
 				851F581E241D7E2900D04F92 /* Date.swift in Sources */,

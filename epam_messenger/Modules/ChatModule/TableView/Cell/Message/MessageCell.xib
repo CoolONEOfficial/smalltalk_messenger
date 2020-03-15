@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="KGk-i7-Jjw" customClass="MessageCell" customModule="epam_messenger" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="250" height="178"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="250" height="178"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <stackView opaque="NO" contentMode="scaleToFill" alignment="bottom" spacing="1" translatesAutoresizingMaskIntoConstraints="NO" id="eA7-GV-i23">
+                        <rect key="frame" x="0.0" y="0.0" width="250" height="173"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="63S-fg-Slr" userLabel="Avatar View">
+                                <rect key="frame" x="0.0" y="133" width="40" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="40" id="Nqz-1Q-2Jg"/>
+                                    <constraint firstAttribute="height" constant="40" id="wDl-Nw-xif"/>
+                                </constraints>
+                            </imageView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Qu0-Ad-KeD" userLabel="Bubble View">
+                                <rect key="frame" x="41" y="0.0" width="209" height="173"/>
+                            </imageView>
+                        </subviews>
+                        <constraints>
+                            <constraint firstAttribute="bottom" secondItem="Qu0-Ad-KeD" secondAttribute="bottom" id="OGj-qO-And"/>
+                            <constraint firstItem="Qu0-Ad-KeD" firstAttribute="top" secondItem="eA7-GV-i23" secondAttribute="top" id="euL-Tx-ACl"/>
+                        </constraints>
+                    </stackView>
+                </subviews>
+                <constraints>
+                    <constraint firstAttribute="bottom" secondItem="eA7-GV-i23" secondAttribute="bottom" constant="5" id="Ru8-xI-TLv"/>
+                    <constraint firstItem="eA7-GV-i23" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" id="gUW-hB-COQ"/>
+                    <constraint firstAttribute="trailing" secondItem="eA7-GV-i23" secondAttribute="trailing" id="jdy-Hl-zxt"/>
+                    <constraint firstItem="eA7-GV-i23" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" id="szI-jV-zFi"/>
+                </constraints>
+            </tableViewCellContentView>
+            <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
+            <connections>
+                <outlet property="avatarImage" destination="63S-fg-Slr" id="7Sg-Yw-p6H"/>
+                <outlet property="bubbleImage" destination="Qu0-Ad-KeD" id="2UD-x6-YeO"/>
+                <outlet property="stackView" destination="eA7-GV-i23" id="F08-Go-MdI"/>
+            </connections>
+            <point key="canvasLocation" x="68.115942028985515" y="196.875"/>
+        </tableViewCell>
+    </objects>
+</document>

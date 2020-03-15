@@ -7,11 +7,11 @@
 
 import Foundation
 
-open class MessageKit24HourDateFormatter {
+open class Message24HourDateFormatter {
 
     // MARK: - Properties
 
-    public static let shared = MessageKit24HourDateFormatter()
+    public static let shared = Message24HourDateFormatter()
 
     private let dateFormatter = DateFormatter()
 
