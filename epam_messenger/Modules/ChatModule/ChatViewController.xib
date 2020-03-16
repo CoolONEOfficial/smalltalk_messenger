@@ -19,16 +19,17 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="JMF-4e-zBG" customClass="ChatTableView" customModule="epam_messenger" customModuleProvider="target">
-                    <rect key="frame" x="0.0" y="44" width="414" height="818"/>
+                    <rect key="frame" x="0.0" y="44" width="414" height="768"/>
                     <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                    <viewLayoutGuide key="contentLayoutGuide" id="2og-PZ-eS6"/>
+                    <viewLayoutGuide key="frameLayoutGuide" id="rtv-H6-ya7"/>
                 </tableView>
             </subviews>
-            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
-                <constraint firstItem="fnl-2z-Ty3" firstAttribute="bottom" secondItem="JMF-4e-zBG" secondAttribute="bottom" id="3xD-VU-Gd4"/>
-                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="JMF-4e-zBG" secondAttribute="trailing" id="FVb-nh-gdE"/>
-                <constraint firstItem="JMF-4e-zBG" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="Feh-e1-B2h"/>
-                <constraint firstItem="JMF-4e-zBG" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" id="vcB-Ur-eJ5"/>
+                <constraint firstItem="JMF-4e-zBG" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" id="7uG-fS-Uz7"/>
+                <constraint firstItem="JMF-4e-zBG" firstAttribute="bottom" secondItem="fnl-2z-Ty3" secondAttribute="bottom" constant="-50" id="Old-dt-87l"/>
+                <constraint firstItem="JMF-4e-zBG" firstAttribute="trailing" secondItem="fnl-2z-Ty3" secondAttribute="trailing" id="Uuy-Xp-RNs"/>
+                <constraint firstItem="JMF-4e-zBG" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="qvi-GF-F9o"/>
             </constraints>
             <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
             <point key="canvasLocation" x="141" y="90"/>

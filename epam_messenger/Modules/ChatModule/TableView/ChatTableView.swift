@@ -64,4 +64,16 @@ class ChatTableView: UITableView {
         dataSource.bind(to: self)
         return dataSource
     }
+    
+    // MARK: - Helpers
+    
+    func scrollToBottom() {
+        guard !chatDataSource.messageItems.isEmpty else {
+            return
+        }
+        
+        let lastIndex = chatDataSource.messageItems.count - 1
+        let lastItem = chatDataSource.messageItems[lastIndex]
+        scrollToRow(at: IndexPath(row: lastItem.value.count - 1, section: lastIndex), at: .none, animated: true)
+    }
 }

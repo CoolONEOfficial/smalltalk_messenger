@@ -26,6 +26,10 @@
 		8581404D241E358D004884FD /* MessageTextContent.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8581404C241E358D004884FD /* MessageTextContent.xib */; };
 		8581404F241E35B0004884FD /* MessageTextContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8581404E241E35B0004884FD /* MessageTextContent.swift */; };
 		85814054241EA660004884FD /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85814053241EA660004884FD /* UIColor.swift */; };
+		85814057241EBE8A004884FD /* ChatInputBarDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85814056241EBE8A004884FD /* ChatInputBarDelegate.swift */; };
+		85814059241EC218004884FD /* ChatInputBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85814058241EC218004884FD /* ChatInputBar.swift */; };
+		8581405B241ED271004884FD /* ChatInputBarAutocompleteManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8581405A241ED271004884FD /* ChatInputBarAutocompleteManager.swift */; };
+		85814063242005BF004884FD /* UIDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85814062242005BF004884FD /* UIDevice.swift */; };
 		859330032417CD9C00F1F32E /* BottomBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 859330022417CD9C00F1F32E /* BottomBarViewController.swift */; };
 		85BE9A6924118CF200E6643B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85BE9A6824118CF200E6643B /* AppDelegate.swift */; };
 		85BE9A7224118CF200E6643B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 85BE9A7124118CF200E6643B /* Assets.xcassets */; };
@@ -76,6 +80,10 @@
 		8581404C241E358D004884FD /* MessageTextContent.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MessageTextContent.xib; sourceTree = "<group>"; };
 		8581404E241E35B0004884FD /* MessageTextContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageTextContent.swift; sourceTree = "<group>"; };
 		85814053241EA660004884FD /* UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
+		85814056241EBE8A004884FD /* ChatInputBarDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatInputBarDelegate.swift; sourceTree = "<group>"; };
+		85814058241EC218004884FD /* ChatInputBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatInputBar.swift; sourceTree = "<group>"; };
+		8581405A241ED271004884FD /* ChatInputBarAutocompleteManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatInputBarAutocompleteManager.swift; sourceTree = "<group>"; };
+		85814062242005BF004884FD /* UIDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIDevice.swift; sourceTree = "<group>"; };
 		859330022417CD9C00F1F32E /* BottomBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomBarViewController.swift; sourceTree = "<group>"; };
 		85BE9A6524118CF200E6643B /* epam_messenger.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = epam_messenger.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		85BE9A6824118CF200E6643B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -233,8 +241,19 @@
 			isa = PBXGroup;
 			children = (
 				85814053241EA660004884FD /* UIColor.swift */,
+				85814062242005BF004884FD /* UIDevice.swift */,
 			);
 			path = UIKit;
+			sourceTree = "<group>";
+		};
+		85814055241EBE4B004884FD /* InputBar */ = {
+			isa = PBXGroup;
+			children = (
+				85814058241EC218004884FD /* ChatInputBar.swift */,
+				85814056241EBE8A004884FD /* ChatInputBarDelegate.swift */,
+				8581405A241ED271004884FD /* ChatInputBarAutocompleteManager.swift */,
+			);
+			path = InputBar;
 			sourceTree = "<group>";
 		};
 		859330012417CD7F00F1F32E /* BottomBarModule */ = {
@@ -367,6 +386,7 @@
 		E6B74990241448A000F00B29 /* ChatModule */ = {
 			isa = PBXGroup;
 			children = (
+				85814055241EBE4B004884FD /* InputBar */,
 				851F581F241D81C400D04F92 /* TableView */,
 				E6B7499524144A4F00F00B29 /* ChatViewModel.swift */,
 				E6B74991241449C600F00B29 /* ChatViewController.swift */,
@@ -570,6 +590,7 @@
 				E6B74976241427C700F00B29 /* AssemblyBuilder.swift in Sources */,
 				851F5829241D92AE00D04F92 /* Message.swift in Sources */,
 				851F5823241D824E00D04F92 /* ChatTableViewDataSource.swift in Sources */,
+				85814063242005BF004884FD /* UIDevice.swift in Sources */,
 				E6B7499824144C5700F00B29 /* SceneDelegate.swift in Sources */,
 				85FF25642414624B00A25D7A /* MessageModel.swift in Sources */,
 				853FD19E24165EDE005A7985 /* FirestoreService.swift in Sources */,
@@ -581,8 +602,11 @@
 				851F581E241D7E2900D04F92 /* Date.swift in Sources */,
 				85FF256C2414DCDF00A25D7A /* ChatCell.swift in Sources */,
 				85FD2A0724182CE80035AC13 /* AutoCodable.generated.swift in Sources */,
+				8581405B241ED271004884FD /* ChatInputBarAutocompleteManager.swift in Sources */,
 				E6B7499624144A4F00F00B29 /* ChatViewModel.swift in Sources */,
 				85BE9A6924118CF200E6643B /* AppDelegate.swift in Sources */,
+				85814059241EC218004884FD /* ChatInputBar.swift in Sources */,
+				85814057241EBE8A004884FD /* ChatInputBarDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

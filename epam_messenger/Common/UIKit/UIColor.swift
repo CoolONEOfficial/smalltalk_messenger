@@ -20,13 +20,19 @@ extension UIColor {
         }
     }
     
-    static let accentText = UIColor.lightText
+    static let accentText = UIColor { (UITraitCollection: UITraitCollection) -> UIColor in
+        if UITraitCollection.userInterfaceStyle == .dark {
+            return UIColor.lightText.withAlphaComponent(0.8)
+        } else {
+            return UIColor.lightText.withAlphaComponent(1)
+        }
+    }
     
     // MARK: - Elements
     
     static let plainText = UIColor { (UITraitCollection: UITraitCollection) -> UIColor in
         if UITraitCollection.userInterfaceStyle == .dark {
-            return .lightText
+            return UIColor.lightText.withAlphaComponent(0.8)
         } else {
             return .darkText
         }
@@ -38,7 +44,7 @@ extension UIColor {
     
     static let chatDateHeaderText = UIColor { (UITraitCollection: UITraitCollection) -> UIColor in
         if UITraitCollection.userInterfaceStyle == .dark {
-            return UIColor.lightText
+            return UIColor.lightText.withAlphaComponent(0.8)
         } else {
             return UIColor.lightText.withAlphaComponent(1)
         }

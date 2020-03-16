@@ -10,27 +10,43 @@ import FirebaseUI
 
 class ChatTableViewDataSource: FUIFirestoreTableViewDataSource {
     
-    // MARK: - Init
+    // MARK: - Vars
+    
+    private var chatTableView: ChatTableView {
+        return tableView as! ChatTableView
+    }
+    
+    internal var messageItems: [(key: Date, value: [MessageProtocol])] = []
     
     internal enum ChangeType {
         case insert
         case delete
     }
     
+    internal var oldSectionCounts: [Int]!
+    
+    private var itemsObservation: NSKeyValueObservation!
+    
+    // MARK: - Init
+    
     override init(collection: FUIBatchedArray, populateCell: @escaping (UITableView, IndexPath, DocumentSnapshot) -> UITableViewCell) {
         super.init(collection: collection, populateCell: populateCell)
         
         itemsObservation = collection.observe(\FUIBatchedArray.items) { _, _ in
-            let oldDateKeys = self.messageItems.map({ $0.key }).removingDuplicates()
-            self.oldSectionCounts = self.messageItems.map({ $0.value.count })
+            let oldMessageItems = self.messageItems
+            
             self.updateMessages()
+            
+            let oldDateKeys = oldMessageItems.map({ $0.key }).removingDuplicates()
             let newDateKeys = self.messageItems.map({ $0.key }).removingDuplicates()
             
             let diff = Array(Set(oldDateKeys).symmetricDifference(newDateKeys))
             
-            let diffType: ChangeType = newDateKeys.count > oldDateKeys.count
-                ? .insert
-                : .delete
+            let diffType: ChangeType =
+                self.messageItems.map({ $0.value.count }).reduce(0, +) >=
+                    oldMessageItems.map({ $0.value.count }).reduce(0, +)
+                    ? .insert
+                    : .delete
             
             if diffType == .insert {
                 self.oldSectionCounts = self.messageItems.map({ $0.value.count })
@@ -58,18 +74,6 @@ class ChatTableViewDataSource: FUIFirestoreTableViewDataSource {
         }
     }
     
-    // MARK: - Vars
-    
-    private var chatTableView: ChatTableView {
-        return tableView as! ChatTableView
-    }
-    
-    internal var messageItems: [(key: Date, value: [MessageProtocol])] = []
-    
-    internal var oldSectionCounts: [Int]!
-    
-    private var itemsObservation: NSKeyValueObservation!
-    
     // MARK: - Override UITableViewDataSource
     
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -87,10 +91,9 @@ class ChatTableViewDataSource: FUIFirestoreTableViewDataSource {
             return MessageModel.fromSnapshot(mSnapshot)!
         }
         
-        messageItems = Dictionary(grouping: messages) { mMessage in
-            return mMessage.timestamp.dateValue().midnight
-        }.sorted { l, r in
-            return (l.key as Date).compare(r.key as Date) == .orderedAscending
+        messageItems = Dictionary(grouping: messages) { $0.date.midnight }
+            .sorted { l, r in
+                return (l.key as Date).compare(r.key as Date) == .orderedAscending
         }
     }
     
@@ -103,7 +106,7 @@ class ChatTableViewDataSource: FUIFirestoreTableViewDataSource {
             }
         }
         
-        fatalError()
+        fatalError("Incorrect IndexPath to transform")
     }
     
     internal func transformIndexPathList(_ indexPathList: [IndexPath]) -> [IndexPath] {

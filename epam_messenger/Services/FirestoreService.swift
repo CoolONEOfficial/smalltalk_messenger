@@ -26,9 +26,10 @@ class FirestoreService {
         return db.collection("chats")
             .document(chatModel.documentId)
             .collection("messages")
-            .limit(to: 20)
             .order(by: "timestamp", descending: false)
     }
+    
+    private var fromMe = false
     
     func sendMessage(
         chatDocumentId: String,
@@ -39,9 +40,11 @@ class FirestoreService {
             let messageModel = MessageModel(
                 documentId: nil,
                 text: messageText,
-                userId: 0, // TODO: user id
+                userId: 0, //fromMe ? 0 : 1, // TODO: user id
                 timestamp: Timestamp()
             )
+            
+            fromMe = !fromMe
             
             var messageData = try FirestoreEncoder().encode(messageModel)
             

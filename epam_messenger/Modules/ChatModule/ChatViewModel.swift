@@ -11,7 +11,6 @@ import Firebase
 protocol ChatViewModelProtocol: ViewModelProtocol {
     func getChatModel() -> ChatModel
     func firestoreQuery() -> Query
-    func messageList() -> [MessageModel]
     func sendMessage(
         messageText: String,
         completion: @escaping (Bool) -> Void
@@ -24,8 +23,6 @@ class ChatViewModel: ChatViewModelProtocol {
     
     let chatModel: ChatModel
     
-    var data: [MessageModel] = []
-    
     init(
         router: RouterProtocol,
         chatModel: ChatModel
@@ -36,10 +33,6 @@ class ChatViewModel: ChatViewModelProtocol {
     
     func getChatModel() -> ChatModel {
         return self.chatModel
-    }
-    
-    func messageList() -> [MessageModel] {
-        return data
     }
     
     func firestoreQuery() -> Query {
