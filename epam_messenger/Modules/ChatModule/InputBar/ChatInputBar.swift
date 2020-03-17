@@ -12,6 +12,8 @@ class ChatInputBar: InputBarAccessoryView {
     
     // MARK: - Init
     
+    static let defaultRightWidth = CGFloat(38)
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         configure()
@@ -24,7 +26,7 @@ class ChatInputBar: InputBarAccessoryView {
     func configure() {
         tintColor = .accent
         
-        inputTextView.backgroundColor = .plainBackground
+        inputTextView.backgroundColor = .systemBackground
         inputTextView.textContainerInset = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 36)
         inputTextView.placeholderLabelInsets = UIEdgeInsets(top: 8, left: 20, bottom: 8, right: 36)
         inputTextView.textColor = .white
@@ -35,7 +37,7 @@ class ChatInputBar: InputBarAccessoryView {
         inputTextView.layer.masksToBounds = true
         inputTextView.tintColor = tintColor
         inputTextView.scrollIndicatorInsets = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
-        setRightStackViewWidthConstant(to: 38, animated: false)
+        setRightStackViewWidthConstant(to: ChatInputBar.defaultRightWidth, animated: false)
         setStackViewItems([sendButton, InputBarButtonItem.fixedSpace(2)], forStack: .right, animated: false)
         sendButton.imageView?.backgroundColor = tintColor
         sendButton.contentEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2)
@@ -44,7 +46,7 @@ class ChatInputBar: InputBarAccessoryView {
         sendButton.title = nil
         sendButton.imageView?.layer.cornerRadius = 16
         sendButton.backgroundColor = .clear
-        middleContentViewPadding.right = -38
+        middleContentViewPadding.right = -ChatInputBar.defaultRightWidth
         separatorLine.isHidden = true
         backgroundView.backgroundColor = .systemBackground
         blurView.isHidden = false

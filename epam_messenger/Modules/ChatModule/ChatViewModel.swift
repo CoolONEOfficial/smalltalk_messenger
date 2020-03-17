@@ -12,13 +12,29 @@ protocol ChatViewModelProtocol: ViewModelProtocol {
     func getChatModel() -> ChatModel
     func firestoreQuery() -> Query
     func sendMessage(
-        messageText: String,
+        _ messageText: String,
         completion: @escaping (Bool) -> Void
     )
     func deleteMessage(
         _ messageModel: MessageProtocol,
         completion: @escaping (Bool) -> Void
     )
+}
+
+extension ChatViewModelProtocol {
+    func deleteMessage(
+        _ messageModel: MessageProtocol,
+        completion: @escaping (Bool) -> Void = {_ in}
+    ) {
+        return deleteMessage(messageModel, completion: completion)
+    }
+    
+    func sendMessage(
+        _ messageModel: MessageProtocol,
+        completion: @escaping (Bool) -> Void = {_ in}
+    ) {
+        return deleteMessage(messageModel, completion: completion)
+    }
 }
 
 class ChatViewModel: ChatViewModelProtocol {
@@ -44,8 +60,8 @@ class ChatViewModel: ChatViewModelProtocol {
     }
     
     func sendMessage(
-        messageText: String,
-        completion: @escaping (Bool) -> Void
+        _ messageText: String,
+        completion: @escaping (Bool) -> Void = {_ in}
     ) {
         firestoreService.sendMessage(
             chatDocumentId: chatModel.documentId,
@@ -54,7 +70,10 @@ class ChatViewModel: ChatViewModelProtocol {
         )
     }
     
-    func deleteMessage(_ messageModel: MessageProtocol, completion: @escaping (Bool) -> Void) {
+    func deleteMessage(
+        _ messageModel: MessageProtocol,
+        completion: @escaping (Bool) -> Void = {_ in}
+    ) {
         firestoreService.deleteMessage(
             chatDocumentId: chatModel.documentId,
             messageDocumentId: messageModel.documentId,

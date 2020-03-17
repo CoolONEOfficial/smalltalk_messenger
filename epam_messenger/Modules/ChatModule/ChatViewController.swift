@@ -23,15 +23,22 @@ class ChatViewController: UIViewController {
     let inputBar: InputBarAccessoryView = ChatInputBar()
     var viewModel: ChatViewModelProtocol!
     
+    var deleteButton = UIButton()
+    var forwardButton = UIButton()
+    let stack = UIStackView()
+    
     open lazy var autocompleteManager: AutocompleteManager = { [unowned self] in
         let manager = AutocompleteManager(for: self.inputBar.inputTextView)
         
         manager.defaultTextAttributes[.foregroundColor] = UIColor.plainText
+        self.inputBar.inputTextView.textColor = UIColor.plainText
         
         manager.delegate = self
         manager.dataSource = self
         return manager
-    }()
+        }()
+    
+    private var keyboardManager = KeyboardManager()
     
     // MARK: - Methods
     
@@ -42,15 +49,34 @@ class ChatViewController: UIViewController {
         
         setupTableView()
         setupInputBar()
+        setupKeyboardManager()
+        setupEditModeButtons()
+    }
+    
+    private func setupEditModeButtons() {
+        deleteButton.setImage(UIImage(systemName: "trash"), for: .normal)
+        deleteButton.addTarget(self, action: #selector(ChatViewController.deleteSelectedMessages), for: .touchUpInside)
+        
+        forwardButton.setImage(UIImage(systemName: "arrowshape.turn.up.right"), for: .normal)
+        forwardButton.addTarget(self, action: #selector(ChatViewController.forwardSelectedMessages), for: .touchUpInside)
+        
+        stack.axis = .horizontal
+        stack.alignment = .fill
+        stack.distribution = .equalSpacing
+        stack.addArrangedSubview(forwardButton)
+        stack.addArrangedSubview(deleteButton)
     }
     
     private func setupInputBar() {
         inputBar.delegate = self
+        view.addSubview(inputBar)
     }
     
     private func setupTableView() {
         tableView.register(cellType: MessageCell.self)
         tableView.delegate = self
+        tableView.allowsMultipleSelection = false
+        tableView.allowsMultipleSelectionDuringEditing = true
         
         tableView.dataSource = tableView.bind(
             toFirestoreQuery: viewModel.firestoreQuery()
@@ -74,6 +100,27 @@ class ChatViewController: UIViewController {
         }
     }
     
+    private func setupKeyboardManager() {
+        keyboardManager.bind(inputAccessoryView: inputBar)
+        keyboardManager.bind(to: tableView)
+        
+        keyboardManager.on(event: .didShow) { [weak self] _ in
+            self?.tableView.scrollToBottom()
+        }
+        
+        // Add some extra handling to manage content inset
+        keyboardManager.on(event: .didChangeFrame) { [weak self] (notification) in
+            
+            let barHeight = self?.inputBar.bounds.height ?? 0
+            self?.tableView.contentInset.bottom = notification.endFrame.height - 35
+            self?.tableView.scrollIndicatorInsets.bottom = notification.endFrame.height - 35
+        }.on(event: .didHide) { [weak self] _ in
+            //let barHeight = self?.inputBar.bounds.height ?? 0
+            self?.tableView.contentInset.bottom = 0
+            self?.tableView.scrollIndicatorInsets.bottom = 0
+        }
+    }
+    
     private static func checkMerge(
         left: MessageProtocol,
         right: MessageProtocol
@@ -86,14 +133,4 @@ class ChatViewController: UIViewController {
         tableView.scrollToBottom()
     }
     
-    // MARK: - Input bar
-    
-    override var inputAccessoryView: UIView? {
-        return inputBar
-    }
-
-    override var canBecomeFirstResponder: Bool {
-        return true
-    }
-
 }

@@ -29,22 +29,18 @@ class FirestoreService {
             .order(by: "timestamp", descending: false)
     }
     
-    private var fromMe = false
-    
     func sendMessage(
         chatDocumentId: String,
         messageText: String,
-        completion: @escaping (Bool) -> Void
+        completion: @escaping (Bool) -> Void = {_ in}
     ) {
         do {
             let messageModel = MessageModel(
                 documentId: "",
                 text: messageText,
-                userId: 0, //fromMe ? 0 : 1, // TODO: user id
+                userId: 0, // TODO: user id
                 timestamp: Timestamp()
             )
-            
-            fromMe = !fromMe
             
             var messageData = try FirestoreEncoder().encode(messageModel)
             
@@ -72,7 +68,7 @@ class FirestoreService {
     func deleteMessage(
         chatDocumentId: String,
         messageDocumentId: String,
-        completion: @escaping (Bool) -> Void
+        completion: @escaping (Bool) -> Void = {_ in}
     ) {
         db.collection("chats")
             .document(chatDocumentId).collection("messages")

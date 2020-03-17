@@ -23,8 +23,8 @@
                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="zFe-3x-wIq">
                     <rect key="frame" x="0.0" y="0.0" width="425" height="148"/>
                     <subviews>
-                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="User Userov" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bhs-yG-zyS" userLabel="Username">
-                            <rect key="frame" x="0.0" y="0.0" width="425" height="15"/>
+                        <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="User Userov" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bhs-yG-zyS" userLabel="Username">
+                            <rect key="frame" x="0.0" y="-15" width="425" height="15"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="15" id="Tu4-Gp-4mZ"/>
                             </constraints>
@@ -33,7 +33,7 @@
                             <nil key="highlightedColor"/>
                         </label>
                         <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Text" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.80000000000000004" translatesAutoresizingMaskIntoConstraints="NO" id="rKC-gl-euR">
-                            <rect key="frame" x="0.0" y="15" width="425" height="118"/>
+                            <rect key="frame" x="0.0" y="0.0" width="425" height="133"/>
                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                             <nil key="textColor"/>
                             <nil key="highlightedColor"/>

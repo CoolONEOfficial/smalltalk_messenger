@@ -29,7 +29,7 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
         inputBar.sendButton.startAnimating()
         inputBar.inputTextView.placeholder = "Sending..."
         
-        viewModel.sendMessage(messageText: text) {_ in
+        viewModel.sendMessage(text) {_ in
             inputBar.sendButton.stopAnimating()
             inputBar.inputTextView.placeholder = "Aa"
             
@@ -40,7 +40,7 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
     func inputBar(_ inputBar: InputBarAccessoryView, didChangeIntrinsicContentTo size: CGSize) {
         // Adjust content insets
         //print(size)
-        tableView.contentInset.bottom = size.height + 300 // keyboard size estimate
+        //tableView.contentInset.bottom = size.height + 300 // keyboard size estimate
     }
     
     func inputBar(_ inputBar: InputBarAccessoryView, textViewTextDidChangeTo text: String) {

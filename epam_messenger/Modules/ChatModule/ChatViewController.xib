@@ -18,13 +18,14 @@
             <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="JMF-4e-zBG" customClass="ChatTableView" customModule="epam_messenger" customModuleProvider="target">
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="none" allowsSelection="NO" allowsSelectionDuringEditing="YES" allowsMultipleSelectionDuringEditing="YES" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="JMF-4e-zBG" customClass="ChatTableView" customModule="epam_messenger" customModuleProvider="target">
                     <rect key="frame" x="0.0" y="44" width="414" height="768"/>
                     <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                     <viewLayoutGuide key="contentLayoutGuide" id="2og-PZ-eS6"/>
                     <viewLayoutGuide key="frameLayoutGuide" id="rtv-H6-ya7"/>
                 </tableView>
             </subviews>
+            <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
             <constraints>
                 <constraint firstItem="JMF-4e-zBG" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" id="7uG-fS-Uz7"/>
                 <constraint firstItem="JMF-4e-zBG" firstAttribute="bottom" secondItem="fnl-2z-Ty3" secondAttribute="bottom" constant="-50" id="Old-dt-87l"/>

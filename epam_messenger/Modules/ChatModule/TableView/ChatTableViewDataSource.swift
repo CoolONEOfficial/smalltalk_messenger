@@ -113,4 +113,18 @@ class ChatTableViewDataSource: FUIFirestoreTableViewDataSource {
         return indexPathList.map({ transformIndexPath($0) })
     }
     
+    // MARK: - Helpers
+    
+    public func messageAt(_ indexPath: IndexPath) -> MessageProtocol {
+        return messageItems[indexPath.section].value[indexPath.row]
+    }
+    
+    public func dayAt(_ indexPath: IndexPath) -> Date {
+        return dayAt(indexPath.section)
+    }
+    
+    public func dayAt(_ section: Int) -> Date {
+        return messageItems[section].key
+    }
+    
 }
