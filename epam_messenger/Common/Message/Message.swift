@@ -11,4 +11,5 @@ protocol MessageProtocol {
     var isIncoming: Bool { get }
     var date: Date { get }
     var userId: Int { get }
+    var documentId: String { get }
 }

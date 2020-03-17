@@ -15,6 +15,10 @@ protocol ChatViewModelProtocol: ViewModelProtocol {
         messageText: String,
         completion: @escaping (Bool) -> Void
     )
+    func deleteMessage(
+        _ messageModel: MessageProtocol,
+        completion: @escaping (Bool) -> Void
+    )
 }
 
 class ChatViewModel: ChatViewModelProtocol {
@@ -46,6 +50,14 @@ class ChatViewModel: ChatViewModelProtocol {
         firestoreService.sendMessage(
             chatDocumentId: chatModel.documentId,
             messageText: messageText,
+            completion: completion
+        )
+    }
+    
+    func deleteMessage(_ messageModel: MessageProtocol, completion: @escaping (Bool) -> Void) {
+        firestoreService.deleteMessage(
+            chatDocumentId: chatModel.documentId,
+            messageDocumentId: messageModel.documentId,
             completion: completion
         )
     }

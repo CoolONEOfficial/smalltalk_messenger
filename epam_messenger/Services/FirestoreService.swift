@@ -38,7 +38,7 @@ class FirestoreService {
     ) {
         do {
             let messageModel = MessageModel(
-                documentId: nil,
+                documentId: "",
                 text: messageText,
                 userId: 0, //fromMe ? 0 : 1, // TODO: user id
                 timestamp: Timestamp()
@@ -66,6 +66,18 @@ class FirestoreService {
         } catch let error {
             debugPrint("error! \(error.localizedDescription)")
             completion(false)
+        }
+    }
+    
+    func deleteMessage(
+        chatDocumentId: String,
+        messageDocumentId: String,
+        completion: @escaping (Bool) -> Void
+    ) {
+        db.collection("chats")
+            .document(chatDocumentId).collection("messages")
+            .document(messageDocumentId).delete { err in
+            completion(err == nil)
         }
     }
 }

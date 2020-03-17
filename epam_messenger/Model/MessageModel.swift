@@ -11,7 +11,7 @@ import CodableFirebase
 
 struct MessageModel: Codable {
     
-    let documentId: String?
+    let documentId: String
     let text: String
     let userId: Int
     let timestamp: Timestamp

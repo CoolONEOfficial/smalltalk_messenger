@@ -95,5 +95,5 @@ class ChatViewController: UIViewController {
     override var canBecomeFirstResponder: Bool {
         return true
     }
-    
+
 }
