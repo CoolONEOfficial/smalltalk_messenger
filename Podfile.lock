@@ -165,6 +165,8 @@ PODS:
     - BoringSSL-GRPC/Interface (= 0.0.3)
   - BoringSSL-GRPC/Interface (0.0.3)
   - CodableFirebase (0.2.1)
+  - Firebase (6.18.0):
+    - Firebase/Core (= 6.18.0)
   - Firebase/Analytics (6.18.0):
     - Firebase/Core
   - Firebase/Auth (6.18.0):
@@ -291,6 +293,7 @@ PODS:
 
 DEPENDENCIES:
   - CodableFirebase
+  - Firebase
   - Firebase/Analytics
   - Firebase/Auth
   - Firebase/Firestore
@@ -362,6 +365,6 @@ SPEC CHECKSUMS:
   SwiftLint: 55e96a4a4d537d4a3156859fc1c54bd24851a046
   TinyConstraints: 8dd91295e56797648c7bc335dd20e1d91ec4c192
 
-PODFILE CHECKSUM: df8e875daaccc72e1dd9f1718ff05385832d772c
+PODFILE CHECKSUM: e1f6f7121cfffe6c0670406fc00437a98ffcb0d8
 
 COCOAPODS: 1.9.0
