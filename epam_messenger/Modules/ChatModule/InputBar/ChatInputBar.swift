@@ -31,11 +31,10 @@ class ChatInputBar: InputBarAccessoryView {
         inputTextView.placeholderLabelInsets = UIEdgeInsets(top: 8, left: 20, bottom: 8, right: 36)
         inputTextView.textColor = .white
         inputTextView.font = UIFont.preferredFont(forTextStyle: .body)
-        inputTextView.layer.borderColor = UIColor.accent.cgColor
+        inputTextView.layer.borderColor = UIColor.plainBackground.cgColor
         inputTextView.layer.borderWidth = 1.0
         inputTextView.layer.cornerRadius = 16.0
         inputTextView.layer.masksToBounds = true
-        inputTextView.tintColor = tintColor
         inputTextView.scrollIndicatorInsets = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
         setRightStackViewWidthConstant(to: ChatInputBar.defaultRightWidth, animated: false)
         setStackViewItems([sendButton, InputBarButtonItem.fixedSpace(2)], forStack: .right, animated: false)
@@ -47,7 +46,7 @@ class ChatInputBar: InputBarAccessoryView {
         sendButton.imageView?.layer.cornerRadius = 16
         sendButton.backgroundColor = .clear
         middleContentViewPadding.right = -ChatInputBar.defaultRightWidth
-        separatorLine.isHidden = true
+        separatorLine.backgroundColor = .plainBackground
         backgroundView.backgroundColor = .systemBackground
         blurView.isHidden = false
     }

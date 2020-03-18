@@ -38,7 +38,7 @@ extension UIColor {
         }
     }
     
-    static let plainBackground = UIColor.systemGray2.withAlphaComponent(0.5)
+    static let plainBackground = UIColor.systemGray3.withAlphaComponent(0.5)
     
     // MARK: - Chat header
     

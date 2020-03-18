@@ -16,11 +16,12 @@ class ChatViewController: UIViewController {
     // MARK: - Outlets
     
     @IBOutlet var tableView: ChatTableView!
-    @IBOutlet var bottomInsetConstraint: NSLayoutConstraint!
+    var bottomScrollAnimationsLock = false
+    @IBOutlet var floatingBottomButton: UIButton!
     
     // MARK: - Vars
     
-    let inputBar: InputBarAccessoryView = ChatInputBar()
+    let inputBar: ChatInputBar = ChatInputBar()
     var viewModel: ChatViewModelProtocol!
     
     var deleteButton = UIButton()
@@ -46,25 +47,45 @@ class ChatViewController: UIViewController {
         super.viewDidLoad()
         
         title = viewModel.getChatModel().name
+        view.tintColor = .accent
         
         setupTableView()
         setupInputBar()
         setupKeyboardManager()
         setupEditModeButtons()
+        setupFloatingBottomButton()
+    }
+    
+    private func setupFloatingBottomButton() {
+        floatingBottomButton.layer.cornerRadius = floatingBottomButton.bounds.width / 2
+        floatingBottomButton.layer.borderWidth = 0.5
+        floatingBottomButton.layer.borderColor = UIColor.plainBackground.cgColor
     }
     
     private func setupEditModeButtons() {
-        deleteButton.setImage(UIImage(systemName: "trash"), for: .normal)
-        deleteButton.addTarget(self, action: #selector(ChatViewController.deleteSelectedMessages), for: .touchUpInside)
-        
-        forwardButton.setImage(UIImage(systemName: "arrowshape.turn.up.right"), for: .normal)
-        forwardButton.addTarget(self, action: #selector(ChatViewController.forwardSelectedMessages), for: .touchUpInside)
-        
         stack.axis = .horizontal
         stack.alignment = .fill
         stack.distribution = .equalSpacing
         stack.addArrangedSubview(forwardButton)
         stack.addArrangedSubview(deleteButton)
+        stack.isLayoutMarginsRelativeArrangement = true
+        stack.directionalLayoutMargins = .init(top: 0, leading: 10, bottom: 0, trailing: 10)
+        
+        deleteButton.setImage(UIImage(systemName: "trash"), for: .normal)
+        deleteButton.addTarget(self, action: #selector(ChatViewController.deleteSelectedMessages), for: .touchUpInside)
+        deleteButton.size(.init(width: 28, height: 28))
+        deleteButton.aspectRatio(1)
+        deleteButton.contentHorizontalAlignment = .fill
+        deleteButton.contentVerticalAlignment = .fill
+        deleteButton.contentMode = .scaleAspectFit
+        
+        forwardButton.setImage(UIImage(systemName: "arrowshape.turn.up.right"), for: .normal)
+        forwardButton.addTarget(self, action: #selector(ChatViewController.forwardSelectedMessages), for: .touchUpInside)
+        forwardButton.size(.init(width: 28, height: 28))
+        forwardButton.aspectRatio(1)
+        forwardButton.contentHorizontalAlignment = .fill
+        forwardButton.contentVerticalAlignment = .fill
+        forwardButton.contentMode = .scaleAspectFit
     }
     
     private func setupInputBar() {
@@ -121,6 +142,12 @@ class ChatViewController: UIViewController {
     }
     
     override func viewDidAppear(_ animated: Bool) {
+        tableView.scrollToBottom()
+    }
+    
+    // MARK: Floating bottom button
+    
+    @IBAction func didFloatingBottomButtonClick(_ sender: UIButton) {
         tableView.scrollToBottom()
     }
     

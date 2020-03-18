@@ -17,7 +17,7 @@ protocol Messagable: UIView {
 }
 
 class MessageCell: UITableViewCell, NibReusable, Messagable {
-
+    
     // MARK: - Outlets
     
     @IBOutlet var avatarImage: UIImageView!
@@ -50,14 +50,14 @@ class MessageCell: UITableViewCell, NibReusable, Messagable {
                 ? cachedImage
                 : cachedImage.withHorizontallyFlippedOrientation()
         }
-          
+        
         let stretchedImage = UIImage(named: imageCacheKey)!
             .resizableImage(
                 withCapInsets: UIEdgeInsets(
                     top: 17, left: 21, bottom: 17, right: 21
                 ),
                 resizingMode: .stretch
-            ).withRenderingMode(.alwaysTemplate)
+        ).withRenderingMode(.alwaysTemplate)
         
         cache.setObject(stretchedImage, forKey: imageCacheKey as NSString)
         
@@ -118,7 +118,7 @@ class MessageCell: UITableViewCell, NibReusable, Messagable {
     
     private func setupBubbleImage() {
         bubbleImage.image = getCachedImage()
-        tintColor = message.isIncoming
+        bubbleImage.tintColor = message.isIncoming
             ? .plainBackground
             : .accent
     }

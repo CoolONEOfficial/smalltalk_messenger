@@ -101,18 +101,18 @@ extension ChatViewController: UITableViewDelegate {
                 ? .plainBackground
                 : .accent
             
-            let bounds = textContent.textLabel.bounds.inset(
+            let bounds = textContent.bounds.inset(
                 by: .init(
-                    top: -5,
-                    left: -5,
-                    bottom: -5,
-                    right: -5
+                    top: -4,
+                    left: -8,
+                    bottom: -4,
+                    right: -8
                 )
             )
-           
-            parameters.visiblePath = UIBezierPath(roundedRect: bounds, cornerRadius: 16)
             
-            return UITargetedPreview(view: textContent.textLabel, parameters: parameters)
+            parameters.visiblePath = UIBezierPath(roundedRect: bounds, cornerRadius: 14)
+            
+            return UITargetedPreview(view: messageCell.messageContent, parameters: parameters)
         default:
             return nil
         }
@@ -126,15 +126,57 @@ extension ChatViewController: UITableViewDelegate {
         return makeTargetedPreview(for: configuration)
     }
     
+    // MARK: Floating bottom button
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        
+        guard !bottomScrollAnimationsLock else {
+            return
+        }
+        
+        let hidden = scrollView.contentSize.height
+            - scrollView.contentOffset.y
+            - scrollView.bounds.height < 100
+        if self.floatingBottomButton.isHidden != hidden {
+            bottomScrollAnimationsLock = true
+            
+            self.floatingBottomButton.alpha = hidden ? 1.0 : 0.0
+            self.inputBar.separatorLine.alpha = hidden ? 1.0 : 0.0
+            
+            if !hidden { // show before alpha transition
+                self.floatingBottomButton.isHidden = hidden
+                self.inputBar.separatorLine.isHidden = hidden
+            }
+            
+            UIView.transition(
+                with: floatingBottomButton,
+                duration: 0.5,
+                options: .transitionCrossDissolve,
+                animations: {
+                    self.floatingBottomButton.alpha = hidden ? 0.0 : 1.0
+                    self.inputBar.separatorLine.alpha = hidden ? 0.0 : 1.0
+            }) { _ in
+                self.bottomScrollAnimationsLock = false
+                
+                if hidden { // hide after alpha transition
+                    self.floatingBottomButton.isHidden = hidden
+                    self.inputBar.separatorLine.isHidden = hidden
+                }
+                
+                self.scrollViewDidScroll(scrollView)
+            }
+        }
+    }
+    
     // MARK: - Edit mode
     
     private func didSelectionChange() {
-        let rowsSelected = tableView.indexPathsForSelectedRows != nil
+        let rowsSelected = !(tableView.indexPathsForSelectedRows?.isEmpty ?? true)
         
         title = rowsSelected
             ? "Selected \(tableView.indexPathsForSelectedRows!.count) messages"
             : viewModel.getChatModel().name
-
+        
         navigationItem.leftBarButtonItem = .init(
             title: "Delete chat",
             style: .plain,
@@ -193,19 +235,19 @@ extension ChatViewController: UITableViewDelegate {
             didSelectionChange()
         }
     }
-
+    
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         if tableView.isEditing {
             didSelectionChange()
         }
     }
-
+    
     func tableView(_ tableView: UITableView, didBeginMultipleSelectionInteractionAt indexPath: IndexPath) {
         enableEditMode()
     }
-
+    
     func tableView(_ tableView: UITableView, shouldBeginMultipleSelectionInteractionAt indexPath: IndexPath) -> Bool {
         return true
     }
-
+    
 }

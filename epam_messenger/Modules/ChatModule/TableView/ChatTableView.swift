@@ -26,6 +26,10 @@ class ChatTableView: UITableView {
     }
     
     override func insertRows(at indexPaths: [IndexPath], with animation: UITableView.RowAnimation) {
+        guard !indexPaths.isEmpty else {
+            return
+        }
+        
         let transformedPaths = chatDataSource.transformIndexPathList(indexPaths)
         let singlePath = transformedPaths.count == 1
         let firstPath = transformedPaths.first!
