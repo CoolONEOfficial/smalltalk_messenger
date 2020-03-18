@@ -55,11 +55,11 @@ class ChatTableView: UITableView {
                 section: firstPath.section
             )
             
-            let prevMessage = chatDataSource.messageAt(prevPath),
-            currentMessage = chatDataSource.messageAt(firstPath)
+            let prevMessage = chatDataSource.messageAt(prevPath)
+            let currentMessage = chatDataSource.messageAt(firstPath)
             
             if MessageModel.checkMerge(left: prevMessage, right: currentMessage) {
-                reloadRows(
+                super.reloadRows(
                     at: [prevPath],
                     with: .fade
                 )
@@ -68,6 +68,10 @@ class ChatTableView: UITableView {
     }
     
     override func deleteRows(at indexPaths: [IndexPath], with animation: UITableView.RowAnimation) {
+        guard !indexPaths.isEmpty else {
+            return
+        }
+        
         let transformedPaths = chatDataSource.transformIndexPathList(indexPaths)
         
         if let change = lastSectionsChange,
@@ -77,7 +81,35 @@ class ChatTableView: UITableView {
             lastSectionsChange = nil
         }
         
-        super.deleteRows(at: transformedPaths, with: .automatic)
+        super.deleteRows(at: transformedPaths, with: .fade)
+        
+        let firstPath = transformedPaths.first!
+        guard chatDataSource.messageItems.count > firstPath.section else {
+            return
+        }
+        let messagesCount = chatDataSource.messageItems[firstPath.section].value.count
+        
+        let prevPath = IndexPath(
+            row: firstPath.row > 0
+                ? firstPath.row - 1
+                : 0,
+            section: firstPath.section
+        )
+        let nextPath = IndexPath(
+            row: firstPath.row + transformedPaths.count > messagesCount
+                ? messagesCount - 1
+                : firstPath.row + transformedPaths.count,
+            section: firstPath.section
+        )
+        
+        let reloadPaths = prevPath != nextPath && prevPath != firstPath
+            ? [prevPath, nextPath]
+            : [nextPath]
+        
+        super.reloadRows(
+            at: reloadPaths,
+            with: .fade
+        )
     }
     
     override func moveRow(at indexPath: IndexPath, to newIndexPath: IndexPath) {

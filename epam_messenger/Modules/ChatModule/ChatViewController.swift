@@ -66,26 +66,25 @@ class ChatViewController: UIViewController {
         stack.axis = .horizontal
         stack.alignment = .fill
         stack.distribution = .equalSpacing
-        stack.addArrangedSubview(forwardButton)
         stack.addArrangedSubview(deleteButton)
+        stack.addArrangedSubview(forwardButton)
         stack.isLayoutMarginsRelativeArrangement = true
-        stack.directionalLayoutMargins = .init(top: 0, leading: 10, bottom: 0, trailing: 10)
+        stack.directionalLayoutMargins = .init(top: 5, leading: 10, bottom: 10, trailing: 10)
         
-        deleteButton.setImage(UIImage(systemName: "trash"), for: .normal)
-        deleteButton.addTarget(self, action: #selector(ChatViewController.deleteSelectedMessages), for: .touchUpInside)
-        deleteButton.size(.init(width: 28, height: 28))
-        deleteButton.aspectRatio(1)
         deleteButton.contentHorizontalAlignment = .fill
         deleteButton.contentVerticalAlignment = .fill
         deleteButton.contentMode = .scaleAspectFit
+        deleteButton.setImage(UIImage(systemName: "trash"), for: .normal)
+        deleteButton.addTarget(self, action: #selector(ChatViewController.deleteSelectedMessages), for: .touchUpInside)
+        deleteButton.size(.init(width: 23, height: 25))
         
-        forwardButton.setImage(UIImage(systemName: "arrowshape.turn.up.right"), for: .normal)
-        forwardButton.addTarget(self, action: #selector(ChatViewController.forwardSelectedMessages), for: .touchUpInside)
-        forwardButton.size(.init(width: 28, height: 28))
-        forwardButton.aspectRatio(1)
         forwardButton.contentHorizontalAlignment = .fill
         forwardButton.contentVerticalAlignment = .fill
         forwardButton.contentMode = .scaleAspectFit
+        forwardButton.setImage(UIImage(systemName: "arrowshape.turn.up.right"), for: .normal)
+        forwardButton.addTarget(self, action: #selector(ChatViewController.forwardSelectedMessages), for: .touchUpInside)
+        forwardButton.size(.init(width: 30, height: 25))
+
     }
     
     private func setupInputBar() {
