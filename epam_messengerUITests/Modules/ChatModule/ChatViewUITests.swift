@@ -30,12 +30,12 @@ class ChatViewUITests: XCTestCase {
         app.buttons["Authorize me"].tap()
         app.tables.staticTexts["0"].tap()
         
-        app.textViews.containing(.staticText, identifier:"Aa").element.tap()
+        app.textViews.containing(.staticText, identifier: "Message...").element.tap()
         
         let sendButton = app.buttons["ic up"]
         XCTAssertFalse(sendButton.isEnabled)
         
-        app.textViews.containing(.staticText, identifier:"Aa").element.typeText("testtext")
+        app.textViews.containing(.staticText, identifier: "Message...").element.typeText("testtext")
         
         XCTAssertTrue(sendButton.isEnabled)
     }

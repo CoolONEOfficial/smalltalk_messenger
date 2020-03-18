@@ -31,7 +31,7 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
         
         viewModel.sendMessage(text) {_ in
             inputBar.sendButton.stopAnimating()
-            inputBar.inputTextView.placeholder = "Aa"
+            inputBar.inputTextView.placeholder = "Message..."
             
             self.tableView.scrollToBottom()
         }

@@ -27,8 +27,9 @@ class ChatInputBar: InputBarAccessoryView {
         tintColor = .accent
         
         inputTextView.backgroundColor = .systemBackground
-        inputTextView.textContainerInset = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 36)
-        inputTextView.placeholderLabelInsets = UIEdgeInsets(top: 8, left: 20, bottom: 8, right: 36)
+        inputTextView.textContainerInset = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 44)
+        inputTextView.placeholderLabelInsets = UIEdgeInsets(top: 8, left: 12, bottom: 8, right: 36)
+        inputTextView.placeholderLabel.text = "Message..."
         inputTextView.textColor = .white
         inputTextView.font = UIFont.preferredFont(forTextStyle: .body)
         inputTextView.layer.borderColor = UIColor.plainBackground.cgColor
