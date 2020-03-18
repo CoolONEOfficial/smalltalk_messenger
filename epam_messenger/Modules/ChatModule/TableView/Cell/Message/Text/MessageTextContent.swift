@@ -111,10 +111,13 @@ class MessageTextContent: UIView, Messagable {
         }
         super.updateConstraints()
     }
-
+    
 }
 
+// MARK: Get lines of label extension from StackOverflow
+
 fileprivate extension UILabel {
+    
     func getSeparatedLines() -> [String] {
         if self.lineBreakMode != NSLineBreakMode.byWordWrapping {
             self.lineBreakMode = .byWordWrapping
@@ -138,8 +141,11 @@ fileprivate extension UILabel {
             }
             let rTest = NSRange(location: rRemainingText.location, length: rWhitespace.location - rRemainingText.location)
             let textTest: String = (self.text! as NSString).substring(with: rTest)
-            let fontAttributes: [String: Any]? = [NSAttributedString.Key.font.rawValue: font]
-            let maxWidth = (textTest as NSString).size(withAttributes: [NSAttributedString.Key(rawValue: NSAttributedString.Key.font.rawValue): font]).width
+            let maxWidth = (textTest as NSString)
+                .size(
+                    withAttributes:
+                    [NSAttributedString.Key(rawValue: NSAttributedString.Key.font.rawValue): font]
+            ).width
             if maxWidth > 180 {
                 lines.append(currentLine?.trimmingCharacters(in: wordSeparators) ?? "")
                 rRemainingText.location = rCurrentLine.location + rCurrentLine.length
@@ -165,4 +171,5 @@ fileprivate extension UILabel {
         
         return false
     }
+    
 }

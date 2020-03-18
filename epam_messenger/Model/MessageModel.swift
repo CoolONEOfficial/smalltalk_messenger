@@ -11,13 +11,13 @@ import CodableFirebase
 
 struct MessageModel: Codable {
     
-    let documentId: String
+    var documentId: String = ""
     let text: String
     let userId: Int
     let timestamp: Timestamp
     
     static func empty() -> MessageModel {
-        return MessageModel(documentId: "", text: "", userId: 0, timestamp: Timestamp.init())
+        return MessageModel(text: "", userId: 0, timestamp: Timestamp.init())
     }
     
     static func fromSnapshot(_ snapshot: DocumentSnapshot) -> MessageModel? {
@@ -34,6 +34,14 @@ struct MessageModel: Codable {
             debugPrint("error while parse message model: \(err)")
             return nil
         }
+    }
+    
+    static func checkMerge(
+        left: MessageProtocol,
+        right: MessageProtocol
+    ) -> Bool {
+        return left.userId == right.userId
+            && abs(left.date.timeIntervalSince(right.date)) < 60 * 5 // 5 minutes interval
     }
 }
 

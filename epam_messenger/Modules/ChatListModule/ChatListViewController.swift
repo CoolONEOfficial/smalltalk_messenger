@@ -74,22 +74,10 @@ extension ChatListViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let snapshot = bindDataSource.items[indexPath.item]
-        var data = snapshot.data() ?? [:]
-        data["documentId"] = snapshot.documentID
         
-        do {
-            let chatModel = try FirestoreDecoder()
-                .decode(
-                    ChatModel.self,
-                    from: data
-            )
-            
+        if let chatModel = ChatModel.fromSnapshot(snapshot) {
             viewModel.goToChat(chatModel)
-            
-        } catch let err {
-            debugPrint("error while parse chat model: \(err)")
         }
-        
     }
     
 }

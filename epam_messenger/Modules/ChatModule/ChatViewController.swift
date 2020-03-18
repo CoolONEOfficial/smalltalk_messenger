@@ -91,9 +91,9 @@ class ChatViewController: UIViewController {
             cell.loadMessage(
                 message,
                 mergeNext: section.count > indexPath.row + 1
-                    && ChatViewController.checkMerge(left: message, right: section[indexPath.row + 1]),
+                    && MessageModel.checkMerge(left: message, right: section[indexPath.row + 1]),
                 mergePrev: 0 < indexPath.row
-                    && ChatViewController.checkMerge(left: message, right: section[indexPath.row - 1])
+                    && MessageModel.checkMerge(left: message, right: section[indexPath.row - 1])
             )
             
             return cell
@@ -110,23 +110,14 @@ class ChatViewController: UIViewController {
         
         // Add some extra handling to manage content inset
         keyboardManager.on(event: .didChangeFrame) { [weak self] (notification) in
-            
-            let barHeight = self?.inputBar.bounds.height ?? 0
+            //let barHeight = self?.inputBar.bounds.height ?? 0
             self?.tableView.contentInset.bottom = notification.endFrame.height - 35
-            self?.tableView.scrollIndicatorInsets.bottom = notification.endFrame.height - 35
+            self?.tableView.verticalScrollIndicatorInsets.bottom = notification.endFrame.height - 35
         }.on(event: .didHide) { [weak self] _ in
             //let barHeight = self?.inputBar.bounds.height ?? 0
             self?.tableView.contentInset.bottom = 0
-            self?.tableView.scrollIndicatorInsets.bottom = 0
+            self?.tableView.verticalScrollIndicatorInsets.bottom = 0
         }
-    }
-    
-    private static func checkMerge(
-        left: MessageProtocol,
-        right: MessageProtocol
-    ) -> Bool {
-        return left.userId == right.userId
-            && abs(left.date.timeIntervalSince(right.date)) < 60 * 5 // 5 minutes interval
     }
     
     override func viewDidAppear(_ animated: Bool) {

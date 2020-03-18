@@ -27,15 +27,40 @@ class ChatTableView: UITableView {
     
     override func insertRows(at indexPaths: [IndexPath], with animation: UITableView.RowAnimation) {
         let transformedPaths = chatDataSource.transformIndexPathList(indexPaths)
+        let singlePath = transformedPaths.count == 1
+        let firstPath = transformedPaths.first!
         
         if let change = lastSectionsChange,
             change.type == .insert,
             !change.change.isEmpty {
-            super.insertSections(change.change, with: animation)
+            super.insertSections(change.change, with: .fade)
             lastSectionsChange = nil
         }
-
-        super.insertRows(at: transformedPaths, with: animation)
+        
+        super.insertRows(
+            at: transformedPaths,
+            with: singlePath
+                ? .bottom
+                : animation
+        )
+        
+        if singlePath,
+            firstPath.row > 0 {
+            let prevPath = IndexPath(
+                row: firstPath.row - 1,
+                section: firstPath.section
+            )
+            
+            let prevMessage = chatDataSource.messageAt(prevPath),
+            currentMessage = chatDataSource.messageAt(firstPath)
+            
+            if MessageModel.checkMerge(left: prevMessage, right: currentMessage) {
+                reloadRows(
+                    at: [prevPath],
+                    with: .fade
+                )
+            }
+        }
     }
     
     override func deleteRows(at indexPaths: [IndexPath], with animation: UITableView.RowAnimation) {
@@ -44,11 +69,11 @@ class ChatTableView: UITableView {
         if let change = lastSectionsChange,
             change.type == .delete,
             !change.change.isEmpty {
-            super.deleteSections(change.change, with: animation)
+            super.deleteSections(change.change, with: .automatic)
             lastSectionsChange = nil
         }
-
-        super.deleteRows(at: transformedPaths, with: animation)
+        
+        super.deleteRows(at: transformedPaths, with: .automatic)
     }
     
     override func moveRow(at indexPath: IndexPath, to newIndexPath: IndexPath) {

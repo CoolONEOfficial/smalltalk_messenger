@@ -10,7 +10,47 @@ import Firebase
 import FirebaseFirestore
 import CodableFirebase
 
-class FirestoreService {
+protocol FirestoreServiceProtocol: AutoMockable {
+    func createChatQuery(_ chatModel: ChatModel) -> Query
+    func sendMessage(
+        chatDocumentId: String,
+        messageText: String,
+        completion: @escaping (Bool) -> Void
+    )
+    func deleteMessage(
+        chatDocumentId: String,
+        messageDocumentId: String,
+        completion: @escaping (Bool) -> Void
+    )
+}
+
+extension FirestoreServiceProtocol {
+    func sendMessage(
+        chatDocumentId: String,
+        messageText: String,
+        completion: @escaping (Bool) -> Void = {_ in}
+    ) {
+        return sendMessage(
+            chatDocumentId: chatDocumentId,
+            messageText: messageText,
+            completion: completion
+        )
+    }
+    
+    func deleteMessage(
+        chatDocumentId: String,
+        messageDocumentId: String,
+        completion: @escaping (Bool) -> Void = {_ in}
+    ) {
+        deleteMessage(
+            chatDocumentId: chatDocumentId,
+            messageDocumentId: messageDocumentId,
+            completion: completion
+        )
+    }
+}
+
+class FirestoreService: FirestoreServiceProtocol {
     
     lazy var db: Firestore = {
         return Firestore.firestore()
@@ -36,9 +76,8 @@ class FirestoreService {
     ) {
         do {
             let messageModel = MessageModel(
-                documentId: "",
                 text: messageText,
-                userId: 0, // TODO: user id
+                userId: 1, // TODO: user id
                 timestamp: Timestamp()
             )
             

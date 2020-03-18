@@ -18,7 +18,7 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
         attributedText.enumerateAttribute(.autocompleted, in: range, options: []) { (attributes, range, stop) in
             
             let substring = attributedText.attributedSubstring(from: range)
-            let context = substring.attribute(.autocompletedContext, at: 0, effectiveRange: nil)
+            //let context = substring.attribute(.autocompletedContext, at: 0, effectiveRange: nil)
             //print("Autocompleted: `", substring, "` with context: ", context ?? [])
         }
 

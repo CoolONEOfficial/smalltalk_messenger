@@ -50,7 +50,9 @@
             <connections>
                 <outlet property="avatarImage" destination="63S-fg-Slr" id="7Sg-Yw-p6H"/>
                 <outlet property="bubbleImage" destination="Qu0-Ad-KeD" id="2UD-x6-YeO"/>
+                <outlet property="stackBottomAnchor" destination="Ru8-xI-TLv" id="ib7-2X-rqQ"/>
                 <outlet property="stackLeadingAnchor" destination="szI-jV-zFi" id="zFX-1d-Ypk"/>
+                <outlet property="stackTopAnchor" destination="gUW-hB-COQ" id="gbd-fQ-SW9"/>
                 <outlet property="stackTrailingAnchor" destination="jdy-Hl-zxt" id="otp-Eu-aFo"/>
                 <outlet property="stackView" destination="eA7-GV-i23" id="F08-Go-MdI"/>
             </connections>

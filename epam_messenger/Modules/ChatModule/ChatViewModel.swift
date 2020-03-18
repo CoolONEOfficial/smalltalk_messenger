@@ -8,7 +8,7 @@
 import Foundation
 import Firebase
 
-protocol ChatViewModelProtocol: ViewModelProtocol {
+protocol ChatViewModelProtocol: ViewModelProtocol, AutoMockable {
     func getChatModel() -> ChatModel
     func firestoreQuery() -> Query
     func sendMessage(
@@ -30,25 +30,27 @@ extension ChatViewModelProtocol {
     }
     
     func sendMessage(
-        _ messageModel: MessageProtocol,
+        _ messageText: String,
         completion: @escaping (Bool) -> Void = {_ in}
     ) {
-        return deleteMessage(messageModel, completion: completion)
+        return sendMessage(messageText, completion: completion)
     }
 }
 
 class ChatViewModel: ChatViewModelProtocol {
     let router: RouterProtocol
-    let firestoreService: FirestoreService = FirestoreService()
+    let firestoreService: FirestoreServiceProtocol
     
     let chatModel: ChatModel
     
     init(
         router: RouterProtocol,
-        chatModel: ChatModel
+        chatModel: ChatModel,
+        firestoreService: FirestoreServiceProtocol = FirestoreService()
     ) {
         self.router = router
         self.chatModel = chatModel
+        self.firestoreService = firestoreService
     }
     
     func getChatModel() -> ChatModel {

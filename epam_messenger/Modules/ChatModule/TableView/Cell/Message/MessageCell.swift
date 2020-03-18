@@ -26,6 +26,8 @@ class MessageCell: UITableViewCell, NibReusable, Messagable {
     
     @IBOutlet var stackTrailingAnchor: NSLayoutConstraint!
     @IBOutlet var stackLeadingAnchor: NSLayoutConstraint!
+    @IBOutlet var stackBottomAnchor: NSLayoutConstraint!
+    @IBOutlet var stackTopAnchor: NSLayoutConstraint!
     
     // MARK: - Vars
     var mergeNext: Bool!
@@ -89,6 +91,14 @@ class MessageCell: UITableViewCell, NibReusable, Messagable {
         } else {
             stackLeadingAnchor.isActive = false
         }
+        
+        if !mergeNext {
+            stackBottomAnchor.constant = 5
+        }
+        
+        if !mergePrev {
+            stackTopAnchor.constant = 5
+        }
     }
     
     private func setupMessageContent() {
@@ -138,5 +148,7 @@ class MessageCell: UITableViewCell, NibReusable, Messagable {
         
         stackTrailingAnchor.isActive = true
         stackLeadingAnchor.isActive = true
+        stackTopAnchor.constant = 2
+        stackBottomAnchor.constant = 2
     }
 }
