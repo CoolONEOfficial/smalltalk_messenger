@@ -15,4 +15,5 @@ target 'epam_messenger' do
   pod 'Reusable'
   pod 'MessageKit'
   pod 'FirebaseUI/Firestore', '~> 8.4.2'
+  pod 'InstantSearchClient', '~> 7.0'
 end

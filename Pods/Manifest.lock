@@ -271,6 +271,7 @@ PODS:
   - gRPC-Core/Interface (1.21.0)
   - GTMSessionFetcher/Core (1.3.1)
   - InputBarAccessoryView (4.2.2)
+  - InstantSearchClient (7.0.3)
   - leveldb-library (1.22)
   - MessageKit (3.0.0):
     - InputBarAccessoryView (~> 4.2.2)
@@ -294,6 +295,7 @@ DEPENDENCIES:
   - Firebase/Auth
   - Firebase/Firestore
   - FirebaseUI/Firestore (~> 8.4.2)
+  - InstantSearchClient (~> 7.0)
   - MessageKit
   - Reusable
   - Sourcery
@@ -322,6 +324,7 @@ SPEC REPOS:
     - gRPC-Core
     - GTMSessionFetcher
     - InputBarAccessoryView
+    - InstantSearchClient
     - leveldb-library
     - MessageKit
     - nanopb
@@ -352,6 +355,7 @@ SPEC CHECKSUMS:
   gRPC-Core: c9aef9a261a1247e881b18059b84d597293c9947
   GTMSessionFetcher: cea130bbfe5a7edc8d06d3f0d17288c32ffe9925
   InputBarAccessoryView: 2b937602598e2fab3149f37f51dd7ad795653812
+  InstantSearchClient: 289fad11a1bd3bab759bbd80376b3a30a897cbee
   leveldb-library: 55d93ee664b4007aac644a782d11da33fba316f7
   MessageKit: e892a9ca49ebe6d82684d3a93ad84021fa23e2c6
   nanopb: 18003b5e52dab79db540fe93fe9579f399bd1ccd
@@ -360,6 +364,6 @@ SPEC CHECKSUMS:
   Sourcery: 3ed61be7c8a1218fce349266139379dba477efe0
   SwiftLint: 55e96a4a4d537d4a3156859fc1c54bd24851a046
 
-PODFILE CHECKSUM: 45bf11a1f946c67c5260f9a81d9cae5d63abac59
+PODFILE CHECKSUM: 13951f2e32112ab49ebdd05e68d43e163cd47f46
 
 COCOAPODS: 1.9.0
