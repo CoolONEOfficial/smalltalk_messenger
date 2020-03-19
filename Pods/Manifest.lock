@@ -275,6 +275,7 @@ PODS:
   - InputBarAccessoryView (4.3.1):
     - InputBarAccessoryView/Core (= 4.3.1)
   - InputBarAccessoryView/Core (4.3.1)
+  - InstantSearchClient (7.0.3)
   - leveldb-library (1.22)
   - nanopb (0.3.9011):
     - nanopb/decode (= 0.3.9011)
@@ -299,6 +300,7 @@ DEPENDENCIES:
   - Firebase/Firestore
   - FirebaseUI/Firestore (~> 8.4.2)
   - InputBarAccessoryView
+  - InstantSearchClient (~> 7.0)
   - Reusable
   - Sourcery
   - SwiftLint
@@ -327,6 +329,7 @@ SPEC REPOS:
     - gRPC-Core
     - GTMSessionFetcher
     - InputBarAccessoryView
+    - InstantSearchClient
     - leveldb-library
     - nanopb
     - PromisesObjC
@@ -357,6 +360,7 @@ SPEC CHECKSUMS:
   gRPC-Core: c9aef9a261a1247e881b18059b84d597293c9947
   GTMSessionFetcher: cea130bbfe5a7edc8d06d3f0d17288c32ffe9925
   InputBarAccessoryView: 58a348be7ea2736c7eec60e5c315511c2dbb39fd
+  InstantSearchClient: 289fad11a1bd3bab759bbd80376b3a30a897cbee
   leveldb-library: 55d93ee664b4007aac644a782d11da33fba316f7
   nanopb: 18003b5e52dab79db540fe93fe9579f399bd1ccd
   PromisesObjC: c119f3cd559f50b7ae681fa59dc1acd19173b7e6
@@ -365,6 +369,6 @@ SPEC CHECKSUMS:
   SwiftLint: 55e96a4a4d537d4a3156859fc1c54bd24851a046
   TinyConstraints: 8dd91295e56797648c7bc335dd20e1d91ec4c192
 
-PODFILE CHECKSUM: e1f6f7121cfffe6c0670406fc00437a98ffcb0d8
+PODFILE CHECKSUM: 9c43f7c6af67d758b104de6a65af0433ce45fc43
 
 COCOAPODS: 1.9.0

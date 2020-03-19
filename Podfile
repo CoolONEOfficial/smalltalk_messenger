@@ -16,6 +16,8 @@ target 'epam_messenger' do
   pod 'FirebaseUI/Firestore', '~> 8.4.2'
   pod 'InputBarAccessoryView'
   pod 'TinyConstraints'
+  pod 'InstantSearchClient', '~> 7.0'
+
   
   target 'epam_messengerTests' do
       inherit! :search_paths
