@@ -9,7 +9,7 @@ import Foundation
 import Firebase
 import CodableFirebase
 
-struct MessageModel: Codable {
+struct MessageModel: Codable, AutoDecodable {
     
     var documentId: String = ""
     let text: String
@@ -36,6 +36,17 @@ struct MessageModel: Codable {
         }
     }
     
+    static func decodeTimestamp(from container: KeyedDecodingContainer<CodingKeys>) -> Timestamp {
+        if let dict = try? container.decode([String: Int64].self, forKey: .timestamp) {
+            return Timestamp.init(
+                seconds: dict["_seconds"]!,
+                nanoseconds: Int32(exactly: dict["_nanoseconds"]!)!
+            )
+        }
+        
+        return try! container.decode(Timestamp.self, forKey: .timestamp)
+    }
+
     static func checkMerge(
         left: MessageProtocol,
         right: MessageProtocol

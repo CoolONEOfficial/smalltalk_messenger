@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		5AE3D163CE8A0E5533DA071F /* Pods_epam_messengerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 682FB1E3F1210218BF1E7658 /* Pods_epam_messengerTests.framework */; };
+		850C7FEC2424D82A008BAF24 /* UISearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850C7FEB2424D82A008BAF24 /* UISearchBar.swift */; };
 		851553F0241983E500C89534 /* Message24HourDateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 851553EF241983E500C89534 /* Message24HourDateFormatter.swift */; };
 		851F581B241D792A00D04F92 /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = 851F581A241D792A00D04F92 /* Array.swift */; };
 		851F581E241D7E2900D04F92 /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 851F581D241D7E2900D04F92 /* Date.swift */; };
@@ -87,6 +88,7 @@
 		2FA8B13468358A2766E54426 /* Pods-epam_messenger.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-epam_messenger.release.xcconfig"; path = "Target Support Files/Pods-epam_messenger/Pods-epam_messenger.release.xcconfig"; sourceTree = "<group>"; };
 		682FB1E3F1210218BF1E7658 /* Pods_epam_messengerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_epam_messengerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		79BA2BE37779AB02DCA41358 /* Pods-epam_messenger.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-epam_messenger.debug.xcconfig"; path = "Target Support Files/Pods-epam_messenger/Pods-epam_messenger.debug.xcconfig"; sourceTree = "<group>"; };
+		850C7FEB2424D82A008BAF24 /* UISearchBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UISearchBar.swift; sourceTree = "<group>"; };
 		851553EF241983E500C89534 /* Message24HourDateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message24HourDateFormatter.swift; sourceTree = "<group>"; };
 		851F581A241D792A00D04F92 /* Array.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Array.swift; sourceTree = "<group>"; };
 		851F581D241D7E2900D04F92 /* Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
@@ -293,6 +295,7 @@
 		85814052241EA656004884FD /* UIKit */ = {
 			isa = PBXGroup;
 			children = (
+				850C7FEB2424D82A008BAF24 /* UISearchBar.swift */,
 				85814053241EA660004884FD /* UIColor.swift */,
 				85814062242005BF004884FD /* UIDevice.swift */,
 			);
@@ -841,6 +844,7 @@
 				851553F0241983E500C89534 /* Message24HourDateFormatter.swift in Sources */,
 				E6B7498A2414382300F00B29 /* ChatListViewModel.swift in Sources */,
 				85FD2A0A24182DED0035AC13 /* SourceryInterfaces.swift in Sources */,
+				850C7FEC2424D82A008BAF24 /* UISearchBar.swift in Sources */,
 				851F581E241D7E2900D04F92 /* Date.swift in Sources */,
 				85FF256C2414DCDF00A25D7A /* ChatCell.swift in Sources */,
 				85FD2A0724182CE80035AC13 /* AutoCodable.generated.swift in Sources */,
