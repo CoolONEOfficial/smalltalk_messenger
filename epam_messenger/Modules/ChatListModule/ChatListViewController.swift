@@ -10,27 +10,49 @@ import Firebase
 import FirebaseUI
 import CodableFirebase
 import Reusable
+import InstantSearchClient
 
 protocol ChatListViewControllerProtocol {
 }
 
 class ChatListViewController: UIViewController {
+    
+    // MARK: - Vars
+    
     var viewModel: ChatListViewModelProtocol!
+    let searchController = UISearchController(searchResultsController: nil)
+    private var searchCollectionIndex: Index!
+    private let searchQuery = Query()
+    private var searchItems: [ChatModel] = .init()
     
     var bindDataSource: FUIFirestoreTableViewDataSource! {
         didSet {
             tableView.dataSource = bindDataSource
         }
     }
+    var searchDataSource: FUIFirestoreTableViewDataSource!
+    
+    // MARK: - Outlets
     
     @IBOutlet var tableView: UITableView!
+    
+    // MARK: - Methods
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupTableView()
         setupNavigationItem()
+        setupSearchController()
         didSelectionChange()
+        setupAlgoliaSearch()
+    }
+    
+    private func setupAlgoliaSearch() {
+        let searchClient = Client(appID: "V6J5G69XKH", apiKey: "c4ef45194a085992c251be8be124e796")
+        searchCollectionIndex = searchClient.index(withName: "chats")
+        searchQuery.hitsPerPage = 20
+        searchQuery.filters = "users = 0" // TODO: user id
     }
     
     private func setupTableView() {
@@ -45,9 +67,17 @@ class ChatListViewController: UIViewController {
             if let chatModel = self.chatFrom(snapshot) {
                 cell.loadChatModel(chatModel)
             }
-
+            
             return cell
         }
+    }
+    
+    private func setupSearchController() {
+        searchController.searchResultsUpdater = self
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.searchBar.placeholder = "Search by chats"
+        navigationItem.searchController = searchController
+        definesPresentationContext = true
     }
     
     // MARK: - Edit mode
@@ -69,7 +99,7 @@ class ChatListViewController: UIViewController {
     }
     
     @objc private func deleteSelectedChats() {
-        
+        // TODO: delete selected chats
     }
     
     private func didSelectionChange() {
@@ -78,7 +108,7 @@ class ChatListViewController: UIViewController {
         title = rowsSelected
             ? "Selected \(tableView.indexPathsForSelectedRows!.count) chats"
             : "Chats"
-
+        
         let spaceButton = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         let deleteButton = UIBarButtonItem(
             title: "Delete",
@@ -91,7 +121,7 @@ class ChatListViewController: UIViewController {
         } else {
             deleteButton.isEnabled = false
         }
-
+        
         setToolbarItems([spaceButton, deleteButton], animated: true)
     }
     
@@ -136,15 +166,12 @@ extension ChatListViewController: UITableViewDelegate {
                         ChatModel.self,
                         from: data
                 )
-
+                
                 viewModel.goToChat(chatModel)
-
+                
             } catch let err {
                 debugPrint("error while parse chat model: \(err)")
             }
-            
-//            let cell = tableView.cellForRow(at: indexPath)!
-//            cell.isSelected = false
         }
         
     }
@@ -153,26 +180,6 @@ extension ChatListViewController: UITableViewDelegate {
         didSelectionChange()
     }
     
-//    func tableView(tableView: UITableView,
-//        editingStyleForRowAtIndexPath indexPath: NSIndexPath)
-//        -> UITableViewCell.EditingStyle {
-//
-//            return UITableViewCell.EditingStyle.init(rawValue: 3)!
-//    }
-    
-//    func tableView(_ tableView: UITableView, willDeselectRowAt indexPath: IndexPath) -> IndexPath? {
-//        return indexPath
-//    }
-    
-//    func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
-//        return true
-//    }
-    
-//    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-//        let cell = tableView.cellForRow(at: indexPath)!
-//        cell.accessoryType = .none
-//    }
-    
     func tableView(_ tableView: UITableView, shouldBeginMultipleSelectionInteractionAt indexPath: IndexPath) -> Bool {
         return true
     }
@@ -180,10 +187,6 @@ extension ChatListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didBeginMultipleSelectionInteractionAt indexPath: IndexPath) {
         self.setEditing(true, animated: true)
     }
-    
-//    func tableViewDidEndMultipleSelectionInteraction(_ tableView: UITableView) {
-//        print("1234567891234568")
-//    }
     
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         if let chatModel = chatAt(indexPath.item) {
@@ -197,7 +200,7 @@ extension ChatListViewController: UITableViewDelegate {
                     image: UIImage(systemName: "trash.fill"),
                     attributes: .destructive
                 ) { _ in
-                    // TODO: delete message
+                    // TODO: delete chat
                 }
                 
                 return UIMenu(title: "", children: [delete])
@@ -219,6 +222,67 @@ extension ChatListViewController: UITableViewDelegate {
         }
     }
     
+}
+
+// MARK: - Search bar
+
+extension ChatListViewController: UISearchResultsUpdating, UISearchControllerDelegate {
+    
+    func updateSearchResults(for searchController: UISearchController) {
+        NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(reload), object: nil)
+        if searchController.searchBar.text?.isEmpty ?? true {
+            if !bindDataSource.isEqual(tableView.dataSource) {
+                bindDataSource.bind(to: tableView)
+                tableView.reloadData()
+            }
+        } else {
+            self.perform(#selector(reload), with: nil, afterDelay: 0.5)
+        }
+    }
+    
+    @objc func reload() {
+        if bindDataSource.isEqual(tableView.dataSource) {
+            bindDataSource.unbind()
+        }
+        tableView.dataSource = nil
+        searchController.searchBar.isLoading = true
+        
+        searchQuery.query = searchController.searchBar.text
+        searchCollectionIndex.search(searchQuery) { (content, error) in
+            guard let content = content else {
+                if let error = error {
+                    print(error.localizedDescription)
+                }
+                return
+            }
+            
+            guard let chats = content["hits"] as? [[String: Any]] else { return }
+            
+            self.searchItems = chats.map { record in
+                var model = record
+                model["documentId"] = record["objectID"]
+                return try! JSONDecoder().decode(ChatModel.self, from: JSONSerialization.data(withJSONObject: model))
+            }
+            if !(self.tableView.dataSource?.isEqual(self) ?? false) {
+                self.tableView.dataSource = self
+            }
+            self.searchController.searchBar.isLoading = false
+            self.tableView.reloadData()
+        }
+    }
+    
+}
+
+extension ChatListViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return searchItems.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = UITableViewCell()
+        cell.textLabel?.text = searchItems[indexPath.row].name
+        return cell
+    }
 }
 
 extension ChatListViewController: ChatListViewControllerProtocol {}

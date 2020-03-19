@@ -20,9 +20,11 @@ class FirestoreService {
         return db.collection("chats")
             .whereField("users", arrayContains: 0)
             .order(by: "lastMessage.timestamp", descending: true)
-        return db.collection("chats")
-            .whereField("users", arrayContains: 0) // TODO: auth user id
     }()
+    
+//    func searchChatListQuery(query: String) -> Query {
+//        return chatListQuery.where
+//    }
     
     func loadChat(
         _ chatDocumentId: String,
