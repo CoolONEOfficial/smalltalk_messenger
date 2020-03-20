@@ -30,29 +30,11 @@ class BottomBarViewController: UITabBarController {
     lazy var controllers: [UIViewController] = {
         return [contacts, chatList, settings]
     }()
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        delegate = self
-    }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         viewControllers = controllers
         selectedIndex = 1
-        title = selectedViewController?.tabBarItem.title
     }
-}
-
-extension BottomBarViewController: UITabBarControllerDelegate {
-    
-    func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
-        
-        title = viewController.tabBarItem.title
-        
-        return true
-    }
-    
 }
