@@ -24,13 +24,15 @@ class ChatViewUITests: XCTestCase {
     func testSendButton() {
         // Use recording to get started writing UI tests.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
-        
+                
         let app = XCUIApplication()
         
         app.buttons["Authorize me"].tap()
-        app.tables.staticTexts["0"].tap()
+
+        app.tables.staticTexts["Testchat1"].tap()
         
-        app.textViews.containing(.staticText, identifier: "Message...").element.tap()
+        app.tables/*@START_MENU_TOKEN@*/.staticTexts["Testchat1"]/*[[".cells.staticTexts[\"Testchat1\"]",".staticTexts[\"Testchat1\"]"],[[[-1,1],[-1,0]]],[0]]@END_MENU_TOKEN@*/.tap()
+        app.textViews.staticTexts["Message..."].tap()
         
         let sendButton = app.buttons["ic up"]
         XCTAssertFalse(sendButton.isEnabled)
