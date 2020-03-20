@@ -89,7 +89,7 @@ class ChatListViewController: UIViewController {
             target: self,
             action: #selector(toggleEditMode)
         )
-        self.navigationItem.rightBarButtonItem = rightItem
+        tabBarController?.navigationItem.setRightBarButton(rightItem, animated: false)
     }
     
     @objc private func toggleEditMode(_ sender: UIBarButtonItem) {
@@ -105,7 +105,7 @@ class ChatListViewController: UIViewController {
     private func didSelectionChange() {
         let rowsSelected = tableView.indexPathsForSelectedRows != nil
         
-        title = rowsSelected
+        tabBarController?.title = rowsSelected
             ? "Selected \(tableView.indexPathsForSelectedRows!.count) chats"
             : "Chats"
         
