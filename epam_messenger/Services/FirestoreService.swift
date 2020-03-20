@@ -10,6 +10,8 @@ import Firebase
 import FirebaseFirestore
 import CodableFirebase
 
+typealias FireQuery = Query
+
 protocol FirestoreServiceProtocol: AutoMockable {
     func createChatQuery(_ chatModel: ChatModel) -> Query
     func sendMessage(
@@ -20,6 +22,10 @@ protocol FirestoreServiceProtocol: AutoMockable {
     func deleteMessage(
         chatDocumentId: String,
         messageDocumentId: String,
+        completion: @escaping (Bool) -> Void
+    )
+    func deleteChat(
+        chatDocumentId: String,
         completion: @escaping (Bool) -> Void
     )
 }
@@ -45,6 +51,16 @@ extension FirestoreServiceProtocol {
         deleteMessage(
             chatDocumentId: chatDocumentId,
             messageDocumentId: messageDocumentId,
+            completion: completion
+        )
+    }
+    
+    func deleteChat(
+        chatDocumentId: String,
+        completion: @escaping (Bool) -> Void = {_ in}
+    ) {
+        deleteChat(
+            chatDocumentId: chatDocumentId,
             completion: completion
         )
     }
@@ -112,6 +128,16 @@ class FirestoreService: FirestoreServiceProtocol {
         db.collection("chats")
             .document(chatDocumentId).collection("messages")
             .document(messageDocumentId).delete { err in
+            completion(err == nil)
+        }
+    }
+    
+    func deleteChat(
+        chatDocumentId: String,
+        completion: @escaping (Bool) -> Void = {_ in}
+    ) {
+        db.collection("chats")
+            .document(chatDocumentId).delete { err in
             completion(err == nil)
         }
     }

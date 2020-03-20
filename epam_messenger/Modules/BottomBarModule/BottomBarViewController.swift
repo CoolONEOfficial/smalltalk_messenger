@@ -35,6 +35,7 @@ class BottomBarViewController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        hidesBottomBarWhenPushed = true
         delegate = self
     }
 

@@ -10,19 +10,20 @@ import Firebase
 import FirebaseUI
 import CodableFirebase
 import Reusable
-import InstantSearchClient
 
 protocol ChatListViewControllerProtocol {
 }
 
 class ChatListViewController: UIViewController {
     
+    // MARK: - Outlets
+    
+    @IBOutlet var tableView: UITableView!
+    
     // MARK: - Vars
     
     var viewModel: ChatListViewModelProtocol!
     let searchController = UISearchController(searchResultsController: nil)
-    private var searchCollectionIndex: Index!
-    private let searchQuery = Query()
     private var searchItems: [ChatModel] = .init()
     
     var bindDataSource: FUIFirestoreTableViewDataSource! {
@@ -32,9 +33,14 @@ class ChatListViewController: UIViewController {
     }
     var searchDataSource: FUIFirestoreTableViewDataSource!
     
-    // MARK: - Outlets
-    
-    @IBOutlet var tableView: UITableView!
+    lazy var deleteButton: UIBarButtonItem = {
+        return UIBarButtonItem(
+            title: "Delete",
+            style: .plain,
+            target: self,
+            action: #selector(deleteSelectedChats)
+        )
+    }()
     
     // MARK: - Methods
     
@@ -44,15 +50,8 @@ class ChatListViewController: UIViewController {
         setupTableView()
         setupNavigationItem()
         setupSearchController()
+        setupToolbarItems()
         didSelectionChange()
-        setupAlgoliaSearch()
-    }
-    
-    private func setupAlgoliaSearch() {
-        let searchClient = Client(appID: "V6J5G69XKH", apiKey: "c4ef45194a085992c251be8be124e796")
-        searchCollectionIndex = searchClient.index(withName: "chats")
-        searchQuery.hitsPerPage = 20
-        searchQuery.filters = "users = 0" // TODO: user id
     }
     
     private func setupTableView() {
@@ -72,12 +71,18 @@ class ChatListViewController: UIViewController {
         }
     }
     
+    private func setupToolbarItems() {
+        tabBarController?.setToolbarItems([
+            UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil),
+            deleteButton
+        ], animated: false)
+    }
+    
     private func setupSearchController() {
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = "Search by chats"
-        navigationItem.searchController = searchController
-        definesPresentationContext = true
+        tabBarController?.navigationItem.searchController = searchController
     }
     
     // MARK: - Edit mode
@@ -95,11 +100,25 @@ class ChatListViewController: UIViewController {
     @objc private func toggleEditMode(_ sender: UIBarButtonItem) {
         tableView.setEditing(!tableView.isEditing, animated: true)
         sender.title = tableView.isEditing ? "Done" : "Edit"
-        navigationController?.setToolbarHidden(!tableView.isEditing, animated: true)
+        
+        setToolbarHidden(!tableView.isEditing)
+        self.setTabBarHidden(tableView.isEditing)
+    }
+    
+    private func setToolbarHidden(_ isHidden: Bool, completion: @escaping () -> Void = {}) {
+        UIView.animate(withDuration: 0.3, animations: {
+            self.tabBarController?.navigationController?.setToolbarHidden(!self.tableView.isEditing, animated: true)
+        }, completion: { _ in
+            completion()
+        })
     }
     
     @objc private func deleteSelectedChats() {
-        // TODO: delete selected chats
+        for indexPath in tableView.indexPathsForSelectedRows! {
+            let chatModel = ChatModel.fromSnapshot(bindDataSource.items[indexPath.row])!
+            
+            viewModel.deleteChat(chatModel)
+        }
     }
     
     private func didSelectionChange() {
@@ -109,20 +128,7 @@ class ChatListViewController: UIViewController {
             ? "Selected \(tableView.indexPathsForSelectedRows!.count) chats"
             : "Chats"
         
-        let spaceButton = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-        let deleteButton = UIBarButtonItem(
-            title: "Delete",
-            style: .plain,
-            target: self,
-            action: nil
-        )
-        if rowsSelected {
-            deleteButton.action = #selector(deleteSelectedChats)
-        } else {
-            deleteButton.isEnabled = false
-        }
-        
-        setToolbarItems([spaceButton, deleteButton], animated: true)
+        deleteButton.isEnabled = rowsSelected
     }
     
     // MARK: - Helpers
@@ -146,6 +152,31 @@ class ChatListViewController: UIViewController {
             debugPrint("error while parse chat model: \(err)")
             return nil
         }
+    }
+    
+    func setTabBarHidden(
+        _ hidden: Bool,
+        animated: Bool = true,
+        duration: TimeInterval = 0.3,
+        completion: @escaping () -> Void = {}
+    ) {
+        
+        if animated,
+            let tabbar = tabBarController?.tabBar {
+            if !hidden {
+                tabbar.isHidden = false
+            }
+            UIView.animate(withDuration: duration, animations: {
+                tabbar.alpha = hidden ? 0.0 : 1.0
+            }) { _ in
+                completion()
+                if hidden {
+                    tabbar.isHidden = true
+                }
+            }
+            return
+        }
+        self.tabBarController?.tabBar.isHidden = hidden
     }
     
 }
@@ -173,7 +204,6 @@ extension ChatListViewController: UITableViewDelegate {
                 debugPrint("error while parse chat model: \(err)")
             }
         }
-        
     }
     
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
@@ -246,25 +276,14 @@ extension ChatListViewController: UISearchResultsUpdating, UISearchControllerDel
         }
         tableView.dataSource = nil
         searchController.searchBar.isLoading = true
-        
-        searchQuery.query = searchController.searchBar.text
-        searchCollectionIndex.search(searchQuery) { (content, error) in
-            guard let content = content else {
-                if let error = error {
-                    print(error.localizedDescription)
+        viewModel.searchChats(searchController.searchBar.text!) { chats in
+            if let chats = chats {
+                self.searchItems = chats
+                if !(self.tableView.dataSource?.isEqual(self) ?? false) {
+                    self.tableView.dataSource = self
                 }
-                return
-            }
-            
-            guard let chats = content["hits"] as? [[String: Any]] else { return }
-            
-            self.searchItems = chats.map { record in
-                var model = record
-                model["documentId"] = record["objectID"]
-                return try! JSONDecoder().decode(ChatModel.self, from: JSONSerialization.data(withJSONObject: model))
-            }
-            if !(self.tableView.dataSource?.isEqual(self) ?? false) {
-                self.tableView.dataSource = self
+            } else {
+                // TODO: handle error
             }
             self.searchController.searchBar.isLoading = false
             self.tableView.reloadData()

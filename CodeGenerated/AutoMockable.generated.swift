@@ -226,6 +226,23 @@ class FirestoreServiceProtocolMock: FirestoreServiceProtocol {
         deleteMessageChatDocumentIdMessageDocumentIdCompletionClosure?(chatDocumentId, messageDocumentId, completion)
     }
 
+    //MARK: - deleteChat
+
+    var deleteChatChatDocumentIdCompletionCallsCount = 0
+    var deleteChatChatDocumentIdCompletionCalled: Bool {
+        return deleteChatChatDocumentIdCompletionCallsCount > 0
+    }
+    var deleteChatChatDocumentIdCompletionReceivedArguments: (chatDocumentId: String, completion: (Bool) -> Void)?
+    var deleteChatChatDocumentIdCompletionReceivedInvocations: [(chatDocumentId: String, completion: (Bool) -> Void)] = []
+    var deleteChatChatDocumentIdCompletionClosure: ((String, @escaping (Bool) -> Void) -> Void)?
+
+    func deleteChat(        chatDocumentId: String,        completion: @escaping (Bool) -> Void    ) {
+        deleteChatChatDocumentIdCompletionCallsCount += 1
+        deleteChatChatDocumentIdCompletionReceivedArguments = (chatDocumentId: chatDocumentId, completion: completion)
+        deleteChatChatDocumentIdCompletionReceivedInvocations.append((chatDocumentId: chatDocumentId, completion: completion))
+        deleteChatChatDocumentIdCompletionClosure?(chatDocumentId, completion)
+    }
+
 }
 class RouterProtocolMock: RouterProtocol {
     var navigationController: UINavigationController?

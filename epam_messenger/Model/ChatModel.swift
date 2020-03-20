@@ -24,7 +24,7 @@ struct ChatModel: AutoDecodable {
     
     static func fromSnapshot(_ snapshot: DocumentSnapshot) -> ChatModel? {
         var data = snapshot.data() ?? [:]
-        data["documentId"] = "testdocid"
+        data["documentId"] = snapshot.documentID
         
         do {
             return try FirestoreDecoder()
