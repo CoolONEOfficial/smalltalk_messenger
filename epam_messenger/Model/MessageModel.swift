@@ -35,6 +35,16 @@ struct MessageModel: Codable, AutoDecodable {
             return nil
         }
     }
+        return try! container.decode(Timestamp.self, forKey: .timestamp)
+        
+        }
+            )
+                seconds: dict["_seconds"]!,
+                nanoseconds: Int32(exactly: dict["_nanoseconds"]!)!
+            return Timestamp.init(
+        if let dict = try? container.decode([String: Int64].self, forKey: .timestamp) {
+    static func decodeTimestamp(from container: KeyedDecodingContainer<CodingKeys>) -> Timestamp {
+    }
     
     static func decodeTimestamp(from container: KeyedDecodingContainer<CodingKeys>) -> Timestamp {
         if let dict = try? container.decode([String: Int64].self, forKey: .timestamp) {

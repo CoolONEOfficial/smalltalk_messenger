@@ -18,7 +18,6 @@ target 'epam_messenger' do
   pod 'TinyConstraints'
   pod 'InstantSearchClient', '~> 7.0'
 
-  
   target 'epam_messengerTests' do
       inherit! :search_paths
       pod 'Firebase'

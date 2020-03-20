@@ -64,6 +64,7 @@
 		E6B74994241449C600F00B29 /* ChatViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E6B74992241449C600F00B29 /* ChatViewController.xib */; };
 		E6B7499624144A4F00F00B29 /* ChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B7499524144A4F00F00B29 /* ChatViewModel.swift */; };
 		E6B7499824144C5700F00B29 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B7499724144C5700F00B29 /* SceneDelegate.swift */; };
+		FC92BBCD586AD78B98C0EA61 /* Pods_epam_messenger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 067B030863AF5333C68EDD33 /* Pods_epam_messenger.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -474,6 +475,14 @@
 			path = MVVM;
 			sourceTree = "<group>";
 		};
+		91F7301D443A4746B7901517 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				067B030863AF5333C68EDD33 /* Pods_epam_messenger.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		E6B749772414281F00F00B29 /* ChatListModule */ = {
 			isa = PBXGroup;
 			children = (
@@ -825,6 +834,7 @@
 				851F5827241D92A600D04F92 /* TextMessage.swift in Sources */,
 				85814040241E2B59004884FD /* MessageCell.swift in Sources */,
 				85FF25622414623200A25D7A /* ChatModel.swift in Sources */,
+				858F213B2424200500CF8BF0 /* UISearchBar.swift in Sources */,
 				857D7CC32418F0C300932457 /* FirestoreCodableInterfaces.swift in Sources */,
 				851F581B241D792A00D04F92 /* Array.swift in Sources */,
 				851F582E241D990900D04F92 /* ChatTableViewDelegate.swift in Sources */,
