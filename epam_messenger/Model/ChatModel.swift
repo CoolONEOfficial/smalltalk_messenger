@@ -9,12 +9,14 @@ import Foundation
 import Firebase
 import CodableFirebase
 
-struct ChatModel: Decodable {
+struct ChatModel: AutoDecodable {
     
     var documentId: String = ""
     let users: [Int]
     let name: String
     let lastMessage: MessageModel?
+    
+    static let defaultDocumentId: String = ""
     
     static func empty() -> ChatModel {
         return ChatModel(users: [], name: "", lastMessage: MessageModel.empty())

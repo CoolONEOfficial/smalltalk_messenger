@@ -16,6 +16,8 @@ struct MessageModel: Codable, AutoDecodable {
     let userId: Int
     let timestamp: Timestamp
     
+    static let defaultDocumentId: String = ""
+    
     static func empty() -> MessageModel {
         return MessageModel(text: "", userId: 0, timestamp: Timestamp.init())
     }
@@ -34,16 +36,6 @@ struct MessageModel: Codable, AutoDecodable {
             debugPrint("error while parse message model: \(err)")
             return nil
         }
-    }
-        return try! container.decode(Timestamp.self, forKey: .timestamp)
-        
-        }
-            )
-                seconds: dict["_seconds"]!,
-                nanoseconds: Int32(exactly: dict["_nanoseconds"]!)!
-            return Timestamp.init(
-        if let dict = try? container.decode([String: Int64].self, forKey: .timestamp) {
-    static func decodeTimestamp(from container: KeyedDecodingContainer<CodingKeys>) -> Timestamp {
     }
     
     static func decodeTimestamp(from container: KeyedDecodingContainer<CodingKeys>) -> Timestamp {
