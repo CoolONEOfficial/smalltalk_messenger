@@ -33,7 +33,7 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
             inputBar.sendButton.stopAnimating()
             inputBar.inputTextView.placeholder = "Message..."
             
-            self.tableView.scrollToBottom()
+            self.tableView.scrollToBottom(animated: true)
         }
     }
     

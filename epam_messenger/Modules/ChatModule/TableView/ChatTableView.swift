@@ -128,13 +128,13 @@ class ChatTableView: UITableView {
     
     // MARK: - Helpers
     
-    func scrollToBottom() {
+    func scrollToBottom(animated: Bool) {
         guard !chatDataSource.messageItems.isEmpty else {
             return
         }
         
         let lastIndex = chatDataSource.messageItems.count - 1
         let lastItem = chatDataSource.messageItems[lastIndex]
-        scrollToRow(at: IndexPath(row: lastItem.value.count - 1, section: lastIndex), at: .none, animated: true)
+        scrollToRow(at: IndexPath(row: lastItem.value.count - 1, section: lastIndex), at: .none, animated: animated)
     }
 }
