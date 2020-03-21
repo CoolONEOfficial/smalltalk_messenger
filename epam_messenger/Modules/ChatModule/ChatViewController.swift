@@ -41,7 +41,7 @@ class ChatViewController: UIViewController {
     
     private var keyboardManager = KeyboardManager()
     
-    // MARK: - Methods
+    // MARK: - Events
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -56,6 +56,13 @@ class ChatViewController: UIViewController {
         setupFloatingBottomButton()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        updateTableViewInset()
+        tableView.scrollToBottom(animated: true)
+    }
+    
+    // MARK: - Methods
+    
     private func setupFloatingBottomButton() {
         floatingBottomButton.layer.cornerRadius = floatingBottomButton.bounds.width / 2
         floatingBottomButton.layer.borderWidth = 0.5
@@ -69,7 +76,7 @@ class ChatViewController: UIViewController {
         stack.addArrangedSubview(deleteButton)
         stack.addArrangedSubview(forwardButton)
         stack.isLayoutMarginsRelativeArrangement = true
-        stack.directionalLayoutMargins = .init(top: 5, leading: 10, bottom: 10, trailing: 10)
+        stack.directionalLayoutMargins = .init(top: 5, leading: 10, bottom: 0, trailing: 10)
         
         deleteButton.contentHorizontalAlignment = .fill
         deleteButton.contentVerticalAlignment = .fill
@@ -84,7 +91,6 @@ class ChatViewController: UIViewController {
         forwardButton.setImage(UIImage(systemName: "arrowshape.turn.up.right"), for: .normal)
         forwardButton.addTarget(self, action: #selector(ChatViewController.forwardSelectedMessages), for: .touchUpInside)
         forwardButton.size(.init(width: 30, height: 25))
-
     }
     
     private func setupInputBar() {
@@ -125,29 +131,30 @@ class ChatViewController: UIViewController {
         keyboardManager.bind(to: tableView)
         
         keyboardManager.on(event: .didShow) { [weak self] _ in
-            self?.tableView.scrollToBottom()
+            self?.tableView.scrollToBottom(animated: true)
         }
         
         // Add some extra handling to manage content inset
         keyboardManager.on(event: .didChangeFrame) { [weak self] (notification) in
-            //let barHeight = self?.inputBar.bounds.height ?? 0
-            self?.tableView.contentInset.bottom = notification.endFrame.height - 35
-            self?.tableView.verticalScrollIndicatorInsets.bottom = notification.endFrame.height - 35
+            self?.updateTableViewInset(notification.endFrame.height)
         }.on(event: .didHide) { [weak self] _ in
-            //let barHeight = self?.inputBar.bounds.height ?? 0
-            self?.tableView.contentInset.bottom = 0
-            self?.tableView.verticalScrollIndicatorInsets.bottom = 0
+            self?.updateTableViewInset()
         }
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        tableView.scrollToBottom()
+    // MARK: - Helpers
+    
+    private func updateTableViewInset(_ additional: CGFloat = 0) {
+        let bottomSafeArea = view.safeAreaInsets.bottom
+        let barHeight = inputBar.bounds.height
+        tableView.contentInset.bottom = barHeight + additional - bottomSafeArea
+        tableView.verticalScrollIndicatorInsets.bottom = barHeight + additional - bottomSafeArea
     }
     
     // MARK: Floating bottom button
     
     @IBAction func didFloatingBottomButtonClick(_ sender: UIButton) {
-        tableView.scrollToBottom()
+        tableView.scrollToBottom(animated: true)
     }
     
 }

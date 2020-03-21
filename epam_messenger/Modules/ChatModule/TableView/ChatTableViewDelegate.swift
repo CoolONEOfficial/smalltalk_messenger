@@ -217,7 +217,7 @@ extension ChatViewController: UITableViewDelegate {
         
         inputBar.setMiddleContentView(stack, animated: false)
         inputBar.middleContentViewPadding.right = 0
-        inputBar.setRightStackViewWidthConstant(to: 0, animated: false)
+        inputBar.hideSideStacks()
     }
     
     @objc private func disableEditMode() {
@@ -226,8 +226,7 @@ extension ChatViewController: UITableViewDelegate {
         navigationItem.rightBarButtonItem = nil
         navigationItem.leftBarButtonItem = nil
         inputBar.setMiddleContentView(inputBar.inputTextView, animated: true)
-        inputBar.middleContentViewPadding.right = -ChatInputBar.defaultRightWidth
-        inputBar.setRightStackViewWidthConstant(to: ChatInputBar.defaultRightWidth, animated: false)
+        inputBar.showSideStacks()
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
