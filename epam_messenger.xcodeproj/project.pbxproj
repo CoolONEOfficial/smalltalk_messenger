@@ -967,6 +967,7 @@
 				E6846BA4242A95E9006818DE /* AuthStartViewController.swift in Sources */,
 				E6B7499624144A4F00F00B29 /* ChatViewModel.swift in Sources */,
 				850C7FF42427886E008BAF24 /* ChatInputBarAttachMenu.swift in Sources */,
+				943595A6241BCD3A005BF7A3 /* ContactsCell.swift in Sources */,
 				85BE9A6924118CF200E6643B /* AppDelegate.swift in Sources */,
 				85814059241EC218004884FD /* ChatInputBar.swift in Sources */,
 				85814057241EBE8A004884FD /* ChatInputBarDelegate.swift in Sources */,
