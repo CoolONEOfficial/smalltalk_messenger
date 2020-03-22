@@ -86,4 +86,9 @@ class FirestoreService {
             completion(false)
         }
     }
+    
+    lazy var contactsListQuery: Query = {
+        return db.collection("users").order(by: "name")
+    }()
+    
 }

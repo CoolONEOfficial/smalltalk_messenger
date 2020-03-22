@@ -39,14 +39,14 @@ class ChatListViewModel: ChatListViewModelProtocol {
     func didChatLoad(snapshot: DocumentSnapshot, cell: ChatCell) {
         var data = snapshot.data() ?? [:]
         data["documentId"] = snapshot.documentID
-        
+
         do {
             let chatModel = try FirestoreDecoder()
                 .decode(
                     ChatModel.self,
                     from: data
             )
-            
+
             cell.loadChatModel(chatModel)
         } catch let err {
             debugPrint("error while parse chat model: \(err)")

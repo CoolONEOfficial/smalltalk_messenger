@@ -7,13 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		79C1009E595A11E0BD8273FD /* Pods_epam_messenger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FBF8FAED7B1C0D473E35E1B0 /* Pods_epam_messenger.framework */; };
+		8135C751EA386E6028A7EEB6 /* Pods_epam_messenger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFE85635220C008A368D8DD5 /* Pods_epam_messenger.framework */; };
 		851553F0241983E500C89534 /* MessageKit24HourDateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 851553EF241983E500C89534 /* MessageKit24HourDateFormatter.swift */; };
 		8526F3D32417907B00ED62E8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8526F3D22417907B00ED62E8 /* Assets.xcassets */; };
 		853FD19E24165EDE005A7985 /* FirestoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 853FD19D24165EDE005A7985 /* FirestoreService.swift */; };
 		856A9C1F2411B8D10039E977 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 856A9C1E2411B8D10039E977 /* GoogleService-Info.plist */; };
-		859330032417CD9C00F1F32E /* BottomBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 859330022417CD9C00F1F32E /* BottomBarViewController.swift */; };
 		857D7CC32418F0C300932457 /* FirestoreCodableInterfaces.swift in Sources */ = {isa = PBXBuildFile; fileRef = 857D7CC22418F0C300932457 /* FirestoreCodableInterfaces.swift */; };
+		859330032417CD9C00F1F32E /* BottomBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 859330022417CD9C00F1F32E /* BottomBarViewController.swift */; };
 		85BE9A6924118CF200E6643B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85BE9A6824118CF200E6643B /* AppDelegate.swift */; };
 		85BE9A7224118CF200E6643B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 85BE9A7124118CF200E6643B /* Assets.xcassets */; };
 		85BE9A7524118CF200E6643B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 85BE9A7324118CF200E6643B /* LaunchScreen.storyboard */; };
@@ -29,6 +29,12 @@
 		85FF256C2414DCDF00A25D7A /* ChatCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FF256A2414DCDF00A25D7A /* ChatCell.swift */; };
 		85FF256D2414DCDF00A25D7A /* ChatCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 85FF256B2414DCDF00A25D7A /* ChatCell.xib */; };
 		85FF25752415976600A25D7A /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FF25742415976600A25D7A /* ViewModel.swift */; };
+		943595A6241BCD3A005BF7A3 /* ContactsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943595A4241BCD3A005BF7A3 /* ContactsCell.swift */; };
+		943595A7241BCD3A005BF7A3 /* ContactsCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 943595A5241BCD3A005BF7A3 /* ContactsCell.xib */; };
+		943595AA241BCECD005BF7A3 /* ContactsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943595A8241BCECD005BF7A3 /* ContactsListViewController.swift */; };
+		943595AB241BCECD005BF7A3 /* ContactsListViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 943595A9241BCECD005BF7A3 /* ContactsListViewController.xib */; };
+		943595AD241BD087005BF7A3 /* ContactsListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943595AC241BD087005BF7A3 /* ContactsListViewModel.swift */; };
+		943595B1241BD278005BF7A3 /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943595B0241BD278005BF7A3 /* UserModel.swift */; };
 		E6B74976241427C700F00B29 /* AssemblyBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B74975241427C700F00B29 /* AssemblyBuilder.swift */; };
 		E6B74981241433BF00F00B29 /* AuthorizationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B74980241433BF00F00B29 /* AuthorizationViewModel.swift */; };
 		E6B74984241433F500F00B29 /* AuthorizationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B74982241433F500F00B29 /* AuthorizationViewController.swift */; };
@@ -42,15 +48,16 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		26AB94EEBFA053FBB610059A /* Pods-epam_messenger.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-epam_messenger.release.xcconfig"; path = "Target Support Files/Pods-epam_messenger/Pods-epam_messenger.release.xcconfig"; sourceTree = "<group>"; };
+		16B36439B6A82A821511DC71 /* Pods-epam_messenger.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-epam_messenger.release.xcconfig"; path = "Target Support Files/Pods-epam_messenger/Pods-epam_messenger.release.xcconfig"; sourceTree = "<group>"; };
+		37625DECFF2323492AD3B22C /* Pods-epam_messenger.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-epam_messenger.debug.xcconfig"; path = "Target Support Files/Pods-epam_messenger/Pods-epam_messenger.debug.xcconfig"; sourceTree = "<group>"; };
 		851553EF241983E500C89534 /* MessageKit24HourDateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageKit24HourDateFormatter.swift; sourceTree = "<group>"; };
 		8526F3D22417907B00ED62E8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8526F3D42417B8C000ED62E8 /* MessageKit24HourDateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageKit24HourDateFormatter.swift; sourceTree = "<group>"; };
 		853FD19D24165EDE005A7985 /* FirestoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreService.swift; sourceTree = "<group>"; };
 		853FD1AE2416A55A005A7985 /* InvertedCollectionViewFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvertedCollectionViewFlowLayout.swift; sourceTree = "<group>"; };
 		856A9C1E2411B8D10039E977 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		859330022417CD9C00F1F32E /* BottomBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomBarViewController.swift; sourceTree = "<group>"; };
 		857D7CC22418F0C300932457 /* FirestoreCodableInterfaces.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreCodableInterfaces.swift; sourceTree = "<group>"; };
+		859330022417CD9C00F1F32E /* BottomBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomBarViewController.swift; sourceTree = "<group>"; };
 		85BE9A6524118CF200E6643B /* epam_messenger.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = epam_messenger.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		85BE9A6824118CF200E6643B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		85BE9A7124118CF200E6643B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -68,7 +75,13 @@
 		85FF256A2414DCDF00A25D7A /* ChatCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatCell.swift; sourceTree = "<group>"; };
 		85FF256B2414DCDF00A25D7A /* ChatCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ChatCell.xib; sourceTree = "<group>"; };
 		85FF25742415976600A25D7A /* ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
-		AF96D330A6FA51B76046EC83 /* Pods-epam_messenger.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-epam_messenger.debug.xcconfig"; path = "Target Support Files/Pods-epam_messenger/Pods-epam_messenger.debug.xcconfig"; sourceTree = "<group>"; };
+		943595A4241BCD3A005BF7A3 /* ContactsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsCell.swift; sourceTree = "<group>"; };
+		943595A5241BCD3A005BF7A3 /* ContactsCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ContactsCell.xib; sourceTree = "<group>"; };
+		943595A8241BCECD005BF7A3 /* ContactsListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsListViewController.swift; sourceTree = "<group>"; };
+		943595A9241BCECD005BF7A3 /* ContactsListViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ContactsListViewController.xib; sourceTree = "<group>"; };
+		943595AC241BD087005BF7A3 /* ContactsListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsListViewModel.swift; sourceTree = "<group>"; };
+		943595B0241BD278005BF7A3 /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
+		BFE85635220C008A368D8DD5 /* Pods_epam_messenger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_epam_messenger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E6B74975241427C700F00B29 /* AssemblyBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssemblyBuilder.swift; sourceTree = "<group>"; };
 		E6B74980241433BF00F00B29 /* AuthorizationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationViewModel.swift; sourceTree = "<group>"; };
 		E6B74982241433F500F00B29 /* AuthorizationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationViewController.swift; sourceTree = "<group>"; };
@@ -79,7 +92,6 @@
 		E6B74992241449C600F00B29 /* ChatViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ChatViewController.xib; sourceTree = "<group>"; };
 		E6B7499524144A4F00F00B29 /* ChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewModel.swift; sourceTree = "<group>"; };
 		E6B7499724144C5700F00B29 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		FBF8FAED7B1C0D473E35E1B0 /* Pods_epam_messenger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_epam_messenger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,17 +99,17 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				79C1009E595A11E0BD8273FD /* Pods_epam_messenger.framework in Frameworks */,
+				8135C751EA386E6028A7EEB6 /* Pods_epam_messenger.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		57B4A2C3F74C80FB4FEBF372 /* Frameworks */ = {
+		833305749A23BE4F5A6B8BC6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				FBF8FAED7B1C0D473E35E1B0 /* Pods_epam_messenger.framework */,
+				BFE85635220C008A368D8DD5 /* Pods_epam_messenger.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -122,6 +134,7 @@
 		853FD19C24165E9C005A7985 /* Modules */ = {
 			isa = PBXGroup;
 			children = (
+				9435959E241BCCA1005BF7A3 /* ContactsListModule */,
 				859330012417CD7F00F1F32E /* BottomBarModule */,
 				E6B749782414286000F00B29 /* AuthorizationModule */,
 				E6B749772414281F00F00B29 /* ChatListModule */,
@@ -146,8 +159,8 @@
 				85BE9A6624118CF200E6643B /* Products */,
 				G_7943270405060 /* CodeGenerated */,
 				F503001F095057135A013E68 /* Pods */,
-				57B4A2C3F74C80FB4FEBF372 /* Frameworks */,
 				851553EC24197C0900C89534 /* Recovered References */,
+				833305749A23BE4F5A6B8BC6 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -201,8 +214,9 @@
 		85FF25602414621C00A25D7A /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				85FF25612414623200A25D7A /* ChatModel.swift */,
+				943595B2241BD2B4005BF7A3 /* UserModel */,
 				85FF25632414624B00A25D7A /* MessageModel.swift */,
+				85FF25612414623200A25D7A /* ChatModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -222,6 +236,34 @@
 				85FF25742415976600A25D7A /* ViewModel.swift */,
 			);
 			path = MVVM;
+			sourceTree = "<group>";
+		};
+		9435959E241BCCA1005BF7A3 /* ContactsListModule */ = {
+			isa = PBXGroup;
+			children = (
+				9435959F241BCCB6005BF7A3 /* Cell */,
+				943595AC241BD087005BF7A3 /* ContactsListViewModel.swift */,
+				943595A8241BCECD005BF7A3 /* ContactsListViewController.swift */,
+				943595A9241BCECD005BF7A3 /* ContactsListViewController.xib */,
+			);
+			path = ContactsListModule;
+			sourceTree = "<group>";
+		};
+		9435959F241BCCB6005BF7A3 /* Cell */ = {
+			isa = PBXGroup;
+			children = (
+				943595A4241BCD3A005BF7A3 /* ContactsCell.swift */,
+				943595A5241BCD3A005BF7A3 /* ContactsCell.xib */,
+			);
+			path = Cell;
+			sourceTree = "<group>";
+		};
+		943595B2241BD2B4005BF7A3 /* UserModel */ = {
+			isa = PBXGroup;
+			children = (
+				943595B0241BD278005BF7A3 /* UserModel.swift */,
+			);
+			path = UserModel;
 			sourceTree = "<group>";
 		};
 		E6B749772414281F00F00B29 /* ChatListModule */ = {
@@ -267,8 +309,8 @@
 		F503001F095057135A013E68 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				AF96D330A6FA51B76046EC83 /* Pods-epam_messenger.debug.xcconfig */,
-				26AB94EEBFA053FBB610059A /* Pods-epam_messenger.release.xcconfig */,
+				37625DECFF2323492AD3B22C /* Pods-epam_messenger.debug.xcconfig */,
+				16B36439B6A82A821511DC71 /* Pods-epam_messenger.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -289,13 +331,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 85BE9A7924118CF200E6643B /* Build configuration list for PBXNativeTarget "epam_messenger" */;
 			buildPhases = (
-				F2BBC4B517C2DD79DED93236 /* [CP] Check Pods Manifest.lock */,
+				7AA8A580179599084457E247 /* [CP] Check Pods Manifest.lock */,
 				85FD2A0324182B220035AC13 /* Sourcery */,
 				85BE9A6124118CF200E6643B /* Sources */,
 				85BE9A6224118CF200E6643B /* Frameworks */,
 				85BE9A6324118CF200E6643B /* Resources */,
 				856A9C1B2411A6740039E977 /* SwiftLint */,
-				D6362EA66F1DE71DE3EC00FC /* [CP] Embed Pods Frameworks */,
+				A67DB731755840C8C81C2434 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -346,8 +388,10 @@
 			files = (
 				85FF256D2414DCDF00A25D7A /* ChatCell.xib in Resources */,
 				85BE9A7524118CF200E6643B /* LaunchScreen.storyboard in Resources */,
+				943595A7241BCD3A005BF7A3 /* ContactsCell.xib in Resources */,
 				E6B74994241449C600F00B29 /* ChatViewController.xib in Resources */,
 				85FD29FA2417FC130035AC13 /* ChatListViewController.xib in Resources */,
+				943595AB241BCECD005BF7A3 /* ContactsListViewController.xib in Resources */,
 				E6B74985241433F500F00B29 /* AuthorizationViewController.xib in Resources */,
 				85FD29FE241818B70035AC13 /* AutoCodable.swifttemplate in Resources */,
 				85FD2A00241825840035AC13 /* AutoEquatable.stencil in Resources */,
@@ -360,6 +404,28 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		7AA8A580179599084457E247 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-epam_messenger-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
 		856A9C1B2411A6740039E977 /* SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -392,7 +458,7 @@
 			shellPath = /bin/sh;
 			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"${PODS_ROOT}/Sourcery/bin/sourcery\" --sources \"${SRCROOT}/epam_messenger\" --templates \"${SRCROOT}/Templates\" --output \"${SRCROOT}/CodeGenerated\"\n";
 		};
-		D6362EA66F1DE71DE3EC00FC /* [CP] Embed Pods Frameworks */ = {
+		A67DB731755840C8C81C2434 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -409,28 +475,6 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-epam_messenger/Pods-epam_messenger-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		F2BBC4B517C2DD79DED93236 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-epam_messenger-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -444,20 +488,24 @@
 				85FD29F92417FC130035AC13 /* ChatListViewController.swift in Sources */,
 				85FF25622414623200A25D7A /* ChatModel.swift in Sources */,
 				857D7CC32418F0C300932457 /* FirestoreCodableInterfaces.swift in Sources */,
+				943595AA241BCECD005BF7A3 /* ContactsListViewController.swift in Sources */,
 				E6B74993241449C600F00B29 /* ChatViewController.swift in Sources */,
 				85FF25752415976600A25D7A /* ViewModel.swift in Sources */,
 				E6B74976241427C700F00B29 /* AssemblyBuilder.swift in Sources */,
 				E6B7499824144C5700F00B29 /* SceneDelegate.swift in Sources */,
 				85FF25642414624B00A25D7A /* MessageModel.swift in Sources */,
 				853FD19E24165EDE005A7985 /* FirestoreService.swift in Sources */,
+				943595AD241BD087005BF7A3 /* ContactsListViewModel.swift in Sources */,
 				859330032417CD9C00F1F32E /* BottomBarViewController.swift in Sources */,
 				E6B74981241433BF00F00B29 /* AuthorizationViewModel.swift in Sources */,
 				851553F0241983E500C89534 /* MessageKit24HourDateFormatter.swift in Sources */,
+				943595B1241BD278005BF7A3 /* UserModel.swift in Sources */,
 				E6B7498A2414382300F00B29 /* ChatListViewModel.swift in Sources */,
 				85FD2A0A24182DED0035AC13 /* SourceryInterfaces.swift in Sources */,
 				85FF256C2414DCDF00A25D7A /* ChatCell.swift in Sources */,
 				85FD2A0724182CE80035AC13 /* AutoCodable.generated.swift in Sources */,
 				E6B7499624144A4F00F00B29 /* ChatViewModel.swift in Sources */,
+				943595A6241BCD3A005BF7A3 /* ContactsCell.swift in Sources */,
 				85BE9A6924118CF200E6643B /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -592,7 +640,7 @@
 		};
 		85BE9A7A24118CF200E6643B /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AF96D330A6FA51B76046EC83 /* Pods-epam_messenger.debug.xcconfig */;
+			baseConfigurationReference = 37625DECFF2323492AD3B22C /* Pods-epam_messenger.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -611,7 +659,7 @@
 		};
 		85BE9A7B24118CF200E6643B /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 26AB94EEBFA053FBB610059A /* Pods-epam_messenger.release.xcconfig */;
+			baseConfigurationReference = 16B36439B6A82A821511DC71 /* Pods-epam_messenger.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
