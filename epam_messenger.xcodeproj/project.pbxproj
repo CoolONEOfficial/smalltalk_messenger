@@ -469,8 +469,9 @@
 		85FF25602414621C00A25D7A /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				85FF25612414623200A25D7A /* ChatModel.swift */,
+				943595B2241BD2B4005BF7A3 /* UserModel */,
 				85FF25632414624B00A25D7A /* MessageModel.swift */,
+				85FF25612414623200A25D7A /* ChatModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -937,6 +938,7 @@
 				850C7FEE2425426E008BAF24 /* AlgoliaService.swift in Sources */,
 				8581405B241ED271004884FD /* ChatInputBarAutocompleteManager.swift in Sources */,
 				E6B7499624144A4F00F00B29 /* ChatViewModel.swift in Sources */,
+				943595A6241BCD3A005BF7A3 /* ContactsCell.swift in Sources */,
 				85BE9A6924118CF200E6643B /* AppDelegate.swift in Sources */,
 				85814059241EC218004884FD /* ChatInputBar.swift in Sources */,
 				85814057241EBE8A004884FD /* ChatInputBarDelegate.swift in Sources */,
