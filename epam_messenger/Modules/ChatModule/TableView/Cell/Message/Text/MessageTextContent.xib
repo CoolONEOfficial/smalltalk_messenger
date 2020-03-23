@@ -10,6 +10,7 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="MessageTextContent" customModule="epam_messenger" customModuleProvider="target">
             <connections>
                 <outlet property="contentView" destination="iN0-l3-epB" id="UgE-hw-RcL"/>
+                <outlet property="infoStack" destination="3BW-b7-tRJ" id="Rgn-mx-0fi"/>
                 <outlet property="textLabel" destination="rKC-gl-euR" id="16m-Vk-mEQ"/>
                 <outlet property="timeLabel" destination="HY6-yo-DQJ" id="hT8-1E-bxH"/>
                 <outlet property="usernameLabel" destination="bhs-yG-zyS" id="hwX-Et-tcz"/>
@@ -32,21 +33,26 @@
                             <nil key="textColor"/>
                             <nil key="highlightedColor"/>
                         </label>
-                        <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Text" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.80000000000000004" translatesAutoresizingMaskIntoConstraints="NO" id="rKC-gl-euR">
+                        <label opaque="NO" contentMode="left" horizontalHuggingPriority="100" verticalHuggingPriority="100" text="Text" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.80000000000000004" translatesAutoresizingMaskIntoConstraints="NO" id="rKC-gl-euR">
                             <rect key="frame" x="0.0" y="0.0" width="425" height="133"/>
                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                             <nil key="textColor"/>
                             <nil key="highlightedColor"/>
                         </label>
-                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="20:20" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HY6-yo-DQJ" userLabel="Time label">
+                        <stackView opaque="NO" contentMode="scaleToFill" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="3BW-b7-tRJ" userLabel="Info Stack View">
                             <rect key="frame" x="0.0" y="133" width="425" height="15"/>
+                            <subviews>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="20:20" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HY6-yo-DQJ" userLabel="Time label">
+                                    <rect key="frame" x="0.0" y="0.5" width="425" height="14.5"/>
+                                    <fontDescription key="fontDescription" type="system" weight="light" pointSize="12"/>
+                                    <nil key="textColor"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                            </subviews>
                             <constraints>
-                                <constraint firstAttribute="height" constant="15" id="4xc-6y-xZ4"/>
+                                <constraint firstAttribute="height" constant="15" id="kCT-UN-KNt"/>
                             </constraints>
-                            <fontDescription key="fontDescription" type="system" weight="light" pointSize="12"/>
-                            <nil key="textColor"/>
-                            <nil key="highlightedColor"/>
-                        </label>
+                        </stackView>
                     </subviews>
                 </stackView>
             </subviews>

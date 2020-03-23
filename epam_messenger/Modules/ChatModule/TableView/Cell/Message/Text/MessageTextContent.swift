@@ -8,8 +8,8 @@
 import UIKit
 import TinyConstraints
 
-class MessageTextContent: UIView, Messagable {
-    
+class MessageTextContent: UIView, MessageCellContentProtocol {
+
     // MARK: - Outlets
     
     @IBOutlet var contentView: UIView!
@@ -17,10 +17,10 @@ class MessageTextContent: UIView, Messagable {
     @IBOutlet var textLabel: UILabel!
     @IBOutlet var usernameLabel: UILabel!
     @IBOutlet var timeLabel: UILabel!
+    @IBOutlet var infoStack: UIStackView!
     
     // MARK: - Vars
     
-    var superInsets: TinyEdgeInsets!
     var shouldSetupConstraints = true
     
     var timeFormatter: DateFormatter {
@@ -29,15 +29,11 @@ class MessageTextContent: UIView, Messagable {
         return formatter
     }
     
-    var mergeNext: Bool!
-    var mergePrev: Bool!
-    var textMessage: TextMessageProtocol! {
+    var cell: MessageCellProtocol!
+    var mergeContentNext: Bool!
+    var mergeContentPrev: Bool!
+    var textMessage: MessageTextProtocol! {
         didSet {
-            superInsets = .vertical(4) + (
-                textMessage.isIncoming
-                    ? .left(16) + .right(8)
-                    : .left(8) + .right(16)
-            )
             
             let textColor: UIColor = textMessage.isIncoming
                 ? .plainText
@@ -55,7 +51,7 @@ class MessageTextContent: UIView, Messagable {
     }
     
     private func setupUsernameLabel(_ textColor: UIColor) {
-        let isHidden = mergePrev! || !textMessage.isIncoming
+        let isHidden = cell.mergePrev! || !textMessage.isIncoming || mergeContentPrev
         
         usernameLabel.isHidden = isHidden
         if !isHidden {
@@ -68,18 +64,17 @@ class MessageTextContent: UIView, Messagable {
         timeLabel.text = timeFormatter.string(from: textMessage.date)
         timeLabel.textColor = textColor
         
-        timeLabel.top(
-            to: textLabel, textLabel.bottomAnchor,
-            offset: textLabel.haveEndSpace
-                ? -timeLabel.bounds.height
-                : 0
+        infoStack.topToBottom(of: textLabel, offset: textLabel.haveEndSpace
+            ? -timeLabel.bounds.height
+            : 0
         )
     }
     
-    func loadMessage(_ message: MessageProtocol, mergeNext: Bool, mergePrev: Bool) {
-        self.mergeNext = mergeNext
-        self.mergePrev = mergePrev
-        self.textMessage = message as? TextMessageProtocol
+    func loadMessage(_ message: MessageProtocol, cell: MessageCellProtocol, mergeContentNext: Bool, mergeContentPrev: Bool) {
+        self.cell = cell
+        self.mergeContentNext = mergeContentNext
+        self.mergeContentPrev = mergeContentPrev
+        self.textMessage = message as! MessageTextProtocol
     }
     
     // MARK: - Init
@@ -104,14 +99,29 @@ class MessageTextContent: UIView, Messagable {
     // MARK: - Methods
     
     override func updateConstraints() {
+        super.updateConstraints()
         if shouldSetupConstraints {
-            edgesToSuperview(insets: superInsets)
+            if let bubbleView = superview?.superview {
+                if textMessage.isIncoming {
+                    leftToSuperview(offset: 10)
+                    right(to: bubbleView, offset: -10)
+                } else {
+                    leftToSuperview(offset: 10)
+                    right(to: bubbleView, offset: -16)
+                }
+            }
             
             shouldSetupConstraints = false
         }
-        super.updateConstraints()
     }
     
+    var topMargin: CGFloat {
+        return 4
+    }
+    
+    var bottomMargin: CGFloat {
+        return 4
+    }
 }
 
 // MARK: Get lines of label extension from StackOverflow

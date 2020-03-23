@@ -7,6 +7,7 @@
 
 import Foundation
 import InputBarAccessoryView
+import Photos
 
 class ChatInputBar: InputBarAccessoryView {
     
@@ -27,6 +28,8 @@ class ChatInputBar: InputBarAccessoryView {
         bottom: attachImageInset, right: attachImageInset
     )
     static let stacksPadding: CGFloat = 4
+    
+    let imagePicker = UIImagePickerController()
     
     // MARK: - Init
     
@@ -107,7 +110,33 @@ class ChatInputBar: InputBarAccessoryView {
     // MARK: - Events
     
     @objc func didClickAttachButton() {
+        let optionMenu = ChatInputBarAttachMenu(
+            cameraRecognizer: UITapGestureRecognizer(
+                target: self, action: #selector(self.showCameraPicker)
+            ),
+            didImageTapCompletion: pickImage
+        )
         
+        window?
+            .rootViewController?
+            .present(optionMenu, animated: true, completion: nil)
+    }
+    
+    @objc private func showCameraPicker() {
+        imagePicker.delegate = self
+        imagePicker.allowsEditing = true
+        imagePicker.mediaTypes = ["public.image"]
+        imagePicker.sourceType = .camera
+        window?.rootViewController?.dismiss(animated: true) {
+            self.window?.rootViewController?
+                .present(self.imagePicker, animated: true, completion: nil)
+        }
+    }
+    
+    @objc private func pickImage(image: UIImage) {
+        window?.rootViewController?.dismiss(animated: true) {
+            self.inputPlugins.forEach { _ = $0.handleInput(of: image) }
+        }
     }
     
     // MARK: - Side stacks visibility functions
@@ -126,5 +155,53 @@ class ChatInputBar: InputBarAccessoryView {
         setLeftStackViewWidthConstant(to: ChatInputBar.defaultLeftStackWidth, animated: true)
         padding.right = ChatInputBar.stacksPadding
         middleContentViewPadding.right = ChatInputBar.stacksPadding
+    }
+}
+
+extension ChatInputBar: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    
+    public func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        self.pickerController(picker, didSelect: nil)
+    }
+
+    public func imagePickerController(
+        _ picker: UIImagePickerController,
+        didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
+    ) {
+        guard let image = info[.editedImage] as? UIImage else {
+            return self.pickerController(picker, didSelect: nil)
+        }
+        self.pickerController(picker, didSelect: image)
+    }
+    
+    private func pickerController(_ controller: UIImagePickerController, didSelect image: UIImage?) {
+        controller.dismiss(animated: true) {
+            if let pickedImage = image {
+                self.inputPlugins.forEach { _ = $0.handleInput(of: pickedImage) }
+            } else {
+                debugPrint("Error while unwrapping selected image")
+            }
+        }
+    }
+}
+
+// MARK: Camera preview helper
+
+fileprivate extension UIImageView {
+    func fetchImage(asset: PHAsset, contentMode: PHImageContentMode, targetSize: CGSize) {
+        let options = PHImageRequestOptions()
+        options.version = .original
+        PHImageManager.default().requestImage(for: asset, targetSize: targetSize, contentMode: contentMode, options: options) { image, _ in
+            guard let image = image else { return }
+            switch contentMode {
+            case .aspectFill:
+                self.contentMode = .scaleAspectFill
+            case .aspectFit:
+                self.contentMode = .scaleAspectFit
+            @unknown default:
+                fatalError()
+            }
+            self.image = image
+        }
     }
 }

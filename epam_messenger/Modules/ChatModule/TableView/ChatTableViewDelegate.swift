@@ -51,8 +51,27 @@ extension ChatViewController: UITableViewDelegate {
                 image: UIImage(systemName: "doc.on.doc")
             ) { _ in
                 let pasteBoard = UIPasteboard.general
-                pasteBoard.string = (self.tableView.chatDataSource
-                    .messageAt(indexPath) as! TextMessageProtocol).text
+                var allText = ""
+                for kind in self.tableView.chatDataSource.messageAt(indexPath).kind {
+                    switch kind {
+                    case .text(let text):
+                        allText += text
+                    default: break
+                    }
+                }
+                pasteBoard.string = allText
+            }
+            
+            let savePhoto = UIAction(
+                title: "Save to camera roll",
+                image: UIImage(systemName: "square.and.arrow.down")
+            ) { _ in
+                
+                if let cell = tableView.cellForRow(at: indexPath) as? MessageCell,
+                    let imageContent = cell.contentStack.subviews.first(where: { $0 is MessageImageContent }) as? MessageImageContent,
+                    let image = imageContent.imageView.image {
+                    UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
+                }
             }
             
             let delete = UIAction(
@@ -74,10 +93,22 @@ extension ChatViewController: UITableViewDelegate {
                 self.didSelectionChange()
             }
             
+            var actions = [
+                copy, delete
+            ]
+            
+            let message = self.tableView.chatDataSource.messageAt(indexPath)
+            if message.kind.filter({ content in
+                if case .image = content {
+                    return true
+                }
+                return false
+            }).count == 1 {
+                actions.insert(savePhoto, at: 1)
+            }
+            
             return UIMenu(title: "", children: [
-                UIMenu(title: "", options: .displayInline, children: [
-                    copy, delete
-                ]),
+                UIMenu(title: "", options: .displayInline, children: actions),
                 other
             ])
         }
@@ -94,28 +125,26 @@ extension ChatViewController: UITableViewDelegate {
         
         let messageCell: MessageCell = tableView.cellForRow(at: indexPath) as! MessageCell
         
-        switch messageCell.messageContent {
-        case let textContent as MessageTextContent:
-            let parameters = UIPreviewParameters()
-            parameters.backgroundColor = textContent.textMessage.isIncoming
-                ? .plainBackground
-                : .accent
-            
-            let bounds = textContent.bounds.inset(
-                by: .init(
-                    top: -4,
-                    left: -8,
-                    bottom: -4,
-                    right: -8
-                )
+        let parameters = UIPreviewParameters()
+        parameters.backgroundColor = messageCell.message.isIncoming
+            ? .plainBackground
+            : .accent
+        
+        let bounds = messageCell.contentStack.bounds.inset(
+            by: .init(
+                top: -(messageCell.contentStack.subviews.first as! MessageCellContentProtocol).topMargin,
+                left: 0,
+                bottom: -(messageCell.contentStack.subviews.last as! MessageCellContentProtocol).bottomMargin,
+                right: 0
             )
-            
-            parameters.visiblePath = UIBezierPath(roundedRect: bounds, cornerRadius: 14)
-            
-            return UITargetedPreview(view: messageCell.messageContent, parameters: parameters)
-        default:
-            return nil
-        }
+        )
+        
+        parameters.visiblePath = UIBezierPath(
+            roundedRect: bounds,
+            cornerRadius: MessageCell.cornerRadius
+        )
+        
+        return UITargetedPreview(view: messageCell.contentStack, parameters: parameters)
     }
     
     func tableView(_ tableView: UITableView, previewForHighlightingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {

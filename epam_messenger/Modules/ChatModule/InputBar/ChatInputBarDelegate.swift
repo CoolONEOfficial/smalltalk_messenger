@@ -21,20 +21,23 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
             //let context = substring.attribute(.autocompletedContext, at: 0, effectiveRange: nil)
             //print("Autocompleted: `", substring, "` with context: ", context ?? [])
         }
-
+        
         inputBar.inputTextView.text = String()
-        inputBar.invalidatePlugins()
-
+        
         // Send button activity animation
         inputBar.sendButton.startAnimating()
         inputBar.inputTextView.placeholder = "Sending..."
         
-        viewModel.sendMessage(text) {_ in
-            inputBar.sendButton.stopAnimating()
-            inputBar.inputTextView.placeholder = "Message..."
-            
-            self.tableView.scrollToBottom(animated: true)
+        viewModel.sendMessage(
+            text,
+            attachments: attachmentManager.attachments) {_ in
+                inputBar.sendButton.stopAnimating()
+                inputBar.inputTextView.placeholder = "Message..."
+                
+                self.tableView.scrollToBottom(animated: true)
         }
+        
+        inputBar.invalidatePlugins()
     }
     
     func inputBar(_ inputBar: InputBarAccessoryView, didChangeIntrinsicContentTo size: CGSize) {
@@ -50,15 +53,14 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
         DispatchQueue.global(qos: .default).async {
             // fake background loading task
             var array: [AutocompleteCompletion] = []
-//            for _ in 1...10 {
-//                array.append(AutocompleteCompletion(text: Lorem.word()))
-//            }
-//            sleep(1)
+            //            for _ in 1...10 {
+            //                array.append(AutocompleteCompletion(text: Lorem.word()))
+            //            }
+            //            sleep(1)
             DispatchQueue.main.async { [weak self] in
                 //self?.asyncCompletions = array
                 self?.autocompleteManager.reloadData()
             }
         }
     }
-    
 }

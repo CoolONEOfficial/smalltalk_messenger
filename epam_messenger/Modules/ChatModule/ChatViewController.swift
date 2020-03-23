@@ -21,14 +21,14 @@ class ChatViewController: UIViewController {
     
     // MARK: - Vars
     
-    let inputBar: ChatInputBar = ChatInputBar()
+    let inputBar = ChatInputBar()
     var viewModel: ChatViewModelProtocol!
     
     var deleteButton = UIButton()
     var forwardButton = UIButton()
     let stack = UIStackView()
     
-    open lazy var autocompleteManager: AutocompleteManager = { [unowned self] in
+    lazy var autocompleteManager: AutocompleteManager = { [unowned self] in
         let manager = AutocompleteManager(for: self.inputBar.inputTextView)
         
         manager.defaultTextAttributes[.foregroundColor] = UIColor.plainText
@@ -36,10 +36,33 @@ class ChatViewController: UIViewController {
         
         manager.delegate = self
         manager.dataSource = self
+        
         return manager
-        }()
+    }()
     
-    private var keyboardManager = KeyboardManager()
+    lazy var keyboardManager: KeyboardManager = { [unowned self] in
+        let manager = KeyboardManager()
+        
+        manager.bind(inputAccessoryView: inputBar)
+        manager.bind(to: tableView)
+        manager.on(event: .didChangeFrame) { [weak self] (notification) in
+            self?.updateTableViewInset(notification.endFrame.height)
+        }.on(event: .didHide) { [weak self] _ in
+            self?.updateTableViewInset()
+        }
+        
+        return manager
+    }()
+    
+    typealias MessageAttachment = AttachmentManager.Attachment
+    
+    lazy var attachmentManager: AttachmentManager = { [unowned self] in
+        let manager = AttachmentManager()
+        manager.delegate = self
+        manager.attachmentView.backgroundColor = .systemBackground
+        manager.tintColor = .accent
+        return manager
+    }()
     
     // MARK: - Events
     
@@ -51,7 +74,6 @@ class ChatViewController: UIViewController {
         
         setupTableView()
         setupInputBar()
-        setupKeyboardManager()
         setupEditModeButtons()
         setupFloatingBottomButton()
     }
@@ -94,8 +116,10 @@ class ChatViewController: UIViewController {
     }
     
     private func setupInputBar() {
-        inputBar.delegate = self
         view.addSubview(inputBar)
+        inputBar.delegate = self
+        let _ = keyboardManager
+        inputBar.inputPlugins = [autocompleteManager, attachmentManager]
     }
     
     private func setupTableView() {
@@ -126,25 +150,9 @@ class ChatViewController: UIViewController {
         }
     }
     
-    private func setupKeyboardManager() {
-        keyboardManager.bind(inputAccessoryView: inputBar)
-        keyboardManager.bind(to: tableView)
-        
-        keyboardManager.on(event: .didShow) { [weak self] _ in
-            self?.tableView.scrollToBottom(animated: true)
-        }
-        
-        // Add some extra handling to manage content inset
-        keyboardManager.on(event: .didChangeFrame) { [weak self] (notification) in
-            self?.updateTableViewInset(notification.endFrame.height)
-        }.on(event: .didHide) { [weak self] _ in
-            self?.updateTableViewInset()
-        }
-    }
-    
     // MARK: - Helpers
     
-    private func updateTableViewInset(_ additional: CGFloat = 0) {
+    internal func updateTableViewInset(_ additional: CGFloat = 0) {
         let bottomSafeArea = view.safeAreaInsets.bottom
         let barHeight = inputBar.bounds.height
         tableView.contentInset.bottom = barHeight + additional - bottomSafeArea
