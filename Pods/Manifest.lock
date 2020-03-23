@@ -180,6 +180,9 @@ PODS:
   - Firebase/Firestore (6.18.0):
     - Firebase/CoreOnly
     - FirebaseFirestore (~> 1.11.0)
+  - Firebase/Storage (6.18.0):
+    - Firebase/CoreOnly
+    - FirebaseStorage (~> 3.5.0)
   - FirebaseAnalytics (6.3.0):
     - FirebaseCore (~> 6.6)
     - FirebaseInstallations (~> 1.1)
@@ -225,8 +228,15 @@ PODS:
     - FirebaseCore (~> 6.6)
     - GoogleUtilities/UserDefaults (~> 6.5)
     - PromisesObjC (~> 1.2)
+  - FirebaseStorage (3.5.0):
+    - FirebaseAuthInterop (~> 1.0)
+    - FirebaseCore (~> 6.0)
+    - GTMSessionFetcher/Core (~> 1.1)
   - FirebaseUI/Firestore (8.4.2):
     - Firebase/Firestore
+  - FirebaseUI/Storage (8.4.2):
+    - Firebase/Storage (~> 6.0)
+    - SDWebImage (~> 5.0)
   - GoogleAppMeasurement (6.3.0):
     - GoogleUtilities/AppDelegateSwizzler (~> 6.0)
     - GoogleUtilities/MethodSwizzler (~> 6.0)
@@ -288,6 +298,9 @@ PODS:
     - Reusable/View (= 4.1.1)
   - Reusable/Storyboard (4.1.1)
   - Reusable/View (4.1.1)
+  - SDWebImage (5.6.0):
+    - SDWebImage/Core (= 5.6.0)
+  - SDWebImage/Core (5.6.0)
   - Sourcery (0.17.0)
   - SwiftLint (0.39.1)
   - TinyConstraints (4.0.1)
@@ -298,7 +311,9 @@ DEPENDENCIES:
   - Firebase/Analytics
   - Firebase/Auth
   - Firebase/Firestore
+  - Firebase/Storage
   - FirebaseUI/Firestore (~> 8.4.2)
+  - FirebaseUI/Storage (~> 8.4.2)
   - InputBarAccessoryView
   - InstantSearchClient (~> 7.0)
   - Reusable
@@ -320,6 +335,7 @@ SPEC REPOS:
     - FirebaseCoreDiagnosticsInterop
     - FirebaseFirestore
     - FirebaseInstallations
+    - FirebaseStorage
     - FirebaseUI
     - GoogleAppMeasurement
     - GoogleDataTransport
@@ -334,6 +350,7 @@ SPEC REPOS:
     - nanopb
     - PromisesObjC
     - Reusable
+    - SDWebImage
     - Sourcery
     - SwiftLint
     - TinyConstraints
@@ -351,6 +368,7 @@ SPEC CHECKSUMS:
   FirebaseCoreDiagnosticsInterop: 296e2c5f5314500a850ad0b83e9e7c10b011a850
   FirebaseFirestore: a23d596ae3a8c13d3b8353b565d2adfb690f9032
   FirebaseInstallations: 575cd32f2aec0feeb0e44f5d0110a09e5e60b47b
+  FirebaseStorage: 6c5263796af3b1be82ed173598aade47535fe125
   FirebaseUI: e57e9b9c4340631151fbe67a14206d23d0974f37
   GoogleAppMeasurement: 39ecba10918b21c83877d392246157f65db351cf
   GoogleDataTransport: 653963cf5be60fb59cf051e070f0836fdc305f81
@@ -365,10 +383,11 @@ SPEC CHECKSUMS:
   nanopb: 18003b5e52dab79db540fe93fe9579f399bd1ccd
   PromisesObjC: c119f3cd559f50b7ae681fa59dc1acd19173b7e6
   Reusable: 53a9acf5c536f229b31b5865782414b508252ddb
+  SDWebImage: 21b19f56b4226cdfe3aefe4e6848dc43ed129a86
   Sourcery: 3ed61be7c8a1218fce349266139379dba477efe0
   SwiftLint: 55e96a4a4d537d4a3156859fc1c54bd24851a046
   TinyConstraints: 8dd91295e56797648c7bc335dd20e1d91ec4c192
 
-PODFILE CHECKSUM: 0f73497a5c607b1d4f4b0cd9827bd27552a7a685
+PODFILE CHECKSUM: 01f793acd092c2d78437f4fb8f21eb3edbe822e4
 
 COCOAPODS: 1.9.0
