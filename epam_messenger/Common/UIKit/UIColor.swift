@@ -44,7 +44,7 @@ extension UIColor {
     
     // MARK: - Chat header
     
-    static let chatDateHeaderText = UIColor { (UITraitCollection: UITraitCollection) -> UIColor in
+    static let chatRectLabelText = UIColor { (UITraitCollection: UITraitCollection) -> UIColor in
         if UITraitCollection.userInterfaceStyle == .dark {
             return UIColor.lightText.withAlphaComponent(0.8)
         } else {
@@ -52,7 +52,7 @@ extension UIColor {
         }
     }
     
-    static let chatDateHeaderBackground = UIColor { (UITraitCollection: UITraitCollection) -> UIColor in
+    static let chatRectLabelBackground = UIColor { (UITraitCollection: UITraitCollection) -> UIColor in
         if UITraitCollection.userInterfaceStyle == .dark {
             return UIColor(red: 0, green: 0, blue: 0, alpha: 0.65)
         } else {

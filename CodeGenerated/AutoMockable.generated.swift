@@ -48,29 +48,29 @@ class ChatViewModelProtocolMock: ChatViewModelProtocol {
     var firestoreQueryCalled: Bool {
         return firestoreQueryCallsCount > 0
     }
-    var firestoreQueryReturnValue: Query!
-    var firestoreQueryClosure: (() -> Query)?
+    var firestoreQueryReturnValue: FireQuery!
+    var firestoreQueryClosure: (() -> FireQuery)?
 
-    func firestoreQuery() -> Query {
+    func firestoreQuery() -> FireQuery {
         firestoreQueryCallsCount += 1
         return firestoreQueryClosure.map({ $0() }) ?? firestoreQueryReturnValue
     }
 
     //MARK: - sendMessage
 
-    var sendMessageCompletionCallsCount = 0
-    var sendMessageCompletionCalled: Bool {
-        return sendMessageCompletionCallsCount > 0
+    var sendMessageAttachmentsCompletionCallsCount = 0
+    var sendMessageAttachmentsCompletionCalled: Bool {
+        return sendMessageAttachmentsCompletionCallsCount > 0
     }
-    var sendMessageCompletionReceivedArguments: (messageText: String, completion: (Bool) -> Void)?
-    var sendMessageCompletionReceivedInvocations: [(messageText: String, completion: (Bool) -> Void)] = []
-    var sendMessageCompletionClosure: ((String, @escaping (Bool) -> Void) -> Void)?
+    var sendMessageAttachmentsCompletionReceivedArguments: (messageText: String, attachments: [ChatViewController.MessageAttachment], completion: (Bool) -> Void)?
+    var sendMessageAttachmentsCompletionReceivedInvocations: [(messageText: String, attachments: [ChatViewController.MessageAttachment], completion: (Bool) -> Void)] = []
+    var sendMessageAttachmentsCompletionClosure: ((String, [ChatViewController.MessageAttachment], @escaping (Bool) -> Void) -> Void)?
 
-    func sendMessage(        _ messageText: String,        completion: @escaping (Bool) -> Void    ) {
-        sendMessageCompletionCallsCount += 1
-        sendMessageCompletionReceivedArguments = (messageText: messageText, completion: completion)
-        sendMessageCompletionReceivedInvocations.append((messageText: messageText, completion: completion))
-        sendMessageCompletionClosure?(messageText, completion)
+    func sendMessage(        _ messageText: String,        attachments: [ChatViewController.MessageAttachment],        completion: @escaping (Bool) -> Void    ) {
+        sendMessageAttachmentsCompletionCallsCount += 1
+        sendMessageAttachmentsCompletionReceivedArguments = (messageText: messageText, attachments: attachments, completion: completion)
+        sendMessageAttachmentsCompletionReceivedInvocations.append((messageText: messageText, attachments: attachments, completion: completion))
+        sendMessageAttachmentsCompletionClosure?(messageText, attachments, completion)
     }
 
     //MARK: - deleteMessage
@@ -194,19 +194,19 @@ class FirestoreServiceProtocolMock: FirestoreServiceProtocol {
 
     //MARK: - sendMessage
 
-    var sendMessageChatDocumentIdMessageTextCompletionCallsCount = 0
-    var sendMessageChatDocumentIdMessageTextCompletionCalled: Bool {
-        return sendMessageChatDocumentIdMessageTextCompletionCallsCount > 0
+    var sendMessageChatDocumentIdMessageKindCompletionCallsCount = 0
+    var sendMessageChatDocumentIdMessageKindCompletionCalled: Bool {
+        return sendMessageChatDocumentIdMessageKindCompletionCallsCount > 0
     }
-    var sendMessageChatDocumentIdMessageTextCompletionReceivedArguments: (chatDocumentId: String, messageText: String, completion: (Bool) -> Void)?
-    var sendMessageChatDocumentIdMessageTextCompletionReceivedInvocations: [(chatDocumentId: String, messageText: String, completion: (Bool) -> Void)] = []
-    var sendMessageChatDocumentIdMessageTextCompletionClosure: ((String, String, @escaping (Bool) -> Void) -> Void)?
+    var sendMessageChatDocumentIdMessageKindCompletionReceivedArguments: (chatDocumentId: String, messageKind: [MessageModel.MessageKind], completion: (Bool) -> Void)?
+    var sendMessageChatDocumentIdMessageKindCompletionReceivedInvocations: [(chatDocumentId: String, messageKind: [MessageModel.MessageKind], completion: (Bool) -> Void)] = []
+    var sendMessageChatDocumentIdMessageKindCompletionClosure: ((String, [MessageModel.MessageKind], @escaping (Bool) -> Void) -> Void)?
 
-    func sendMessage(        chatDocumentId: String,        messageText: String,        completion: @escaping (Bool) -> Void    ) {
-        sendMessageChatDocumentIdMessageTextCompletionCallsCount += 1
-        sendMessageChatDocumentIdMessageTextCompletionReceivedArguments = (chatDocumentId: chatDocumentId, messageText: messageText, completion: completion)
-        sendMessageChatDocumentIdMessageTextCompletionReceivedInvocations.append((chatDocumentId: chatDocumentId, messageText: messageText, completion: completion))
-        sendMessageChatDocumentIdMessageTextCompletionClosure?(chatDocumentId, messageText, completion)
+    func sendMessage(        chatDocumentId: String,        messageKind: [MessageModel.MessageKind],        completion: @escaping (Bool) -> Void    ) {
+        sendMessageChatDocumentIdMessageKindCompletionCallsCount += 1
+        sendMessageChatDocumentIdMessageKindCompletionReceivedArguments = (chatDocumentId: chatDocumentId, messageKind: messageKind, completion: completion)
+        sendMessageChatDocumentIdMessageKindCompletionReceivedInvocations.append((chatDocumentId: chatDocumentId, messageKind: messageKind, completion: completion))
+        sendMessageChatDocumentIdMessageKindCompletionClosure?(chatDocumentId, messageKind, completion)
     }
 
     //MARK: - deleteMessage

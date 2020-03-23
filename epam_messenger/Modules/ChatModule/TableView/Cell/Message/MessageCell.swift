@@ -9,14 +9,26 @@ import UIKit
 import Reusable
 import TinyConstraints
 
-protocol Messagable: UIView {
+protocol MessageCellProtocol: UIView {
     func loadMessage(_ message: MessageProtocol, mergeNext: Bool, mergePrev: Bool)
     
     var mergeNext: Bool! { get set }
     var mergePrev: Bool! { get set }
 }
 
-class MessageCell: UITableViewCell, NibReusable, Messagable {
+protocol MessageCellContentProtocol: UIView {
+    func loadMessage(_ message: MessageProtocol, cell: MessageCellProtocol, mergeContentNext: Bool, mergeContentPrev: Bool)
+    
+    var cell: MessageCellProtocol! { get set }
+    var mergeContentNext: Bool! { get set }
+    var mergeContentPrev: Bool! { get set }
+    
+    var topMargin: CGFloat { get }
+    var bottomMargin: CGFloat { get }
+    
+}
+
+class MessageCell: UITableViewCell, NibReusable, MessageCellProtocol {
     
     // MARK: - Outlets
     
@@ -29,10 +41,33 @@ class MessageCell: UITableViewCell, NibReusable, Messagable {
     @IBOutlet var stackBottomAnchor: NSLayoutConstraint!
     @IBOutlet var stackTopAnchor: NSLayoutConstraint!
     
+    static let cornerRadius: CGFloat = 17
+    
     // MARK: - Vars
+    
     var mergeNext: Bool!
     var mergePrev: Bool!
-    var messageContent: Messagable!
+    
+    var _contentStack: UIStackView?
+    var contentStack: UIStackView {
+        if _contentStack == nil {
+            let newStack = UIStackView()
+            newStack.translatesAutoresizingMaskIntoConstraints = false
+            newStack.axis = .vertical
+            newStack.spacing = 4
+            newStack.distribution = .fillProportionally
+            
+            bubbleImage.addSubview(newStack)
+            newStack.horizontalToSuperview(
+                insets: message.isIncoming
+                    ? .left(6) + .right(0)
+                    : .left(0) + .right(6)
+            )
+            _contentStack = newStack
+        }
+        
+        return _contentStack!
+    }
     
     internal static let bubbleImageCache: NSCache<NSString, UIImage> = {
         let cache = NSCache<NSString, UIImage>()
@@ -66,7 +101,7 @@ class MessageCell: UITableViewCell, NibReusable, Messagable {
             : stretchedImage.withHorizontallyFlippedOrientation()
     }
     
-    private var message: MessageProtocol! {
+    internal var message: MessageProtocol! {
         didSet {
             setupBubbleImage()
             setupMessageContent()
@@ -102,18 +137,31 @@ class MessageCell: UITableViewCell, NibReusable, Messagable {
     }
     
     private func setupMessageContent() {
-        switch self.message {
-        case let textMessage as TextMessageProtocol:
-            messageContent = MessageTextContent()
-            messageContent.loadMessage(
-                textMessage,
-                mergeNext: mergeNext,
-                mergePrev: mergePrev
+        for (index, kind) in message.kind.enumerated() {
+            var contentView: MessageCellContentProtocol!
+            switch kind {
+            case .text:
+                contentView = MessageTextContent()
+            case .image:
+                contentView = MessageImageContent()
+            }
+            contentView.loadMessage(
+                self.message,
+                cell: self,
+                mergeContentNext: index != message.kind.count - 1,
+                mergeContentPrev: index != 0
             )
-        default:
-            fatalError("Incorrect protocol")
+            contentStack.addArrangedSubview(contentView)
+            
+            if index == 0 {
+                contentStack.topToSuperview(offset: contentView.topMargin)
+            }
+            debugPrint("PRE ff BINGO")
+            if index == message.kind.count - 1 {
+                debugPrint("BINGO")
+                contentStack.bottomToSuperview(offset: -contentView.bottomMargin)
+            }
         }
-        bubbleImage.addSubview(messageContent)
     }
     
     private func setupBubbleImage() {
@@ -141,10 +189,11 @@ class MessageCell: UITableViewCell, NibReusable, Messagable {
     override func prepareForReuse() {
         super.prepareForReuse()
         
-        if let messageContent = messageContent {
-            messageContent.removeFromSuperview()
-        }
+        contentStack.removeFromSuperview()
+        _contentStack = nil
+        
         mergeNext = false
+        mergePrev = false
         
         stackTrailingAnchor.isActive = true
         stackLeadingAnchor.isActive = true

@@ -7,12 +7,14 @@
 
 import Foundation
 import Firebase
+import InputBarAccessoryView
 
 protocol ChatViewModelProtocol: ViewModelProtocol, AutoMockable {
     func getChatModel() -> ChatModel
-    func firestoreQuery() -> Query
+    func firestoreQuery() -> FireQuery
     func sendMessage(
         _ messageText: String,
+        attachments: [ChatViewController.MessageAttachment],
         completion: @escaping (Bool) -> Void
     )
     func deleteMessage(
@@ -31,45 +33,76 @@ extension ChatViewModelProtocol {
     
     func sendMessage(
         _ messageText: String,
+        attachments: [ChatViewController.MessageAttachment],
         completion: @escaping (Bool) -> Void = {_ in}
     ) {
-        return sendMessage(messageText, completion: completion)
+        return sendMessage(messageText, attachments: attachments, completion: completion)
     }
 }
 
 class ChatViewModel: ChatViewModelProtocol {
     let router: RouterProtocol
     let firestoreService: FirestoreServiceProtocol
+    let storageService: StorageServiceProtocol
     
     let chatModel: ChatModel
     
     init(
         router: RouterProtocol,
         chatModel: ChatModel,
-        firestoreService: FirestoreServiceProtocol = FirestoreService()
+        firestoreService: FirestoreServiceProtocol = FirestoreService(),
+        storageService: StorageServiceProtocol = StorageService()
     ) {
         self.router = router
         self.chatModel = chatModel
         self.firestoreService = firestoreService
+        self.storageService = storageService
     }
     
     func getChatModel() -> ChatModel {
         return self.chatModel
     }
     
-    func firestoreQuery() -> Query {
+    func firestoreQuery() -> FireQuery {
         return firestoreService.createChatQuery(chatModel)
     }
     
     func sendMessage(
         _ messageText: String,
+        attachments: [ChatViewController.MessageAttachment],
         completion: @escaping (Bool) -> Void = {_ in}
     ) {
-        firestoreService.sendMessage(
-            chatDocumentId: chatModel.documentId,
-            messageText: messageText,
-            completion: completion
-        )
+        let uploadGroup = DispatchGroup()
+        var uploadKinds: [MessageModel.MessageKind] = messageText
+            .trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            ? []
+            : [ .text(messageText) ]
+        
+        for attachment in attachments {
+            switch attachment {
+            case .image(let image):
+                uploadGroup.enter()
+                storageService.uploadImage(
+                    chatDocumentId: chatModel.documentId,
+                    image: image
+                ) { kind in
+                    if let kind = kind {
+                        uploadKinds.insert(kind, at: 0)
+                    }
+                    uploadGroup.leave()
+                }
+            default:
+                fatalError() // TODO: other attachments
+            }
+        }
+        
+        uploadGroup.notify(queue: .main) {
+            self.firestoreService.sendMessage(
+                chatDocumentId: self.chatModel.documentId,
+                messageKind: uploadKinds,
+                completion: completion
+            )
+        }
     }
     
     func deleteMessage(
@@ -78,7 +111,7 @@ class ChatViewModel: ChatViewModelProtocol {
     ) {
         firestoreService.deleteMessage(
             chatDocumentId: chatModel.documentId,
-            messageDocumentId: messageModel.documentId,
+            messageDocumentId: messageModel.documentId!,
             completion: completion
         )
     }

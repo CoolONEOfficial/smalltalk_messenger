@@ -12,8 +12,8 @@ class DateHeaderLabel: UILabel {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        backgroundColor = .chatDateHeaderBackground
-        textColor = .chatDateHeaderText
+        backgroundColor = .chatRectLabelBackground
+        textColor = .chatRectLabelText
         textAlignment = .center
         translatesAutoresizingMaskIntoConstraints = false // enables auto layout
         font = UIFont.systemFont(ofSize: 12, weight: .semibold)
