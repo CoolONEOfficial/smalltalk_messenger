@@ -40,21 +40,6 @@
 		853FD19E24165EDE005A7985 /* FirestoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 853FD19D24165EDE005A7985 /* FirestoreService.swift */; };
 		856A9C1F2411B8D10039E977 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 856A9C1E2411B8D10039E977 /* GoogleService-Info.plist */; };
 		857D7CC32418F0C300932457 /* FirestoreCodableInterfaces.swift in Sources */ = {isa = PBXBuildFile; fileRef = 857D7CC22418F0C300932457 /* FirestoreCodableInterfaces.swift */; };
-		85814040241E2B59004884FD /* MessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8581403E241E2B59004884FD /* MessageCell.swift */; };
-		85814041241E2B59004884FD /* MessageCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8581403F241E2B59004884FD /* MessageCell.xib */; };
-		8581404D241E358D004884FD /* MessageTextContent.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8581404C241E358D004884FD /* MessageTextContent.xib */; };
-		8581404F241E35B0004884FD /* MessageTextContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8581404E241E35B0004884FD /* MessageTextContent.swift */; };
-		85814054241EA660004884FD /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85814053241EA660004884FD /* UIColor.swift */; };
-		85814057241EBE8A004884FD /* ChatInputBarDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85814056241EBE8A004884FD /* ChatInputBarDelegate.swift */; };
-		85814059241EC218004884FD /* ChatInputBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85814058241EC218004884FD /* ChatInputBar.swift */; };
-		8581405B241ED271004884FD /* ChatInputBarAutocompleteManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8581405A241ED271004884FD /* ChatInputBarAutocompleteManager.swift */; };
-		85814063242005BF004884FD /* UIDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85814062242005BF004884FD /* UIDevice.swift */; };
-		858F21182421782B00CF8BF0 /* ChatViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 858F21172421782B00CF8BF0 /* ChatViewModelTests.swift */; };
-		858F211A24217BB700CF8BF0 /* AutoMockable.stencil in Resources */ = {isa = PBXBuildFile; fileRef = 858F211924217BB700CF8BF0 /* AutoMockable.stencil */; };
-		858F211C24217BCA00CF8BF0 /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 858F211B24217BCA00CF8BF0 /* AutoMockable.generated.swift */; };
-		858F21202421879900CF8BF0 /* FirestoreServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 858F211F2421879900CF8BF0 /* FirestoreServiceTests.swift */; };
-		858F212A24222BB700CF8BF0 /* epam_messengerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 858F212924222BB700CF8BF0 /* epam_messengerUITests.swift */; };
-		858F213424222C1500CF8BF0 /* ChatViewUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 858F213324222C1500CF8BF0 /* ChatViewUITests.swift */; };
 		859330032417CD9C00F1F32E /* BottomBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 859330022417CD9C00F1F32E /* BottomBarViewController.swift */; };
 		85BE9A6924118CF200E6643B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85BE9A6824118CF200E6643B /* AppDelegate.swift */; };
 		85BE9A7224118CF200E6643B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 85BE9A7124118CF200E6643B /* Assets.xcassets */; };
@@ -71,12 +56,21 @@
 		85FF256C2414DCDF00A25D7A /* ChatCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FF256A2414DCDF00A25D7A /* ChatCell.swift */; };
 		85FF256D2414DCDF00A25D7A /* ChatCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 85FF256B2414DCDF00A25D7A /* ChatCell.xib */; };
 		85FF25752415976600A25D7A /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FF25742415976600A25D7A /* ViewModel.swift */; };
-		943595B1241BD278005BF7A3 /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943595B0241BD278005BF7A3 /* UserModel.swift */; };
-		99C2AD164DAE6CB10716209B /* Pods_epam_messenger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 652ECE69719138B26CCF3B86 /* Pods_epam_messenger.framework */; };
+		E6846B9E242A95E9006818DE /* AuthAssemblyBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6846B8C242A95E9006818DE /* AuthAssemblyBuilder.swift */; };
+		E6846B9F242A95E9006818DE /* AuthEnterCodeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6846B8E242A95E9006818DE /* AuthEnterCodeViewController.swift */; };
+		E6846BA0242A95E9006818DE /* AuthEnterCodeViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E6846B8F242A95E9006818DE /* AuthEnterCodeViewController.xib */; };
+		E6846BA1242A95E9006818DE /* AuthEnterCodeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6846B90242A95E9006818DE /* AuthEnterCodeViewModel.swift */; };
+		E6846BA2242A95E9006818DE /* AuthStartViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E6846B92242A95E9006818DE /* AuthStartViewController.xib */; };
+		E6846BA3242A95E9006818DE /* AuthStartViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6846B93242A95E9006818DE /* AuthStartViewModel.swift */; };
+		E6846BA4242A95E9006818DE /* AuthStartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6846B94242A95E9006818DE /* AuthStartViewController.swift */; };
+		E6846BA5242A95E9006818DE /* AuthEnterNameViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6846B96242A95E9006818DE /* AuthEnterNameViewModel.swift */; };
+		E6846BA6242A95E9006818DE /* AuthEnterNameViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E6846B97242A95E9006818DE /* AuthEnterNameViewController.xib */; };
+		E6846BA7242A95E9006818DE /* AuthEnterNameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6846B98242A95E9006818DE /* AuthEnterNameViewController.swift */; };
+		E6846BA8242A95E9006818DE /* AuthRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6846B99242A95E9006818DE /* AuthRouter.swift */; };
+		E6846BA9242A95E9006818DE /* AuthEnterNumberViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6846B9B242A95E9006818DE /* AuthEnterNumberViewModel.swift */; };
+		E6846BAA242A95E9006818DE /* AuthEnterNumberViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6846B9C242A95E9006818DE /* AuthEnterNumberViewController.swift */; };
+		E6846BAB242A95E9006818DE /* AuthEnterNumberViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E6846B9D242A95E9006818DE /* AuthEnterNumberViewController.xib */; };
 		E6B74976241427C700F00B29 /* AssemblyBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B74975241427C700F00B29 /* AssemblyBuilder.swift */; };
-		E6B74981241433BF00F00B29 /* AuthorizationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B74980241433BF00F00B29 /* AuthorizationViewModel.swift */; };
-		E6B74984241433F500F00B29 /* AuthorizationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B74982241433F500F00B29 /* AuthorizationViewController.swift */; };
-		E6B74985241433F500F00B29 /* AuthorizationViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E6B74983241433F500F00B29 /* AuthorizationViewController.xib */; };
 		E6B749882414377500F00B29 /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B749872414377500F00B29 /* Router.swift */; };
 		E6B7498A2414382300F00B29 /* ChatListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B749892414382300F00B29 /* ChatListViewModel.swift */; };
 		E6B74993241449C600F00B29 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B74991241449C600F00B29 /* ChatViewController.swift */; };
@@ -140,25 +134,6 @@
 		853FD1AE2416A55A005A7985 /* InvertedCollectionViewFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvertedCollectionViewFlowLayout.swift; sourceTree = "<group>"; };
 		856A9C1E2411B8D10039E977 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		857D7CC22418F0C300932457 /* FirestoreCodableInterfaces.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreCodableInterfaces.swift; sourceTree = "<group>"; };
-		8581403E241E2B59004884FD /* MessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCell.swift; sourceTree = "<group>"; };
-		8581403F241E2B59004884FD /* MessageCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MessageCell.xib; sourceTree = "<group>"; };
-		8581404C241E358D004884FD /* MessageTextContent.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MessageTextContent.xib; sourceTree = "<group>"; };
-		8581404E241E35B0004884FD /* MessageTextContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageTextContent.swift; sourceTree = "<group>"; };
-		85814053241EA660004884FD /* UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
-		85814056241EBE8A004884FD /* ChatInputBarDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatInputBarDelegate.swift; sourceTree = "<group>"; };
-		85814058241EC218004884FD /* ChatInputBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatInputBar.swift; sourceTree = "<group>"; };
-		8581405A241ED271004884FD /* ChatInputBarAutocompleteManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatInputBarAutocompleteManager.swift; sourceTree = "<group>"; };
-		85814062242005BF004884FD /* UIDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIDevice.swift; sourceTree = "<group>"; };
-		858F21092421756300CF8BF0 /* epam_messengerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = epam_messengerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		858F210D2421756300CF8BF0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		858F21172421782B00CF8BF0 /* ChatViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewModelTests.swift; sourceTree = "<group>"; };
-		858F211924217BB700CF8BF0 /* AutoMockable.stencil */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AutoMockable.stencil; sourceTree = "<group>"; };
-		858F211B24217BCA00CF8BF0 /* AutoMockable.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoMockable.generated.swift; sourceTree = "<group>"; };
-		858F211F2421879900CF8BF0 /* FirestoreServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreServiceTests.swift; sourceTree = "<group>"; };
-		858F212724222BB700CF8BF0 /* epam_messengerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = epam_messengerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		858F212924222BB700CF8BF0 /* epam_messengerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = epam_messengerUITests.swift; sourceTree = "<group>"; };
-		858F212B24222BB700CF8BF0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		858F213324222C1500CF8BF0 /* ChatViewUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewUITests.swift; sourceTree = "<group>"; };
 		859330022417CD9C00F1F32E /* BottomBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomBarViewController.swift; sourceTree = "<group>"; };
 		85BE9A6524118CF200E6643B /* epam_messenger.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = epam_messenger.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		85BE9A6824118CF200E6643B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -177,14 +152,22 @@
 		85FF256A2414DCDF00A25D7A /* ChatCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatCell.swift; sourceTree = "<group>"; };
 		85FF256B2414DCDF00A25D7A /* ChatCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ChatCell.xib; sourceTree = "<group>"; };
 		85FF25742415976600A25D7A /* ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
-		943595B0241BD278005BF7A3 /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
-		95A2E9892D73F8C8D024D984 /* Pods-epam_messengerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-epam_messengerTests.release.xcconfig"; path = "Target Support Files/Pods-epam_messengerTests/Pods-epam_messengerTests.release.xcconfig"; sourceTree = "<group>"; };
-		9A92A57DE12C66C501107237 /* Pods-epam_messenger.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-epam_messenger.debug.xcconfig"; path = "Target Support Files/Pods-epam_messenger/Pods-epam_messenger.debug.xcconfig"; sourceTree = "<group>"; };
-		CF17F4ABE52AFC05E17D698D /* Pods-epam_messengerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-epam_messengerTests.debug.xcconfig"; path = "Target Support Files/Pods-epam_messengerTests/Pods-epam_messengerTests.debug.xcconfig"; sourceTree = "<group>"; };
+		AF96D330A6FA51B76046EC83 /* Pods-epam_messenger.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-epam_messenger.debug.xcconfig"; path = "Target Support Files/Pods-epam_messenger/Pods-epam_messenger.debug.xcconfig"; sourceTree = "<group>"; };
+		E6846B8C242A95E9006818DE /* AuthAssemblyBuilder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthAssemblyBuilder.swift; sourceTree = "<group>"; };
+		E6846B8E242A95E9006818DE /* AuthEnterCodeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthEnterCodeViewController.swift; sourceTree = "<group>"; };
+		E6846B8F242A95E9006818DE /* AuthEnterCodeViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AuthEnterCodeViewController.xib; sourceTree = "<group>"; };
+		E6846B90242A95E9006818DE /* AuthEnterCodeViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthEnterCodeViewModel.swift; sourceTree = "<group>"; };
+		E6846B92242A95E9006818DE /* AuthStartViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AuthStartViewController.xib; sourceTree = "<group>"; };
+		E6846B93242A95E9006818DE /* AuthStartViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthStartViewModel.swift; sourceTree = "<group>"; };
+		E6846B94242A95E9006818DE /* AuthStartViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthStartViewController.swift; sourceTree = "<group>"; };
+		E6846B96242A95E9006818DE /* AuthEnterNameViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthEnterNameViewModel.swift; sourceTree = "<group>"; };
+		E6846B97242A95E9006818DE /* AuthEnterNameViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AuthEnterNameViewController.xib; sourceTree = "<group>"; };
+		E6846B98242A95E9006818DE /* AuthEnterNameViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthEnterNameViewController.swift; sourceTree = "<group>"; };
+		E6846B99242A95E9006818DE /* AuthRouter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthRouter.swift; sourceTree = "<group>"; };
+		E6846B9B242A95E9006818DE /* AuthEnterNumberViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthEnterNumberViewModel.swift; sourceTree = "<group>"; };
+		E6846B9C242A95E9006818DE /* AuthEnterNumberViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthEnterNumberViewController.swift; sourceTree = "<group>"; };
+		E6846B9D242A95E9006818DE /* AuthEnterNumberViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AuthEnterNumberViewController.xib; sourceTree = "<group>"; };
 		E6B74975241427C700F00B29 /* AssemblyBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssemblyBuilder.swift; sourceTree = "<group>"; };
-		E6B74980241433BF00F00B29 /* AuthorizationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationViewModel.swift; sourceTree = "<group>"; };
-		E6B74982241433F500F00B29 /* AuthorizationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationViewController.swift; sourceTree = "<group>"; };
-		E6B74983241433F500F00B29 /* AuthorizationViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AuthorizationViewController.xib; sourceTree = "<group>"; };
 		E6B749872414377500F00B29 /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
 		E6B749892414382300F00B29 /* ChatListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListViewModel.swift; sourceTree = "<group>"; };
 		E6B74991241449C600F00B29 /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
@@ -357,8 +340,8 @@
 		853FD19C24165E9C005A7985 /* Modules */ = {
 			isa = PBXGroup;
 			children = (
+				E6846B8B242A95E9006818DE /* Auth */,
 				859330012417CD7F00F1F32E /* BottomBarModule */,
-				E6B749782414286000F00B29 /* AuthorizationModule */,
 				E6B749772414281F00F00B29 /* ChatListModule */,
 				E6B74990241448A000F00B29 /* ChatModule */,
 			);
@@ -553,13 +536,57 @@
 			path = MVVM;
 			sourceTree = "<group>";
 		};
-		B2E8FA6F741EB754D5157F15 /* Frameworks */ = {
+		E6846B8B242A95E9006818DE /* Auth */ = {
 			isa = PBXGroup;
 			children = (
-				652ECE69719138B26CCF3B86 /* Pods_epam_messenger.framework */,
-				563E219A4954661809570F49 /* Pods_epam_messengerTests.framework */,
+				E6846B95242A95E9006818DE /* AuthEnterName */,
+				E6846B8D242A95E9006818DE /* AuthEnterCode */,
+				E6846B9A242A95E9006818DE /* AuthEnterNumber */,
+				E6846B91242A95E9006818DE /* AuthStart */,
+				E6846B99242A95E9006818DE /* AuthRouter.swift */,
+				E6846B8C242A95E9006818DE /* AuthAssemblyBuilder.swift */,
 			);
-			name = Frameworks;
+			path = Auth;
+			sourceTree = "<group>";
+		};
+		E6846B8D242A95E9006818DE /* AuthEnterCode */ = {
+			isa = PBXGroup;
+			children = (
+				E6846B8E242A95E9006818DE /* AuthEnterCodeViewController.swift */,
+				E6846B8F242A95E9006818DE /* AuthEnterCodeViewController.xib */,
+				E6846B90242A95E9006818DE /* AuthEnterCodeViewModel.swift */,
+			);
+			path = AuthEnterCode;
+			sourceTree = "<group>";
+		};
+		E6846B91242A95E9006818DE /* AuthStart */ = {
+			isa = PBXGroup;
+			children = (
+				E6846B92242A95E9006818DE /* AuthStartViewController.xib */,
+				E6846B93242A95E9006818DE /* AuthStartViewModel.swift */,
+				E6846B94242A95E9006818DE /* AuthStartViewController.swift */,
+			);
+			path = AuthStart;
+			sourceTree = "<group>";
+		};
+		E6846B95242A95E9006818DE /* AuthEnterName */ = {
+			isa = PBXGroup;
+			children = (
+				E6846B96242A95E9006818DE /* AuthEnterNameViewModel.swift */,
+				E6846B97242A95E9006818DE /* AuthEnterNameViewController.xib */,
+				E6846B98242A95E9006818DE /* AuthEnterNameViewController.swift */,
+			);
+			path = AuthEnterName;
+			sourceTree = "<group>";
+		};
+		E6846B9A242A95E9006818DE /* AuthEnterNumber */ = {
+			isa = PBXGroup;
+			children = (
+				E6846B9B242A95E9006818DE /* AuthEnterNumberViewModel.swift */,
+				E6846B9C242A95E9006818DE /* AuthEnterNumberViewController.swift */,
+				E6846B9D242A95E9006818DE /* AuthEnterNumberViewController.xib */,
+			);
+			path = AuthEnterNumber;
 			sourceTree = "<group>";
 		};
 		E6B749772414281F00F00B29 /* ChatListModule */ = {
@@ -571,16 +598,6 @@
 				85FD29F82417FC130035AC13 /* ChatListViewController.xib */,
 			);
 			path = ChatListModule;
-			sourceTree = "<group>";
-		};
-		E6B749782414286000F00B29 /* AuthorizationModule */ = {
-			isa = PBXGroup;
-			children = (
-				E6B74980241433BF00F00B29 /* AuthorizationViewModel.swift */,
-				E6B74982241433F500F00B29 /* AuthorizationViewController.swift */,
-				E6B74983241433F500F00B29 /* AuthorizationViewController.xib */,
-			);
-			path = AuthorizationModule;
 			sourceTree = "<group>";
 		};
 		E6B7497F2414332D00F00B29 /* Supporting Files */ = {
@@ -751,17 +768,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				85FF256D2414DCDF00A25D7A /* ChatCell.xib in Resources */,
-				852C00F7242F5EAF00BCC056 /* MessageAudioContent.xib in Resources */,
+				E6846BA0242A95E9006818DE /* AuthEnterCodeViewController.xib in Resources */,
 				85BE9A7524118CF200E6643B /* LaunchScreen.storyboard in Resources */,
+				E6846BA2242A95E9006818DE /* AuthStartViewController.xib in Resources */,
+				E6846BA6242A95E9006818DE /* AuthEnterNameViewController.xib in Resources */,
 				E6B74994241449C600F00B29 /* ChatViewController.xib in Resources */,
 				85FD29FA2417FC130035AC13 /* ChatListViewController.xib in Resources */,
-				8581404D241E358D004884FD /* MessageTextContent.xib in Resources */,
-				850C7FFE2427FD89008BAF24 /* MessageImageContent.xib in Resources */,
-				85814041241E2B59004884FD /* MessageCell.xib in Resources */,
-				E6B74985241433F500F00B29 /* AuthorizationViewController.xib in Resources */,
 				85FD29FE241818B70035AC13 /* AutoCodable.swifttemplate in Resources */,
 				858F211A24217BB700CF8BF0 /* AutoMockable.stencil in Resources */,
 				85FD2A00241825840035AC13 /* AutoEquatable.stencil in Resources */,
+				E6846BAB242A95E9006818DE /* AuthEnterNumberViewController.xib in Resources */,
 				856A9C1F2411B8D10039E977 /* GoogleService-Info.plist in Resources */,
 				8526F3D32417907B00ED62E8 /* Assets.xcassets in Resources */,
 				85BE9A7224118CF200E6643B /* Assets.xcassets in Resources */,
@@ -909,40 +925,33 @@
 			files = (
 				852C01152431486000BCC056 /* MediaModel.swift in Sources */,
 				E6B749882414377500F00B29 /* Router.swift in Sources */,
-				850C80062428E99B008BAF24 /* StorageService.swift in Sources */,
-				852C00F5242F5EA300BCC056 /* MessageAudioContent.swift in Sources */,
-				850C7FF0242765DC008BAF24 /* UIImage.swift in Sources */,
-				851F5821241D81D400D04F92 /* ChatTableView.swift in Sources */,
-				E6B74984241433F500F00B29 /* AuthorizationViewController.swift in Sources */,
-				851F582C241D987300D04F92 /* DateHeader.swift in Sources */,
+				E6846BA5242A95E9006818DE /* AuthEnterNameViewModel.swift in Sources */,
+				E6846BA9242A95E9006818DE /* AuthEnterNumberViewModel.swift in Sources */,
+				E6846B9F242A95E9006818DE /* AuthEnterCodeViewController.swift in Sources */,
 				85FD2A0524182BD70035AC13 /* AutoEquatable.generated.swift in Sources */,
 				85814054241EA660004884FD /* UIColor.swift in Sources */,
 				85FD29F92417FC130035AC13 /* ChatListViewController.swift in Sources */,
 				852C0121243161F900BCC056 /* MessageForward.swift in Sources */,
 				85814040241E2B59004884FD /* MessageCell.swift in Sources */,
 				85FF25622414623200A25D7A /* ChatModel.swift in Sources */,
-				850C7FF2242773CA008BAF24 /* ChatInputBarAttachmentManager.swift in Sources */,
+				E6846BA1242A95E9006818DE /* AuthEnterCodeViewModel.swift in Sources */,
+				E6846BA7242A95E9006818DE /* AuthEnterNameViewController.swift in Sources */,
 				857D7CC32418F0C300932457 /* FirestoreCodableInterfaces.swift in Sources */,
-				850C7FFC2427FD7C008BAF24 /* MessageImageContent.swift in Sources */,
-				851F581B241D792A00D04F92 /* Array.swift in Sources */,
-				851F582E241D990900D04F92 /* ChatTableViewDelegate.swift in Sources */,
+				E6846BA8242A95E9006818DE /* AuthRouter.swift in Sources */,
 				E6B74993241449C600F00B29 /* ChatViewController.swift in Sources */,
 				852C00F9242F607400BCC056 /* MessageAudio.swift in Sources */,
 				85FF25752415976600A25D7A /* ViewModel.swift in Sources */,
 				8581404F241E35B0004884FD /* MessageTextContent.swift in Sources */,
 				E6B74976241427C700F00B29 /* AssemblyBuilder.swift in Sources */,
-				851F5829241D92AE00D04F92 /* Message.swift in Sources */,
-				852C00F2242E188400BCC056 /* ImagePickerService.swift in Sources */,
-				851F5823241D824E00D04F92 /* ChatTableViewDataSource.swift in Sources */,
-				85814063242005BF004884FD /* UIDevice.swift in Sources */,
+				E6846B9E242A95E9006818DE /* AuthAssemblyBuilder.swift in Sources */,
 				E6B7499824144C5700F00B29 /* SceneDelegate.swift in Sources */,
 				858F211C24217BCA00CF8BF0 /* AutoMockable.generated.swift in Sources */,
 				85FF25642414624B00A25D7A /* MessageModel.swift in Sources */,
+				E6846BA3242A95E9006818DE /* AuthStartViewModel.swift in Sources */,
 				853FD19E24165EDE005A7985 /* FirestoreService.swift in Sources */,
+				E6846BAA242A95E9006818DE /* AuthEnterNumberViewController.swift in Sources */,
 				859330032417CD9C00F1F32E /* BottomBarViewController.swift in Sources */,
-				E6B74981241433BF00F00B29 /* AuthorizationViewModel.swift in Sources */,
-				851553F0241983E500C89534 /* Message24HourDateFormatter.swift in Sources */,
-				943595B1241BD278005BF7A3 /* UserModel.swift in Sources */,
+				851553F0241983E500C89534 /* MessageKit24HourDateFormatter.swift in Sources */,
 				E6B7498A2414382300F00B29 /* ChatListViewModel.swift in Sources */,
 				850C8015242A7F34008BAF24 /* ChatPhotoViewerDataSource.swift in Sources */,
 				852C00EF242CF8FA00BCC056 /* MessageText.swift in Sources */,
@@ -951,11 +960,7 @@
 				851F581E241D7E2900D04F92 /* Date.swift in Sources */,
 				85FF256C2414DCDF00A25D7A /* ChatCell.swift in Sources */,
 				85FD2A0724182CE80035AC13 /* AutoCodable.generated.swift in Sources */,
-				850C80022428BD7D008BAF24 /* UIStackView.swift in Sources */,
-				852C00F0242CF8FA00BCC056 /* MessageImage.swift in Sources */,
-				852C011F2431604500BCC056 /* MessageForwardContent.swift in Sources */,
-				850C7FEE2425426E008BAF24 /* AlgoliaService.swift in Sources */,
-				8581405B241ED271004884FD /* ChatInputBarAutocompleteManager.swift in Sources */,
+				E6846BA4242A95E9006818DE /* AuthStartViewController.swift in Sources */,
 				E6B7499624144A4F00F00B29 /* ChatViewModel.swift in Sources */,
 				850C7FF42427886E008BAF24 /* ChatInputBarAttachMenu.swift in Sources */,
 				85BE9A6924118CF200E6643B /* AppDelegate.swift in Sources */,

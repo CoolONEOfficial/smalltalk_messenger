@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 protocol RouterMain {
     var navigationController: UINavigationController? { get set }
@@ -24,11 +25,17 @@ class Router: RouterProtocol {
     var navigationController: UINavigationController?
     var assemblyBuilder: AssemblyBuilderProtocol?
     
-    var isAuthorized = false
+    var isAuthorized: Bool {
+        return Auth.auth().currentUser != nil
+    }
     
     var rootViewController: UIViewController? {
-        return isAuthorized ? assemblyBuilder?.createChatListModule(router: self) :
-            assemblyBuilder?.createAuthorizationModule(router: self)
+        if isAuthorized {
+            return assemblyBuilder?.createChatListModule(router: self)
+        } else {
+            guard let assemblyBuilder = assemblyBuilder as? AuthAssemblyBuilder else { return UIViewController() }
+            return assemblyBuilder.createAuthStart(router: self)
+        }
     }
     
     func initialViewController() {
