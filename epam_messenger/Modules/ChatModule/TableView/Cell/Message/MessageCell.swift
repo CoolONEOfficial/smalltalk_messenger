@@ -26,6 +26,15 @@ protocol MessageCellContentProtocol: UIView {
     var topMargin: CGFloat { get }
     var bottomMargin: CGFloat { get }
     
+    func didTap(_ recognizer: UITapGestureRecognizer)
+}
+
+extension MessageCellContentProtocol {
+    func didTap(_ recognizer: UITapGestureRecognizer) {}
+}
+
+protocol MessageCellDelegate {
+    func didTapContent(_ content: MessageCellContentProtocol)
 }
 
 class MessageCell: UITableViewCell, NibReusable, MessageCellProtocol {
@@ -48,6 +57,8 @@ class MessageCell: UITableViewCell, NibReusable, MessageCellProtocol {
     var mergeNext: Bool!
     var mergePrev: Bool!
     
+    var delegate: MessageCellDelegate?
+    
     var _contentStack: UIStackView?
     var contentStack: UIStackView {
         if _contentStack == nil {
@@ -56,6 +67,7 @@ class MessageCell: UITableViewCell, NibReusable, MessageCellProtocol {
             newStack.axis = .vertical
             newStack.spacing = 4
             newStack.distribution = .fillProportionally
+            newStack.isUserInteractionEnabled = true
             
             bubbleImage.addSubview(newStack)
             newStack.horizontalToSuperview(
@@ -156,9 +168,7 @@ class MessageCell: UITableViewCell, NibReusable, MessageCellProtocol {
             if index == 0 {
                 contentStack.topToSuperview(offset: contentView.topMargin)
             }
-            debugPrint("PRE ff BINGO")
             if index == message.kind.count - 1 {
-                debugPrint("BINGO")
                 contentStack.bottomToSuperview(offset: -contentView.bottomMargin)
             }
         }
@@ -176,7 +186,7 @@ class MessageCell: UITableViewCell, NibReusable, MessageCellProtocol {
         self.mergePrev = mergePrev
         self.message = message
     }
-    
+        
     // MARK: - Methods
     
     override func awakeFromNib() {
@@ -184,6 +194,9 @@ class MessageCell: UITableViewCell, NibReusable, MessageCellProtocol {
         
         // Disable selection color
         selectedBackgroundView = UIView()
+        
+        isUserInteractionEnabled = true
+        addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didCellTap(_:))))
     }
     
     override func prepareForReuse() {
@@ -199,5 +212,19 @@ class MessageCell: UITableViewCell, NibReusable, MessageCellProtocol {
         stackLeadingAnchor.isActive = true
         stackTopAnchor.constant = 2
         stackBottomAnchor.constant = 2
+    }
+    
+    // MARK: - Actions
+    
+    @objc func didCellTap(_ recognizer: UITapGestureRecognizer) {
+        for content in contentStack.subviews {
+            let tapLocation = recognizer.location(in: content)
+            
+            if content.frame.contains(tapLocation),
+                let content = content as? MessageCellContentProtocol {
+                content.didTap(recognizer)
+                delegate?.didTapContent(content)
+            }
+        }
     }
 }

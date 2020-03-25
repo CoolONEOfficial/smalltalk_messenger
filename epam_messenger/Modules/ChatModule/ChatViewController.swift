@@ -10,6 +10,11 @@ import Firebase
 import FirebaseUI
 import CodableFirebase
 import InputBarAccessoryView
+import NYTPhotoViewer
+
+protocol ChatViewControllerProtocol: AutoMockable {
+    func presentPhotoViewer(_ storageRefs: [StorageReference], initialIndex: Int)
+}
 
 class ChatViewController: UIViewController {
     
@@ -23,6 +28,7 @@ class ChatViewController: UIViewController {
     
     let inputBar = ChatInputBar()
     var viewModel: ChatViewModelProtocol!
+    var photosViewerCoordinator: ChatPhotoViewerDataSource!
     
     var deleteButton = UIButton()
     var forwardButton = UIButton()
@@ -125,6 +131,7 @@ class ChatViewController: UIViewController {
     private func setupTableView() {
         tableView.register(cellType: MessageCell.self)
         tableView.delegate = self
+        tableView.messageDelegate = viewModel
         tableView.allowsMultipleSelection = false
         tableView.allowsMultipleSelectionDuringEditing = true
         
@@ -165,4 +172,55 @@ class ChatViewController: UIViewController {
         tableView.scrollToBottom(animated: true)
     }
     
+}
+
+extension ChatViewController: ChatViewControllerProtocol {
+    
+    func presentPhotoViewer(_ storageRefs: [StorageReference], initialIndex: Int) {
+        var photosViewController: NYTPhotosViewController!
+        let coordinator = ChatPhotoViewerDataSource(
+            data: storageRefs.map { ref -> PhotoBox in
+                debugPrint("fullpath: \(ref.fullPath)")
+                let photoBox = PhotoBox(ref.fullPath)
+                
+                ref.getData(maxSize: Int64.max) { data, err in
+                    guard let data = data else {
+                        debugPrint("error while get image data: \(err?.localizedDescription ?? "nil error")")
+                        return
+                    }
+                    
+                    photoBox.image = UIImage(data: data)
+                    photosViewController.update(photoBox)
+                }
+                return photoBox
+            }
+        )
+        
+        photosViewerCoordinator = coordinator
+        
+        photosViewController = .init(
+            dataSource: coordinator,
+            initialPhotoIndex: initialIndex,
+            delegate: self
+        )
+        
+        present(photosViewController, animated: true)
+    }
+    
+}
+
+extension ChatViewController: NYTPhotosViewControllerDelegate {
+    
+    func photosViewController(_ photosViewController: NYTPhotosViewController, referenceViewFor photo: NYTPhoto) -> UIView? {
+        guard let box = photo as? PhotoBox else { return nil }
+
+        return box.path == (viewModel.lastTapCellContent as! MessageImageContent)
+            .imageMessage.image?.path
+            ? viewModel.lastTapCellContent
+            : nil
+    }
+    
+    func photosViewController(_ photosViewController: NYTPhotosViewController, maximumZoomScaleFor photo: NYTPhoto) -> CGFloat {
+        return 2
+    }
 }

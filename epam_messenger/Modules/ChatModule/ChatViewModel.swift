@@ -9,7 +9,7 @@ import Foundation
 import Firebase
 import InputBarAccessoryView
 
-protocol ChatViewModelProtocol: ViewModelProtocol, AutoMockable {
+protocol ChatViewModelProtocol: ViewModelProtocol, AutoMockable, MessageCellDelegate {
     func getChatModel() -> ChatModel
     func firestoreQuery() -> FireQuery
     func sendMessage(
@@ -21,6 +21,8 @@ protocol ChatViewModelProtocol: ViewModelProtocol, AutoMockable {
         _ messageModel: MessageProtocol,
         completion: @escaping (Bool) -> Void
     )
+    
+    var lastTapCellContent: MessageCellContentProtocol! { get }
 }
 
 extension ChatViewModelProtocol {
@@ -45,14 +47,20 @@ class ChatViewModel: ChatViewModelProtocol {
     let firestoreService: FirestoreServiceProtocol
     let storageService: StorageServiceProtocol
     
+    let viewController: ChatViewControllerProtocol
+    
     let chatModel: ChatModel
     
+    var lastTapCellContent: MessageCellContentProtocol!
+    
     init(
+        viewController: ChatViewControllerProtocol,
         router: RouterProtocol,
         chatModel: ChatModel,
         firestoreService: FirestoreServiceProtocol = FirestoreService(),
         storageService: StorageServiceProtocol = StorageService()
     ) {
+        self.viewController = viewController
         self.router = router
         self.chatModel = chatModel
         self.firestoreService = firestoreService
@@ -78,13 +86,14 @@ class ChatViewModel: ChatViewModelProtocol {
             ? []
             : [ .text(messageText) ]
         
-        for attachment in attachments {
+        for (index, attachment) in attachments.enumerated() {
             switch attachment {
             case .image(let image):
                 uploadGroup.enter()
                 storageService.uploadImage(
                     chatDocumentId: chatModel.documentId,
-                    image: image
+                    image: image,
+                    nameSuffix: "_\(index)"
                 ) { kind in
                     if let kind = kind {
                         uploadKinds.insert(kind, at: 0)
@@ -114,5 +123,26 @@ class ChatViewModel: ChatViewModelProtocol {
             messageDocumentId: messageModel.documentId!,
             completion: completion
         )
+    }
+}
+
+extension ChatViewModel: MessageCellDelegate {
+    func didTapContent(_ content: MessageCellContentProtocol) {
+        lastTapCellContent = content
+        switch content {
+        case let messageContent as MessageImageContent:
+            storageService.listChatFiles(chatDocumentId: chatModel.documentId) { refs in
+                if let refs = refs {
+                    let initialIndex = refs.firstIndex { ref in
+                        return ref.fullPath == messageContent.imageMessage.image!.path
+                    }
+                    self.viewController.presentPhotoViewer(
+                        refs,
+                        initialIndex: initialIndex!
+                    )
+                }
+            }
+        default: break
+        }
     }
 }

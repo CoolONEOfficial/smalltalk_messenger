@@ -9,6 +9,7 @@ import UIKit
 import FirebaseStorage
 import FirebaseUI
 import TinyConstraints
+import NYTPhotoViewer
 
 class MessageImageContent: UIView, MessageCellContentProtocol {
     
@@ -57,10 +58,18 @@ class MessageImageContent: UIView, MessageCellContentProtocol {
             with: imageRef,
             placeholderImage: placeholderImage
         ) { image, err, _, _ in
+            guard err == nil else {
+                return
+            }
             
-            self.imageView.backgroundColor = UIColor(patternImage: image!).withAlphaComponent(0.5)
-            
+            self.imageView.backgroundColor = UIColor(patternImage: image!.darkened()!)
+            self.imageView.bounds.origin.x = (image!.size.width / 2) - (self.imageView.bounds.size.width / 2)
+            self.imageView.bounds.origin.y = (image!.size.height / 2) - (self.imageView.bounds.size.height / 2)
         }
+    }
+    
+    @objc private func testTap() {
+        debugPrint("TAP DETECTED")
     }
     
     private func setupStack() {
@@ -126,4 +135,28 @@ class MessageImageContent: UIView, MessageCellContentProtocol {
         return image!
     }
     
+}
+
+// MARK: Image darken helper
+
+fileprivate extension UIImage {
+    func darkened() -> UIImage? {
+        UIGraphicsBeginImageContextWithOptions(size, false, 0)
+        defer { UIGraphicsEndImageContext() }
+
+        guard let ctx = UIGraphicsGetCurrentContext(), let cgImage = cgImage else {
+            return nil
+        }
+
+        // flip the image, or result appears flipped
+        ctx.scaleBy(x: 1.0, y: -1.0)
+        ctx.translateBy(x: 0, y: -size.height)
+
+        let rect = CGRect(origin: .zero, size: size)
+        ctx.draw(cgImage, in: rect)
+        UIColor(white: 0, alpha: 0.5).setFill()
+        ctx.fill(rect)
+
+        return UIGraphicsGetImageFromCurrentImageContext()
+    }
 }

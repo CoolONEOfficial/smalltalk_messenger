@@ -40,6 +40,7 @@ class AssemblyBuilder: AssemblyBuilderProtocol {
     func createChatModule(router: RouterProtocol, chatModel: ChatModel) -> UIViewController {
         let view = ChatViewController()
         let viewModel = ChatViewModel(
+            viewController: view,
             router: router,
             chatModel: chatModel
         )
