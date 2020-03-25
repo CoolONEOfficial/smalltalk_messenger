@@ -77,7 +77,7 @@ class ChatInputBarAttachMenu: UIAlertController {
             self.stack.addArrangedSubview(imageView)
         }
         
-        let photoVideoAction = UIAlertAction(title: "Photo or video", style: .default)
+        let photoVideoAction = UIAlertAction(title: "Photo", style: .default)
         let fileAction = UIAlertAction(title: "File", style: .default)
         let geoAction = UIAlertAction(title: "Geoposition", style: .default)
         let contactAction = UIAlertAction(title: "Contact", style: .default)
