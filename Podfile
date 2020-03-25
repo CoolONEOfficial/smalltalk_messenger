@@ -19,6 +19,7 @@ target 'epam_messenger' do
   pod 'InputBarAccessoryView'
   pod 'TinyConstraints'
   pod 'InstantSearchClient', '~> 7.0'
+  pod 'NYTPhotoViewer'
 
   target 'epam_messengerTests' do
       inherit! :search_paths
