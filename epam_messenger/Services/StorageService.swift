@@ -20,6 +20,10 @@ protocol StorageServiceProtocol: AutoMockable {
         data: Data,
         completion: @escaping (MessageModel.MessageKind?) -> Void
     )
+    func listChatFiles(
+        chatDocumentId: String,
+        completion: @escaping ([StorageReference]?) -> Void
+    )
 }
 
 extension StorageServiceProtocol {
@@ -98,4 +102,36 @@ class StorageService: StorageServiceProtocol {
                 }
         }
     }
+     
+    func listChatFiles(
+        chatDocumentId: String,
+        completion: @escaping ([StorageReference]?) -> Void
+    ) {
+        storage.child("chats").child(chatDocumentId).list(withMaxResults: 20) { result, err in
+            guard err == nil else {
+                completion(nil)
+                return
+            }
+            
+            completion(result.items)
+        }
+    }
+}
+
+// MARK: - ISO8601 date formatter
+
+fileprivate extension ISO8601DateFormatter {
+    convenience init(_ formatOptions: Options, timeZone: TimeZone = TimeZone(secondsFromGMT: 0)!) {
+        self.init()
+        self.formatOptions = formatOptions
+        self.timeZone = timeZone
+    }
+}
+
+fileprivate extension Formatter {
+    static let iso8601withFractionalSeconds = ISO8601DateFormatter([.withInternetDateTime, .withFractionalSeconds])
+}
+
+fileprivate extension Date {
+    var iso8601withFractionalSeconds: String { return Formatter.iso8601withFractionalSeconds.string(from: self) }
 }
