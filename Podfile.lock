@@ -292,6 +292,28 @@ PODS:
     - nanopb/encode (= 0.3.9011)
   - nanopb/decode (0.3.9011)
   - nanopb/encode (0.3.9011)
+  - NYTPhotoViewer (4.0.0):
+    - NYTPhotoViewer/AnimatedGifSupport (= 4.0.0)
+    - NYTPhotoViewer/Core (= 4.0.0)
+  - NYTPhotoViewer/AnimatedGifSupport (4.0.0):
+    - NYTPhotoViewer/Core
+    - PINRemoteImage (~> 3.0.0)
+  - NYTPhotoViewer/Core (4.0.0)
+  - PINCache (3.0.1-beta.8):
+    - PINCache/Arc-exception-safe (= 3.0.1-beta.8)
+    - PINCache/Core (= 3.0.1-beta.8)
+  - PINCache/Arc-exception-safe (3.0.1-beta.8):
+    - PINCache/Core
+  - PINCache/Core (3.0.1-beta.8):
+    - PINOperation (~> 1.1.1)
+  - PINOperation (1.1.2)
+  - PINRemoteImage (3.0.0):
+    - PINRemoteImage/PINCache (= 3.0.0)
+  - PINRemoteImage/Core (3.0.0):
+    - PINOperation
+  - PINRemoteImage/PINCache (3.0.0):
+    - PINCache (= 3.0.1-beta.8)
+    - PINRemoteImage/Core
   - PromisesObjC (1.2.8)
   - Reusable (4.1.1):
     - Reusable/Storyboard (= 4.1.1)
@@ -316,6 +338,7 @@ DEPENDENCIES:
   - FirebaseUI/Storage (~> 8.4.2)
   - InputBarAccessoryView
   - InstantSearchClient (~> 7.0)
+  - NYTPhotoViewer
   - Reusable
   - Sourcery
   - SwiftLint
@@ -348,6 +371,10 @@ SPEC REPOS:
     - InstantSearchClient
     - leveldb-library
     - nanopb
+    - NYTPhotoViewer
+    - PINCache
+    - PINOperation
+    - PINRemoteImage
     - PromisesObjC
     - Reusable
     - SDWebImage
@@ -381,6 +408,10 @@ SPEC CHECKSUMS:
   InstantSearchClient: 289fad11a1bd3bab759bbd80376b3a30a897cbee
   leveldb-library: 55d93ee664b4007aac644a782d11da33fba316f7
   nanopb: 18003b5e52dab79db540fe93fe9579f399bd1ccd
+  NYTPhotoViewer: ff7daab9e450db6d1d0644048ef35b58b9dd65fe
+  PINCache: 534fd41d358d828dfdf227a0d327f3673a65e20b
+  PINOperation: 24b774353ca248fcf87d67b2d61eef42087c125a
+  PINRemoteImage: e2b89e19fb6e77ffc099f9d9f3b3fe1745e3f9f9
   PromisesObjC: c119f3cd559f50b7ae681fa59dc1acd19173b7e6
   Reusable: 53a9acf5c536f229b31b5865782414b508252ddb
   SDWebImage: 21b19f56b4226cdfe3aefe4e6848dc43ed129a86
@@ -388,6 +419,6 @@ SPEC CHECKSUMS:
   SwiftLint: 55e96a4a4d537d4a3156859fc1c54bd24851a046
   TinyConstraints: 8dd91295e56797648c7bc335dd20e1d91ec4c192
 
-PODFILE CHECKSUM: 01f793acd092c2d78437f4fb8f21eb3edbe822e4
+PODFILE CHECKSUM: 0aa1cb12757d6e68f72b9b48011f2064d044c364
 
 COCOAPODS: 1.9.0
