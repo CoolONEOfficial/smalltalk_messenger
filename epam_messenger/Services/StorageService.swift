@@ -102,7 +102,7 @@ class StorageService: StorageServiceProtocol {
                 }
         }
     }
-     
+    
     func listChatFiles(
         chatDocumentId: String,
         completion: @escaping ([StorageReference]?) -> Void
