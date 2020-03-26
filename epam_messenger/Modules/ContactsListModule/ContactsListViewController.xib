@@ -9,7 +9,7 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ContactsListViewController" customModule="epam_messenger" customModuleProvider="target">
             <connections>
-                <outlet property="tableView" destination="Xpd-g8-cTD" id="mX4-q6-y2p"/>
+                <outlet property="tableView" destination="Xpd-g8-cTD" id="iXc-kz-LTi"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -19,17 +19,11 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Xpd-g8-cTD">
-                    <rect key="frame" x="0.0" y="168" width="414" height="694"/>
+                    <rect key="frame" x="0.0" y="100" width="414" height="762"/>
                     <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                 </tableView>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Contacts" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0FC-ET-CcJ">
-                    <rect key="frame" x="71" y="65" width="272" height="27.666666666666671"/>
-                    <fontDescription key="fontDescription" type="system" pointSize="23"/>
-                    <nil key="textColor"/>
-                    <nil key="highlightedColor"/>
-                </label>
                 <searchBar contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="pCz-IA-gaL">
-                    <rect key="frame" x="0.0" y="112" width="414" height="56"/>
+                    <rect key="frame" x="0.0" y="44" width="414" height="56"/>
                     <textInputTraits key="textInputTraits"/>
                 </searchBar>
             </subviews>
@@ -37,12 +31,9 @@
             <constraints>
                 <constraint firstItem="Xpd-g8-cTD" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="2ln-0S-afv"/>
                 <constraint firstItem="Xpd-g8-cTD" firstAttribute="bottom" secondItem="fnl-2z-Ty3" secondAttribute="bottom" id="6hg-7i-EKI"/>
-                <constraint firstItem="pCz-IA-gaL" firstAttribute="top" secondItem="0FC-ET-CcJ" secondAttribute="bottom" constant="19.333333333333329" id="BsC-k2-eHa"/>
+                <constraint firstItem="pCz-IA-gaL" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" id="9JC-Hg-HpL"/>
                 <constraint firstItem="Xpd-g8-cTD" firstAttribute="trailing" secondItem="fnl-2z-Ty3" secondAttribute="trailing" id="DTx-w6-0Lm"/>
-                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="0FC-ET-CcJ" secondAttribute="trailing" constant="71" id="It8-kg-sfO"/>
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="pCz-IA-gaL" secondAttribute="trailing" id="Ypk-ew-sAC"/>
-                <constraint firstItem="0FC-ET-CcJ" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="71" id="b6w-5i-iPT"/>
-                <constraint firstItem="0FC-ET-CcJ" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" constant="21" id="gcP-Tm-Xqd"/>
                 <constraint firstItem="pCz-IA-gaL" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="la8-Tx-8sp"/>
                 <constraint firstItem="Xpd-g8-cTD" firstAttribute="top" secondItem="pCz-IA-gaL" secondAttribute="bottom" id="vPe-Vh-Zrc"/>
             </constraints>
