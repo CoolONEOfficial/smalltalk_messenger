@@ -86,6 +86,7 @@ class ChatViewModel: ChatViewModelProtocol {
             ? []
             : [ .text(messageText) ]
         
+        let uploadStartTimestamp = Date()
         for (index, attachment) in attachments.enumerated() {
             switch attachment {
             case .image(let image):
@@ -93,7 +94,8 @@ class ChatViewModel: ChatViewModelProtocol {
                 storageService.uploadImage(
                     chatDocumentId: chatModel.documentId,
                     image: image,
-                    nameSuffix: "_\(index)"
+                    timestamp: uploadStartTimestamp,
+                    index: attachments.count - index
                 ) { kind in
                     if let kind = kind {
                         uploadKinds.insert(kind, at: 0)
@@ -134,7 +136,7 @@ extension ChatViewModel: MessageCellDelegate {
             storageService.listChatFiles(chatDocumentId: chatModel.documentId) { refs in
                 if let refs = refs {
                     let initialIndex = refs.firstIndex { ref in
-                        return ref.fullPath == messageContent.imageMessage.image!.path
+                        return ref.fullPath == messageContent.imageMessage.kindImage(at: messageContent.kindIndex)!.path
                     }
                     self.viewController.presentPhotoViewer(
                         refs,

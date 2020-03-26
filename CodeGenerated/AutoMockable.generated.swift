@@ -360,19 +360,19 @@ class StorageServiceProtocolMock: StorageServiceProtocol {
 
     //MARK: - uploadImage
 
-    var uploadImageChatDocumentIdImageNameSuffixCompletionCallsCount = 0
-    var uploadImageChatDocumentIdImageNameSuffixCompletionCalled: Bool {
-        return uploadImageChatDocumentIdImageNameSuffixCompletionCallsCount > 0
+    var uploadImageChatDocumentIdImageTimestampIndexCompletionCallsCount = 0
+    var uploadImageChatDocumentIdImageTimestampIndexCompletionCalled: Bool {
+        return uploadImageChatDocumentIdImageTimestampIndexCompletionCallsCount > 0
     }
-    var uploadImageChatDocumentIdImageNameSuffixCompletionReceivedArguments: (chatDocumentId: String, image: UIImage, nameSuffix: String, completion: (MessageModel.MessageKind?) -> Void)?
-    var uploadImageChatDocumentIdImageNameSuffixCompletionReceivedInvocations: [(chatDocumentId: String, image: UIImage, nameSuffix: String, completion: (MessageModel.MessageKind?) -> Void)] = []
-    var uploadImageChatDocumentIdImageNameSuffixCompletionClosure: ((String, UIImage, String, @escaping (MessageModel.MessageKind?) -> Void) -> Void)?
+    var uploadImageChatDocumentIdImageTimestampIndexCompletionReceivedArguments: (chatDocumentId: String, image: UIImage, timestamp: Date, index: Int, completion: (MessageModel.MessageKind?) -> Void)?
+    var uploadImageChatDocumentIdImageTimestampIndexCompletionReceivedInvocations: [(chatDocumentId: String, image: UIImage, timestamp: Date, index: Int, completion: (MessageModel.MessageKind?) -> Void)] = []
+    var uploadImageChatDocumentIdImageTimestampIndexCompletionClosure: ((String, UIImage, Date, Int, @escaping (MessageModel.MessageKind?) -> Void) -> Void)?
 
-    func uploadImage(        chatDocumentId: String,        image: UIImage,        nameSuffix: String,        completion: @escaping (MessageModel.MessageKind?) -> Void    ) {
-        uploadImageChatDocumentIdImageNameSuffixCompletionCallsCount += 1
-        uploadImageChatDocumentIdImageNameSuffixCompletionReceivedArguments = (chatDocumentId: chatDocumentId, image: image, nameSuffix: nameSuffix, completion: completion)
-        uploadImageChatDocumentIdImageNameSuffixCompletionReceivedInvocations.append((chatDocumentId: chatDocumentId, image: image, nameSuffix: nameSuffix, completion: completion))
-        uploadImageChatDocumentIdImageNameSuffixCompletionClosure?(chatDocumentId, image, nameSuffix, completion)
+    func uploadImage(        chatDocumentId: String,        image: UIImage,        timestamp: Date,        index: Int,        completion: @escaping (MessageModel.MessageKind?) -> Void    ) {
+        uploadImageChatDocumentIdImageTimestampIndexCompletionCallsCount += 1
+        uploadImageChatDocumentIdImageTimestampIndexCompletionReceivedArguments = (chatDocumentId: chatDocumentId, image: image, timestamp: timestamp, index: index, completion: completion)
+        uploadImageChatDocumentIdImageTimestampIndexCompletionReceivedInvocations.append((chatDocumentId: chatDocumentId, image: image, timestamp: timestamp, index: index, completion: completion))
+        uploadImageChatDocumentIdImageTimestampIndexCompletionClosure?(chatDocumentId, image, timestamp, index, completion)
     }
 
     //MARK: - listChatFiles

@@ -5,8 +5,8 @@
 //  Created by Nickolay Truhin on 22.03.2020.
 //
 
-import Foundation
+import UIKit
 
 protocol MessageImageProtocol: MessageProtocol {
-    var image: (path: String, size: ImageSize)? { get }
+    func kindImage(at: Int) -> (path: String, size: ImageSize)?
 }

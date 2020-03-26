@@ -29,11 +29,15 @@ class MessageImageContent: UIView, MessageCellContentProtocol {
     var cell: MessageCellProtocol!
     var mergeContentNext: Bool!
     var mergeContentPrev: Bool!
+    var kindIndex: Int!
     var imageMessage: MessageImageProtocol! {
         didSet {
             setupImage()
             setupStack()
         }
+    }
+    var message: MessageProtocol! {
+        return imageMessage
     }
     
     var topMargin: CGFloat {
@@ -45,7 +49,8 @@ class MessageImageContent: UIView, MessageCellContentProtocol {
     }
     
     private func setupImage() {
-        let imageRef = Storage.storage().reference().child(imageMessage.image!.path)
+        let kindImage = imageMessage.kindImage(at: kindIndex)!
+        let imageRef = Storage.storage().reference().child(kindImage.path)
         imageView.layer.cornerRadius = MessageCell.cornerRadius
         imageView.layer.masksToBounds = true
         if mergeContentPrev || mergeContentNext {
@@ -53,7 +58,7 @@ class MessageImageContent: UIView, MessageCellContentProtocol {
                 ? [.layerMinXMaxYCorner, .layerMaxXMaxYCorner] : !mergeContentPrev
                 ? [.layerMinXMinYCorner, .layerMaxXMinYCorner] : []
         }
-        let placeholderImage = imageWithSize(size: imageMessage.image!.size)
+        let placeholderImage = imageWithSize(size: kindImage.size)
         imageView.sd_setImage(
             with: imageRef,
             placeholderImage: placeholderImage
@@ -99,7 +104,14 @@ class MessageImageContent: UIView, MessageCellContentProtocol {
     
     // MARK: - Methods
     
-    func loadMessage(_ message: MessageProtocol, cell: MessageCellProtocol, mergeContentNext: Bool, mergeContentPrev: Bool) {
+    func loadMessage(
+        _ message: MessageProtocol,
+        index: Int,
+        cell: MessageCellProtocol,
+        mergeContentNext: Bool,
+        mergeContentPrev: Bool
+    ) {
+        self.kindIndex = index
         self.cell = cell
         self.mergeContentNext = mergeContentNext
         self.mergeContentPrev = mergeContentPrev

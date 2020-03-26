@@ -8,5 +8,5 @@
 import Foundation
 
 protocol MessageTextProtocol: MessageProtocol {
-    var text: String? { get }
+    func kindText(at: Int) -> String?
 }

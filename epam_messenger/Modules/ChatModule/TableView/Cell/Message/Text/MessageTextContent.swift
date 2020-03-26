@@ -32,6 +32,7 @@ class MessageTextContent: UIView, MessageCellContentProtocol {
     var cell: MessageCellProtocol!
     var mergeContentNext: Bool!
     var mergeContentPrev: Bool!
+    var kindIndex: Int!
     var textMessage: MessageTextProtocol! {
         didSet {
             
@@ -45,8 +46,12 @@ class MessageTextContent: UIView, MessageCellContentProtocol {
         }
     }
     
+    var message: MessageProtocol! {
+        return textMessage
+    }
+    
     private func setupTextLabel(_ textColor: UIColor) {
-        textLabel.text = textMessage.text
+        textLabel.text = textMessage.kindText(at: kindIndex)
         textLabel.textColor = textColor
     }
     
@@ -70,7 +75,13 @@ class MessageTextContent: UIView, MessageCellContentProtocol {
         )
     }
     
-    func loadMessage(_ message: MessageProtocol, cell: MessageCellProtocol, mergeContentNext: Bool, mergeContentPrev: Bool) {
+    func loadMessage(
+        _ message: MessageProtocol,
+        index: Int, cell: MessageCellProtocol,
+        mergeContentNext: Bool,
+        mergeContentPrev: Bool
+    ) {
+        self.kindIndex = index
         self.cell = cell
         self.mergeContentNext = mergeContentNext
         self.mergeContentPrev = mergeContentPrev
