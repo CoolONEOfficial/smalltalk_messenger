@@ -50,11 +50,11 @@
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
             <connections>
-                <outlet property="avatarImageView" destination="C74-xt-hXQ" id="Tlj-NI-GNa"/>
-                <outlet property="nameLabel" destination="gun-Jc-qZp" id="KnW-27-hq3"/>
-                <outlet property="surnameLabel" destination="gYe-R7-pUg" id="YfV-Vu-bju"/>
+                <outlet property="avatarImageView" destination="C74-xt-hXQ" id="I6Q-k1-uXA"/>
+                <outlet property="nameLabel" destination="gun-Jc-qZp" id="sBm-c0-HqR"/>
+                <outlet property="surnameLabel" destination="gYe-R7-pUg" id="WE8-Z6-N63"/>
             </connections>
-            <point key="canvasLocation" x="369.56521739130437" y="251.11607142857142"/>
+            <point key="canvasLocation" x="25" y="60"/>
         </tableViewCell>
     </objects>
 </document>

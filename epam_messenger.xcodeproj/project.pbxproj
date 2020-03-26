@@ -513,6 +513,7 @@
 				943595B2241BD2B4005BF7A3 /* UserModel */,
 				85FF25632414624B00A25D7A /* MessageModel.swift */,
 				85FF25612414623200A25D7A /* ChatModel.swift */,
+				9443B4D5242B9224000BC21E /* UserContactsListModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
