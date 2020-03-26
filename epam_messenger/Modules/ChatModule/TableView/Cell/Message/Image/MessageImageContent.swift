@@ -81,10 +81,6 @@ class MessageImageContent: UIView, MessageCellContentProtocol {
         }
     }
     
-    @objc private func testTap() {
-        debugPrint("TAP DETECTED")
-    }
-    
     private func setupStack() {
         infoStack.isHidden = mergeContentNext
         infoStack.addBackground(color: .chatRectLabelBackground, cornerRadius: infoStack.bounds.height / 2)
