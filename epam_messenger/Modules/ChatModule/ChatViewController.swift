@@ -178,28 +178,19 @@ extension ChatViewController: ChatViewControllerProtocol {
     
     func presentPhotoViewer(_ storageRefs: [StorageReference], initialIndex: Int) {
         var photosViewController: NYTPhotosViewController!
-        let coordinator = ChatPhotoViewerDataSource(
-            data: storageRefs.map { ref -> PhotoBox in
-                debugPrint("fullpath: \(ref.fullPath)")
-                let photoBox = PhotoBox(ref.fullPath)
-                
-                ref.getData(maxSize: Int64.max) { data, err in
-                    guard let data = data else {
-                        debugPrint("error while get image data: \(err?.localizedDescription ?? "nil error")")
-                        return
-                    }
-                    
-                    photoBox.image = UIImage(data: data)
-                    photosViewController.update(photoBox)
-                }
-                return photoBox
-            }
-        )
         
-        photosViewerCoordinator = coordinator
+        if photosViewerCoordinator == nil {
+            photosViewerCoordinator = ChatPhotoViewerDataSource(
+                data: storageRefs.map { ref -> PhotoBox in
+                    let photoBox = PhotoBox(ref.fullPath)
+                    photoBox.image = SDImageCache.shared.imageFromDiskCache(forKey: "gs://\(ref.bucket)/\(ref.fullPath)")
+                    return photoBox
+                }
+            )
+        }
         
         photosViewController = .init(
-            dataSource: coordinator,
+            dataSource: photosViewerCoordinator,
             initialPhotoIndex: initialIndex,
             delegate: self
         )
