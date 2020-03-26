@@ -225,10 +225,12 @@ extension ChatViewController: UITableViewDelegate {
     }
     
     @objc internal func deleteSelectedMessages() {
-        for mIndexPath in tableView.indexPathsForSelectedRows! {
-            let mMessage = self.tableView.chatDataSource.messageAt(mIndexPath)
+        for indexPath in tableView.indexPathsForSelectedRows! {
+            let message = self.tableView.chatDataSource.messageAt(indexPath)
             
-            viewModel.deleteMessage(mMessage)
+            viewModel.deleteMessage(message) { _ in
+                self.didSelectionChange()
+            }
         }
     }
     
