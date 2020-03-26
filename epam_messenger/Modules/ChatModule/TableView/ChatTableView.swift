@@ -112,8 +112,6 @@ class ChatTableView: UITableView {
             at: reloadPaths,
             with: .fade
         )
-        
-        delegate?.didDeleteRow()
     }
     
     override func moveRow(at indexPath: IndexPath, to newIndexPath: IndexPath) {

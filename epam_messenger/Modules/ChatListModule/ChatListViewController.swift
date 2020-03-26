@@ -201,10 +201,6 @@ class ChatListViewController: UIViewController {
     }
 }
 
-extension UITableViewDelegate {
-    func didDeleteRow() {}
-}
-
 extension ChatListViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
