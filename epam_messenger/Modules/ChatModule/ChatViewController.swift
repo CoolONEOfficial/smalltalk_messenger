@@ -124,7 +124,7 @@ class ChatViewController: UIViewController {
     private func setupInputBar() {
         view.addSubview(inputBar)
         inputBar.delegate = self
-        let _ = keyboardManager
+        _ = keyboardManager
         inputBar.inputPlugins = [autocompleteManager, attachmentManager]
     }
     
@@ -214,8 +214,8 @@ extension ChatViewController: NYTPhotosViewControllerDelegate {
     func photosViewController(_ photosViewController: NYTPhotosViewController, referenceViewFor photo: NYTPhoto) -> UIView? {
         guard let box = photo as? PhotoBox else { return nil }
 
-        return box.path == (viewModel.lastTapCellContent as! MessageImageContent)
-            .imageMessage.image?.path
+        let lastCellTapContent = viewModel.lastTapCellContent as! MessageImageContent
+        return box.path == lastCellTapContent.imageMessage.kindImage(at: lastCellTapContent.kindIndex)?.path
             ? viewModel.lastTapCellContent
             : nil
     }

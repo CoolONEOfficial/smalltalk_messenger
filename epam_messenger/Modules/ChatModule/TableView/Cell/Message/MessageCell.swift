@@ -17,7 +17,16 @@ protocol MessageCellProtocol: UIView {
 }
 
 protocol MessageCellContentProtocol: UIView {
-    func loadMessage(_ message: MessageProtocol, cell: MessageCellProtocol, mergeContentNext: Bool, mergeContentPrev: Bool)
+    func loadMessage(
+        _ message: MessageProtocol,
+        index: Int,
+        cell: MessageCellProtocol,
+        mergeContentNext: Bool,
+        mergeContentPrev: Bool
+    )
+    
+    var message: MessageProtocol! { get }
+    var kindIndex: Int! { get set }
     
     var cell: MessageCellProtocol! { get set }
     var mergeContentNext: Bool! { get set }
@@ -159,6 +168,7 @@ class MessageCell: UITableViewCell, NibReusable, MessageCellProtocol {
             }
             contentView.loadMessage(
                 self.message,
+                index: index,
                 cell: self,
                 mergeContentNext: index != message.kind.count - 1,
                 mergeContentPrev: index != 0
@@ -218,8 +228,7 @@ class MessageCell: UITableViewCell, NibReusable, MessageCellProtocol {
     
     @objc func didCellTap(_ recognizer: UITapGestureRecognizer) {
         for content in contentStack.subviews {
-            let tapLocation = recognizer.location(in: content)
-            
+            let tapLocation = recognizer.location(in: contentStack)
             if content.frame.contains(tapLocation),
                 let content = content as? MessageCellContentProtocol {
                 content.didTap(recognizer)

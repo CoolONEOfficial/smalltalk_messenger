@@ -11,7 +11,8 @@ protocol StorageServiceProtocol: AutoMockable {
     func uploadImage(
         chatDocumentId: String,
         image: UIImage,
-        nameSuffix: String,
+        timestamp: Date,
+        index: Int,
         completion: @escaping (MessageModel.MessageKind?) -> Void
     )
     func listChatFiles(
@@ -24,10 +25,11 @@ extension StorageServiceProtocol {
     func uploadImage(
         chatDocumentId: String,
         image: UIImage,
-        nameSuffix: String,
+        timestamp: Date,
+        index: Int,
         completion: @escaping (MessageModel.MessageKind?) -> Void = {_ in}
     ) {
-        uploadImage(chatDocumentId: chatDocumentId, image: image, nameSuffix: nameSuffix, completion: completion)
+        uploadImage(chatDocumentId: chatDocumentId, image: image, timestamp: timestamp, index: index, completion: completion)
     }
 }
 
@@ -37,31 +39,32 @@ class StorageService: StorageServiceProtocol {
     func uploadImage(
         chatDocumentId: String,
         image: UIImage,
-        nameSuffix: String,
+        timestamp: Date,
+        index: Int,
         completion: @escaping (MessageModel.MessageKind?) -> Void = {_ in}
     ) {
         let metadata = StorageMetadata()
         metadata.contentType = "image/jpeg"
         
-        if let data = image.jpegData(compressionQuality: 0.5) {
-        storage.child("chats")
-            .child(chatDocumentId)
-            .child("\(Date().iso8601withFractionalSeconds).jpg")
-            .putData(data, metadata: metadata) { metadata, _ in
-                if let path = metadata?.path {
-                    completion(.image(
-                        path: path,
-                        size: image.size
-                    ))
-                } else {
-                    completion(nil)
-                }
+        if let data = image.jpegData(compressionQuality: 0.9) {
+            storage.child("chats")
+                .child(chatDocumentId)
+                .child("\(timestamp.iso8601withFractionalSeconds)_\(index).jpg")
+                .putData(data, metadata: metadata) { metadata, _ in
+                    if let path = metadata?.path {
+                        completion(.image(
+                            path: path,
+                            size: image.size
+                            ))
+                    } else {
+                        completion(nil)
+                    }
             }
         } else {
             completion(nil)
         }
     }
-     
+    
     func listChatFiles(
         chatDocumentId: String,
         completion: @escaping ([StorageReference]?) -> Void

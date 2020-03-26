@@ -86,27 +86,23 @@ extension MessageModel: MessageProtocol {
 }
 
 extension MessageModel: MessageTextProtocol {
-    var text: String? {
-        for kind in kind {
-            switch kind {
-            case .text(let text):
-                return text
-            default: break
-            }
+    func kindText(at: Int) -> String? {
+        switch kind[at] {
+        case .text(let text):
+            return text
+        default:
+            return nil
         }
-        return nil
     }
 }
 
 extension MessageModel: MessageImageProtocol {
-    var image: (path: String, size: ImageSize)? {
-        for kind in kind {
-            switch kind {
-            case .image(let path, let size):
-                return (path: path, size: size)
-            default: break
-            }
+    func kindImage(at: Int) -> (path: String, size: ImageSize)? {
+        switch kind[at] {
+        case .image(let path, let size):
+            return (path: path, size: size)
+        default:
+            return nil
         }
-        return nil
     }
 }
