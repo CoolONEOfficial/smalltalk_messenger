@@ -35,6 +35,12 @@
 		943595AB241BCECD005BF7A3 /* ContactsListViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 943595A9241BCECD005BF7A3 /* ContactsListViewController.xib */; };
 		943595AD241BD087005BF7A3 /* ContactsListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943595AC241BD087005BF7A3 /* ContactsListViewModel.swift */; };
 		943595B1241BD278005BF7A3 /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943595B0241BD278005BF7A3 /* UserModel.swift */; };
+		9443B4D6242B9224000BC21E /* UserContactsListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9443B4D5242B9224000BC21E /* UserContactsListModel.swift */; };
+		9443B4DD242B93D4000BC21E /* UserContactsListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9443B4DC242B93D4000BC21E /* UserContactsListViewModel.swift */; };
+		94A43704242B9D6000FBB114 /* UserContactsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A43702242B9D6000FBB114 /* UserContactsListViewController.swift */; };
+		94A43705242B9D6000FBB114 /* UserContactsListViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 94A43703242B9D6000FBB114 /* UserContactsListViewController.xib */; };
+		94B3DEEA242BAA8100D75953 /* UserContactsListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94B3DEE8242BAA8100D75953 /* UserContactsListCell.swift */; };
+		94B3DEEB242BAA8100D75953 /* UserContactsListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 94B3DEE9242BAA8100D75953 /* UserContactsListCell.xib */; };
 		E6B74976241427C700F00B29 /* AssemblyBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B74975241427C700F00B29 /* AssemblyBuilder.swift */; };
 		E6B74981241433BF00F00B29 /* AuthorizationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B74980241433BF00F00B29 /* AuthorizationViewModel.swift */; };
 		E6B74984241433F500F00B29 /* AuthorizationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B74982241433F500F00B29 /* AuthorizationViewController.swift */; };
@@ -81,6 +87,12 @@
 		943595A9241BCECD005BF7A3 /* ContactsListViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ContactsListViewController.xib; sourceTree = "<group>"; };
 		943595AC241BD087005BF7A3 /* ContactsListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsListViewModel.swift; sourceTree = "<group>"; };
 		943595B0241BD278005BF7A3 /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
+		9443B4D5242B9224000BC21E /* UserContactsListModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserContactsListModel.swift; sourceTree = "<group>"; };
+		9443B4DC242B93D4000BC21E /* UserContactsListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserContactsListViewModel.swift; sourceTree = "<group>"; };
+		94A43702242B9D6000FBB114 /* UserContactsListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserContactsListViewController.swift; sourceTree = "<group>"; };
+		94A43703242B9D6000FBB114 /* UserContactsListViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UserContactsListViewController.xib; sourceTree = "<group>"; };
+		94B3DEE8242BAA8100D75953 /* UserContactsListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserContactsListCell.swift; sourceTree = "<group>"; };
+		94B3DEE9242BAA8100D75953 /* UserContactsListCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UserContactsListCell.xib; sourceTree = "<group>"; };
 		BFE85635220C008A368D8DD5 /* Pods_epam_messenger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_epam_messenger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E6B74975241427C700F00B29 /* AssemblyBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssemblyBuilder.swift; sourceTree = "<group>"; };
 		E6B74980241433BF00F00B29 /* AuthorizationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationViewModel.swift; sourceTree = "<group>"; };
@@ -134,6 +146,7 @@
 		853FD19C24165E9C005A7985 /* Modules */ = {
 			isa = PBXGroup;
 			children = (
+				9443B4D7242B9318000BC21E /* UserContactsListModule */,
 				9435959E241BCCA1005BF7A3 /* ContactsListModule */,
 				859330012417CD7F00F1F32E /* BottomBarModule */,
 				E6B749782414286000F00B29 /* AuthorizationModule */,
@@ -217,6 +230,7 @@
 				943595B2241BD2B4005BF7A3 /* UserModel */,
 				85FF25632414624B00A25D7A /* MessageModel.swift */,
 				85FF25612414623200A25D7A /* ChatModel.swift */,
+				9443B4D5242B9224000BC21E /* UserContactsListModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -264,6 +278,34 @@
 				943595B0241BD278005BF7A3 /* UserModel.swift */,
 			);
 			path = UserModel;
+			sourceTree = "<group>";
+		};
+		9443B4D0242B8EDB000BC21E /* UserContactsListCell */ = {
+			isa = PBXGroup;
+			children = (
+				94B3DEDF242BA7AC00D75953 /* UserContactsListCell */,
+			);
+			path = UserContactsListCell;
+			sourceTree = "<group>";
+		};
+		9443B4D7242B9318000BC21E /* UserContactsListModule */ = {
+			isa = PBXGroup;
+			children = (
+				9443B4D0242B8EDB000BC21E /* UserContactsListCell */,
+				9443B4DC242B93D4000BC21E /* UserContactsListViewModel.swift */,
+				94A43702242B9D6000FBB114 /* UserContactsListViewController.swift */,
+				94A43703242B9D6000FBB114 /* UserContactsListViewController.xib */,
+			);
+			path = UserContactsListModule;
+			sourceTree = "<group>";
+		};
+		94B3DEDF242BA7AC00D75953 /* UserContactsListCell */ = {
+			isa = PBXGroup;
+			children = (
+				94B3DEE8242BAA8100D75953 /* UserContactsListCell.swift */,
+				94B3DEE9242BAA8100D75953 /* UserContactsListCell.xib */,
+			);
+			path = UserContactsListCell;
 			sourceTree = "<group>";
 		};
 		E6B749772414281F00F00B29 /* ChatListModule */ = {
@@ -387,8 +429,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				85FF256D2414DCDF00A25D7A /* ChatCell.xib in Resources */,
+				94B3DEEB242BAA8100D75953 /* UserContactsListCell.xib in Resources */,
 				85BE9A7524118CF200E6643B /* LaunchScreen.storyboard in Resources */,
 				943595A7241BCD3A005BF7A3 /* ContactsCell.xib in Resources */,
+				94A43705242B9D6000FBB114 /* UserContactsListViewController.xib in Resources */,
 				E6B74994241449C600F00B29 /* ChatViewController.xib in Resources */,
 				85FD29FA2417FC130035AC13 /* ChatListViewController.xib in Resources */,
 				943595AB241BCECD005BF7A3 /* ContactsListViewController.xib in Resources */,
@@ -493,17 +537,21 @@
 				85FF25752415976600A25D7A /* ViewModel.swift in Sources */,
 				E6B74976241427C700F00B29 /* AssemblyBuilder.swift in Sources */,
 				E6B7499824144C5700F00B29 /* SceneDelegate.swift in Sources */,
+				94B3DEEA242BAA8100D75953 /* UserContactsListCell.swift in Sources */,
 				85FF25642414624B00A25D7A /* MessageModel.swift in Sources */,
 				853FD19E24165EDE005A7985 /* FirestoreService.swift in Sources */,
 				943595AD241BD087005BF7A3 /* ContactsListViewModel.swift in Sources */,
 				859330032417CD9C00F1F32E /* BottomBarViewController.swift in Sources */,
 				E6B74981241433BF00F00B29 /* AuthorizationViewModel.swift in Sources */,
+				94A43704242B9D6000FBB114 /* UserContactsListViewController.swift in Sources */,
 				851553F0241983E500C89534 /* MessageKit24HourDateFormatter.swift in Sources */,
 				943595B1241BD278005BF7A3 /* UserModel.swift in Sources */,
+				9443B4DD242B93D4000BC21E /* UserContactsListViewModel.swift in Sources */,
 				E6B7498A2414382300F00B29 /* ChatListViewModel.swift in Sources */,
 				85FD2A0A24182DED0035AC13 /* SourceryInterfaces.swift in Sources */,
 				85FF256C2414DCDF00A25D7A /* ChatCell.swift in Sources */,
 				85FD2A0724182CE80035AC13 /* AutoCodable.generated.swift in Sources */,
+				9443B4D6242B9224000BC21E /* UserContactsListModel.swift in Sources */,
 				E6B7499624144A4F00F00B29 /* ChatViewModel.swift in Sources */,
 				943595A6241BCD3A005BF7A3 /* ContactsCell.swift in Sources */,
 				85BE9A6924118CF200E6643B /* AppDelegate.swift in Sources */,

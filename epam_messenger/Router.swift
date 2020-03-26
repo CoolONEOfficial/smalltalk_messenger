@@ -19,6 +19,7 @@ protocol RouterProtocol: RouterMain {
     func showChat(_ chatModel: ChatModel)
     func popToRoot()
     func showContactsList()
+    func showUserContactsListViewController() // list user's contacts
 }
 
 class Router: RouterProtocol {
@@ -75,6 +76,13 @@ class Router: RouterProtocol {
             navigationController.viewControllers = [contactsListViewController]
         }
     }
+
+    func showUserContactsListViewController() {
+           if let navigationController = navigationController {
+               guard let userContactsListViewController = assemblyBuilder?.createUserContactsListModule(router: self) else { return }
+               navigationController.viewControllers = [userContactsListViewController]
+           }
+       }
     
     init(navigationController: UINavigationController,
          assemblyBuilder: AssemblyBuilderProtocol) {
