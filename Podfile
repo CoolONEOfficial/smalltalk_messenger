@@ -1,5 +1,5 @@
 # Uncomment the next line to define a global platform for your project
-platform :ios, '9.0'
+platform :ios, '10.0'
 
 target 'epam_messenger' do
   # Comment the next line if you don't want to use dynamic frameworks
@@ -20,6 +20,7 @@ target 'epam_messenger' do
   pod 'TinyConstraints'
   pod 'InstantSearchClient', '~> 7.0'
   pod 'NYTPhotoViewer'
+  pod 'BSImagePicker', '~> 3.1.1'
 
   target 'epam_messengerTests' do
       inherit! :search_paths

@@ -1,4 +1,5 @@
 ${PODS_ROOT}/Target Support Files/Pods-epam_messenger/Pods-epam_messenger-frameworks.sh
+${BUILT_PRODUCTS_DIR}/BSImagePicker/BSImagePicker.framework
 ${BUILT_PRODUCTS_DIR}/BoringSSL-GRPC/openssl_grpc.framework
 ${BUILT_PRODUCTS_DIR}/CodableFirebase/CodableFirebase.framework
 ${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework
