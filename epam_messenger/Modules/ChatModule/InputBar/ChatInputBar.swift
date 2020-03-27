@@ -124,7 +124,6 @@ class ChatInputBar: InputBarAccessoryView {
     
     @objc private func showCameraPicker() {
         imagePicker.delegate = self
-        imagePicker.allowsEditing = true
         imagePicker.mediaTypes = ["public.image"]
         imagePicker.sourceType = .camera
         window?.rootViewController?.dismiss(animated: true) {
