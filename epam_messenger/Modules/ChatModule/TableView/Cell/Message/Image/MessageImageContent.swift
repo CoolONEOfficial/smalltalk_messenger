@@ -36,6 +36,14 @@ class MessageImageContent: UIView, MessageCellContentProtocol {
         didSet {
             setupImage()
             setupStack()
+            
+            layer.cornerRadius = MessageCell.cornerRadius
+            layer.masksToBounds = true
+            if mergeContentPrev || mergeContentNext {
+                layer.maskedCorners = !mergeContentNext
+                    ? [.layerMinXMaxYCorner, .layerMaxXMaxYCorner] : !mergeContentPrev
+                    ? [.layerMinXMinYCorner, .layerMaxXMinYCorner] : []
+            }
         }
     }
     var message: MessageProtocol! {
@@ -53,13 +61,6 @@ class MessageImageContent: UIView, MessageCellContentProtocol {
     private func setupImage() {
         let kindImage = imageMessage.kindImage(at: kindIndex)!
         let imageRef = Storage.storage().reference().child(kindImage.path)
-        imageView.layer.cornerRadius = MessageCell.cornerRadius
-        imageView.layer.masksToBounds = true
-        if mergeContentPrev || mergeContentNext {
-            imageView.layer.maskedCorners = !mergeContentNext
-                ? [.layerMinXMaxYCorner, .layerMaxXMaxYCorner] : !mergeContentPrev
-                ? [.layerMinXMinYCorner, .layerMaxXMinYCorner] : []
-        }
         let placeholderImage = imageWithSize(size: kindImage.size)
         imageView.sd_setImage(
             with: imageRef,
@@ -73,7 +74,6 @@ class MessageImageContent: UIView, MessageCellContentProtocol {
             
             self.backgroundImageView = UIImageView(frame: self.imageView.bounds)
             self.backgroundImageView.contentMode = .scaleAspectFill
-            self.backgroundImageView.clipsToBounds = true
             self.backgroundImageView.image = image?.darkened()
             self.contentView.insertSubview(self.backgroundImageView, at: 0)
         }
