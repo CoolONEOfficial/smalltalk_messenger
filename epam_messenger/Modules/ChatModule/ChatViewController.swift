@@ -67,6 +67,7 @@ class ChatViewController: UIViewController {
         manager.delegate = self
         manager.attachmentView.backgroundColor = .systemBackground
         manager.tintColor = .accent
+        manager.showAddAttachmentCell = false
         return manager
     }()
     
@@ -124,6 +125,7 @@ class ChatViewController: UIViewController {
     private func setupInputBar() {
         view.addSubview(inputBar)
         inputBar.delegate = self
+        inputBar.chatDelegate = self
         _ = keyboardManager
         inputBar.inputPlugins = [autocompleteManager, attachmentManager]
     }
@@ -205,10 +207,23 @@ extension ChatViewController: NYTPhotosViewControllerDelegate {
     func photosViewController(_ photosViewController: NYTPhotosViewController, referenceViewFor photo: NYTPhoto) -> UIView? {
         guard let box = photo as? PhotoBox else { return nil }
 
-        let lastCellTapContent = viewModel.lastTapCellContent as! MessageImageContent
-        return box.path == lastCellTapContent.imageMessage.kindImage(at: lastCellTapContent.kindIndex)?.path
-            ? viewModel.lastTapCellContent
-            : nil
+        for (sectionIndex, day) in tableView.chatDataSource.messageItems.enumerated() {
+            for (rowIndex, message) in day.value.enumerated() {
+                for (contentIndex, content) in message.kind.enumerated() {
+                    switch content {
+                    case .image(let path, _):
+                        if box.path == path {
+                            let cell = tableView.cellForRow(at: .init(row: rowIndex, section: sectionIndex)) as! MessageCell
+                            let imageContent = cell.contentStack.subviews[contentIndex] as! MessageImageContent
+                            return imageContent.imageView
+                        }
+                    default: break
+                    }
+                }
+            }
+        }
+        
+        return nil
     }
     
     func photosViewController(_ photosViewController: NYTPhotosViewController, maximumZoomScaleFor photo: NYTPhoto) -> CGFloat {

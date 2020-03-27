@@ -29,6 +29,7 @@
 		8526F3D32417907B00ED62E8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8526F3D22417907B00ED62E8 /* Assets.xcassets */; };
 		852C00EF242CF8FA00BCC056 /* MessageText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 852C00ED242CF8FA00BCC056 /* MessageText.swift */; };
 		852C00F0242CF8FA00BCC056 /* MessageImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 852C00EE242CF8FA00BCC056 /* MessageImage.swift */; };
+		852C00F2242E188400BCC056 /* ImagePickerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 852C00F1242E188400BCC056 /* ImagePickerService.swift */; };
 		853FD19E24165EDE005A7985 /* FirestoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 853FD19D24165EDE005A7985 /* FirestoreService.swift */; };
 		856A9C1F2411B8D10039E977 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 856A9C1E2411B8D10039E977 /* GoogleService-Info.plist */; };
 		857D7CC32418F0C300932457 /* FirestoreCodableInterfaces.swift in Sources */ = {isa = PBXBuildFile; fileRef = 857D7CC22418F0C300932457 /* FirestoreCodableInterfaces.swift */; };
@@ -131,6 +132,7 @@
 		8526F3D42417B8C000ED62E8 /* MessageKit24HourDateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageKit24HourDateFormatter.swift; sourceTree = "<group>"; };
 		852C00ED242CF8FA00BCC056 /* MessageText.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageText.swift; sourceTree = "<group>"; };
 		852C00EE242CF8FA00BCC056 /* MessageImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageImage.swift; sourceTree = "<group>"; };
+		852C00F1242E188400BCC056 /* ImagePickerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerService.swift; sourceTree = "<group>"; };
 		853FD19D24165EDE005A7985 /* FirestoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreService.swift; sourceTree = "<group>"; };
 		853FD1AE2416A55A005A7985 /* InvertedCollectionViewFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvertedCollectionViewFlowLayout.swift; sourceTree = "<group>"; };
 		856A9C1E2411B8D10039E977 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -332,6 +334,7 @@
 				853FD19D24165EDE005A7985 /* FirestoreService.swift */,
 				850C7FED2425426E008BAF24 /* AlgoliaService.swift */,
 				850C80052428E99B008BAF24 /* StorageService.swift */,
+				852C00F1242E188400BCC056 /* ImagePickerService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -960,6 +963,7 @@
 				E6B74976241427C700F00B29 /* AssemblyBuilder.swift in Sources */,
 				E6846B9E242A95E9006818DE /* AuthAssemblyBuilder.swift in Sources */,
 				851F5829241D92AE00D04F92 /* Message.swift in Sources */,
+				852C00F2242E188400BCC056 /* ImagePickerService.swift in Sources */,
 				851F5823241D824E00D04F92 /* ChatTableViewDataSource.swift in Sources */,
 				85814063242005BF004884FD /* UIDevice.swift in Sources */,
 				E6B7499824144C5700F00B29 /* SceneDelegate.swift in Sources */,

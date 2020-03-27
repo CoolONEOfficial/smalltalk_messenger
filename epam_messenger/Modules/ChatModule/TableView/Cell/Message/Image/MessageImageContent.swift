@@ -23,6 +23,8 @@ class MessageImageContent: UIView, MessageCellContentProtocol {
     
     // MARK: - Vars
     
+    var backgroundImageView: UIImageView!
+    
     var shouldSetupConstraints = true
     var superInsets: TinyEdgeInsets!
     
@@ -67,9 +69,13 @@ class MessageImageContent: UIView, MessageCellContentProtocol {
                 return
             }
             
-            self.imageView.backgroundColor = UIColor(patternImage: image!.darkened()!)
-            self.imageView.bounds.origin.x = (image!.size.width / 2) - (self.imageView.bounds.size.width / 2)
-            self.imageView.bounds.origin.y = (image!.size.height / 2) - (self.imageView.bounds.size.height / 2)
+            self.backgroundImageView?.removeFromSuperview()
+            
+            self.backgroundImageView = UIImageView(frame: self.imageView.bounds)
+            self.backgroundImageView.contentMode = .scaleAspectFill
+            self.backgroundImageView.clipsToBounds = true
+            self.backgroundImageView.image = image?.darkened()
+            self.contentView.insertSubview(self.backgroundImageView, at: 0)
         }
     }
     
@@ -116,7 +122,7 @@ class MessageImageContent: UIView, MessageCellContentProtocol {
     
     override func updateConstraints() {
         if shouldSetupConstraints {
-        
+            
             horizontalToSuperview()
             
             shouldSetupConstraints = false
@@ -151,20 +157,20 @@ fileprivate extension UIImage {
     func darkened() -> UIImage? {
         UIGraphicsBeginImageContextWithOptions(size, false, 0)
         defer { UIGraphicsEndImageContext() }
-
+        
         guard let ctx = UIGraphicsGetCurrentContext(), let cgImage = cgImage else {
             return nil
         }
-
+        
         // flip the image, or result appears flipped
         ctx.scaleBy(x: 1.0, y: -1.0)
         ctx.translateBy(x: 0, y: -size.height)
-
+        
         let rect = CGRect(origin: .zero, size: size)
         ctx.draw(cgImage, in: rect)
         UIColor(white: 0, alpha: 0.5).setFill()
         ctx.fill(rect)
-
+        
         return UIGraphicsGetImageFromCurrentImageContext()
     }
 }
