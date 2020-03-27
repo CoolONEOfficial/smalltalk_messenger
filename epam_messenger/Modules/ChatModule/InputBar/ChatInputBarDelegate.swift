@@ -8,6 +8,20 @@
 import Foundation
 import InputBarAccessoryView
 
+protocol ChatInputBarDelegate {
+    func didActionImageTap()
+}
+
+extension ChatViewController: ChatInputBarDelegate {
+    
+    func didActionImageTap() {
+        viewModel.pickImages(viewController: self) { image in
+            self.attachmentManager.handleInput(of: image)
+        }
+    }
+    
+}
+
 extension ChatViewController: InputBarAccessoryViewDelegate {
     
     func inputBar(_ inputBar: InputBarAccessoryView, didPressSendButtonWith text: String) {
@@ -38,6 +52,7 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
         }
         
         inputBar.invalidatePlugins()
+        updateTableViewInset()
     }
     
     func inputBar(_ inputBar: InputBarAccessoryView, didChangeIntrinsicContentTo size: CGSize) {

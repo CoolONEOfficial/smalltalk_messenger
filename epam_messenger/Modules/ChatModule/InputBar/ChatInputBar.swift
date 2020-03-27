@@ -13,6 +13,8 @@ class ChatInputBar: InputBarAccessoryView {
     
     // MARK: - Vars
     
+    var chatDelegate: ChatInputBarDelegate?
+
     let attachButton = InputBarButtonItem()
     
     static let defaultLeftStackWidth: CGFloat = 30
@@ -114,7 +116,8 @@ class ChatInputBar: InputBarAccessoryView {
             cameraRecognizer: UITapGestureRecognizer(
                 target: self, action: #selector(self.showCameraPicker)
             ),
-            didImageTapCompletion: pickImage
+            didImageTapCompletion: pickImage,
+            didActionImageTapCompletion: presentImagePicker
         )
         
         window?
@@ -132,10 +135,14 @@ class ChatInputBar: InputBarAccessoryView {
         }
     }
     
-    @objc private func pickImage(image: UIImage) {
+    private func pickImage(image: UIImage) {
         window?.rootViewController?.dismiss(animated: true) {
             self.inputPlugins.forEach { _ = $0.handleInput(of: image) }
         }
+    }
+    
+    private func presentImagePicker() {
+        chatDelegate?.didActionImageTap()
     }
     
     // MARK: - Side stacks visibility functions

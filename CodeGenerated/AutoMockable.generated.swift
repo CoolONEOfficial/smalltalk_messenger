@@ -111,6 +111,23 @@ class ChatViewModelProtocolMock: ChatViewModelProtocol {
         deleteMessageCompletionClosure?(messageModel, completion)
     }
 
+    //MARK: - pickImages
+
+    var pickImagesViewControllerCompletionCallsCount = 0
+    var pickImagesViewControllerCompletionCalled: Bool {
+        return pickImagesViewControllerCompletionCallsCount > 0
+    }
+    var pickImagesViewControllerCompletionReceivedArguments: (viewController: UIViewController, completion: (UIImage) -> Void)?
+    var pickImagesViewControllerCompletionReceivedInvocations: [(viewController: UIViewController, completion: (UIImage) -> Void)] = []
+    var pickImagesViewControllerCompletionClosure: ((UIViewController, @escaping (UIImage) -> Void) -> Void)?
+
+    func pickImages(        viewController: UIViewController,        completion: @escaping (UIImage) -> Void    ) {
+        pickImagesViewControllerCompletionCallsCount += 1
+        pickImagesViewControllerCompletionReceivedArguments = (viewController: viewController, completion: completion)
+        pickImagesViewControllerCompletionReceivedInvocations.append((viewController: viewController, completion: completion))
+        pickImagesViewControllerCompletionClosure?(viewController, completion)
+    }
+
     //MARK: - didTapContent
 
     var didTapContentCallsCount = 0
@@ -279,6 +296,26 @@ class FirestoreServiceProtocolMock: FirestoreServiceProtocol {
         deleteChatChatDocumentIdCompletionReceivedArguments = (chatDocumentId: chatDocumentId, completion: completion)
         deleteChatChatDocumentIdCompletionReceivedInvocations.append((chatDocumentId: chatDocumentId, completion: completion))
         deleteChatChatDocumentIdCompletionClosure?(chatDocumentId, completion)
+    }
+
+}
+class ImagePickerServiceProtocolMock: ImagePickerServiceProtocol {
+
+    //MARK: - pickImages
+
+    var pickImagesViewControllerCompletionCallsCount = 0
+    var pickImagesViewControllerCompletionCalled: Bool {
+        return pickImagesViewControllerCompletionCallsCount > 0
+    }
+    var pickImagesViewControllerCompletionReceivedArguments: (viewController: UIViewController, completion: (UIImage) -> Void)?
+    var pickImagesViewControllerCompletionReceivedInvocations: [(viewController: UIViewController, completion: (UIImage) -> Void)] = []
+    var pickImagesViewControllerCompletionClosure: ((UIViewController, @escaping (UIImage) -> Void) -> Void)?
+
+    func pickImages(        viewController: UIViewController,        completion: @escaping (UIImage) -> Void    ) {
+        pickImagesViewControllerCompletionCallsCount += 1
+        pickImagesViewControllerCompletionReceivedArguments = (viewController: viewController, completion: completion)
+        pickImagesViewControllerCompletionReceivedInvocations.append((viewController: viewController, completion: completion))
+        pickImagesViewControllerCompletionClosure?(viewController, completion)
     }
 
 }

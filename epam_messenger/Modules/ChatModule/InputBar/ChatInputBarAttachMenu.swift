@@ -40,6 +40,7 @@ class ChatInputBarAttachMenu: UIAlertController {
     }()
     
     var didImageTapCompletion: ((UIImage) -> Void)?
+    var didActionImageTapCompletion: (() -> Void)?
     
     // MARK: - Init
     
@@ -56,11 +57,13 @@ class ChatInputBarAttachMenu: UIAlertController {
     
     convenience init(
         cameraRecognizer: UITapGestureRecognizer,
-        didImageTapCompletion: @escaping (UIImage) -> Void
+        didImageTapCompletion: @escaping (UIImage) -> Void,
+        didActionImageTapCompletion: @escaping () -> Void
     ) {
         self.init(nibName: nil, bundle: nil)
         
         self.didImageTapCompletion = didImageTapCompletion
+        self.didActionImageTapCompletion = didActionImageTapCompletion
         
         setupView()
         
@@ -77,13 +80,15 @@ class ChatInputBarAttachMenu: UIAlertController {
             self.stack.addArrangedSubview(imageView)
         }
         
-        let photoVideoAction = UIAlertAction(title: "Photo", style: .default)
+        let photoAction = UIAlertAction(title: "Photo", style: .default) { _ in
+            self.didActionImageTapCompletion?()
+        }
         let fileAction = UIAlertAction(title: "File", style: .default)
         let geoAction = UIAlertAction(title: "Geoposition", style: .default)
         let contactAction = UIAlertAction(title: "Contact", style: .default)
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
         
-        addAction(photoVideoAction) // TODO: photo select
+        addAction(photoAction) // TODO: photo select
         addAction(fileAction) // TODO: file select
         addAction(geoAction) // TODO: geolocations
         addAction(contactAction) // TODO: contacts select

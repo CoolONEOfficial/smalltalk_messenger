@@ -21,6 +21,10 @@ protocol ChatViewModelProtocol: ViewModelProtocol, AutoMockable, MessageCellDele
         _ messageModel: MessageProtocol,
         completion: @escaping (Bool) -> Void
     )
+    func pickImages(
+        viewController: UIViewController,
+        completion: @escaping (UIImage) -> Void
+    )
     
     var lastTapCellContent: MessageCellContentProtocol! { get }
 }
@@ -46,6 +50,7 @@ class ChatViewModel: ChatViewModelProtocol {
     let router: RouterProtocol
     let firestoreService: FirestoreServiceProtocol
     let storageService: StorageServiceProtocol
+    let imagePickerService: ImagePickerServiceProtocol
     
     let viewController: ChatViewControllerProtocol
     
@@ -58,13 +63,15 @@ class ChatViewModel: ChatViewModelProtocol {
         router: RouterProtocol,
         chatModel: ChatModel,
         firestoreService: FirestoreServiceProtocol = FirestoreService(),
-        storageService: StorageServiceProtocol = StorageService()
+        storageService: StorageServiceProtocol = StorageService(),
+        imagePickerService: ImagePickerServiceProtocol = ImagePickerService()
     ) {
         self.viewController = viewController
         self.router = router
         self.chatModel = chatModel
         self.firestoreService = firestoreService
         self.storageService = storageService
+        self.imagePickerService = imagePickerService
     }
     
     func getChatModel() -> ChatModel {
@@ -125,6 +132,13 @@ class ChatViewModel: ChatViewModelProtocol {
             messageDocumentId: messageModel.documentId!,
             completion: completion
         )
+    }
+    
+    func pickImages(
+        viewController: UIViewController,
+        completion: @escaping (UIImage) -> Void
+    ) {
+        imagePickerService.pickImages(viewController: viewController, completion: completion)
     }
 }
 
