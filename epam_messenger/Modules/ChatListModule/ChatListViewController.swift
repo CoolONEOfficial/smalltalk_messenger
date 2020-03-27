@@ -15,83 +15,293 @@ protocol ChatListViewControllerProtocol {
 }
 
 class ChatListViewController: UIViewController {
-    func batchedArray(_ array: FUIBatchedArray, didUpdateWith diff: FUISnapshotArrayDiff<DocumentSnapshot>) {
-        debugPrint("array : \(array)")
-    }
     
-    func batchedArray(_ array: FUIBatchedArray, willUpdateWith diff: FUISnapshotArrayDiff<DocumentSnapshot>) {
-        debugPrint("array : \(array)")
-    }
+    // MARK: - Outlets
     
-    func batchedArray(_ array: FUIBatchedArray, queryDidFailWithError error: Error) {
-        debugPrint("array : \(array)")
-    }
+    @IBOutlet var tableView: UITableView!
+    
+    // MARK: - Vars
     
     var viewModel: ChatListViewModelProtocol!
+    let searchController = UISearchController(searchResultsController: nil)
+    private var searchItems: [ChatModel] = .init()
     
     var bindDataSource: FUIFirestoreTableViewDataSource! {
         didSet {
             tableView.dataSource = bindDataSource
         }
     }
+    var searchDataSource: FUIFirestoreTableViewDataSource!
     
-    @IBOutlet var tableView: UITableView!
+    lazy var deleteButton: UIBarButtonItem = {
+        return UIBarButtonItem(
+            title: "Delete",
+            style: .plain,
+            target: self,
+            action: #selector(deleteSelectedChats)
+        )
+    }()
+    
+    // MARK: - Methods
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        title = "ChatList"
+        setupTableView()
+        setupNavigationItem()
+        setupSearchController()
+        setupToolbarItems()
+        didSelectionChange()
+    }
+    
+    private func setupTableView() {
         tableView.register(cellType: ChatCell.self)
         tableView.delegate = self
-        
-        let rightItem = UIBarButtonItem(
-            title: "Edit",
-            style: .plain,
-            target: self,
-            action: #selector(toggleEditMode)
-        )
-        self.navigationItem.rightBarButtonItem = rightItem
         
         bindDataSource = self.tableView.bind(
             toFirestoreQuery: viewModel.firestoreQuery()
         ) { tableView, indexPath, snapshot in
             let cell = tableView.dequeueReusableCell(for: indexPath, cellType: ChatCell.self)
             
-            self.viewModel.didChatLoad(snapshot: snapshot, cell: cell)
+            if let chatModel = self.chatFrom(snapshot) {
+                cell.loadChatModel(chatModel)
+            }
             
             return cell
         }
     }
     
-    @objc func toggleEditMode(_ sender: UIBarButtonItem) {
+    private func setupToolbarItems() {
+        tabBarController?.setToolbarItems([
+            UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil),
+            deleteButton
+        ], animated: false)
+    }
+    
+    private func setupSearchController() {
+        searchController.searchResultsUpdater = self
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.searchBar.placeholder = "Search by chats"
+        tabBarController?.navigationItem.searchController = searchController
+    }
+    
+    // MARK: - Edit mode
+    
+    private func setupNavigationItem() {
+        let rightItem = UIBarButtonItem(
+            title: "Edit",
+            style: .plain,
+            target: self,
+            action: #selector(toggleEditMode)
+        )
+        tabBarController?.navigationItem.setRightBarButton(rightItem, animated: false)
+    }
+    
+    @objc private func toggleEditMode(_ sender: UIBarButtonItem) {
         tableView.setEditing(!tableView.isEditing, animated: true)
         sender.title = tableView.isEditing ? "Done" : "Edit"
+        
+        setToolbarHidden(!tableView.isEditing)
+        self.setTabBarHidden(tableView.isEditing)
+    }
+    
+    private func setToolbarHidden(_ isHidden: Bool, completion: @escaping () -> Void = {}) {
+        UIView.animate(withDuration: 0.3, animations: {
+            self.tabBarController?.navigationController?.setToolbarHidden(!self.tableView.isEditing, animated: true)
+        }, completion: { _ in
+            completion()
+        })
+    }
+    
+    @objc private func deleteSelectedChats() {
+        for indexPath in tableView.indexPathsForSelectedRows! {
+            let chatModel = ChatModel.fromSnapshot(bindDataSource.items[indexPath.row])!
+            
+            viewModel.deleteChat(chatModel)
+        }
+    }
+    
+    private func didSelectionChange() {
+        let rowsSelected = tableView.indexPathsForSelectedRows != nil
+        
+        tabBarController?.title = rowsSelected
+            ? "Selected \(tableView.indexPathsForSelectedRows!.count) chats"
+            : "Chats"
+        
+        deleteButton.isEnabled = rowsSelected
+    }
+    
+    // MARK: - Helpers
+    
+    private func chatAt(_ itemIndex: Int) -> ChatModel? {
+        let snapshot = bindDataSource.items[itemIndex]
+        return chatFrom(snapshot)
+    }
+    
+    private func chatFrom(_ snapshot: DocumentSnapshot) -> ChatModel? {
+        var data = snapshot.data() ?? [:]
+        data["documentId"] = snapshot.documentID
+        
+        do {
+            return try FirestoreDecoder()
+                .decode(
+                    ChatModel.self,
+                    from: data
+            )
+        } catch let err {
+            debugPrint("error while parse chat model: \(err)")
+            return nil
+        }
+    }
+    
+    func setTabBarHidden(
+        _ hidden: Bool,
+        animated: Bool = true,
+        duration: TimeInterval = 0.3,
+        completion: @escaping () -> Void = {}
+    ) {
+        
+        if animated,
+            let tabbar = tabBarController?.tabBar {
+            if !hidden {
+                tabbar.isHidden = false
+            }
+            UIView.animate(withDuration: duration, animations: {
+                tabbar.alpha = hidden ? 0.0 : 1.0
+            }) { _ in
+                completion()
+                if hidden {
+                    tabbar.isHidden = true
+                }
+            }
+            return
+        }
+        self.tabBarController?.tabBar.isHidden = hidden
     }
     
 }
 
 extension ChatListViewController: UITableViewDelegate {
-    
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let snapshot = bindDataSource.items[indexPath.item]
-        var data = snapshot.data() ?? [:]
-        data["documentId"] = snapshot.documentID
-        
-        do {
-            let chatModel = try FirestoreDecoder()
-                .decode(
-                    ChatModel.self,
-                    from: data
-            )
-            
-            viewModel.goToChat(chatModel)
-            
-        } catch let err {
-            debugPrint("error while parse chat model: \(err)")
+        if tableView.isEditing {
+            didSelectionChange()
+        } else {
+            let snapshot = bindDataSource.items[indexPath.item]
+            var data = snapshot.data() ?? [:]
+            data["documentId"] = snapshot.documentID
+
+            do {
+                let chatModel = try FirestoreDecoder()
+                    .decode(
+                        ChatModel.self,
+                        from: data
+                )
+                
+                viewModel.goToChat(chatModel)
+                
+            } catch let err {
+                debugPrint("error while parse chat model: \(err)")
+            }
         }
-        
     }
     
+    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        didSelectionChange()
+    }
+    
+    func tableView(_ tableView: UITableView, shouldBeginMultipleSelectionInteractionAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    func tableView(_ tableView: UITableView, didBeginMultipleSelectionInteractionAt indexPath: IndexPath) {
+        self.setEditing(true, animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        if let chatModel = chatAt(indexPath.item) {
+            let identifier = NSString(string: String(indexPath.item))
+            let configuration = UIContextMenuConfiguration(identifier: identifier, previewProvider: { () -> UIViewController? in
+                // Return Preview View Controller here
+                return self.viewModel.createChatPreview(chatModel)
+            }) { _ -> UIMenu? in
+                let delete = UIAction(
+                    title: "Delete",
+                    image: UIImage(systemName: "trash.fill"),
+                    attributes: .destructive
+                ) { _ in
+                    // TODO: delete chat
+                }
+                
+                return UIMenu(title: "", children: [delete])
+            }
+            return configuration
+        } else {
+            return nil
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating) {
+        guard let identifier = configuration.identifier as? String else { return }
+        guard let itemIndex = Int(identifier) else { return }
+        
+        if let chatModel = chatAt(itemIndex) {
+            animator.addCompletion {
+                self.viewModel.goToChat(chatModel)
+            }
+        }
+    }
+    
+}
+
+// MARK: - Search bar
+
+extension ChatListViewController: UISearchResultsUpdating, UISearchControllerDelegate {
+    
+    func updateSearchResults(for searchController: UISearchController) {
+        NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(reload), object: nil)
+        if searchController.searchBar.text?.isEmpty ?? true {
+            if !bindDataSource.isEqual(tableView.dataSource) {
+                bindDataSource.bind(to: tableView)
+                tableView.reloadData()
+            }
+        } else {
+            self.perform(#selector(reload), with: nil, afterDelay: 0.5)
+        }
+    }
+    
+    @objc func reload() {
+        if bindDataSource.isEqual(tableView.dataSource) {
+            bindDataSource.unbind()
+        }
+        tableView.dataSource = nil
+        searchController.searchBar.isLoading = true
+        viewModel.searchChats(searchController.searchBar.text!) { chats in
+            if let chats = chats {
+                self.searchItems = chats
+                if !(self.tableView.dataSource?.isEqual(self) ?? false) {
+                    self.tableView.dataSource = self
+                }
+            } else {
+                // TODO: handle error
+            }
+            self.searchController.searchBar.isLoading = false
+            self.tableView.reloadData()
+        }
+    }
+    
+}
+
+extension ChatListViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return searchItems.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = UITableViewCell()
+        cell.textLabel?.text = searchItems[indexPath.row].name
+        return cell
+    }
 }
 
 extension ChatListViewController: ChatListViewControllerProtocol {}

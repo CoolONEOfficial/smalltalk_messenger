@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<testsuites name='epam_messengerUITests.xctest' tests='4' failures='1'>
+  <testsuite name='epam_messengerTests.ChatViewModelTests' tests='2' failures='0'>
+    <testcase classname='epam_messengerTests.ChatViewModelTests' name='testDeleteMessage' time='0.001'/>
+    <testcase classname='epam_messengerTests.ChatViewModelTests' name='testSendMessage' time='0.000'/>
+  </testsuite>
+  <testsuite name='epam_messengerTests.FirestoreServiceTests' tests='1' failures='0'>
+    <testcase classname='epam_messengerTests.FirestoreServiceTests' name='testDeleteMessage' time='0.000'/>
+  </testsuite>
+  <testsuite name='epam_messengerUITests.ChatViewUITests' tests='1' failures='1'>
+    <testcase classname='epam_messengerUITests.ChatViewUITests' name='testSendButton'>
+      <failure message='Failed to get matching snapshot: No matches found for Elements matching predicate &apos;&quot;Testchat1&quot; IN identifiers&apos; from input {('>ChatViewUITests.swift:34</failure>
+    </testcase>
+  </testsuite>
+</testsuites>

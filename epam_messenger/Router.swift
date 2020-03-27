@@ -12,7 +12,7 @@ protocol RouterMain {
     var assemblyBuilder: AssemblyBuilderProtocol? { get set }
 }
 
-protocol RouterProtocol: RouterMain {
+protocol RouterProtocol: RouterMain, AutoMockable {
     func initialViewController()
     func showBottomBar()
     func showChatList()

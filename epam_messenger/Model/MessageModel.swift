@@ -7,35 +7,63 @@
 
 import Foundation
 import Firebase
-import MessageKit
+import CodableFirebase
 
-struct MessageModel: Codable {
+struct MessageModel: Codable, AutoDecodable {
     
-    let documentId: String?
+    var documentId: String = ""
     let text: String
     let userId: Int
     let timestamp: Timestamp
     
+    static let defaultDocumentId: String = ""
+    
     static func empty() -> MessageModel {
-        return MessageModel(documentId: "", text: "", userId: 0, timestamp: Timestamp.init())
+        return MessageModel(text: "", userId: 0, timestamp: Timestamp.init())
+    }
+    
+    static func fromSnapshot(_ snapshot: DocumentSnapshot) -> MessageModel? {
+        var data = snapshot.data() ?? [:]
+        data["documentId"] = snapshot.documentID
+        
+        do {
+            return try FirestoreDecoder()
+                .decode(
+                    MessageModel.self,
+                    from: data
+            )
+        } catch let err {
+            debugPrint("error while parse message model: \(err)")
+            return nil
+        }
+    }
+    
+    static func decodeTimestamp(from container: KeyedDecodingContainer<CodingKeys>) -> Timestamp {
+        if let dict = try? container.decode([String: Int64].self, forKey: .timestamp) {
+            return Timestamp.init(
+                seconds: dict["_seconds"]!,
+                nanoseconds: Int32(exactly: dict["_nanoseconds"]!)!
+            )
+        }
+        
+        return try! container.decode(Timestamp.self, forKey: .timestamp)
+    }
+
+    static func checkMerge(
+        left: MessageProtocol,
+        right: MessageProtocol
+    ) -> Bool {
+        return left.userId == right.userId
+            && abs(left.date.timeIntervalSince(right.date)) < 60 * 5 // 5 minutes interval
     }
 }
 
-extension MessageModel: MessageType {
-    var sender: SenderType {
-        return Sender(senderId: String(userId), displayName: "123")
-    }
-    
-    var messageId: String {
-        return documentId!
-    }
-    
-    var sentDate: Date {
+extension MessageModel: TextMessageProtocol {
+    var date: Date {
         return timestamp.dateValue()
     }
     
-    var kind: MessageKind {
-        return .text(text)
+    var isIncoming: Bool {
+        return userId != 0 // TODO: auth user id
     }
-    
 }

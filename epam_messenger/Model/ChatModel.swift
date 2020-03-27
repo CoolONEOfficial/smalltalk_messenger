@@ -7,15 +7,34 @@
 
 import Foundation
 import Firebase
+import CodableFirebase
 
-struct ChatModel: Decodable {
+struct ChatModel: AutoDecodable {
     
-    let documentId: String
+    var documentId: String = ""
     let users: [Int]
     let name: String
     let lastMessage: MessageModel?
     
+    static let defaultDocumentId: String = ""
+    
     static func empty() -> ChatModel {
-        return ChatModel(documentId: "", users: [], name: "", lastMessage: MessageModel.empty())
+        return ChatModel(users: [], name: "", lastMessage: MessageModel.empty())
+    }
+    
+    static func fromSnapshot(_ snapshot: DocumentSnapshot) -> ChatModel? {
+        var data = snapshot.data() ?? [:]
+        data["documentId"] = snapshot.documentID
+        
+        do {
+            return try FirestoreDecoder()
+                .decode(
+                    ChatModel.self,
+                    from: data
+            )
+        } catch let err {
+            debugPrint("error while parse chat model: \(err)")
+            return nil
+        }
     }
 }
