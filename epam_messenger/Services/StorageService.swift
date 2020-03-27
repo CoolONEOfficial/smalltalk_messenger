@@ -107,7 +107,7 @@ class StorageService: StorageServiceProtocol {
         chatDocumentId: String,
         completion: @escaping ([StorageReference]?) -> Void
     ) {
-        storage.child("chats").child(chatDocumentId).list(withMaxResults: 20) { result, err in
+        storage.child("chats").child(chatDocumentId).list(withMaxResults: 100) { result, err in
             guard err == nil else {
                 completion(nil)
                 return
