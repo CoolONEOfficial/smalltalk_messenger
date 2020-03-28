@@ -21,6 +21,7 @@ target 'epam_messenger' do
   pod 'InstantSearchClient', '~> 7.0'
   pod 'NYTPhotoViewer'
   pod 'BSImagePicker', '~> 3.1.1'
+  pod 'FDWaveformView'
 
   target 'epam_messengerTests' do
       inherit! :search_paths
