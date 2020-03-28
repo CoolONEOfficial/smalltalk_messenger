@@ -166,6 +166,7 @@ PODS:
   - BoringSSL-GRPC/Interface (0.0.3)
   - BSImagePicker (3.1.1)
   - CodableFirebase (0.2.1)
+  - FDWaveformView (5.0.1)
   - Firebase (6.21.0):
     - Firebase/Core (= 6.21.0)
   - Firebase/Analytics (6.21.0):
@@ -331,6 +332,7 @@ PODS:
 DEPENDENCIES:
   - BSImagePicker (~> 3.1.1)
   - CodableFirebase
+  - FDWaveformView
   - Firebase
   - Firebase/Analytics
   - Firebase/Auth
@@ -352,6 +354,7 @@ SPEC REPOS:
     - BoringSSL-GRPC
     - BSImagePicker
     - CodableFirebase
+    - FDWaveformView
     - Firebase
     - FirebaseAnalytics
     - FirebaseAuth
@@ -390,6 +393,7 @@ SPEC CHECKSUMS:
   BoringSSL-GRPC: db8764df3204ccea016e1c8dd15d9a9ad63ff318
   BSImagePicker: 86f28e0f63b78d35fec7c6f0174b7af9e6f1431e
   CodableFirebase: 0bf201991eeec35eb9fcd987d271ea463cf34a80
+  FDWaveformView: c188be613947273cc83d6f0056505f60e6c4b9ac
   Firebase: f378c80340dd41c0ad0914af740c021eb282a04b
   FirebaseAnalytics: a1a0b3327ceb5cd5b4bacffdb293f6c909aa087d
   FirebaseAuth: a6da11d78dfd956b7f7af3222a0f0b1c93ef8fc9
@@ -423,6 +427,6 @@ SPEC CHECKSUMS:
   SwiftLint: 55e96a4a4d537d4a3156859fc1c54bd24851a046
   TinyConstraints: 8dd91295e56797648c7bc335dd20e1d91ec4c192
 
-PODFILE CHECKSUM: d26d1eb8c2c190416818862d23073bea0d3cf763
+PODFILE CHECKSUM: 89ed84e1da79727c309aaa0a5ebd69689dc125fb
 
 COCOAPODS: 1.9.0
