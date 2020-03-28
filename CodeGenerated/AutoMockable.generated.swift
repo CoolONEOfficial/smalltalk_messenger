@@ -540,4 +540,21 @@ class StorageServiceProtocolMock: StorageServiceProtocol {
         uploadAudioChatDocumentIdDataCompletionClosure?(chatDocumentId, data, completion)
     }
 
+    //MARK: - listChatMediaFiles
+
+    var listChatMediaFilesChatDocumentIdCompletionCallsCount = 0
+    var listChatMediaFilesChatDocumentIdCompletionCalled: Bool {
+        return listChatMediaFilesChatDocumentIdCompletionCallsCount > 0
+    }
+    var listChatMediaFilesChatDocumentIdCompletionReceivedArguments: (chatDocumentId: String, completion: ([StorageReference]?) -> Void)?
+    var listChatMediaFilesChatDocumentIdCompletionReceivedInvocations: [(chatDocumentId: String, completion: ([StorageReference]?) -> Void)] = []
+    var listChatMediaFilesChatDocumentIdCompletionClosure: ((String, @escaping ([StorageReference]?) -> Void) -> Void)?
+
+    func listChatMediaFiles(        chatDocumentId: String,        completion: @escaping ([StorageReference]?) -> Void    ) {
+        listChatMediaFilesChatDocumentIdCompletionCallsCount += 1
+        listChatMediaFilesChatDocumentIdCompletionReceivedArguments = (chatDocumentId: chatDocumentId, completion: completion)
+        listChatMediaFilesChatDocumentIdCompletionReceivedInvocations.append((chatDocumentId: chatDocumentId, completion: completion))
+        listChatMediaFilesChatDocumentIdCompletionClosure?(chatDocumentId, completion)
+    }
+
 }

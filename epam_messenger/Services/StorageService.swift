@@ -22,6 +22,11 @@ protocol StorageServiceProtocol: AutoMockable {
     )
     func listChatFiles(
         chatDocumentId: String,
+        data: Data,
+        completion: @escaping (MessageModel.MessageKind?) -> Void
+    )
+    func listChatMediaFiles(
+        chatDocumentId: String,
         completion: @escaping ([StorageReference]?) -> Void
     )
 }
@@ -105,33 +110,39 @@ class StorageService: StorageServiceProtocol {
     
     func listChatFiles(
         chatDocumentId: String,
-        completion: @escaping ([StorageReference]?) -> Void
+        data: Data,
+        completion: @escaping (MessageModel.MessageKind?) -> Void
     ) {
-        storage.child("chats").child(chatDocumentId).list(withMaxResults: 100) { result, err in
-            guard err == nil else {
-                completion(nil)
-                return
-            }
-            
-            completion(result.items)
+        let metadata = StorageMetadata()
+        metadata.contentType = "audio/x-m4a"
+        
+        storage.child("chats")
+            .child(chatDocumentId)
+            .child("audio")
+            .child("\(Date().iso8601withFractionalSeconds).m4a")
+            .putData(data, metadata: metadata) { metadata, _ in
+                if let path = metadata?.path {
+                    completion(.audio(
+                        path: path
+                        ))
+                } else {
+                    completion(nil)
+                }
         }
     }
-}
-
-// MARK: - ISO8601 date formatter
-
-fileprivate extension ISO8601DateFormatter {
-    convenience init(_ formatOptions: Options, timeZone: TimeZone = TimeZone(secondsFromGMT: 0)!) {
-        self.init()
-        self.formatOptions = formatOptions
-        self.timeZone = timeZone
+    
+    func listChatMediaFiles(
+        chatDocumentId: String,
+        completion: @escaping ([StorageReference]?) -> Void
+    ) {
+        storage.child("chats").child(chatDocumentId).child("media")
+            .list(withMaxResults: 100) { result, err in
+                guard err == nil else {
+                    completion(nil)
+                    return
+                }
+                
+                completion(result.items)
+        }
     }
-}
-
-fileprivate extension Formatter {
-    static let iso8601withFractionalSeconds = ISO8601DateFormatter([.withInternetDateTime, .withFractionalSeconds])
-}
-
-fileprivate extension Date {
-    var iso8601withFractionalSeconds: String { return Formatter.iso8601withFractionalSeconds.string(from: self) }
 }
