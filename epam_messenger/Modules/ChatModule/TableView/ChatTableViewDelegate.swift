@@ -94,10 +94,11 @@ extension ChatViewController: UITableViewDelegate {
             }
             
             var actions = [
-                copy, delete
+                delete
             ]
             
             let message = self.tableView.chatDataSource.messageAt(indexPath)
+            
             if message.kind.filter({ content in
                 if case .image = content {
                     return true
@@ -105,6 +106,14 @@ extension ChatViewController: UITableViewDelegate {
                 return false
             }).count == 1 {
                 actions.insert(savePhoto, at: 1)
+            }
+            if !message.kind.contains(where: { content in
+                if case .audio = content {
+                    return true
+                }
+                return false
+            }) {
+                actions.insert(copy, at: 0)
             }
             
             return UIMenu(title: "", children: [

@@ -168,6 +168,17 @@ class ChatViewController: UIViewController {
         tableView.verticalScrollIndicatorInsets.bottom = barHeight + additional - bottomSafeArea
     }
     
+    internal func didStartSendMessage() {
+        inputBar.sendButton.startAnimating()
+        inputBar.inputTextView.placeholder = "Sending..."
+    }
+    
+    internal func didEndSendMessage() {
+        inputBar.sendButton.stopAnimating()
+        inputBar.inputTextView.placeholder = "Message..."
+        tableView.scrollToBottom(animated: true)
+    }
+    
     // MARK: Floating bottom button
     
     @IBAction func didFloatingBottomButtonClick(_ sender: UIButton) {

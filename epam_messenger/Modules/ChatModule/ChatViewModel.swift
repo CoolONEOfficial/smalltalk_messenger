@@ -13,8 +13,8 @@ protocol ChatViewModelProtocol: ViewModelProtocol, AutoMockable, MessageCellDele
     func getChatModel() -> ChatModel
     func firestoreQuery() -> FireQuery
     func sendMessage(
-        _ messageText: String,
         attachments: [ChatViewController.MessageAttachment],
+        messageText: String?,
         completion: @escaping (Bool) -> Void
     )
     func deleteMessage(
@@ -38,11 +38,11 @@ extension ChatViewModelProtocol {
     }
     
     func sendMessage(
-        _ messageText: String,
         attachments: [ChatViewController.MessageAttachment],
+        messageText: String? = nil,
         completion: @escaping (Bool) -> Void = {_ in}
     ) {
-        return sendMessage(messageText, attachments: attachments, completion: completion)
+        return sendMessage(attachments: attachments, messageText: messageText, completion: completion)
     }
 }
 
@@ -83,15 +83,15 @@ class ChatViewModel: ChatViewModelProtocol {
     }
     
     func sendMessage(
-        _ messageText: String,
         attachments: [ChatViewController.MessageAttachment],
+        messageText: String? = nil,
         completion: @escaping (Bool) -> Void = {_ in}
     ) {
         let uploadGroup = DispatchGroup()
-        var uploadKinds: [MessageModel.MessageKind] = messageText
-            .trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        var uploadKinds: [MessageModel.MessageKind] = messageText?
+            .trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true
             ? []
-            : [ .text(messageText) ]
+            : [ .text(messageText!) ]
         
         let uploadStartTimestamp = Date()
         for (index, attachment) in attachments.enumerated() {
@@ -106,6 +106,17 @@ class ChatViewModel: ChatViewModelProtocol {
                 ) { kind in
                     if let kind = kind {
                         uploadKinds.insert(kind, at: 0)
+                    }
+                    uploadGroup.leave()
+                }
+            case .data(let data):
+                uploadGroup.enter()
+                storageService.uploadAudio(
+                    chatDocumentId: chatModel.documentId,
+                    data: data
+                ) { kind in
+                    if let kind = kind {
+                        uploadKinds.append(kind)
                     }
                     uploadGroup.leave()
                 }
@@ -147,7 +158,7 @@ extension ChatViewModel: MessageCellDelegate {
         lastTapCellContent = content
         switch content {
         case let messageContent as MessageImageContent:
-            storageService.listChatFiles(chatDocumentId: chatModel.documentId) { refs in
+            storageService.listChatMediaFiles(chatDocumentId: chatModel.documentId) { refs in
                 if let refs = refs {
                     let initialIndex = refs.firstIndex { ref in
                         return ref.fullPath == messageContent.imageMessage.kindImage(at: messageContent.kindIndex)!.path

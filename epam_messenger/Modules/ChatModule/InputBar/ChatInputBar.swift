@@ -16,6 +16,8 @@ class ChatInputBar: InputBarAccessoryView {
     var chatDelegate: ChatInputBarDelegate?
 
     let attachButton = InputBarButtonItem()
+    let voiceCancelButton = InputBarButtonItem()
+    let voiceButton = InputBarButtonItem()
     
     static let defaultLeftStackWidth: CGFloat = 30
     static let defaultRightStackWidth: CGFloat = 30
@@ -32,6 +34,9 @@ class ChatInputBar: InputBarAccessoryView {
     static let stacksPadding: CGFloat = 4
     
     let imagePicker = UIImagePickerController()
+    
+    var recordingSession: AVAudioSession!
+    var audioRecorder: AVAudioRecorder!
     
     // MARK: - Init
     
@@ -61,8 +66,11 @@ class ChatInputBar: InputBarAccessoryView {
     
     func setupRightStack() {
         setupSendButton()
+        setupVoiceButton()
+        setupVoiceCancelButton()
+        rightStackView.spacing = 30
         setRightStackViewWidthConstant(to: ChatInputBar.defaultRightStackWidth, animated: false)
-        setStackViewItems([sendButton], forStack: .right, animated: false)
+        setStackViewItems([voiceButton], forStack: .right, animated: false)
         padding.right = ChatInputBar.stacksPadding
         middleContentViewPadding.right = ChatInputBar.stacksPadding
     }
@@ -95,6 +103,44 @@ class ChatInputBar: InputBarAccessoryView {
         attachButton.addTarget(self, action: #selector(didClickAttachButton), for: .touchUpInside)
     }
     
+    func setupVoiceCancelButton() {
+        voiceCancelButton.setSize(CGSize(width: 30, height: 30), animated: false)
+        voiceCancelButton.image = UIImage(systemName: "xmark")
+        voiceCancelButton.tintColor = .plainIcon
+        voiceCancelButton.imageEdgeInsets = .uniform(5)
+        
+        voiceCancelButton.contentHorizontalAlignment = .fill
+        voiceCancelButton.contentVerticalAlignment = .fill
+        voiceCancelButton.contentMode = .scaleToFill
+        voiceCancelButton.title = nil
+        voiceCancelButton.addTarget(self, action: #selector(didTouchDownVoiceCancelButton), for: .touchDown)
+    }
+    
+    func setupVoiceButton() {
+        voiceButton.imageEdgeInsets = ChatInputBar.attachButtonInsets
+        voiceButton.setSize(CGSize(width: 30, height: 30), animated: false)
+        voiceButton.image = UIImage(systemName: "mic")
+        voiceButton.tintColor = .plainIcon
+        
+        voiceButton.contentHorizontalAlignment = .fill
+        voiceButton.contentVerticalAlignment = .fill
+        voiceButton.contentMode = .scaleToFill
+        voiceButton.title = nil
+        voiceButton.addTarget(self, action: #selector(didTouchUpVoiceButton), for: .touchUpInside)
+        voiceButton.addTarget(self, action: #selector(didTouchDragOutsideVoiceButton), for: .touchDragOutside)
+        voiceButton.addTarget(self, action: #selector(didTouchDownVoiceButton), for: .touchDown)
+        
+        recordingSession = AVAudioSession.sharedInstance()
+        
+        do {
+            try recordingSession.setCategory(.playAndRecord, mode: .default)
+            try recordingSession.setActive(true)
+            recordingSession.requestRecordPermission() { _ in }
+        } catch {
+            debugPrint("failed to record")
+        }
+    }
+    
     func setupInputTextView() {
         inputTextView.backgroundColor = .systemBackground
         inputTextView.textContainerInset = UIEdgeInsets(top: 6, left: 8, bottom: 4, right: 44)
@@ -123,6 +169,87 @@ class ChatInputBar: InputBarAccessoryView {
         window?
             .rootViewController?
             .present(optionMenu, animated: true, completion: nil)
+    }
+    
+    @objc func didTouchDownVoiceCancelButton() {
+        audioRecorder = nil
+        didFinishRecording()
+    }
+    
+    @objc func didTouchUpVoiceButton() {
+        finishRecording()
+    }
+    
+    @objc func didTouchDragOutsideVoiceButton() {
+        voiceButton.image = UIImage(systemName: "stop.circle.fill")
+        
+        voiceButton.contentEdgeInsets = .init(top: -20, left: -30, bottom: -20, right: -10)
+        setRightStackViewWidthConstant(to: ChatInputBar.defaultRightStackWidth * 2 + 30, animated: true)
+        setStackViewItems([voiceCancelButton, voiceButton], forStack: .right, animated: true)
+    }
+    
+    @objc func didTouchDownVoiceButton() {
+        if audioRecorder != nil {
+            finishRecording()
+        } else {
+            startRecording()
+        }
+    }
+    
+    func getDocumentsDirectory() -> URL {
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        return paths[0]
+    }
+    
+    func startRecording() {
+        let audioFilename = getDocumentsDirectory().appendingPathComponent("\(Date().iso8601withFractionalSeconds).m4a")
+
+        let settings = [
+            AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
+            AVSampleRateKey: 12000,
+            AVNumberOfChannelsKey: 1,
+            AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
+        ]
+
+        do {
+            audioRecorder = try AVAudioRecorder(url: audioFilename, settings: settings)
+            audioRecorder.delegate = self
+            audioRecorder.record()
+            
+            didStartRecording()
+        } catch {
+            finishRecording()
+        }
+    }
+    
+    func finishRecording() {
+        if audioRecorder != nil {
+            audioRecorder.stop()
+            audioRecorder = nil
+        }
+        didFinishRecording()
+    }
+    
+    private func didStartRecording() {
+        voiceButton.image = UIImage(systemName: "mic.circle.fill")
+        UIView.animate(withDuration: 0.3) {
+            self.voiceButton.contentEdgeInsets = .uniform(-20)
+            self.voiceButton.layoutIfNeeded()
+        }
+        setStackViewItems([], forStack: .left, animated: true)
+        setMiddleContentView(nil, animated: true)
+    }
+    
+    private func didFinishRecording() {
+        voiceButton.image = UIImage(systemName: "mic")
+        UIView.animate(withDuration: 0.3) {
+            self.voiceButton.contentEdgeInsets = .zero
+            self.voiceButton.layoutIfNeeded()
+        }
+        setStackViewItems([attachButton], forStack: .left, animated: true)
+        setMiddleContentView(inputTextView, animated: true)
+        setRightStackViewWidthConstant(to: ChatInputBar.defaultRightStackWidth, animated: true)
+        setStackViewItems([voiceButton], forStack: .right, animated: true)
     }
     
     @objc private func showCameraPicker() {
@@ -187,6 +314,16 @@ extension ChatInputBar: UIImagePickerControllerDelegate, UINavigationControllerD
             } else {
                 debugPrint("Error while unwrapping selected image")
             }
+        }
+    }
+}
+
+extension ChatInputBar: AVAudioRecorderDelegate {
+    func audioRecorderDidFinishRecording(_ recorder: AVAudioRecorder, successfully flag: Bool) {
+        if !flag {
+            finishRecording()
+        } else {
+            chatDelegate?.didVoiceMessageRecord(data: try! Data(contentsOf: recorder.url))
         }
     }
 }

@@ -30,6 +30,7 @@ struct MessageModel: AutoCodable {
     enum MessageKind: AutoCodable {
         case text(_: String)
         case image(path: String, size: ImageSize)
+        case audio(path: String)
     }
     
     static let defaultDocumentId: String? = nil
@@ -101,6 +102,17 @@ extension MessageModel: MessageImageProtocol {
         switch kind[at] {
         case .image(let path, let size):
             return (path: path, size: size)
+        default:
+            return nil
+        }
+    }
+}
+
+extension MessageModel: MessageAudioProtocol {
+    func kindAudio(at: Int) -> String? {
+        switch kind[at] {
+        case .audio(let path):
+            return path
         default:
             return nil
         }

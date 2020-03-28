@@ -10,6 +10,7 @@ import InputBarAccessoryView
 
 protocol ChatInputBarDelegate {
     func didActionImageTap()
+    func didVoiceMessageRecord(data: Data)
 }
 
 extension ChatViewController: ChatInputBarDelegate {
@@ -17,6 +18,18 @@ extension ChatViewController: ChatInputBarDelegate {
     func didActionImageTap() {
         viewModel.pickImages(viewController: self) { image in
             self.attachmentManager.handleInput(of: image)
+        }
+    }
+    
+    func didVoiceMessageRecord(data: Data) {
+        
+        didStartSendMessage()
+        
+        viewModel.sendMessage(
+            attachments: [ .data(data) ],
+            messageText: nil
+        ) { _ in
+            self.didEndSendMessage()
         }
     }
     
@@ -38,17 +51,13 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
         
         inputBar.inputTextView.text = String()
         
-        // Send button activity animation
-        inputBar.sendButton.startAnimating()
-        inputBar.inputTextView.placeholder = "Sending..."
+        didStartSendMessage()
         
         viewModel.sendMessage(
-            text,
-            attachments: attachmentManager.attachments) {_ in
-                inputBar.sendButton.stopAnimating()
-                inputBar.inputTextView.placeholder = "Message..."
-                
-                self.tableView.scrollToBottom(animated: true)
+            attachments: attachmentManager.attachments,
+            messageText: text
+        ) {_ in
+            self.didEndSendMessage()
         }
         
         inputBar.invalidatePlugins()
@@ -62,6 +71,14 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
     }
     
     func inputBar(_ inputBar: InputBarAccessoryView, textViewTextDidChangeTo text: String) {
+        
+        let inputBar = self.inputBar
+        
+        inputBar.setStackViewItems([
+            text.isEmpty
+                ? inputBar.voiceButton
+                : inputBar.sendButton
+        ], forStack: .right, animated: false)
         
         guard autocompleteManager.currentSession != nil, autocompleteManager.currentSession?.prefix == "#" else { return }
         // Load some data asyncronously for the given session.prefix
