@@ -55,15 +55,19 @@ class ChatCell: UITableViewCell, NibReusable {
         senderNameLabel.text = String(lastMessage.userId) // load user name
         var imageCount = 0
         var allText = ""
+        var icon = ""
         for mKind in lastMessage.kind {
             switch mKind {
             case .image(_):
                 imageCount += 1
+                icon = "🖼️"
+            case .audio(_):
+                icon = "🎵"
             case .text(let text):
                 allText += text
             }
         }
-        lastMessageLabel.text = "\(imageCount > 1 ? "x\(imageCount)" : "")\(imageCount > 0 ? "🖼️" : "") \(allText)"
+        lastMessageLabel.text = "\(imageCount > 1 ? "x\(imageCount)" : "") \(icon) \(allText)"
         
     }
 }

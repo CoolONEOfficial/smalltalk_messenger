@@ -30,6 +30,9 @@
 		852C00EF242CF8FA00BCC056 /* MessageText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 852C00ED242CF8FA00BCC056 /* MessageText.swift */; };
 		852C00F0242CF8FA00BCC056 /* MessageImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 852C00EE242CF8FA00BCC056 /* MessageImage.swift */; };
 		852C00F2242E188400BCC056 /* ImagePickerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 852C00F1242E188400BCC056 /* ImagePickerService.swift */; };
+		852C00F5242F5EA300BCC056 /* MessageAudioContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 852C00F4242F5EA300BCC056 /* MessageAudioContent.swift */; };
+		852C00F7242F5EAF00BCC056 /* MessageAudioContent.xib in Resources */ = {isa = PBXBuildFile; fileRef = 852C00F6242F5EAF00BCC056 /* MessageAudioContent.xib */; };
+		852C00F9242F607400BCC056 /* MessageAudio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 852C00F8242F607400BCC056 /* MessageAudio.swift */; };
 		853FD19E24165EDE005A7985 /* FirestoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 853FD19D24165EDE005A7985 /* FirestoreService.swift */; };
 		856A9C1F2411B8D10039E977 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 856A9C1E2411B8D10039E977 /* GoogleService-Info.plist */; };
 		857D7CC32418F0C300932457 /* FirestoreCodableInterfaces.swift in Sources */ = {isa = PBXBuildFile; fileRef = 857D7CC22418F0C300932457 /* FirestoreCodableInterfaces.swift */; };
@@ -121,6 +124,9 @@
 		852C00ED242CF8FA00BCC056 /* MessageText.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageText.swift; sourceTree = "<group>"; };
 		852C00EE242CF8FA00BCC056 /* MessageImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageImage.swift; sourceTree = "<group>"; };
 		852C00F1242E188400BCC056 /* ImagePickerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerService.swift; sourceTree = "<group>"; };
+		852C00F4242F5EA300BCC056 /* MessageAudioContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageAudioContent.swift; sourceTree = "<group>"; };
+		852C00F6242F5EAF00BCC056 /* MessageAudioContent.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MessageAudioContent.xib; sourceTree = "<group>"; };
+		852C00F8242F607400BCC056 /* MessageAudio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageAudio.swift; sourceTree = "<group>"; };
 		853FD19D24165EDE005A7985 /* FirestoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreService.swift; sourceTree = "<group>"; };
 		853FD1AE2416A55A005A7985 /* InvertedCollectionViewFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvertedCollectionViewFlowLayout.swift; sourceTree = "<group>"; };
 		856A9C1E2411B8D10039E977 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -241,6 +247,7 @@
 		851F580D241BE7EF00D04F92 /* Message */ = {
 			isa = PBXGroup;
 			children = (
+				852C00F3242F5E8700BCC056 /* Audio */,
 				850C7FFA2427FD57008BAF24 /* Image */,
 				851F580E241BE8D900D04F92 /* Text */,
 				8581403E241E2B59004884FD /* MessageCell.swift */,
@@ -291,6 +298,7 @@
 			children = (
 				852C00EE242CF8FA00BCC056 /* MessageImage.swift */,
 				852C00ED242CF8FA00BCC056 /* MessageText.swift */,
+				852C00F8242F607400BCC056 /* MessageAudio.swift */,
 				851553EF241983E500C89534 /* Message24HourDateFormatter.swift */,
 				851F5828241D92AE00D04F92 /* Message.swift */,
 			);
@@ -303,6 +311,15 @@
 				851F582B241D987300D04F92 /* DateHeader.swift */,
 			);
 			path = Header;
+			sourceTree = "<group>";
+		};
+		852C00F3242F5E8700BCC056 /* Audio */ = {
+			isa = PBXGroup;
+			children = (
+				852C00F4242F5EA300BCC056 /* MessageAudioContent.swift */,
+				852C00F6242F5EAF00BCC056 /* MessageAudioContent.xib */,
+			);
+			path = Audio;
 			sourceTree = "<group>";
 		};
 		853FD19B24165E87005A7985 /* Services */ = {
@@ -711,6 +728,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				85FF256D2414DCDF00A25D7A /* ChatCell.xib in Resources */,
+				852C00F7242F5EAF00BCC056 /* MessageAudioContent.xib in Resources */,
 				85BE9A7524118CF200E6643B /* LaunchScreen.storyboard in Resources */,
 				E6B74994241449C600F00B29 /* ChatViewController.xib in Resources */,
 				85FD29FA2417FC130035AC13 /* ChatListViewController.xib in Resources */,
@@ -867,6 +885,7 @@
 			files = (
 				E6B749882414377500F00B29 /* Router.swift in Sources */,
 				850C80062428E99B008BAF24 /* StorageService.swift in Sources */,
+				852C00F5242F5EA300BCC056 /* MessageAudioContent.swift in Sources */,
 				850C7FF0242765DC008BAF24 /* UIImage.swift in Sources */,
 				851F5821241D81D400D04F92 /* ChatTableView.swift in Sources */,
 				E6B74984241433F500F00B29 /* AuthorizationViewController.swift in Sources */,
@@ -882,6 +901,7 @@
 				851F581B241D792A00D04F92 /* Array.swift in Sources */,
 				851F582E241D990900D04F92 /* ChatTableViewDelegate.swift in Sources */,
 				E6B74993241449C600F00B29 /* ChatViewController.swift in Sources */,
+				852C00F9242F607400BCC056 /* MessageAudio.swift in Sources */,
 				85FF25752415976600A25D7A /* ViewModel.swift in Sources */,
 				8581404F241E35B0004884FD /* MessageTextContent.swift in Sources */,
 				E6B74976241427C700F00B29 /* AssemblyBuilder.swift in Sources */,

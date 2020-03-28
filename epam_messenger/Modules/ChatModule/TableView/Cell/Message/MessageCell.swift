@@ -59,7 +59,7 @@ class MessageCell: UITableViewCell, NibReusable, MessageCellProtocol {
     @IBOutlet var stackBottomAnchor: NSLayoutConstraint!
     @IBOutlet var stackTopAnchor: NSLayoutConstraint!
     
-    static let cornerRadius: CGFloat = 17
+    static let cornerRadius: CGFloat = 16.5
     
     // MARK: - Vars
     
@@ -165,6 +165,8 @@ class MessageCell: UITableViewCell, NibReusable, MessageCellProtocol {
                 contentView = MessageTextContent()
             case .image:
                 contentView = MessageImageContent()
+            case .audio:
+                contentView = MessageAudioContent()
             }
             contentView.loadMessage(
                 self.message,

@@ -17,7 +17,7 @@ extension ChatModel {
         documentId = (try? container.decode(String.self, forKey: .documentId)) ?? ChatModel.defaultDocumentId
         users = try container.decode([Int].self, forKey: .users)
         name = try container.decode(String.self, forKey: .name)
-        lastMessage = try container.decodeIfPresent(MessageModel.self, forKey: .lastMessage)
+        lastMessage = (try? container.decodeIfPresent(MessageModel.self, forKey: .lastMessage)) ?? ChatModel.defaultLastMessage
     }
 
 }
@@ -49,6 +49,7 @@ extension MessageModel.MessageKind {
     enum CodingKeys: String, CodingKey {
         case text
         case image
+        case audio
         case path
         case size
     }
@@ -69,6 +70,12 @@ extension MessageModel.MessageKind {
             self = .image(path: path, size: size)
             return
         }
+        if container.allKeys.contains(.audio), try container.decodeNil(forKey: .audio) == false {
+            let associatedValues = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: .audio)
+            let path = try associatedValues.decode(String.self, forKey: .path)
+            self = .audio(path: path)
+            return
+        }
         throw DecodingError.dataCorrupted(.init(codingPath: decoder.codingPath, debugDescription: "Unknown enum case"))
     }
 
@@ -83,6 +90,9 @@ extension MessageModel.MessageKind {
             var associatedValues = container.nestedContainer(keyedBy: CodingKeys.self, forKey: .image)
             try associatedValues.encode(path, forKey: .path)
             try associatedValues.encode(size, forKey: .size)
+        case let .audio(path):
+            var associatedValues = container.nestedContainer(keyedBy: CodingKeys.self, forKey: .audio)
+            try associatedValues.encode(path, forKey: .path)
         }
     }
 

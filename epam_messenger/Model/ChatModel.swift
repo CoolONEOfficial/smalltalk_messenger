@@ -17,6 +17,7 @@ struct ChatModel: AutoDecodable {
     let lastMessage: MessageModel?
     
     static let defaultDocumentId: String = ""
+    static let defaultLastMessage: MessageModel? = nil
     
     static func empty() -> ChatModel {
         return ChatModel(users: [], name: "", lastMessage: MessageModel.empty())
