@@ -244,7 +244,9 @@ extension ChatViewController: UITableViewDelegate {
     }
     
     @objc internal func deleteChat() {
-        // TODO: delete chat
+        viewModel.deleteChat() { _ in
+            self.navigationController?.popViewController(animated: true)
+        }
     }
     
     @objc internal func forwardSelectedMessages() {
