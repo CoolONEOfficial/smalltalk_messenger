@@ -13,15 +13,12 @@ struct UserSettingsModel: Codable, AutoDecodable {
     
     let userId: String
     let userPhoneNumber: String
- //   let userLastLogin: Timestamp
-    
+    let userLastLogin: Timestamp
     
     static let defaultUserId: String = ""
     
-    
     static func empty() -> UserSettingsModel {
-        return UserSettingsModel(userId: "", userPhoneNumber: ""
-            //, userLastLogin: Timestamp.init()
+        return UserSettingsModel(userId: "", userPhoneNumber: "", userLastLogin: Timestamp.init()
         )
     }
     
@@ -41,20 +38,15 @@ struct UserSettingsModel: Codable, AutoDecodable {
         }
     }
     
-//    static func decodeTimestamp(from container: KeyedDecodingContainer<CodingKeys>) -> Timestamp {
-//        if let dict = try? container.decode([String: Int64].self, forKey: .userLastLogin) {
-//            return Timestamp.init(
-//                seconds: dict["_seconds"]!,
-//                nanoseconds: Int32(exactly: dict["_nanoseconds"]!)!
-//            )
-//        }
-//
-//        return try! container.decode(Timestamp.self, forKey: .userLastLogin)
-//    }
+    static func decodeTimestamp(from container: KeyedDecodingContainer<CodingKeys>) -> Timestamp {
+        if let dict = try? container.decode([String: Int64].self, forKey: .userLastLogin) {
+            return Timestamp.init(
+                seconds: dict["_seconds"]!,
+                nanoseconds: Int32(exactly: dict["_nanoseconds"]!)!
+            )
+        }
+
+        return try! container.decode(Timestamp.self, forKey: .userLastLogin)
+    }
 }
 
-//extension UserSettingsModel: UserSettingsViewControllerProtocol {
-//    var date: Date {
-//        return userLastLogin.dateValue()
-//    }
-//}
