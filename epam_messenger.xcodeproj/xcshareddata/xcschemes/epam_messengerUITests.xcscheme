@@ -17,7 +17,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "858F212624222BB700CF8BF0"
-               BuildableName = "epam_messengerUITests.xctest"
+               BuildableName = "epam_messengerUITests"
                BlueprintName = "epam_messengerUITests"
                ReferencedContainer = "container:epam_messenger.xcodeproj">
             </BuildableReference>
