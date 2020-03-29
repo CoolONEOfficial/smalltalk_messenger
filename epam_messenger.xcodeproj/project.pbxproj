@@ -43,6 +43,7 @@
 		E7202AF1241A5D73002A0112 /* UserSettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E7202AEF241A5D73002A0112 /* UserSettingsViewController.xib */; };
 		E7202AF3241A5DD6002A0112 /* UserSettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7202AF2241A5DD6002A0112 /* UserSettingsViewModel.swift */; };
 		E7202AF5241B5B2A002A0112 /* UserSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7202AF4241B5B2A002A0112 /* UserSettings.swift */; };
+		E7202AF72427A8D6002A0112 /* ConstraintLayoutSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7202AF62427A8D6002A0112 /* ConstraintLayoutSet.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -87,6 +88,7 @@
 		E7202AEF241A5D73002A0112 /* UserSettingsViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UserSettingsViewController.xib; sourceTree = "<group>"; };
 		E7202AF2241A5DD6002A0112 /* UserSettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSettingsViewModel.swift; sourceTree = "<group>"; };
 		E7202AF4241B5B2A002A0112 /* UserSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSettings.swift; sourceTree = "<group>"; };
+		E7202AF62427A8D6002A0112 /* ConstraintLayoutSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConstraintLayoutSet.swift; sourceTree = "<group>"; };
 		FBF8FAED7B1C0D473E35E1B0 /* Pods_epam_messenger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_epam_messenger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -280,6 +282,7 @@
 				E7202AF2241A5DD6002A0112 /* UserSettingsViewModel.swift */,
 				E7202AEE241A5D73002A0112 /* UserSettingsViewController.swift */,
 				E7202AEF241A5D73002A0112 /* UserSettingsViewController.xib */,
+				E7202AF62427A8D6002A0112 /* ConstraintLayoutSet.swift */,
 			);
 			path = UserSettingsModule;
 			sourceTree = "<group>";
@@ -459,6 +462,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E7202AF72427A8D6002A0112 /* ConstraintLayoutSet.swift in Sources */,
 				E6B749882414377500F00B29 /* Router.swift in Sources */,
 				E6B74984241433F500F00B29 /* AuthorizationViewController.swift in Sources */,
 				85FD2A0524182BD70035AC13 /* AutoEquatable.generated.swift in Sources */,
