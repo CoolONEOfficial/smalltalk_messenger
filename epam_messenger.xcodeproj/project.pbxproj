@@ -68,6 +68,7 @@
 		85FF256D2414DCDF00A25D7A /* ChatCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 85FF256B2414DCDF00A25D7A /* ChatCell.xib */; };
 		85FF25752415976600A25D7A /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FF25742415976600A25D7A /* ViewModel.swift */; };
 		99C2AD164DAE6CB10716209B /* Pods_epam_messenger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 652ECE69719138B26CCF3B86 /* Pods_epam_messenger.framework */; };
+		943595B1241BD278005BF7A3 /* UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943595B0241BD278005BF7A3 /* UserModel.swift */; };
 		E6B74976241427C700F00B29 /* AssemblyBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B74975241427C700F00B29 /* AssemblyBuilder.swift */; };
 		E6B74981241433BF00F00B29 /* AuthorizationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B74980241433BF00F00B29 /* AuthorizationViewModel.swift */; };
 		E6B74984241433F500F00B29 /* AuthorizationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B74982241433F500F00B29 /* AuthorizationViewController.swift */; };
@@ -171,6 +172,7 @@
 		95A2E9892D73F8C8D024D984 /* Pods-epam_messengerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-epam_messengerTests.release.xcconfig"; path = "Target Support Files/Pods-epam_messengerTests/Pods-epam_messengerTests.release.xcconfig"; sourceTree = "<group>"; };
 		9A92A57DE12C66C501107237 /* Pods-epam_messenger.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-epam_messenger.debug.xcconfig"; path = "Target Support Files/Pods-epam_messenger/Pods-epam_messenger.debug.xcconfig"; sourceTree = "<group>"; };
 		CF17F4ABE52AFC05E17D698D /* Pods-epam_messengerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-epam_messengerTests.debug.xcconfig"; path = "Target Support Files/Pods-epam_messengerTests/Pods-epam_messengerTests.debug.xcconfig"; sourceTree = "<group>"; };
+		943595B0241BD278005BF7A3 /* UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
 		E6B74975241427C700F00B29 /* AssemblyBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssemblyBuilder.swift; sourceTree = "<group>"; };
 		E6B74980241433BF00F00B29 /* AuthorizationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationViewModel.swift; sourceTree = "<group>"; };
 		E6B74982241433F500F00B29 /* AuthorizationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationViewController.swift; sourceTree = "<group>"; };
@@ -336,6 +338,8 @@
 		853FD19C24165E9C005A7985 /* Modules */ = {
 			isa = PBXGroup;
 			children = (
+				9443B4D7242B9318000BC21E /* UserContactsListModule */,
+				9435959E241BCCA1005BF7A3 /* ContactsListModule */,
 				859330012417CD7F00F1F32E /* BottomBarModule */,
 				E6B749782414286000F00B29 /* AuthorizationModule */,
 				E6B749772414281F00F00B29 /* ChatListModule */,
@@ -507,8 +511,10 @@
 		85FF25602414621C00A25D7A /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				85FF25612414623200A25D7A /* ChatModel.swift */,
+				943595B0241BD278005BF7A3 /* UserModel.swift */,
 				85FF25632414624B00A25D7A /* MessageModel.swift */,
+				85FF25612414623200A25D7A /* ChatModel.swift */,
+				9443B4D5242B9224000BC21E /* UserContactsListModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -730,6 +736,8 @@
 				85FF256D2414DCDF00A25D7A /* ChatCell.xib in Resources */,
 				852C00F7242F5EAF00BCC056 /* MessageAudioContent.xib in Resources */,
 				85BE9A7524118CF200E6643B /* LaunchScreen.storyboard in Resources */,
+				943595A7241BCD3A005BF7A3 /* ContactsCell.xib in Resources */,
+				94A43705242B9D6000FBB114 /* UserContactsListViewController.xib in Resources */,
 				E6B74994241449C600F00B29 /* ChatViewController.xib in Resources */,
 				85FD29FA2417FC130035AC13 /* ChatListViewController.xib in Resources */,
 				8581404D241E358D004884FD /* MessageTextContent.xib in Resources */,
@@ -913,9 +921,11 @@
 				858F211C24217BCA00CF8BF0 /* AutoMockable.generated.swift in Sources */,
 				85FF25642414624B00A25D7A /* MessageModel.swift in Sources */,
 				853FD19E24165EDE005A7985 /* FirestoreService.swift in Sources */,
+				943595AD241BD087005BF7A3 /* ContactsListViewModel.swift in Sources */,
 				859330032417CD9C00F1F32E /* BottomBarViewController.swift in Sources */,
 				E6B74981241433BF00F00B29 /* AuthorizationViewModel.swift in Sources */,
 				851553F0241983E500C89534 /* Message24HourDateFormatter.swift in Sources */,
+				943595B1241BD278005BF7A3 /* UserModel.swift in Sources */,
 				E6B7498A2414382300F00B29 /* ChatListViewModel.swift in Sources */,
 				850C8015242A7F34008BAF24 /* ChatPhotoViewerDataSource.swift in Sources */,
 				852C00EF242CF8FA00BCC056 /* MessageText.swift in Sources */,
