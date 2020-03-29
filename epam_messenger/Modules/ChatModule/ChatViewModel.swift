@@ -21,6 +21,9 @@ protocol ChatViewModelProtocol: ViewModelProtocol, AutoMockable, MessageCellDele
         _ messageModel: MessageProtocol,
         completion: @escaping (Bool) -> Void
     )
+    func deleteChat(
+        completion: @escaping (Bool) -> Void
+    )
     func pickImages(
         viewController: UIViewController,
         completion: @escaping (UIImage) -> Void
@@ -43,6 +46,12 @@ extension ChatViewModelProtocol {
         completion: @escaping (Bool) -> Void = {_ in}
     ) {
         return sendMessage(attachments: attachments, messageText: messageText, completion: completion)
+    }
+    
+    func deleteChat(
+        completion: @escaping (Bool) -> Void = {_ in}
+    ) {
+        return deleteChat(completion: completion)
     }
 }
 
@@ -141,6 +150,15 @@ class ChatViewModel: ChatViewModelProtocol {
         firestoreService.deleteMessage(
             chatDocumentId: chatModel.documentId,
             messageDocumentId: messageModel.documentId!,
+            completion: completion
+        )
+    }
+    
+    func deleteChat(
+        completion: @escaping (Bool) -> Void = {_ in}
+    ) {
+        firestoreService.deleteChat(
+            chatDocumentId: chatModel.documentId,
             completion: completion
         )
     }

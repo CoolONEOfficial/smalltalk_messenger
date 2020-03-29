@@ -111,6 +111,23 @@ class ChatViewModelProtocolMock: ChatViewModelProtocol {
         deleteMessageCompletionClosure?(messageModel, completion)
     }
 
+    //MARK: - deleteChat
+
+    var deleteChatCompletionCallsCount = 0
+    var deleteChatCompletionCalled: Bool {
+        return deleteChatCompletionCallsCount > 0
+    }
+    var deleteChatCompletionReceivedCompletion: ((Bool) -> Void)?
+    var deleteChatCompletionReceivedInvocations: [((Bool) -> Void)] = []
+    var deleteChatCompletionClosure: ((@escaping (Bool) -> Void) -> Void)?
+
+    func deleteChat(        completion: @escaping (Bool) -> Void    ) {
+        deleteChatCompletionCallsCount += 1
+        deleteChatCompletionReceivedCompletion = completion
+        deleteChatCompletionReceivedInvocations.append(completion)
+        deleteChatCompletionClosure?(completion)
+    }
+
     //MARK: - pickImages
 
     var pickImagesViewControllerCompletionCallsCount = 0
