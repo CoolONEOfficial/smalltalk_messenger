@@ -34,11 +34,7 @@ class LayoutConstraintSet {
     }
     
     private var availableConstraints: [NSLayoutConstraint] {
-//        #if swift(>=4.1)
             return [top, bottom, left, right, centerX, centerY, width, height].compactMap {$0}
-//        #else
-//            return [top, bottom, left, right, centerX, centerY, width, height].flatMap {$0}
-//        #endif
     }
     
     @discardableResult

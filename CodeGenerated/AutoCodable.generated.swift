@@ -7,7 +7,6 @@ extension UserSettingsModel {
     enum CodingKeys: String, CodingKey {
         case userId
         case userPhoneNumber
-        case userLastLogin
     }
 
     internal init(from decoder: Decoder) throws {
@@ -15,7 +14,6 @@ extension UserSettingsModel {
 
         userId = (try? container.decode(String.self, forKey: .userId)) ?? UserSettingsModel.defaultUserId
         userPhoneNumber = try container.decode(String.self, forKey: .userPhoneNumber)
-        userLastLogin = try container.decode(Timestamp.self, forKey: .userLastLogin)
     }
 
 }
