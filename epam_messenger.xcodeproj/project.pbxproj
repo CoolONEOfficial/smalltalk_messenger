@@ -227,7 +227,7 @@
 		85FF25602414621C00A25D7A /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				943595B2241BD2B4005BF7A3 /* UserModel */,
+				943595B0241BD278005BF7A3 /* UserModel.swift */,
 				85FF25632414624B00A25D7A /* MessageModel.swift */,
 				85FF25612414623200A25D7A /* ChatModel.swift */,
 				9443B4D5242B9224000BC21E /* UserContactsListModel.swift */,
@@ -270,14 +270,6 @@
 				943595A5241BCD3A005BF7A3 /* ContactsCell.xib */,
 			);
 			path = Cell;
-			sourceTree = "<group>";
-		};
-		943595B2241BD2B4005BF7A3 /* UserModel */ = {
-			isa = PBXGroup;
-			children = (
-				943595B0241BD278005BF7A3 /* UserModel.swift */,
-			);
-			path = UserModel;
 			sourceTree = "<group>";
 		};
 		9443B4D0242B8EDB000BC21E /* UserContactsListCell */ = {

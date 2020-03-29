@@ -23,7 +23,7 @@ struct UserModel: Decodable {
                     from: data
             )
         } catch let err {
-            debugPrint("error while parse test model: \(err) 11111")
+            debugPrint("error while parse test model: \(err)")
             return nil
         }
     }
