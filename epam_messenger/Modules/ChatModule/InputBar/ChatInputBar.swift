@@ -80,6 +80,7 @@ class ChatInputBar: InputBarAccessoryView {
         sendButton.setSize(CGSize(width: 30, height: 30), animated: false)
         sendButton.image = UIImage(systemName: "arrow.up")
         sendButton.tintColor = UIColor.lightText.withAlphaComponent(1)
+        sendButton.activityViewColor = .plainText
         
         sendButton.contentHorizontalAlignment = .fill
         sendButton.contentVerticalAlignment = .fill
@@ -156,6 +157,12 @@ class ChatInputBar: InputBarAccessoryView {
     }
     
     // MARK: - Events
+    
+    override func inputTextViewDidChange() {
+        super.inputTextViewDidChange()
+        
+        sendButton.isEnabled = true
+    }
     
     @objc func didClickAttachButton() {
         let optionMenu = ChatInputBarAttachMenu(

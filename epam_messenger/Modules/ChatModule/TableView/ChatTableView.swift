@@ -139,6 +139,6 @@ class ChatTableView: UITableView {
         
         let lastIndex = chatDataSource.messageItems.count - 1
         let lastItem = chatDataSource.messageItems[lastIndex]
-        scrollToRow(at: IndexPath(row: lastItem.value.count - 1, section: lastIndex), at: .none, animated: animated)
+        scrollToRow(at: IndexPath(row: lastItem.value.count - 1, section: lastIndex), at: .bottom, animated: animated)
     }
 }

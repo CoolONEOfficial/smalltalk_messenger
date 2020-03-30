@@ -37,6 +37,8 @@ class ChatViewController: UIViewController {
     
     var forwardMessages: [MessageProtocol]!
     
+    var keyboardHeight: CGFloat = 0
+    
     lazy var autocompleteManager: AutocompleteManager = { [unowned self] in
         let manager = AutocompleteManager(for: self.inputBar.inputTextView)
         
@@ -54,10 +56,20 @@ class ChatViewController: UIViewController {
         
         manager.bind(inputAccessoryView: inputBar)
         manager.bind(to: tableView)
-        manager.on(event: .didChangeFrame) { [weak self] (notification) in
-            self?.updateTableViewInset(notification.endFrame.height)
+        manager.on(event: .didShow) { [weak self] (notification) in
+            guard let self = self else { return }
+            
+            self.keyboardHeight = notification.endFrame.height
+            self.updateTableViewInset()
+            
+            if self.floatingBottomButton.isHidden {
+                self.tableView.scrollToBottom(animated: true)
+            }
         }.on(event: .didHide) { [weak self] _ in
-            self?.updateTableViewInset()
+            guard let self = self else { return }
+            
+            self.keyboardHeight = 0
+            self.updateTableViewInset()
         }
         
         return manager
@@ -127,6 +139,7 @@ class ChatViewController: UIViewController {
     
     private func setupInputBar() {
         view.addSubview(inputBar)
+        floatingBottomButton.bottomToTop(of: inputBar, offset: -10)
         inputBar.delegate = self
         inputBar.chatDelegate = self
         _ = keyboardManager
@@ -167,12 +180,17 @@ class ChatViewController: UIViewController {
     internal func updateTableViewInset(_ additional: CGFloat = 0) {
         let bottomSafeArea = view.safeAreaInsets.bottom
         let barHeight = inputBar.bounds.height
-        tableView.contentInset.bottom = barHeight + additional - bottomSafeArea
-        tableView.verticalScrollIndicatorInsets.bottom = barHeight + additional - bottomSafeArea
+        let bottomInset =  barHeight + additional - bottomSafeArea + keyboardHeight
+        
+        UIView.animate(withDuration: 0.5) {
+            self.tableView.contentInset.bottom = bottomInset
+        }
+        tableView.verticalScrollIndicatorInsets.bottom = bottomInset
     }
     
     internal func didStartSendMessage() {
         inputBar.sendButton.startAnimating()
+        inputBar.inputTextView.text = String()
         inputBar.inputTextView.placeholder = "Sending..."
     }
     
@@ -180,6 +198,9 @@ class ChatViewController: UIViewController {
         inputBar.sendButton.stopAnimating()
         inputBar.inputTextView.placeholder = "Message..."
         tableView.scrollToBottom(animated: true)
+
+        inputBar.invalidatePlugins()
+        updateTableViewInset()
     }
     
     // MARK: Floating bottom button

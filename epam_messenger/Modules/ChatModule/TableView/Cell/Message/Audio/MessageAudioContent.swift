@@ -53,6 +53,11 @@ class MessageAudioContent: UIView, MessageCellContentProtocol {
         return 5
     }
     
+    override var intrinsicContentSize: CGSize {
+        let size = super.intrinsicContentSize
+        return .init(width: 300, height: size.height)
+    }
+    
     private func setupPlayer() {
         player.delegate = self
     }

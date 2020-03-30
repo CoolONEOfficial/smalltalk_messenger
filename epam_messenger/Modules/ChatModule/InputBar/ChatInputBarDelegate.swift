@@ -38,19 +38,6 @@ extension ChatViewController: ChatInputBarDelegate {
 extension ChatViewController: InputBarAccessoryViewDelegate {
     
     func inputBar(_ inputBar: InputBarAccessoryView, didPressSendButtonWith text: String) {
-        
-        // Here we can parse for which substrings were autocompleted
-        let attributedText = inputBar.inputTextView.attributedText!
-        let range = NSRange(location: 0, length: attributedText.length)
-        attributedText.enumerateAttribute(.autocompleted, in: range, options: []) { (attributes, range, stop) in
-            
-            let substring = attributedText.attributedSubstring(from: range)
-            //let context = substring.attribute(.autocompletedContext, at: 0, effectiveRange: nil)
-            //print("Autocompleted: `", substring, "` with context: ", context ?? [])
-        }
-        
-        inputBar.inputTextView.text = String()
-        
         didStartSendMessage()
         
         viewModel.sendMessage(
@@ -59,14 +46,12 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
         ) {_ in
             self.didEndSendMessage()
         }
-        
-        inputBar.invalidatePlugins()
-        updateTableViewInset()
     }
     
     func inputBar(_ inputBar: InputBarAccessoryView, didChangeIntrinsicContentTo size: CGSize) {
         // Adjust content insets
         //print(size)
+        //updateTableViewInset()
         //tableView.contentInset.bottom = size.height + 300 // keyboard size estimate
     }
     
@@ -75,7 +60,7 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
         let inputBar = self.inputBar
         
         inputBar.setStackViewItems([
-            text.isEmpty
+            text.isEmpty && attachmentManager.attachments.isEmpty
                 ? inputBar.voiceButton
                 : inputBar.sendButton
         ], forStack: .right, animated: false)
