@@ -61,10 +61,12 @@ class StorageService: StorageServiceProtocol {
                 .child("\(timestamp.iso8601withFractionalSeconds)_\(index).jpg")
                 .putData(data, metadata: metadata) { metadata, _ in
                     if let path = metadata?.path {
-                        completion(.image(
-                            path: path,
-                            size: image.size
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                            completion(.image(
+                                path: path,
+                                size: image.size
                             ))
+                        }
                     } else {
                         completion(nil)
                     }

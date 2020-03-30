@@ -218,9 +218,27 @@ extension ChatViewController: ChatViewControllerProtocol {
         
         if photosViewerCoordinator == nil {
             photosViewerCoordinator = ChatPhotoViewerDataSource(
-                data: storageRefs.map { ref -> PhotoBox in
+                data: storageRefs.enumerated().map { (index, ref) -> PhotoBox in
                     let photoBox = PhotoBox(ref.fullPath)
-                    photoBox.image = SDImageCache.shared.imageFromDiskCache(forKey: "gs://\(ref.bucket)/\(ref.fullPath)")
+                    let cacheKey = "gs://\(ref.bucket)/\(ref.fullPath)"
+                    
+                    photoBox.image = SDImageCache.shared.imageFromDiskCache(forKey: cacheKey)
+                    
+                    if photoBox.image == nil {
+                        ref.getData(maxSize: Int64.max) { data, err in
+                            guard err == nil else {
+                                debugPrint("Error while get image: \(err!.localizedDescription)")
+                                return
+                            }
+                            
+                            let image = UIImage(data: data!)
+                            SDImageCache.shared.storeImage(toMemory: image, forKey: cacheKey)
+                            photoBox.image = image
+                            
+                            photosViewController.updatePhoto(at: index)
+                        }
+                    }
+                    
                     return photoBox
                 }
             )
@@ -242,7 +260,7 @@ extension ChatViewController: ChatViewControllerProtocol {
         )
         alert.addAction(UIAlertAction(title: "Dismiss", style: .default))
         
-        self.present(alert, animated: true, completion:nil)
+        self.present(alert, animated: true, completion: nil)
     }
     
 }

@@ -60,7 +60,9 @@ class MessageImageContent: UIView, MessageCellContentProtocol {
     
     private func setupImage() {
         let kindImage = imageMessage.kindImage(at: kindIndex)!
-        let imageRef = Storage.storage().reference().child(kindImage.path)
+        var minSize = kindImage.path
+        minSize.insert(contentsOf: "_200x200", at: minSize.index(minSize.endIndex, offsetBy: -4))
+        let imageRef = Storage.storage().reference().child(minSize)
         let placeholderImage = imageWithSize(size: kindImage.size)
         imageView.sd_setImage(
             with: imageRef,
