@@ -124,7 +124,10 @@ extension ChatViewController: UITableViewDelegate {
             }
             
             actions.append(forward)
-            actions.append(delete)
+            
+            if !message.isIncoming {
+                actions.append(delete)
+            }
             
             return UIMenu(title: "", children: [
                 UIMenu(title: "", options: .displayInline, children: actions),
@@ -313,15 +316,17 @@ extension ChatViewController: UITableViewDelegate {
 extension ChatViewController: ForwardDelegateProtocol {
     
     func didSelectChat(_ chatModel: ChatModel) {
-        for message in forwardMessages {
-            viewModel.forwardMessage(chatModel, message) { result in
-                if result && self.viewModel.chatModel.documentId != chatModel.documentId {
-                    self.viewModel.goToChat(chatModel)
+        if forwardMessages != nil {
+            for message in forwardMessages {
+                viewModel.forwardMessage(chatModel, message) { result in
+                    if result && self.viewModel.chatModel.documentId != chatModel.documentId {
+                        self.viewModel.goToChat(chatModel)
+                    }
                 }
             }
+            forwardMessages = nil
+            disableEditMode()
         }
-        forwardMessages = nil
-        disableEditMode()
     }
     
 }

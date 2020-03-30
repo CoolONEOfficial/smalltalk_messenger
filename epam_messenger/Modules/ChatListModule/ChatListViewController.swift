@@ -213,7 +213,7 @@ extension ChatListViewController: UITableViewDelegate {
             
             if let chatModel = chatModel {
                 if isForward {
-                    dismiss(animated: true) {
+                    navigationController?.dismiss(animated: true) {
                         self.forwardDelegate?.didSelectChat(chatModel)
                     }
                 } else {
