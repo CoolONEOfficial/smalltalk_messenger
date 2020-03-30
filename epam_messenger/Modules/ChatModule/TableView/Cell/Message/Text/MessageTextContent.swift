@@ -33,10 +33,10 @@ class MessageTextContent: UIView, MessageCellContentProtocol {
     var mergeContentNext: Bool!
     var mergeContentPrev: Bool!
     var kindIndex: Int!
-    var textMessage: MessageTextProtocol! {
+    var messageText: MessageTextProtocol! {
         didSet {
             
-            let textColor: UIColor = textMessage.isIncoming
+            let textColor: UIColor = messageText.isIncoming
                 ? .plainText
                 : .accentText
             
@@ -47,16 +47,16 @@ class MessageTextContent: UIView, MessageCellContentProtocol {
     }
     
     var message: MessageProtocol! {
-        return textMessage
+        return messageText
     }
     
     private func setupTextLabel(_ textColor: UIColor) {
-        textLabel.text = textMessage.kindText(at: kindIndex)
+        textLabel.text = messageText.kindText(at: kindIndex)
         textLabel.textColor = textColor
     }
     
     private func setupUsernameLabel(_ textColor: UIColor) {
-        let isHidden = cell.mergePrev! || !textMessage.isIncoming || mergeContentPrev
+        let isHidden = cell.mergePrev! || !messageText.isIncoming || mergeContentPrev
         
         usernameLabel.isHidden = isHidden
         if !isHidden {
@@ -66,7 +66,7 @@ class MessageTextContent: UIView, MessageCellContentProtocol {
     }
     
     private func setupTimeLabel(_ textColor: UIColor) {
-        timeLabel.text = timeFormatter.string(from: textMessage.date)
+        timeLabel.text = timeFormatter.string(from: messageText.date)
         timeLabel.textColor = textColor
         
         infoStack.topToBottom(of: textLabel, offset: textLabel.haveEndSpace
@@ -85,7 +85,7 @@ class MessageTextContent: UIView, MessageCellContentProtocol {
         self.cell = cell
         self.mergeContentNext = mergeContentNext
         self.mergeContentPrev = mergeContentPrev
-        self.textMessage = message as! MessageTextProtocol
+        self.messageText = message as! MessageTextProtocol
     }
     
     // MARK: - Init
@@ -113,7 +113,7 @@ class MessageTextContent: UIView, MessageCellContentProtocol {
         super.updateConstraints()
         if shouldSetupConstraints {
             if let bubbleView = superview?.superview {
-                if textMessage.isIncoming {
+                if messageText.isIncoming {
                     leftToSuperview(offset: 10)
                     right(to: bubbleView, offset: -10)
                 } else {

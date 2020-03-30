@@ -94,6 +94,23 @@ class ChatViewModelProtocolMock: ChatViewModelProtocol {
         sendMessageAttachmentsMessageTextCompletionClosure?(attachments, messageText, completion)
     }
 
+    //MARK: - forwardMessage
+
+    var forwardMessageCompletionCallsCount = 0
+    var forwardMessageCompletionCalled: Bool {
+        return forwardMessageCompletionCallsCount > 0
+    }
+    var forwardMessageCompletionReceivedArguments: (chatModel: ChatModel, messageModel: MessageProtocol, completion: (Bool) -> Void)?
+    var forwardMessageCompletionReceivedInvocations: [(chatModel: ChatModel, messageModel: MessageProtocol, completion: (Bool) -> Void)] = []
+    var forwardMessageCompletionClosure: ((ChatModel, MessageProtocol, @escaping (Bool) -> Void) -> Void)?
+
+    func forwardMessage(        _ chatModel: ChatModel,        _ messageModel: MessageProtocol,        completion: @escaping (Bool) -> Void    ) {
+        forwardMessageCompletionCallsCount += 1
+        forwardMessageCompletionReceivedArguments = (chatModel: chatModel, messageModel: messageModel, completion: completion)
+        forwardMessageCompletionReceivedInvocations.append((chatModel: chatModel, messageModel: messageModel, completion: completion))
+        forwardMessageCompletionClosure?(chatModel, messageModel, completion)
+    }
+
     //MARK: - deleteMessage
 
     var deleteMessageCompletionCallsCount = 0
@@ -143,6 +160,41 @@ class ChatViewModelProtocolMock: ChatViewModelProtocol {
         pickImagesViewControllerCompletionReceivedArguments = (viewController: viewController, completion: completion)
         pickImagesViewControllerCompletionReceivedInvocations.append((viewController: viewController, completion: completion))
         pickImagesViewControllerCompletionClosure?(viewController, completion)
+    }
+
+    //MARK: - createForwardViewController
+
+    var createForwardViewControllerForwardDelegateCallsCount = 0
+    var createForwardViewControllerForwardDelegateCalled: Bool {
+        return createForwardViewControllerForwardDelegateCallsCount > 0
+    }
+    var createForwardViewControllerForwardDelegateReceivedForwardDelegate: ForwardDelegateProtocol?
+    var createForwardViewControllerForwardDelegateReceivedInvocations: [ForwardDelegateProtocol] = []
+    var createForwardViewControllerForwardDelegateReturnValue: UIViewController!
+    var createForwardViewControllerForwardDelegateClosure: ((ForwardDelegateProtocol) -> UIViewController)?
+
+    func createForwardViewController(forwardDelegate: ForwardDelegateProtocol) -> UIViewController {
+        createForwardViewControllerForwardDelegateCallsCount += 1
+        createForwardViewControllerForwardDelegateReceivedForwardDelegate = forwardDelegate
+        createForwardViewControllerForwardDelegateReceivedInvocations.append(forwardDelegate)
+        return createForwardViewControllerForwardDelegateClosure.map({ $0(forwardDelegate) }) ?? createForwardViewControllerForwardDelegateReturnValue
+    }
+
+    //MARK: - goToChat
+
+    var goToChatCallsCount = 0
+    var goToChatCalled: Bool {
+        return goToChatCallsCount > 0
+    }
+    var goToChatReceivedChatModel: ChatModel?
+    var goToChatReceivedInvocations: [ChatModel] = []
+    var goToChatClosure: ((ChatModel) -> Void)?
+
+    func goToChat(        _ chatModel: ChatModel    ) {
+        goToChatCallsCount += 1
+        goToChatReceivedChatModel = chatModel
+        goToChatReceivedInvocations.append(chatModel)
+        goToChatClosure?(chatModel)
     }
 
     //MARK: - didTapContent
@@ -315,6 +367,23 @@ class FirestoreServiceProtocolMock: FirestoreServiceProtocol {
         deleteChatChatDocumentIdCompletionClosure?(chatDocumentId, completion)
     }
 
+    //MARK: - listChatMedia
+
+    var listChatMediaChatDocumentIdCompletionCallsCount = 0
+    var listChatMediaChatDocumentIdCompletionCalled: Bool {
+        return listChatMediaChatDocumentIdCompletionCallsCount > 0
+    }
+    var listChatMediaChatDocumentIdCompletionReceivedArguments: (chatDocumentId: String, completion: ([MediaModel]?) -> Void)?
+    var listChatMediaChatDocumentIdCompletionReceivedInvocations: [(chatDocumentId: String, completion: ([MediaModel]?) -> Void)] = []
+    var listChatMediaChatDocumentIdCompletionClosure: ((String, @escaping ([MediaModel]?) -> Void) -> Void)?
+
+    func listChatMedia(        chatDocumentId: String,        completion: @escaping ([MediaModel]?) -> Void    ) {
+        listChatMediaChatDocumentIdCompletionCallsCount += 1
+        listChatMediaChatDocumentIdCompletionReceivedArguments = (chatDocumentId: chatDocumentId, completion: completion)
+        listChatMediaChatDocumentIdCompletionReceivedInvocations.append((chatDocumentId: chatDocumentId, completion: completion))
+        listChatMediaChatDocumentIdCompletionClosure?(chatDocumentId, completion)
+    }
+
 }
 class ImagePickerServiceProtocolMock: ImagePickerServiceProtocol {
 
@@ -444,23 +513,6 @@ class StorageServiceProtocolMock: StorageServiceProtocol {
         uploadAudioChatDocumentIdDataCompletionReceivedArguments = (chatDocumentId: chatDocumentId, data: data, completion: completion)
         uploadAudioChatDocumentIdDataCompletionReceivedInvocations.append((chatDocumentId: chatDocumentId, data: data, completion: completion))
         uploadAudioChatDocumentIdDataCompletionClosure?(chatDocumentId, data, completion)
-    }
-
-    //MARK: - listChatMediaFiles
-
-    var listChatMediaFilesChatDocumentIdCompletionCallsCount = 0
-    var listChatMediaFilesChatDocumentIdCompletionCalled: Bool {
-        return listChatMediaFilesChatDocumentIdCompletionCallsCount > 0
-    }
-    var listChatMediaFilesChatDocumentIdCompletionReceivedArguments: (chatDocumentId: String, completion: ([StorageReference]?) -> Void)?
-    var listChatMediaFilesChatDocumentIdCompletionReceivedInvocations: [(chatDocumentId: String, completion: ([StorageReference]?) -> Void)] = []
-    var listChatMediaFilesChatDocumentIdCompletionClosure: ((String, @escaping ([StorageReference]?) -> Void) -> Void)?
-
-    func listChatMediaFiles(        chatDocumentId: String,        completion: @escaping ([StorageReference]?) -> Void    ) {
-        listChatMediaFilesChatDocumentIdCompletionCallsCount += 1
-        listChatMediaFilesChatDocumentIdCompletionReceivedArguments = (chatDocumentId: chatDocumentId, completion: completion)
-        listChatMediaFilesChatDocumentIdCompletionReceivedInvocations.append((chatDocumentId: chatDocumentId, completion: completion))
-        listChatMediaFilesChatDocumentIdCompletionClosure?(chatDocumentId, completion)
     }
 
 }

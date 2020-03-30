@@ -65,6 +65,8 @@ class ChatCell: UITableViewCell, NibReusable {
                 icon = "🎵"
             case .text(let text):
                 allText += text
+            case .forward(_):
+                allText += "↪️"
             }
         }
         lastMessageLabel.text = "\(imageCount > 1 ? "x\(imageCount)" : "") \(icon) \(allText)"

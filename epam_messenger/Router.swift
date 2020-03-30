@@ -19,8 +19,6 @@ protocol RouterProtocol: RouterMain, AutoMockable {
     func showChatList()
     func showChat(_ chatModel: ChatModel)
     func popToRoot()
-    func showContactsList()
-    func showUserContactsListViewController() // list user's contacts
 }
 
 class Router: RouterProtocol {
@@ -76,20 +74,6 @@ class Router: RouterProtocol {
             navigationController.popToRootViewController(animated: true)
         }
     }
-    
-    func showContactsList() {
-        if let navigationController = navigationController {
-            guard let contactsListViewController = assemblyBuilder?.createContactsListModule(router: self) else { return }
-            navigationController.viewControllers = [contactsListViewController]
-        }
-    }
-
-    func showUserContactsListViewController() {
-           if let navigationController = navigationController {
-               guard let userContactsListViewController = assemblyBuilder?.createUserContactsListModule(router: self) else { return }
-               navigationController.viewControllers = [userContactsListViewController]
-           }
-       }
     
     init(navigationController: UINavigationController,
          assemblyBuilder: AssemblyBuilderProtocol) {

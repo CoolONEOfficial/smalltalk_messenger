@@ -17,6 +17,11 @@ protocol ChatViewModelProtocol: ViewModelProtocol, AutoMockable, MessageCellDele
         messageText: String?,
         completion: @escaping (Bool) -> Void
     )
+    func forwardMessage(
+        _ chatModel: ChatModel,
+        _ messageModel: MessageProtocol,
+        completion: @escaping (Bool) -> Void
+    )
     func deleteMessage(
         _ messageModel: MessageProtocol,
         completion: @escaping (Bool) -> Void
@@ -27,6 +32,10 @@ protocol ChatViewModelProtocol: ViewModelProtocol, AutoMockable, MessageCellDele
     func pickImages(
         viewController: UIViewController,
         completion: @escaping (UIImage) -> Void
+    )
+    func createForwardViewController(forwardDelegate: ForwardDelegateProtocol) -> UIViewController
+    func goToChat(
+        _ chatModel: ChatModel
     )
     
     var lastTapCellContent: MessageCellContentProtocol! { get }
@@ -143,6 +152,18 @@ class ChatViewModel: ChatViewModelProtocol {
         }
     }
     
+    func forwardMessage(
+        _ chatModel: ChatModel,
+        _ messageModel: MessageProtocol,
+        completion: @escaping (Bool) -> Void
+    ) {
+        firestoreService.sendMessage(
+            chatDocumentId: chatModel.documentId,
+            messageKind: messageModel.forwardedKind(.init(name: "User", surname: "Userov")), // TODO: sender forward user
+            completion: completion
+        )
+    }
+    
     func deleteMessage(
         _ messageModel: MessageProtocol,
         completion: @escaping (Bool) -> Void = {_ in}
@@ -163,11 +184,19 @@ class ChatViewModel: ChatViewModelProtocol {
         )
     }
     
+    func goToChat(_ chatModel: ChatModel) {
+        router.showChat(chatModel)
+    }
+    
     func pickImages(
         viewController: UIViewController,
         completion: @escaping (UIImage) -> Void
     ) {
         imagePickerService.pickImages(viewController: viewController, completion: completion)
+    }
+    
+    func createForwardViewController(forwardDelegate: ForwardDelegateProtocol) -> UIViewController {
+        return AssemblyBuilder().createChatListModule(router: router, forwardDelegate: forwardDelegate)
     }
 }
 
@@ -176,16 +205,16 @@ extension ChatViewModel: MessageCellDelegate {
         lastTapCellContent = content
         switch content {
         case let messageContent as MessageImageContent:
-            storageService.listChatMediaFiles(chatDocumentId: chatModel.documentId) { refs in
-                if let refs = refs {
-                    let initialIndex = refs.firstIndex { ref in
-                        return ref.fullPath == messageContent.imageMessage.kindImage(at: messageContent.kindIndex)!.path
-                    }
-                    self.viewController.presentPhotoViewer(
-                        refs,
-                        initialIndex: initialIndex!
-                    )
+            firestoreService.listChatMedia(chatDocumentId: chatModel.documentId) { mediaItems in
+                let refs = mediaItems!.map { Storage.storage().reference(withPath: $0.path) }
+                
+                let initialIndex = refs.firstIndex { ref in
+                    return ref.fullPath == messageContent.imageMessage.kindImage(at: messageContent.kindIndex)!.path
                 }
+                self.viewController.presentPhotoViewer(
+                    refs,
+                    initialIndex: initialIndex!
+                )
             }
         default: break
         }

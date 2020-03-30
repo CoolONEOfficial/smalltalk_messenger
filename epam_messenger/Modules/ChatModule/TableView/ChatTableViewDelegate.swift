@@ -250,7 +250,9 @@ extension ChatViewController: UITableViewDelegate {
     }
     
     @objc internal func forwardSelectedMessages() {
-        // TODO: forward messages
+        let forwardController = viewModel.createForwardViewController(forwardDelegate: self)
+        let navigationController = UINavigationController(rootViewController: forwardController)
+        present(navigationController, animated: true, completion: nil)
     }
     
     private func enableEditMode() {
@@ -263,8 +265,8 @@ extension ChatViewController: UITableViewDelegate {
     }
     
     @objc private func disableEditMode() {
-        didSelectionChange()
         tableView.setEditing(false, animated: true)
+        didSelectionChange()
         navigationItem.rightBarButtonItem = nil
         navigationItem.leftBarButtonItem = nil
         inputBar.setMiddleContentView(inputBar.inputTextView, animated: true)
@@ -289,6 +291,22 @@ extension ChatViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, shouldBeginMultipleSelectionInteractionAt indexPath: IndexPath) -> Bool {
         return true
+    }
+    
+}
+
+extension ChatViewController: ForwardDelegateProtocol {
+    
+    func didSelectChat(_ chatModel: ChatModel) {
+        for indexPath in tableView.indexPathsForSelectedRows! {
+            let message = tableView!.chatDataSource.messageAt(indexPath)
+            viewModel.forwardMessage(chatModel, message) { result in
+                if result {
+                    self.viewModel.goToChat(chatModel)
+                }
+            }
+        }
+        disableEditMode()
     }
     
 }

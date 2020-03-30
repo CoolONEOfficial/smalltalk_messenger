@@ -167,6 +167,8 @@ class MessageCell: UITableViewCell, NibReusable, MessageCellProtocol {
                 contentView = MessageImageContent()
             case .audio:
                 contentView = MessageAudioContent()
+            case .forward(_):
+                contentView = MessageForwardContent()
             }
             contentView.loadMessage(
                 self.message,

@@ -31,6 +31,7 @@ struct MessageModel: AutoCodable {
         case text(_: String)
         case image(path: String, size: ImageSize)
         case audio(path: String)
+        case forward(_: UserModel)
     }
     
     static let defaultDocumentId: String? = nil
@@ -84,6 +85,15 @@ extension MessageModel: MessageProtocol {
     var isIncoming: Bool {
         return userId != 0 // TODO: auth user id
     }
+    
+    func forwardedKind(_ userModel: UserModel) -> [MessageModel.MessageKind] {
+        var forwardedKind = kind
+        if case .forward = forwardedKind.first {
+            forwardedKind.remove(at: 0)
+        }
+        forwardedKind.insert(.forward(userModel), at: 0)
+        return forwardedKind
+    }
 }
 
 extension MessageModel: MessageTextProtocol {
@@ -113,6 +123,17 @@ extension MessageModel: MessageAudioProtocol {
         switch kind[at] {
         case .audio(let path):
             return path
+        default:
+            return nil
+        }
+    }
+}
+
+extension MessageModel: MessageForwardProtocol {
+    func kindForwardUser(at: Int) -> UserModel? {
+        switch kind[at] {
+        case .forward(let userModel):
+            return userModel
         default:
             return nil
         }

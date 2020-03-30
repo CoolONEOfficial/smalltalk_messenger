@@ -20,10 +20,6 @@ protocol StorageServiceProtocol: AutoMockable {
         data: Data,
         completion: @escaping (MessageModel.MessageKind?) -> Void
     )
-    func listChatMediaFiles(
-        chatDocumentId: String,
-        completion: @escaping ([StorageReference]?) -> Void
-    )
 }
 
 extension StorageServiceProtocol {
@@ -98,21 +94,6 @@ class StorageService: StorageServiceProtocol {
                 } else {
                     completion(nil)
                 }
-        }
-    }
-    
-    func listChatMediaFiles(
-        chatDocumentId: String,
-        completion: @escaping ([StorageReference]?) -> Void
-    ) {
-        storage.child("chats").child(chatDocumentId).child("media")
-            .list(withMaxResults: 100) { result, err in
-                guard err == nil else {
-                    completion(nil)
-                    return
-                }
-                
-                completion(result.items)
         }
     }
 }

@@ -11,6 +11,10 @@ import FirebaseUI
 import CodableFirebase
 import Reusable
 
+protocol ForwardDelegateProtocol {
+    func didSelectChat(_ chatModel: ChatModel)
+}
+
 protocol ChatListViewControllerProtocol {
 }
 
@@ -25,6 +29,8 @@ class ChatListViewController: UIViewController {
     var viewModel: ChatListViewModelProtocol!
     let searchController = UISearchController(searchResultsController: nil)
     private var searchItems: [ChatModel] = .init()
+    
+    var forwardDelegate: ForwardDelegateProtocol?
     
     var bindDataSource: FUIFirestoreTableViewDataSource! {
         didSet {
@@ -46,6 +52,10 @@ class ChatListViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        if isForward {
+            title = "Forward"
+        }
         
         setupTableView()
         setupNavigationItem()
@@ -82,7 +92,11 @@ class ChatListViewController: UIViewController {
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = "Search by chats"
-        tabBarController?.navigationItem.searchController = searchController
+        if isForward {
+            navigationItem.searchController = searchController
+        } else {
+            tabBarController?.navigationItem.searchController = searchController
+        }
     }
     
     // MARK: - Edit mode
@@ -179,6 +193,11 @@ class ChatListViewController: UIViewController {
         self.tabBarController?.tabBar.isHidden = hidden
     }
     
+    // MARK: - Helpers
+    
+    var isForward: Bool {
+        return tabBarController == nil
+    }
 }
 
 extension ChatListViewController: UITableViewDelegate {
@@ -187,21 +206,20 @@ extension ChatListViewController: UITableViewDelegate {
         if tableView.isEditing {
             didSelectionChange()
         } else {
-            let snapshot = bindDataSource.items[indexPath.item]
-            var data = snapshot.data() ?? [:]
-            data["documentId"] = snapshot.documentID
-
-            do {
-                let chatModel = try FirestoreDecoder()
-                    .decode(
-                        ChatModel.self,
-                        from: data
-                )
-                
-                viewModel.goToChat(chatModel)
-                
-            } catch let err {
-                debugPrint("error while parse chat model: \(err)")
+            let chatModel = (searchController.searchBar.text?.isEmpty ?? true)
+                ? ChatModel.fromSnapshot(bindDataSource.items[indexPath.item])
+                : searchItems[indexPath.item]
+            
+            if let chatModel = chatModel {
+                if isForward {
+                    dismiss(animated: true) {
+                        self.forwardDelegate?.didSelectChat(chatModel)
+                    }
+                } else {
+                    viewModel.goToChat(chatModel)
+                }
+            } else {
+                debugPrint("Error while parse selected chat")
             }
         }
     }
