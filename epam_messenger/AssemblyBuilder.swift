@@ -10,10 +10,14 @@ import UIKit
 protocol AssemblyBuilderProtocol {
     func createAuthorizationModule(router: RouterProtocol) -> UIViewController
     func createBottomBarModule(router: RouterProtocol) -> UIViewController
-    func createChatListModule(router: RouterProtocol) -> UIViewController
+    func createChatListModule(router: RouterProtocol, forwardDelegate: ForwardDelegateProtocol?) -> UIViewController
     func createChatModule(router: RouterProtocol, chatModel: ChatModel) -> UIViewController
-    func createContactsListModule(router: RouterProtocol) -> UIViewController // me
-    func createUserContactsListModule(router: RouterProtocol) -> UIViewController
+}
+
+extension AssemblyBuilderProtocol {
+    func createChatListModule(router: RouterProtocol, forwardDelegate: ForwardDelegateProtocol? = nil) -> UIViewController {
+        return createChatListModule(router: router, forwardDelegate: forwardDelegate)
+    }
 }
 
 class AssemblyBuilder: AssemblyBuilderProtocol {
@@ -32,8 +36,9 @@ class AssemblyBuilder: AssemblyBuilderProtocol {
         return view
     }
     
-    func createChatListModule(router: RouterProtocol) -> UIViewController {
+    func createChatListModule(router: RouterProtocol, forwardDelegate: ForwardDelegateProtocol? = nil) -> UIViewController {
         let view = ChatListViewController()
+        view.forwardDelegate = forwardDelegate
         let viewModel = ChatListViewModel(router: router, viewController: view)
         view.viewModel = viewModel
         return view
@@ -46,20 +51,6 @@ class AssemblyBuilder: AssemblyBuilderProtocol {
             router: router,
             chatModel: chatModel
         )
-        view.viewModel = viewModel
-        return view
-    }
-    
-    func createContactsListModule(router: RouterProtocol) -> UIViewController {
-        let view = ContactsListViewController()
-        let viewModel = ContactsListViewModel(router: router, viewController: view)
-        view.viewModel = viewModel
-        return view
-    }
-    
-    func createUserContactsListModule(router: RouterProtocol) -> UIViewController {
-        let view = UserContactsListViewController()
-        let viewModel = UserContactsListViewModel(router: router, viewController: view)
         view.viewModel = viewModel
         return view
     }

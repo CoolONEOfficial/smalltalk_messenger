@@ -9,7 +9,7 @@ import Foundation
 import Firebase
 import CodableFirebase
 
-struct UserModel: Decodable {
+struct UserModel: Codable {
     let name: String
     let surname: String
     

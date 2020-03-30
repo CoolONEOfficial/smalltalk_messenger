@@ -22,6 +22,7 @@ extension ChatModel {
 
 }
 
+
 extension MessageModel {
 
     internal init(from decoder: Decoder) throws {
@@ -50,6 +51,7 @@ extension MessageModel.MessageKind {
         case text
         case image
         case audio
+        case forward
         case path
         case size
     }
@@ -76,6 +78,12 @@ extension MessageModel.MessageKind {
             self = .audio(path: path)
             return
         }
+        if container.allKeys.contains(.forward), try container.decodeNil(forKey: .forward) == false {
+            var associatedValues = try container.nestedUnkeyedContainer(forKey: .forward)
+            let associatedValue0 = try associatedValues.decode(UserModel.self)
+            self = .forward(associatedValue0)
+            return
+        }
         throw DecodingError.dataCorrupted(.init(codingPath: decoder.codingPath, debugDescription: "Unknown enum case"))
     }
 
@@ -93,6 +101,9 @@ extension MessageModel.MessageKind {
         case let .audio(path):
             var associatedValues = container.nestedContainer(keyedBy: CodingKeys.self, forKey: .audio)
             try associatedValues.encode(path, forKey: .path)
+        case let .forward(associatedValue0):
+            var associatedValues = container.nestedUnkeyedContainer(forKey: .forward)
+            try associatedValues.encode(associatedValue0)
         }
     }
 

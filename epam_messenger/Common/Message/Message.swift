@@ -13,4 +13,6 @@ protocol MessageProtocol {
     var userId: Int { get }
     var documentId: String? { get }
     var kind: [MessageModel.MessageKind] { get }
+    
+    func forwardedKind(_ userModel: UserModel) -> [MessageModel.MessageKind]
 }
