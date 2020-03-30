@@ -38,6 +38,7 @@ class MessageAudioContent: UIView, MessageCellContentProtocol {
         didSet {
             setupWaveform()
             setupPlayButton()
+            playAudioBackground()
         }
     }
     var message: MessageProtocol! {
@@ -45,11 +46,11 @@ class MessageAudioContent: UIView, MessageCellContentProtocol {
     }
     
     var topMargin: CGFloat {
-        return 0
+        return 5
     }
     
     var bottomMargin: CGFloat {
-        return 0
+        return 5
     }
     
     private func setupPlayer() {
@@ -98,7 +99,15 @@ class MessageAudioContent: UIView, MessageCellContentProtocol {
     
     private func playAudioBackground() {
         do {
-            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [.mixWithOthers, .allowAirPlay, .defaultToSpeaker])
+            try AVAudioSession.sharedInstance().setCategory(
+                .playback,
+                mode: .default,
+                options: [
+                    .mixWithOthers,
+                    .allowAirPlay,
+                    .defaultToSpeaker
+                ]
+            )
             print("Playback OK")
             try AVAudioSession.sharedInstance().setActive(true)
             print("Session is Active")
@@ -168,20 +177,24 @@ class MessageAudioContent: UIView, MessageCellContentProtocol {
     }
     
     func didPlayButtonTap() {
-        if player.isPlaying {
-            player.pause()
-            playButton.setBackgroundImage(UIImage(systemName: "play.circle.fill"), for: .normal)
-            self.waveform.layer.pause()
-        } else {
-            player.play()
-            playButton.setBackgroundImage(UIImage(systemName: "pause.circle.fill"), for: .normal)
-            if player.currentTime.isZero {
-                UIView.animate(withDuration: player.duration, delay: 0, options: .curveLinear, animations: {
-                    self.waveform.highlightedSamples =  0 ..< self.waveform.totalSamples
-                }, completion: nil)
+        if player != nil {
+            if player.isPlaying {
+                player.pause()
+                playButton.setBackgroundImage(UIImage(systemName: "play.circle.fill"), for: .normal)
+                self.waveform.layer.pause()
             } else {
-                self.waveform.layer.resume()
+                player.play()
+                playButton.setBackgroundImage(UIImage(systemName: "pause.circle.fill"), for: .normal)
+                if player.currentTime.isZero {
+                    UIView.animate(withDuration: player.duration, delay: 0, options: .curveLinear, animations: {
+                        self.waveform.highlightedSamples =  0 ..< self.waveform.totalSamples
+                    }, completion: nil)
+                } else {
+                    self.waveform.layer.resume()
+                }
             }
+        } else {
+            cell?.delegate?.didError("Audio message has been deleted by the owner")
         }
     }
 }
