@@ -45,23 +45,31 @@ class ChatViewControllerProtocolMock: ChatViewControllerProtocol {
         presentPhotoViewerInitialIndexClosure?(storageRefs, initialIndex)
     }
 
+    //MARK: - presentErrorAlert
+
+    var presentErrorAlertCallsCount = 0
+    var presentErrorAlertCalled: Bool {
+        return presentErrorAlertCallsCount > 0
+    }
+    var presentErrorAlertReceivedText: String?
+    var presentErrorAlertReceivedInvocations: [String] = []
+    var presentErrorAlertClosure: ((String) -> Void)?
+
+    func presentErrorAlert(_ text: String) {
+        presentErrorAlertCallsCount += 1
+        presentErrorAlertReceivedText = text
+        presentErrorAlertReceivedInvocations.append(text)
+        presentErrorAlertClosure?(text)
+    }
+
 }
 class ChatViewModelProtocolMock: ChatViewModelProtocol {
+    var chatModel: ChatModel {
+        get { return underlyingChatModel }
+        set(value) { underlyingChatModel = value }
+    }
+    var underlyingChatModel: ChatModel!
     var lastTapCellContent: MessageCellContentProtocol!
-
-    //MARK: - getChatModel
-
-    var getChatModelCallsCount = 0
-    var getChatModelCalled: Bool {
-        return getChatModelCallsCount > 0
-    }
-    var getChatModelReturnValue: ChatModel!
-    var getChatModelClosure: (() -> ChatModel)?
-
-    func getChatModel() -> ChatModel {
-        getChatModelCallsCount += 1
-        return getChatModelClosure.map({ $0() }) ?? getChatModelReturnValue
-    }
 
     //MARK: - firestoreQuery
 
@@ -212,6 +220,23 @@ class ChatViewModelProtocolMock: ChatViewModelProtocol {
         didTapContentReceivedContent = content
         didTapContentReceivedInvocations.append(content)
         didTapContentClosure?(content)
+    }
+
+    //MARK: - didError
+
+    var didErrorCallsCount = 0
+    var didErrorCalled: Bool {
+        return didErrorCallsCount > 0
+    }
+    var didErrorReceivedText: String?
+    var didErrorReceivedInvocations: [String] = []
+    var didErrorClosure: ((String) -> Void)?
+
+    func didError(_ text: String) {
+        didErrorCallsCount += 1
+        didErrorReceivedText = text
+        didErrorReceivedInvocations.append(text)
+        didErrorClosure?(text)
     }
 
     //MARK: - viewDidLoad

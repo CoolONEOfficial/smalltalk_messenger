@@ -14,6 +14,8 @@ protocol MessageCellProtocol: UIView {
     
     var mergeNext: Bool! { get set }
     var mergePrev: Bool! { get set }
+    
+    var delegate: MessageCellDelegate? { get }
 }
 
 protocol MessageCellContentProtocol: UIView {
@@ -44,6 +46,7 @@ extension MessageCellContentProtocol {
 
 protocol MessageCellDelegate {
     func didTapContent(_ content: MessageCellContentProtocol)
+    func didError(_ text: String)
 }
 
 class MessageCell: UITableViewCell, NibReusable, MessageCellProtocol {

@@ -113,6 +113,7 @@ class ChatListViewController: UIViewController {
     
     @objc private func toggleEditMode(_ sender: UIBarButtonItem) {
         tableView.setEditing(!tableView.isEditing, animated: true)
+        tableView.separatorInset.left = tableView.isEditing ? 120 : 75
         sender.title = tableView.isEditing ? "Done" : "Edit"
         
         setToolbarHidden(!tableView.isEditing)
@@ -229,15 +230,18 @@ extension ChatListViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, shouldBeginMultipleSelectionInteractionAt indexPath: IndexPath) -> Bool {
-        return true
+        return !isForward
     }
     
     func tableView(_ tableView: UITableView, didBeginMultipleSelectionInteractionAt indexPath: IndexPath) {
-        self.setEditing(true, animated: true)
+        if !isForward {
+            self.setEditing(true, animated: true)
+        }
     }
     
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
-        if let chatModel = chatAt(indexPath.item) {
+        if !isForward,
+            let chatModel = chatAt(indexPath.item) {
             let identifier = NSString(string: String(indexPath.item))
             let configuration = UIContextMenuConfiguration(identifier: identifier, previewProvider: { () -> UIViewController? in
                 // Return Preview View Controller here
@@ -260,12 +264,14 @@ extension ChatListViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating) {
-        guard let identifier = configuration.identifier as? String else { return }
-        guard let itemIndex = Int(identifier) else { return }
-        
-        if let chatModel = chatAt(itemIndex) {
-            animator.addCompletion {
-                self.viewModel.goToChat(chatModel)
+        if !isForward {
+            guard let identifier = configuration.identifier as? String else { return }
+            guard let itemIndex = Int(identifier) else { return }
+            
+            if let chatModel = chatAt(itemIndex) {
+                animator.addCompletion {
+                    self.viewModel.goToChat(chatModel)
+                }
             }
         }
     }

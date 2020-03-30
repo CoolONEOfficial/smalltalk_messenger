@@ -62,6 +62,15 @@ extension ChatViewController: UITableViewDelegate {
                 pasteBoard.string = allText
             }
             
+            let forward = UIAction(
+                title: "Forward",
+                image: UIImage(systemName: "arrowshape.turn.up.right")
+            ) { _ in
+                let messageModel = self.tableView.chatDataSource.messageAt(indexPath)
+                self.presentForwardController()
+                self.forwardMessages = [messageModel]
+            }
+            
             let savePhoto = UIAction(
                 title: "Save to camera roll",
                 image: UIImage(systemName: "square.and.arrow.down")
@@ -93,9 +102,7 @@ extension ChatViewController: UITableViewDelegate {
                 self.didSelectionChange()
             }
             
-            var actions = [
-                delete
-            ]
+            var actions: [UIAction] = []
             
             let message = self.tableView.chatDataSource.messageAt(indexPath)
             
@@ -105,7 +112,7 @@ extension ChatViewController: UITableViewDelegate {
                 }
                 return false
             }).count == 1 {
-                actions.insert(savePhoto, at: 1)
+                actions.append(savePhoto)
             }
             if !message.kind.contains(where: { content in
                 if case .audio = content {
@@ -113,8 +120,11 @@ extension ChatViewController: UITableViewDelegate {
                 }
                 return false
             }) {
-                actions.insert(copy, at: 0)
+                actions.append(copy)
             }
+            
+            actions.append(forward)
+            actions.append(delete)
             
             return UIMenu(title: "", children: [
                 UIMenu(title: "", options: .displayInline, children: actions),
@@ -213,7 +223,7 @@ extension ChatViewController: UITableViewDelegate {
         
         title = rowsSelected
             ? "Selected \(tableView.indexPathsForSelectedRows!.count) messages"
-            : viewModel.getChatModel().name
+            : viewModel.chatModel.name
         
         navigationItem.leftBarButtonItem = .init(
             title: "Delete chat",
@@ -249,10 +259,15 @@ extension ChatViewController: UITableViewDelegate {
         }
     }
     
-    @objc internal func forwardSelectedMessages() {
+    internal func presentForwardController() {
         let forwardController = viewModel.createForwardViewController(forwardDelegate: self)
         let navigationController = UINavigationController(rootViewController: forwardController)
         present(navigationController, animated: true, completion: nil)
+    }
+    
+    @objc internal func forwardSelectedMessages() {
+        presentForwardController()
+        forwardMessages = tableView!.indexPathsForSelectedRows!.map { tableView!.chatDataSource.messageAt($0) }
     }
     
     private func enableEditMode() {
@@ -298,14 +313,14 @@ extension ChatViewController: UITableViewDelegate {
 extension ChatViewController: ForwardDelegateProtocol {
     
     func didSelectChat(_ chatModel: ChatModel) {
-        for indexPath in tableView.indexPathsForSelectedRows! {
-            let message = tableView!.chatDataSource.messageAt(indexPath)
+        for message in forwardMessages {
             viewModel.forwardMessage(chatModel, message) { result in
-                if result {
+                if result && self.viewModel.chatModel.documentId != chatModel.documentId {
                     self.viewModel.goToChat(chatModel)
                 }
             }
         }
+        forwardMessages = nil
         disableEditMode()
     }
     

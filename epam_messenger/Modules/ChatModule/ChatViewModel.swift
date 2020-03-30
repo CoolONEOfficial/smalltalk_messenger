@@ -10,7 +10,6 @@ import Firebase
 import InputBarAccessoryView
 
 protocol ChatViewModelProtocol: ViewModelProtocol, AutoMockable, MessageCellDelegate {
-    func getChatModel() -> ChatModel
     func firestoreQuery() -> FireQuery
     func sendMessage(
         attachments: [ChatViewController.MessageAttachment],
@@ -38,6 +37,7 @@ protocol ChatViewModelProtocol: ViewModelProtocol, AutoMockable, MessageCellDele
         _ chatModel: ChatModel
     )
     
+    var chatModel: ChatModel { get }
     var lastTapCellContent: MessageCellContentProtocol! { get }
 }
 
@@ -90,10 +90,6 @@ class ChatViewModel: ChatViewModelProtocol {
         self.firestoreService = firestoreService
         self.storageService = storageService
         self.imagePickerService = imagePickerService
-    }
-    
-    func getChatModel() -> ChatModel {
-        return self.chatModel
     }
     
     func firestoreQuery() -> FireQuery {
@@ -201,6 +197,7 @@ class ChatViewModel: ChatViewModelProtocol {
 }
 
 extension ChatViewModel: MessageCellDelegate {
+    
     func didTapContent(_ content: MessageCellContentProtocol) {
         lastTapCellContent = content
         switch content {
@@ -211,12 +208,21 @@ extension ChatViewModel: MessageCellDelegate {
                 let initialIndex = refs.firstIndex { ref in
                     return ref.fullPath == messageContent.imageMessage.kindImage(at: messageContent.kindIndex)!.path
                 }
-                self.viewController.presentPhotoViewer(
-                    refs,
-                    initialIndex: initialIndex!
-                )
+                if let initialIndex = initialIndex {
+                    self.viewController.presentPhotoViewer(
+                        refs,
+                        initialIndex: initialIndex
+                    )
+                } else {
+                    self.viewController.presentErrorAlert("Photo has been deleted by the owner.")
+                }
             }
         default: break
         }
     }
+    
+    func didError(_ text: String) {
+        viewController.presentErrorAlert(text)
+    }
+    
 }

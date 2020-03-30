@@ -17,7 +17,6 @@ class ChatCell: UITableViewCell, NibReusable {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
         
         chatNameLabel.isHidden = true
         avatarImageView.image = #imageLiteral(resourceName: "Nathan-Tannar")

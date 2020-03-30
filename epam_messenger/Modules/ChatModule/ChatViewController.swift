@@ -14,6 +14,7 @@ import NYTPhotoViewer
 
 protocol ChatViewControllerProtocol: AutoMockable {
     func presentPhotoViewer(_ storageRefs: [StorageReference], initialIndex: Int)
+    func presentErrorAlert(_ text: String)
 }
 
 class ChatViewController: UIViewController {
@@ -33,6 +34,8 @@ class ChatViewController: UIViewController {
     var deleteButton = UIButton()
     var forwardButton = UIButton()
     let stack = UIStackView()
+    
+    var forwardMessages: [MessageProtocol]!
     
     lazy var autocompleteManager: AutocompleteManager = { [unowned self] in
         let manager = AutocompleteManager(for: self.inputBar.inputTextView)
@@ -76,7 +79,7 @@ class ChatViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        title = viewModel.getChatModel().name
+        title = viewModel.chatModel.name
         view.tintColor = .accent
         
         setupTableView()
@@ -209,6 +212,16 @@ extension ChatViewController: ChatViewControllerProtocol {
         )
         
         present(photosViewController, animated: true)
+    }
+    
+    func presentErrorAlert(_ text: String) {
+        let alert = UIAlertController(title: "Error",
+            message: text,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "Dismiss", style: .default))
+        
+        self.present(alert, animated: true, completion:nil)
     }
     
 }
