@@ -8,61 +8,77 @@
 import Foundation
 import Firebase
 
-protocol ChatViewModelProtocol: ViewModelProtocol {
+protocol ChatViewModelProtocol: ViewModelProtocol, AutoMockable {
     func getChatModel() -> ChatModel
-    func messageList() -> [MessageModel]
+    func firestoreQuery() -> Query
     func sendMessage(
-        messageText: String,
+        _ messageText: String,
+        completion: @escaping (Bool) -> Void
+    )
+    func deleteMessage(
+        _ messageModel: MessageProtocol,
         completion: @escaping (Bool) -> Void
     )
 }
 
+extension ChatViewModelProtocol {
+    func deleteMessage(
+        _ messageModel: MessageProtocol,
+        completion: @escaping (Bool) -> Void = {_ in}
+    ) {
+        return deleteMessage(messageModel, completion: completion)
+    }
+    
+    func sendMessage(
+        _ messageText: String,
+        completion: @escaping (Bool) -> Void = {_ in}
+    ) {
+        return sendMessage(messageText, completion: completion)
+    }
+}
+
 class ChatViewModel: ChatViewModelProtocol {
     let router: RouterProtocol
-    let viewController: ChatViewControllerProtocol
-    let firestoreService: FirestoreService = FirestoreService()
+    let firestoreService: FirestoreServiceProtocol
     
     let chatModel: ChatModel
-    
-    var data: [MessageModel] = []
     
     init(
         router: RouterProtocol,
         chatModel: ChatModel,
-        viewController: ChatViewControllerProtocol
+        firestoreService: FirestoreServiceProtocol = FirestoreService()
     ) {
         self.router = router
         self.chatModel = chatModel
-        self.viewController = viewController
+        self.firestoreService = firestoreService
     }
     
     func getChatModel() -> ChatModel {
         return self.chatModel
     }
     
-    func messageList() -> [MessageModel] {
-        return data
-    }
-    
-    func viewDidLoad() {
-        var firstLoad = true
-        firestoreService.loadChat(
-            chatModel.documentId,
-            messagesListener: { parsedData in
-                self.data = parsedData
-                self.viewController.performUpdates(keepOffset: !firstLoad)
-                firstLoad = false
-        }
-        )
+    func firestoreQuery() -> Query {
+        return firestoreService.createChatQuery(chatModel)
     }
     
     func sendMessage(
-        messageText: String,
-        completion: @escaping (Bool) -> Void
+        _ messageText: String,
+        completion: @escaping (Bool) -> Void = {_ in}
     ) {
         firestoreService.sendMessage(
             chatDocumentId: chatModel.documentId,
             messageText: messageText,
+            completion: completion
+        )
+    }
+    
+    func deleteMessage(
+        _ messageModel: MessageProtocol,
+        completion: @escaping (Bool) -> Void = {_ in}
+    ) {
+        firestoreService.deleteMessage(
+            chatDocumentId: chatModel.documentId,
+            messageDocumentId: messageModel.documentId,
             completion: completion
         )
     }
