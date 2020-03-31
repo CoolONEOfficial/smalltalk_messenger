@@ -7,6 +7,7 @@
 
 import Foundation
 import InputBarAccessoryView
+import FirebaseAuth
 
 extension ChatViewController: AutocompleteManagerDelegate, AutocompleteManagerDataSource {
     
@@ -16,7 +17,7 @@ extension ChatViewController: AutocompleteManagerDelegate, AutocompleteManagerDa
         
         if prefix == "@" {
             return viewModel.chatModel.users
-                .filter { $0 != 0 }
+                .filter { $0 != Auth.auth().currentUser!.uid }
                 .map { user in
                     return AutocompleteCompletion(text: "Ivan Ivanov", // TODO: user data
                                                   context: ["id": user])

@@ -8,5 +8,5 @@
 import Foundation
 
 protocol MessageForwardProtocol: MessageProtocol {
-    func kindForwardUser(at: Int) -> UserModel?
+    func kindForwardUser(at: Int) -> String?
 }

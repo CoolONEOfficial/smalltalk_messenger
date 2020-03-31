@@ -32,6 +32,13 @@ protocol FirestoreServiceProtocol: AutoMockable {
         chatDocumentId: String,
         completion: @escaping ([MediaModel]?) -> Void
     )
+    func currentUserData(
+        completion: @escaping (UserModel?) -> Void
+    )
+    func userData(
+        _ userId: String,
+        completion: @escaping (UserModel?) -> Void
+    )
 }
 
 extension FirestoreServiceProtocol {
@@ -76,7 +83,7 @@ class FirestoreService: FirestoreServiceProtocol {
     
     lazy var chatListQuery: Query = {
         return db.collection("chats")
-            .whereField("users", arrayContains: 0) // TODO: auth user id
+            .whereField("users", arrayContains: Auth.auth().currentUser!.uid)
             .order(by: "lastMessage.timestamp", descending: true)
     }()
     
@@ -94,8 +101,8 @@ class FirestoreService: FirestoreServiceProtocol {
     ) {
         do {
             let messageModel = MessageModel(
-                kind: messageKind, // TODO: kinds
-                userId: 0, // TODO: user id
+                kind: messageKind,
+                userId: Auth.auth().currentUser!.uid,
                 timestamp: Timestamp()
             )
             
@@ -161,6 +168,7 @@ class FirestoreService: FirestoreServiceProtocol {
         }
     }
     
+<<<<<<< HEAD
     //    lazy var contactsListQuery: Query = {
     //        return db.collection("users").order(by: "name")
     //    }()
@@ -170,4 +178,32 @@ class FirestoreService: FirestoreServiceProtocol {
         return db.collection("users").document("\(documentId)").collection("contacts")
     }() // for contacts
     
+=======
+    func currentUserData(
+        completion: @escaping (UserModel?) -> Void
+    ) {
+        return userData(Auth.auth().currentUser!.uid, completion: completion)
+    }
+    
+    func userData(
+        _ userId: String,
+        completion: @escaping (UserModel?) -> Void
+    ) {
+        db.collection("users")
+            .document(userId).getDocument { snapshot, err in
+                guard err == nil else {
+                    debugPrint("Error while get user data: \(err!.localizedDescription)")
+                    completion(nil)
+                    return
+                }
+                
+                completion(UserModel.fromSnapshot(snapshot!))
+        }
+    }
+    
+    lazy var contactsListQuery: Query = {
+        return db.collection("users").order(by: "name")
+    }()
+    
+>>>>>>> Integrate users structure
 }
