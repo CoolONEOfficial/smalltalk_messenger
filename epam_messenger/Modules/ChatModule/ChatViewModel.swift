@@ -216,10 +216,6 @@ extension ChatViewModel: MessageCellDelegate {
                 } else {
                     self.viewController.presentErrorAlert("Photo has been deleted by the owner.")
                 }
-                self.viewController.presentPhotoViewer(
-                    refs,
-                    initialIndex: initialIndex!
-                )
             }
         default: break
         }

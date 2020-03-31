@@ -19,12 +19,6 @@ extension AssemblyBuilderProtocol {
     }
 }
 
-extension AssemblyBuilderProtocol {
-    func createChatListModule(router: RouterProtocol, forwardDelegate: ForwardDelegateProtocol? = nil) -> UIViewController {
-        return createChatListModule(router: router, forwardDelegate: forwardDelegate)
-    }
-}
-
 class AssemblyBuilder: AssemblyBuilderProtocol {
     func createBottomBarModule(router: RouterProtocol) -> UIViewController {
         let view = BottomBarViewController()

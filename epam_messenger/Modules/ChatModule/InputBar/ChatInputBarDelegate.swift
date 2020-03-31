@@ -46,9 +46,6 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
         ) {_ in
             self.didEndSendMessage()
         }
-        
-        inputBar.invalidatePlugins()
-        updateTableViewInset()
     }
     
     func inputBar(_ inputBar: InputBarAccessoryView, didChangeIntrinsicContentTo size: CGSize) {

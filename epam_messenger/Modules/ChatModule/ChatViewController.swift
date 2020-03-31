@@ -4,7 +4,6 @@
 //
 //  Created by Anton Pryakhin on 08.03.2020.
 //
-
 import UIKit
 import Firebase
 import FirebaseUI
@@ -191,27 +190,18 @@ class ChatViewController: UIViewController {
     internal func didStartSendMessage() {
         inputBar.sendButton.startAnimating()
         inputBar.inputTextView.text = String()
+        inputBar.inputTextView.isEditable = false
         inputBar.inputTextView.placeholder = "Sending..."
     }
     
     internal func didEndSendMessage() {
         inputBar.sendButton.stopAnimating()
         inputBar.inputTextView.placeholder = "Message..."
+        inputBar.inputTextView.isEditable = true
         tableView.scrollToBottom(animated: true)
 
         inputBar.invalidatePlugins()
         updateTableViewInset()
-    }
-    
-    internal func didStartSendMessage() {
-        inputBar.sendButton.startAnimating()
-        inputBar.inputTextView.placeholder = "Sending..."
-    }
-    
-    internal func didEndSendMessage() {
-        inputBar.sendButton.stopAnimating()
-        inputBar.inputTextView.placeholder = "Message..."
-        tableView.scrollToBottom(animated: true)
     }
     
     // MARK: Floating bottom button
@@ -220,9 +210,6 @@ class ChatViewController: UIViewController {
         tableView.scrollToBottom(animated: true)
     }
     
-    func photosViewController(_ photosViewController: NYTPhotosViewController, maximumZoomScaleFor photo: NYTPhoto) -> CGFloat {
-        return 2
-    }
 }
 
 extension ChatViewController: ChatViewControllerProtocol {
