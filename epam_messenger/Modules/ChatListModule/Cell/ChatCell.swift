@@ -55,5 +55,4 @@ class ChatCell: UITableViewCell, NibReusable {
         senderNameLabel.text = String(lastMessage.userId) // load user name
         lastMessageLabel.text = lastMessage.text
     }
-
 }

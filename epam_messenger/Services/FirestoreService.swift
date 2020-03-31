@@ -10,7 +10,63 @@ import Firebase
 import FirebaseFirestore
 import CodableFirebase
 
-class FirestoreService {
+typealias FireQuery = Query
+
+protocol FirestoreServiceProtocol: AutoMockable {
+    func createChatQuery(_ chatModel: ChatModel) -> Query
+    func sendMessage(
+        chatDocumentId: String,
+        messageText: String,
+        completion: @escaping (Bool) -> Void
+    )
+    func deleteMessage(
+        chatDocumentId: String,
+        messageDocumentId: String,
+        completion: @escaping (Bool) -> Void
+    )
+    func deleteChat(
+        chatDocumentId: String,
+        completion: @escaping (Bool) -> Void
+    )
+}
+
+extension FirestoreServiceProtocol {
+    func sendMessage(
+        chatDocumentId: String,
+        messageText: String,
+        completion: @escaping (Bool) -> Void = {_ in}
+    ) {
+        return sendMessage(
+            chatDocumentId: chatDocumentId,
+            messageText: messageText,
+            completion: completion
+        )
+    }
+    
+    func deleteMessage(
+        chatDocumentId: String,
+        messageDocumentId: String,
+        completion: @escaping (Bool) -> Void = {_ in}
+    ) {
+        deleteMessage(
+            chatDocumentId: chatDocumentId,
+            messageDocumentId: messageDocumentId,
+            completion: completion
+        )
+    }
+    
+    func deleteChat(
+        chatDocumentId: String,
+        completion: @escaping (Bool) -> Void = {_ in}
+    ) {
+        deleteChat(
+            chatDocumentId: chatDocumentId,
+            completion: completion
+        )
+    }
+}
+
+class FirestoreService: FirestoreServiceProtocol {
     
     lazy var db: Firestore = {
         return Firestore.firestore()
@@ -22,45 +78,22 @@ class FirestoreService {
             .order(by: "lastMessage.timestamp", descending: true)
     }()
     
-    func loadChat(
-        _ chatDocumentId: String,
-        messagesListener: @escaping ([MessageModel]) -> Void
-    ) {
-        db.collection("chats").document(chatDocumentId).collection("messages")
-            .order(by: "timestamp", descending: true)
-            .limit(to: 20)
-            .addSnapshotListener { querySnapshot, error in
-                guard let query = querySnapshot else {
-                    debugPrint("Error fetching messages query: \(error!)")
-                    return
-                }
-                let data = query.documents.reversed()
-                
-                let parsedData = data.map { snapshot -> MessageModel in
-                    var messageData = snapshot.data()
-                    messageData["documentId"] = snapshot.documentID
-                    
-                    return try! FirestoreDecoder()
-                        .decode(
-                            MessageModel.self,
-                            from: messageData
-                    )
-                }
-                
-                messagesListener(parsedData)
-        }
+    func createChatQuery(_ chatModel: ChatModel) -> Query {
+        return db.collection("chats")
+            .document(chatModel.documentId)
+            .collection("messages")
+            .order(by: "timestamp", descending: false)
     }
     
     func sendMessage(
         chatDocumentId: String,
         messageText: String,
-        completion: @escaping (Bool) -> Void
+        completion: @escaping (Bool) -> Void = {_ in}
     ) {
         do {
             let messageModel = MessageModel(
-                documentId: nil,
                 text: messageText,
-                userId: 0, // TODO: user id
+                userId: 1, // TODO: user id
                 timestamp: Timestamp()
             )
             
@@ -84,6 +117,28 @@ class FirestoreService {
         } catch let error {
             debugPrint("error! \(error.localizedDescription)")
             completion(false)
+        }
+    }
+    
+    func deleteMessage(
+        chatDocumentId: String,
+        messageDocumentId: String,
+        completion: @escaping (Bool) -> Void = {_ in}
+    ) {
+        db.collection("chats")
+            .document(chatDocumentId).collection("messages")
+            .document(messageDocumentId).delete { err in
+            completion(err == nil)
+        }
+    }
+    
+    func deleteChat(
+        chatDocumentId: String,
+        completion: @escaping (Bool) -> Void = {_ in}
+    ) {
+        db.collection("chats")
+            .document(chatDocumentId).delete { err in
+            completion(err == nil)
         }
     }
 }
