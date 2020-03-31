@@ -220,6 +220,9 @@ class ChatViewController: UIViewController {
         tableView.scrollToBottom(animated: true)
     }
     
+    func photosViewController(_ photosViewController: NYTPhotosViewController, maximumZoomScaleFor photo: NYTPhoto) -> CGFloat {
+        return 2
+    }
 }
 
 extension ChatViewController: ChatViewControllerProtocol {
