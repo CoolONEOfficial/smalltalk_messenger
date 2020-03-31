@@ -31,7 +31,7 @@ class Router: RouterProtocol {
     
     var rootViewController: UIViewController? {
         if isAuthorized {
-            return assemblyBuilder?.createChatListModule(router: self)
+            return assemblyBuilder?.createBottomBarModule(router: self)
         } else {
             guard let assemblyBuilder = assemblyBuilder as? AuthAssemblyBuilder else { return UIViewController() }
             return assemblyBuilder.createAuthStart(router: self)

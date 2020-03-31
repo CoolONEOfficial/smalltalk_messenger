@@ -32,7 +32,7 @@ struct AuthEnterCodeViewModel: AuthEnterCodeViewModelProtocol {
 //                        router.showAuthEnterName()
 //                    }
 //                } else {
-                    self.router.showChatList()
+                    self.router.showBottomBar()
 //                }
 //            }
         }
