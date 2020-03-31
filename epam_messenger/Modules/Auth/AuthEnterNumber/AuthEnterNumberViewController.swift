@@ -8,7 +8,7 @@
 import UIKit
 
 protocol AuthEnterNumberViewControllerProtocol {
-    
+    func showErrorAlert(_ text: String)
 }
 
 class AuthEnterNumberViewController: UIViewController {
@@ -55,18 +55,40 @@ class AuthEnterNumberViewController: UIViewController {
         numberTextField.layer.addSublayer(borderTop)
         numberTextField.layer.addSublayer(borderBottom)
     }
+    
+    func formattedNumber(number: String) -> String {
+        let cleanPhoneNumber = number.components(separatedBy: CharacterSet.decimalDigits.inverted).joined()
+        let mask = "+X (XXX) XXX-XXXX"
+
+        var result = ""
+        var index = cleanPhoneNumber.startIndex
+        for ch in mask where index < cleanPhoneNumber.endIndex {
+            if ch == "X" {
+                result.append(cleanPhoneNumber[index])
+                index = cleanPhoneNumber.index(after: index)
+            } else {
+                result.append(ch)
+            }
+        }
+        return result
+    }
 }
 
 extension AuthEnterNumberViewController: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        let allowedCharacters = "+1234567890"
-        let allowedCharacterSet = CharacterSet(charactersIn: allowedCharacters)
-        let typedCharacterSet = CharacterSet(charactersIn: string)
-        
-        return allowedCharacterSet.isSuperset(of: typedCharacterSet)
+        guard let text = textField.text else { return false }
+        let newString = (text as NSString).replacingCharacters(in: range, with: string)
+        textField.text = formattedNumber(number: newString)
+        return false
     }
 }
 
 extension AuthEnterNumberViewController: AuthEnterNumberViewControllerProtocol {
+    func showErrorAlert(_ text: String) {
+        let alert = UIAlertController(title: "Error", message: text, preferredStyle: .alert)
 
+        alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: nil))
+
+        self.present(alert, animated: true)
+    }
 }
