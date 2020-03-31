@@ -239,6 +239,23 @@ class ChatViewModelProtocolMock: ChatViewModelProtocol {
         didErrorClosure?(text)
     }
 
+    //MARK: - cellUserData
+
+    var cellUserDataCompletionCallsCount = 0
+    var cellUserDataCompletionCalled: Bool {
+        return cellUserDataCompletionCallsCount > 0
+    }
+    var cellUserDataCompletionReceivedArguments: (userId: String, completion: (UserModel?) -> Void)?
+    var cellUserDataCompletionReceivedInvocations: [(userId: String, completion: (UserModel?) -> Void)] = []
+    var cellUserDataCompletionClosure: ((String, @escaping (UserModel?) -> Void) -> Void)?
+
+    func cellUserData(_ userId: String, completion: @escaping (UserModel?) -> Void) {
+        cellUserDataCompletionCallsCount += 1
+        cellUserDataCompletionReceivedArguments = (userId: userId, completion: completion)
+        cellUserDataCompletionReceivedInvocations.append((userId: userId, completion: completion))
+        cellUserDataCompletionClosure?(userId, completion)
+    }
+
     //MARK: - viewDidLoad
 
     var viewDidLoadCallsCount = 0
@@ -407,6 +424,40 @@ class FirestoreServiceProtocolMock: FirestoreServiceProtocol {
         listChatMediaChatDocumentIdCompletionReceivedArguments = (chatDocumentId: chatDocumentId, completion: completion)
         listChatMediaChatDocumentIdCompletionReceivedInvocations.append((chatDocumentId: chatDocumentId, completion: completion))
         listChatMediaChatDocumentIdCompletionClosure?(chatDocumentId, completion)
+    }
+
+    //MARK: - currentUserData
+
+    var currentUserDataCompletionCallsCount = 0
+    var currentUserDataCompletionCalled: Bool {
+        return currentUserDataCompletionCallsCount > 0
+    }
+    var currentUserDataCompletionReceivedCompletion: ((UserModel?) -> Void)?
+    var currentUserDataCompletionReceivedInvocations: [((UserModel?) -> Void)] = []
+    var currentUserDataCompletionClosure: ((@escaping (UserModel?) -> Void) -> Void)?
+
+    func currentUserData(        completion: @escaping (UserModel?) -> Void    ) {
+        currentUserDataCompletionCallsCount += 1
+        currentUserDataCompletionReceivedCompletion = completion
+        currentUserDataCompletionReceivedInvocations.append(completion)
+        currentUserDataCompletionClosure?(completion)
+    }
+
+    //MARK: - userData
+
+    var userDataCompletionCallsCount = 0
+    var userDataCompletionCalled: Bool {
+        return userDataCompletionCallsCount > 0
+    }
+    var userDataCompletionReceivedArguments: (userId: String, completion: (UserModel?) -> Void)?
+    var userDataCompletionReceivedInvocations: [(userId: String, completion: (UserModel?) -> Void)] = []
+    var userDataCompletionClosure: ((String, @escaping (UserModel?) -> Void) -> Void)?
+
+    func userData(        _ userId: String,        completion: @escaping (UserModel?) -> Void    ) {
+        userDataCompletionCallsCount += 1
+        userDataCompletionReceivedArguments = (userId: userId, completion: completion)
+        userDataCompletionReceivedInvocations.append((userId: userId, completion: completion))
+        userDataCompletionClosure?(userId, completion)
     }
 
 }

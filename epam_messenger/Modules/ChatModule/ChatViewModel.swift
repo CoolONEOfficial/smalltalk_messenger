@@ -135,7 +135,7 @@ class ChatViewModel: ChatViewModelProtocol {
                     uploadGroup.leave()
                 }
             default:
-                fatalError() // TODO: other attachments
+                fatalError()
             }
         }
         
@@ -153,9 +153,9 @@ class ChatViewModel: ChatViewModelProtocol {
         _ messageModel: MessageProtocol,
         completion: @escaping (Bool) -> Void
     ) {
-        firestoreService.sendMessage(
+        self.firestoreService.sendMessage(
             chatDocumentId: chatModel.documentId,
-            messageKind: messageModel.forwardedKind(.init(name: "User", surname: "Userov")), // TODO: sender forward user
+            messageKind: messageModel.forwardedKind(Auth.auth().currentUser!.uid),
             completion: completion
         )
     }
@@ -223,6 +223,10 @@ extension ChatViewModel: MessageCellDelegate {
     
     func didError(_ text: String) {
         viewController.presentErrorAlert(text)
+    }
+    
+    func cellUserData(_ userId: String, completion: @escaping (UserModel?) -> Void) {
+        return firestoreService.userData(userId, completion: completion)
     }
     
 }

@@ -61,7 +61,7 @@ class MessageTextContent: UIView, MessageCellContentProtocol {
         usernameLabel.isHidden = isHidden
         if !isHidden {
             usernameLabel.textColor = textColor
-            usernameLabel.text = "User Userov" // TODO: user name by id
+            usernameLabel.text = "..."
         }
     }
     
@@ -124,6 +124,10 @@ class MessageTextContent: UIView, MessageCellContentProtocol {
             
             shouldSetupConstraints = false
         }
+    }
+    
+    func didLoadUser(_ userModel: UserModel) {
+        usernameLabel.text = "\(userModel.name) \(userModel.surname)"
     }
     
     var topMargin: CGFloat {

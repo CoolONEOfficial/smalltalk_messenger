@@ -7,6 +7,7 @@
 
 import Foundation
 import InstantSearchClient
+import FirebaseAuth
 
 typealias AlgoliaQuery = Query
 
@@ -28,7 +29,7 @@ class AlgoliaService {
     func searchChats(_ searchString: String, completion: @escaping SearchCompletion) {
         let query = Query()
         query.hitsPerPage = 20
-        query.filters = "users = 0" // TODO: auth id
+        query.filters = "users = \(Auth.auth().currentUser!.uid)"
         query.query = searchString
         chatsIndex.search(query) { (content, error) in
             completion(self.parseContent(content: content, error: error))

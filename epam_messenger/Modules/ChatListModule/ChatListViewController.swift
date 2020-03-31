@@ -252,7 +252,7 @@ extension ChatListViewController: UITableViewDelegate {
                     image: UIImage(systemName: "trash.fill"),
                     attributes: .destructive
                 ) { _ in
-                    // TODO: delete chat
+                    self.viewModel.deleteChat(chatModel)
                 }
                 
                 return UIMenu(title: "", children: [delete])
@@ -306,8 +306,6 @@ extension ChatListViewController: UISearchResultsUpdating, UISearchControllerDel
                 if !(self.tableView.dataSource?.isEqual(self) ?? false) {
                     self.tableView.dataSource = self
                 }
-            } else {
-                // TODO: handle error
             }
             self.searchController.searchBar.isLoading = false
             self.tableView.reloadData()

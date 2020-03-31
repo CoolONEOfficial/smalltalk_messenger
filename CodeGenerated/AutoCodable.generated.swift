@@ -15,7 +15,7 @@ extension ChatModel {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         documentId = (try? container.decode(String.self, forKey: .documentId)) ?? ChatModel.defaultDocumentId
-        users = try container.decode([Int].self, forKey: .users)
+        users = try container.decode([String].self, forKey: .users)
         name = try container.decode(String.self, forKey: .name)
         lastMessage = (try? container.decodeIfPresent(MessageModel.self, forKey: .lastMessage)) ?? ChatModel.defaultLastMessage
     }
@@ -30,7 +30,7 @@ extension MessageModel {
 
         documentId = (try? container.decodeIfPresent(String.self, forKey: .documentId)) ?? MessageModel.defaultDocumentId
         kind = (try? container.decode([MessageKind].self, forKey: .kind)) ?? MessageModel.defaultKind
-        userId = try container.decode(Int.self, forKey: .userId)
+        userId = try container.decode(String.self, forKey: .userId)
         timestamp = MessageModel.decodeTimestamp(from: container)
     }
 
@@ -54,6 +54,7 @@ extension MessageModel.MessageKind {
         case forward
         case path
         case size
+        case userId
     }
 
     internal init(from decoder: Decoder) throws {
@@ -79,9 +80,9 @@ extension MessageModel.MessageKind {
             return
         }
         if container.allKeys.contains(.forward), try container.decodeNil(forKey: .forward) == false {
-            var associatedValues = try container.nestedUnkeyedContainer(forKey: .forward)
-            let associatedValue0 = try associatedValues.decode(UserModel.self)
-            self = .forward(associatedValue0)
+            let associatedValues = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: .forward)
+            let userId = try associatedValues.decode(String.self, forKey: .userId)
+            self = .forward(userId: userId)
             return
         }
         throw DecodingError.dataCorrupted(.init(codingPath: decoder.codingPath, debugDescription: "Unknown enum case"))
@@ -101,9 +102,9 @@ extension MessageModel.MessageKind {
         case let .audio(path):
             var associatedValues = container.nestedContainer(keyedBy: CodingKeys.self, forKey: .audio)
             try associatedValues.encode(path, forKey: .path)
-        case let .forward(associatedValue0):
-            var associatedValues = container.nestedUnkeyedContainer(forKey: .forward)
-            try associatedValues.encode(associatedValue0)
+        case let .forward(userId):
+            var associatedValues = container.nestedContainer(keyedBy: CodingKeys.self, forKey: .forward)
+            try associatedValues.encode(userId, forKey: .userId)
         }
     }
 
