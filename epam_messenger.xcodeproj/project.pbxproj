@@ -14,6 +14,7 @@
 		856A9C1F2411B8D10039E977 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 856A9C1E2411B8D10039E977 /* GoogleService-Info.plist */; };
 		857D7CC32418F0C300932457 /* FirestoreCodableInterfaces.swift in Sources */ = {isa = PBXBuildFile; fileRef = 857D7CC22418F0C300932457 /* FirestoreCodableInterfaces.swift */; };
 		859330032417CD9C00F1F32E /* BottomBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 859330022417CD9C00F1F32E /* BottomBarViewController.swift */; };
+		85B3F1CC24336F9A001F92D9 /* AuthEnterCodeTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85B3F1CB24336F9A001F92D9 /* AuthEnterCodeTextField.swift */; };
 		85BE9A6924118CF200E6643B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85BE9A6824118CF200E6643B /* AppDelegate.swift */; };
 		85BE9A7224118CF200E6643B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 85BE9A7124118CF200E6643B /* Assets.xcassets */; };
 		85BE9A7524118CF200E6643B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 85BE9A7324118CF200E6643B /* LaunchScreen.storyboard */; };
@@ -62,6 +63,7 @@
 		856A9C1E2411B8D10039E977 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		857D7CC22418F0C300932457 /* FirestoreCodableInterfaces.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreCodableInterfaces.swift; sourceTree = "<group>"; };
 		859330022417CD9C00F1F32E /* BottomBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomBarViewController.swift; sourceTree = "<group>"; };
+		85B3F1CB24336F9A001F92D9 /* AuthEnterCodeTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthEnterCodeTextField.swift; sourceTree = "<group>"; };
 		85BE9A6524118CF200E6643B /* epam_messenger.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = epam_messenger.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		85BE9A6824118CF200E6643B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		85BE9A7124118CF200E6643B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -265,6 +267,7 @@
 				E6846B8E242A95E9006818DE /* AuthEnterCodeViewController.swift */,
 				E6846B8F242A95E9006818DE /* AuthEnterCodeViewController.xib */,
 				E6846B90242A95E9006818DE /* AuthEnterCodeViewModel.swift */,
+				85B3F1CB24336F9A001F92D9 /* AuthEnterCodeTextField.swift */,
 			);
 			path = AuthEnterCode;
 			sourceTree = "<group>";
@@ -507,6 +510,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E6B749882414377500F00B29 /* Router.swift in Sources */,
+				85B3F1CC24336F9A001F92D9 /* AuthEnterCodeTextField.swift in Sources */,
 				E6846BA5242A95E9006818DE /* AuthEnterNameViewModel.swift in Sources */,
 				E6846BA9242A95E9006818DE /* AuthEnterNumberViewModel.swift in Sources */,
 				E6846B9F242A95E9006818DE /* AuthEnterCodeViewController.swift in Sources */,

@@ -14,7 +14,7 @@ protocol AuthEnterCodeViewControllerProtocol {
 class AuthEnterCodeViewController: UIViewController {
     var viewModel: AuthEnterCodeViewModelProtocol!
   
-    @IBOutlet weak var codeTextField: UITextField!
+    @IBOutlet weak var codeTextField: AuthEnterCodeTextField!
     
     @objc func touchNext() {
         guard let code = codeTextField.text else { return }
@@ -40,6 +40,11 @@ class AuthEnterCodeViewController: UIViewController {
         navigationItem.rightBarButtonItem = next
         
         codeTextField.becomeFirstResponder()
+        codeTextField.configure()
+        codeTextField.didEnterLastDigit = { [weak self] code in
+            guard let self = self else { return }
+            self.viewModel.signIn(code: code)
+        }
     }
     
     override func viewDidLayoutSubviews() {

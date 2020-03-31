@@ -20,7 +20,8 @@ struct AuthEnterNumberViewModel: AuthEnterNumberViewModelProtocol {
         PhoneAuthProvider.provider().verifyPhoneNumber(number, uiDelegate: nil) { (verificationId, error) in
             guard let verificationId = verificationId else { return }
             
-            if error != nil {
+            if let error = error {
+                self.viewController.showErrorAlert(error.localizedDescription)
                 return
             }
             
