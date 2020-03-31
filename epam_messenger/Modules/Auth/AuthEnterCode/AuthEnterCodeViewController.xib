@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="dark"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16086"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="AuthEnterCodeViewController" customModule="epam_messenger" customModuleProvider="target">
+            <connections>
+                <outlet property="codeTextField" destination="beu-ug-rC7" id="bwb-Hj-Vuu"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Check your messeges" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="b2A-Sr-aHN">
+                    <rect key="frame" x="86.5" y="98" width="241" height="29"/>
+                    <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="24"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="We have sent you an SMS with the code" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6bP-89-rxr">
+                    <rect key="frame" x="62" y="135" width="290" height="20"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="beu-ug-rC7" customClass="AuthEnterCodeTextField" customModule="epam_messenger" customModuleProvider="target">
+                    <rect key="frame" x="16" y="211" width="382" height="48"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="48" id="bVB-l4-7eh"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                    <textInputTraits key="textInputTraits"/>
+                </textField>
+            </subviews>
+            <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+            <constraints>
+                <constraint firstItem="b2A-Sr-aHN" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" constant="54" id="8lo-kZ-pDh"/>
+                <constraint firstItem="6bP-89-rxr" firstAttribute="top" secondItem="b2A-Sr-aHN" secondAttribute="bottom" constant="8" id="Dob-hr-OiT"/>
+                <constraint firstItem="6bP-89-rxr" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="VST-cp-JdX"/>
+                <constraint firstAttribute="trailing" secondItem="beu-ug-rC7" secondAttribute="trailing" constant="16" id="iW4-ka-cCM"/>
+                <constraint firstItem="beu-ug-rC7" firstAttribute="top" secondItem="6bP-89-rxr" secondAttribute="bottom" constant="56" id="odX-vV-Ji7"/>
+                <constraint firstItem="beu-ug-rC7" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="16" id="pBr-Md-sCo"/>
+                <constraint firstItem="b2A-Sr-aHN" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="y21-UV-O1A"/>
+            </constraints>
+            <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
+            <point key="canvasLocation" x="140.57971014492756" y="83.705357142857139"/>
+        </view>
+    </objects>
+</document>
