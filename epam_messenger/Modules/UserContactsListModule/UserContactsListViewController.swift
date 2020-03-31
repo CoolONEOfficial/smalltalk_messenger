@@ -16,6 +16,10 @@ protocol UserContactsListViewControllerProtocol {
 
 class UserContactsListViewController: UIViewController {
     
+    var db: Firestore = {
+        return Firestore.firestore()
+    }()
+    
     var viewModel: UserContactsListViewModelProtocol!
     
     var bindDataSource: FUIFirestoreTableViewDataSource! {
@@ -26,21 +30,40 @@ class UserContactsListViewController: UIViewController {
     
     @IBOutlet var tableView: UITableView!
     
-    
     override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        title = "Contacts"
-        tableView.register(cellType: UserContactsListCell.self)
-        
-        bindDataSource = self.tableView.bind(
-            toFirestoreQuery: viewModel.firestoreUserContactsListQuery()
-        ) { tableView, indexPath, snapshot in
-            let cell = tableView.dequeueReusableCell(for: indexPath, cellType: UserContactsListCell.self)
-            self.viewModel.didUserContactsListLoad(snapshot: snapshot, cell: cell)
-            return cell
+            super.viewDidLoad()
+            tableView.delegate = self
+            
+            title = "Contacts"
+            tableView.register(cellType: UserContactsListCell.self)
+            
+            bindDataSource = self.tableView.bind(
+                toFirestoreQuery: viewModel.firestoreUserContactsListQuery()
+            ) { tableView, indexPath, snapshot in
+                let cell = tableView.dequeueReusableCell(for: indexPath, cellType: UserContactsListCell.self)
+                self.viewModel.didUserContactsListLoad(snapshot: snapshot, cell: cell)
+                let snapshot = self.bindDataSource.items[indexPath.row]
+                return cell
+            }
         }
     }
-}
 
-extension UserContactsListViewController: UserContactsListViewControllerProtocol {}
+    extension UserContactsListViewController: UITableViewDelegate {
+        
+        func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+            let deleteAction = UIContextualAction(style: .normal, title: "Delete") { _, _, complete in
+                let cell = self.tableView.cellForRow(at: indexPath) as? UserContactsListCell
+                self.db.collection("users").document("7kEMVwxyIccl9bawojE3").collection("contacts").document("fB0OkG9ZI5a78SXLb5Fj").delete()
+                tableView.reloadData()
+                complete(true)
+            }
+            
+            deleteAction.backgroundColor = .red
+            
+            let configuration = UISwipeActionsConfiguration(actions: [deleteAction])
+            configuration.performsFirstActionWithFullSwipe = false
+            return configuration
+        }
+    }
+
+    extension UserContactsListViewController: UserContactsListViewControllerProtocol {}

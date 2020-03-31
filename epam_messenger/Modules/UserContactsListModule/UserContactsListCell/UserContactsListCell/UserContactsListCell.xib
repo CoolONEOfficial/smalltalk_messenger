@@ -23,7 +23,7 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="0d5-cG-e6y">
-                        <rect key="frame" x="16" y="2" width="40" height="40"/>
+                        <rect key="frame" x="16" y="0.0" width="40" height="40"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="40" id="TCa-1J-Pmm"/>
                             <constraint firstAttribute="width" constant="40" id="pnf-nh-TAg"/>
@@ -36,12 +36,12 @@
                 <constraint firstItem="y5K-gy-Thl" firstAttribute="leading" secondItem="njF-e1-oar" secondAttribute="leading" constant="93" id="bGB-GO-mqg"/>
                 <constraint firstItem="y5K-gy-Thl" firstAttribute="top" secondItem="njF-e1-oar" secondAttribute="top" constant="13" id="ca6-iA-Kes"/>
                 <constraint firstItem="0d5-cG-e6y" firstAttribute="leading" secondItem="njF-e1-oar" secondAttribute="leading" constant="16" id="gC0-iD-nmS"/>
-                <constraint firstItem="0d5-cG-e6y" firstAttribute="top" secondItem="njF-e1-oar" secondAttribute="top" constant="2" id="lTH-Zx-xU6"/>
+                <constraint firstItem="0d5-cG-e6y" firstAttribute="top" secondItem="njF-e1-oar" secondAttribute="top" id="lTH-Zx-xU6"/>
             </constraints>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
             <connections>
-                <outlet property="avatarImageView" destination="0d5-cG-e6y" id="J4g-Sz-0vT"/>
-                <outlet property="localName" destination="y5K-gy-Thl" id="pJ1-2Y-I3L"/>
+                <outlet property="avatarImageView" destination="0d5-cG-e6y" id="Uwg-z3-BV8"/>
+                <outlet property="localName" destination="y5K-gy-Thl" id="aMd-P4-ixw"/>
             </connections>
             <point key="canvasLocation" x="140.57971014492756" y="114.84375"/>
         </tableViewCell>

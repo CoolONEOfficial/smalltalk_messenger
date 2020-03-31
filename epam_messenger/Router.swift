@@ -34,9 +34,15 @@ class Router: RouterProtocol {
     }
     
     func initialViewController() {
-        if let navigationController = navigationController, let rootViewController = rootViewController {
-            navigationController.viewControllers = [rootViewController]
-        }
+//        if let navigationController = navigationController, let rootViewController = rootViewController {
+//            navigationController.viewControllers = [rootViewController]
+//        }
+        
+        if let navigationController = navigationController {
+                      guard let userContactsListViewController = assemblyBuilder?.createUserContactsListModule(router: self) else { return }
+                      navigationController.viewControllers = [userContactsListViewController]
+                  }
+        
     }
     
     func showBottomBar() {
@@ -78,10 +84,10 @@ class Router: RouterProtocol {
     }
 
     func showUserContactsListViewController() {
-           if let navigationController = navigationController {
-               guard let userContactsListViewController = assemblyBuilder?.createUserContactsListModule(router: self) else { return }
-               navigationController.viewControllers = [userContactsListViewController]
-           }
+//           if let navigationController = navigationController {
+//               guard let userContactsListViewController = assemblyBuilder?.createUserContactsListModule(router: self) else { return }
+//               navigationController.viewControllers = [userContactsListViewController]
+//           }
        }
     
     init(navigationController: UINavigationController,

@@ -92,7 +92,7 @@ class FirestoreService {
     }()
     
     lazy var userContactsListQuery: Query = {
-        var documentId = "JfgyNfOJh8LlnIXKKFVd"
+        var documentId = "7kEMVwxyIccl9bawojE3"
         return db.collection("users").document("\(documentId)").collection("contacts")
     }() // for contacts
     

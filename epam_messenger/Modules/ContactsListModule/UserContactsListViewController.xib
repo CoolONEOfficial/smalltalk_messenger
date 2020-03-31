@@ -4,12 +4,13 @@
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15510"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="UIMenu" message="Requires Xcode 11 or later." minToolsVersion="11.0" requiredIntegratedClassName="UICommandDiff"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="UserContactsListViewController" customModule="epam_messenger" customModuleProvider="target">
             <connections>
-                <outlet property="tableView" destination="8Ez-3v-r5q" id="TCR-GO-vWT"/>
+                <outlet property="tableView" destination="8Ez-3v-r5q" id="oi6-EL-yUU"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="t8S-f7-M4N"/>
             </connections>
         </placeholder>
@@ -33,5 +34,12 @@
             <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
             <point key="canvasLocation" x="137.68115942028987" y="118.52678571428571"/>
         </view>
+        <menu title="Sub Menu" id="kY4-2f-6hd">
+            <children>
+                <command title="Item 1" id="oGf-Qo-szg"/>
+                <command title="Item 2" id="G6z-nU-pqf"/>
+            </children>
+            <point key="canvasLocation" x="-205" y="28"/>
+        </menu>
     </objects>
 </document>
