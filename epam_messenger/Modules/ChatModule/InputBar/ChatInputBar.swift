@@ -14,10 +14,18 @@ class ChatInputBar: InputBarAccessoryView {
     // MARK: - Vars
     
     var chatDelegate: ChatInputBarDelegate?
-
+    
     let attachButton = InputBarButtonItem()
     let voiceCancelButton = InputBarButtonItem()
     let voiceButton = InputBarButtonItem()
+    lazy var voiceTimerLabel: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 20)
+        label.numberOfLines = 1
+        return label
+    }()
+    var voiceTimer: Timer?
+    var startTime: Double = 0
     
     static let defaultLeftStackWidth: CGFloat = 30
     static let defaultRightStackWidth: CGFloat = 30
@@ -107,7 +115,7 @@ class ChatInputBar: InputBarAccessoryView {
     func setupVoiceCancelButton() {
         voiceCancelButton.setSize(CGSize(width: 30, height: 30), animated: false)
         voiceCancelButton.image = UIImage(systemName: "xmark")
-        voiceCancelButton.tintColor = .plainIcon
+        voiceCancelButton.tintColor = .plainText
         voiceCancelButton.imageEdgeInsets = .uniform(5)
         
         voiceCancelButton.contentHorizontalAlignment = .fill
@@ -127,6 +135,7 @@ class ChatInputBar: InputBarAccessoryView {
         voiceButton.contentVerticalAlignment = .fill
         voiceButton.contentMode = .scaleToFill
         voiceButton.title = nil
+        voiceButton.isEnabled = false
         voiceButton.addTarget(self, action: #selector(didTouchUpVoiceButton), for: .touchUpInside)
         voiceButton.addTarget(self, action: #selector(didTouchDragOutsideVoiceButton), for: .touchDragOutside)
         voiceButton.addTarget(self, action: #selector(didTouchDownVoiceButton), for: .touchDown)
@@ -134,11 +143,23 @@ class ChatInputBar: InputBarAccessoryView {
         recordingSession = AVAudioSession.sharedInstance()
         
         do {
-            try recordingSession.setCategory(.playAndRecord, mode: .default)
+            try recordingSession.setCategory(
+                .playAndRecord,
+                mode: .default,
+                options: [
+                    .mixWithOthers,
+                    .allowAirPlay,
+                    .defaultToSpeaker
+                ]
+            )
             try recordingSession.setActive(true)
-            recordingSession.requestRecordPermission() { _ in }
+            recordingSession.requestRecordPermission() { result in
+                if result {
+                    self.voiceButton.isEnabled = true
+                }
+            }
         } catch {
-            debugPrint("failed to record")
+            debugPrint("Errorr while get record permissions: \(error.localizedDescription)")
         }
     }
     
@@ -164,6 +185,16 @@ class ChatInputBar: InputBarAccessoryView {
         sendButton.isEnabled = true
     }
     
+    @objc func advanceTimer(timer: Timer) {
+        let time = Date().timeIntervalSinceReferenceDate - startTime
+        
+        let minutes = Int(time) / 60
+        let seconds = Int(time) % 60
+        let milliseconds = Int(time * 100) % 100
+        
+        voiceTimerLabel.text = String(format: "%02i:%02i:%02i", minutes, seconds, milliseconds)
+    }
+    
     @objc func didClickAttachButton() {
         let optionMenu = ChatInputBarAttachMenu(
             cameraRecognizer: UITapGestureRecognizer(
@@ -180,7 +211,7 @@ class ChatInputBar: InputBarAccessoryView {
     
     @objc func didTouchDownVoiceCancelButton() {
         audioRecorder = nil
-        didFinishRecording()
+        willFinishRecording()
     }
     
     @objc func didTouchUpVoiceButton() {
@@ -209,15 +240,17 @@ class ChatInputBar: InputBarAccessoryView {
     }
     
     func startRecording() {
+        willStartRecording()
+        
         let audioFilename = getDocumentsDirectory().appendingPathComponent("\(Date().iso8601withFractionalSeconds).m4a")
-
+        
         let settings = [
             AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
             AVSampleRateKey: 12000,
             AVNumberOfChannelsKey: 1,
             AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
         ]
-
+        
         do {
             audioRecorder = try AVAudioRecorder(url: audioFilename, settings: settings)
             audioRecorder.delegate = self
@@ -225,36 +258,55 @@ class ChatInputBar: InputBarAccessoryView {
             
             didStartRecording()
         } catch {
+            debugPrint("Error while get audio recorder: \(error.localizedDescription)")
             finishRecording()
         }
     }
     
     func finishRecording() {
+        willFinishRecording()
         if audioRecorder != nil {
             audioRecorder.stop()
             audioRecorder = nil
         }
-        didFinishRecording()
     }
     
-    private func didStartRecording() {
+    private func willStartRecording() {
         voiceButton.image = UIImage(systemName: "mic.circle.fill")
         UIView.animate(withDuration: 0.3) {
             self.voiceButton.contentEdgeInsets = .uniform(-20)
+            self.voiceButton.tintColor = .plainText
             self.voiceButton.layoutIfNeeded()
         }
         setStackViewItems([], forStack: .left, animated: true)
-        setMiddleContentView(nil, animated: true)
+        middleContentView?.isHidden = true
+        addSubview(voiceTimerLabel)
+        voiceTimerLabel.leftToSuperview(offset: 10)
+        voiceTimerLabel.bottom(to: leftStackView)
+        voiceTimerLabel.top(to: leftStackView)
     }
     
-    private func didFinishRecording() {
+    private func didStartRecording() {
+        startTime = Date().timeIntervalSinceReferenceDate
+        voiceTimer = Timer.scheduledTimer(
+            timeInterval: 0.05,
+            target: self,
+            selector: #selector(advanceTimer(timer:)),
+            userInfo: nil,
+            repeats: true
+        )
+    }
+    
+    private func willFinishRecording() {
+        voiceTimerLabel.removeFromSuperview()
         voiceButton.image = UIImage(systemName: "mic")
         UIView.animate(withDuration: 0.3) {
             self.voiceButton.contentEdgeInsets = .zero
+            self.voiceButton.tintColor = .plainIcon
             self.voiceButton.layoutIfNeeded()
         }
         setStackViewItems([attachButton], forStack: .left, animated: true)
-        setMiddleContentView(inputTextView, animated: true)
+        middleContentView?.isHidden = false
         setRightStackViewWidthConstant(to: ChatInputBar.defaultRightStackWidth, animated: true)
         setStackViewItems([voiceButton], forStack: .right, animated: true)
     }
@@ -303,7 +355,7 @@ extension ChatInputBar: UIImagePickerControllerDelegate, UINavigationControllerD
     public func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         self.pickerController(picker, didSelect: nil)
     }
-
+    
     public func imagePickerController(
         _ picker: UIImagePickerController,
         didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
@@ -327,11 +379,19 @@ extension ChatInputBar: UIImagePickerControllerDelegate, UINavigationControllerD
 
 extension ChatInputBar: AVAudioRecorderDelegate {
     func audioRecorderDidFinishRecording(_ recorder: AVAudioRecorder, successfully flag: Bool) {
-        if !flag {
-            finishRecording()
+        if flag {
+            let stopTime = Date().timeIntervalSinceReferenceDate - startTime
+            if stopTime > 1 {
+                chatDelegate?.didVoiceMessageRecord(data: try! Data(contentsOf: recorder.url))
+                recorder.deleteRecording()
+            }
         } else {
-            chatDelegate?.didVoiceMessageRecord(data: try! Data(contentsOf: recorder.url))
+            debugPrint("Error while record voice message!")
         }
+    }
+    
+    func audioRecorderEncodeErrorDidOccur(_ recorder: AVAudioRecorder, error: Error?) {
+        debugPrint("Recorder error! \(error!.localizedDescription)")
     }
 }
 
@@ -353,5 +413,19 @@ fileprivate extension UIImageView {
             }
             self.image = image
         }
+    }
+}
+
+// MARK: Format number helper
+
+fileprivate extension Int {
+    func format(_ f: String) -> String {
+        return String(format: "%\(f)d", self)
+    }
+}
+
+fileprivate extension Double {
+    func format(_ f: String) -> String {
+        return String(format: "%\(f)f", self)
     }
 }

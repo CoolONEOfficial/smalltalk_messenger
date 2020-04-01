@@ -190,18 +190,14 @@ class ChatViewController: UIViewController {
     internal func didStartSendMessage() {
         inputBar.sendButton.startAnimating()
         inputBar.inputTextView.text = String()
-        inputBar.inputTextView.isEditable = false
         inputBar.inputTextView.placeholder = "Sending..."
     }
     
     internal func didEndSendMessage() {
         inputBar.sendButton.stopAnimating()
         inputBar.inputTextView.placeholder = "Message..."
-        inputBar.inputTextView.isEditable = true
         tableView.scrollToBottom(animated: true)
-
         inputBar.invalidatePlugins()
-        updateTableViewInset()
     }
     
     // MARK: Floating bottom button
@@ -217,7 +213,7 @@ extension ChatViewController: ChatViewControllerProtocol {
     func presentPhotoViewer(_ storageRefs: [StorageReference], initialIndex: Int) {
         var photosViewController: NYTPhotosViewController!
         
-        if photosViewerCoordinator == nil {
+        if photosViewerCoordinator == nil || photosViewerCoordinator.data.count != storageRefs.count {
             photosViewerCoordinator = ChatPhotoViewerDataSource(
                 data: storageRefs.enumerated().map { (index, ref) -> PhotoBox in
                     let photoBox = PhotoBox(ref.fullPath)
@@ -277,9 +273,12 @@ extension ChatViewController: NYTPhotosViewControllerDelegate {
                     switch content {
                     case .image(let path, _):
                         if box.path == path {
-                            let cell = tableView.cellForRow(at: .init(row: rowIndex, section: sectionIndex)) as! MessageCell
-                            let imageContent = cell.contentStack.subviews[contentIndex] as! MessageImageContent
-                            return imageContent.imageView
+                            if let cell = tableView.cellForRow(at: .init(row: rowIndex, section: sectionIndex)) as? MessageCell {
+                                let imageContent = cell.contentStack.subviews[contentIndex] as! MessageImageContent
+                                return imageContent.imageView
+                            } else {
+                                presentErrorAlert("Image not found")
+                            }
                         }
                     default: break
                     }

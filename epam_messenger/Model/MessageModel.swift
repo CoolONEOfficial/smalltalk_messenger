@@ -83,7 +83,7 @@ extension MessageModel: MessageProtocol {
     }
     
     var isIncoming: Bool {
-        return userId != "fdsfdsf"//Auth.auth().currentUser!.uid
+        return userId != Auth.auth().currentUser!.uid
     }
     
     func forwardedKind(_ userId: String) -> [MessageModel.MessageKind] {

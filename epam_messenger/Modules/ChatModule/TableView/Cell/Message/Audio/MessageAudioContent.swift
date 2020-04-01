@@ -38,7 +38,6 @@ class MessageAudioContent: UIView, MessageCellContentProtocol {
         didSet {
             setupWaveform()
             setupPlayButton()
-            playAudioBackground()
         }
     }
     var message: MessageProtocol! {
@@ -83,6 +82,7 @@ class MessageAudioContent: UIView, MessageCellContentProtocol {
                 
                 if let data = data {
                     do {
+                        debugPrint("write \(data) to \(fileURL.absoluteString)")
                         try data.write(to: fileURL)
                         self.didAudioLoaded(fileURL)
                     } catch {
@@ -100,25 +100,6 @@ class MessageAudioContent: UIView, MessageCellContentProtocol {
             print(error)
         }
         self.waveform.audioURL = fileURL
-    }
-    
-    private func playAudioBackground() {
-        do {
-            try AVAudioSession.sharedInstance().setCategory(
-                .playback,
-                mode: .default,
-                options: [
-                    .mixWithOthers,
-                    .allowAirPlay,
-                    .defaultToSpeaker
-                ]
-            )
-            print("Playback OK")
-            try AVAudioSession.sharedInstance().setActive(true)
-            print("Session is Active")
-        } catch {
-            print(error)
-        }
     }
     
     private func setupPlayButton() {
