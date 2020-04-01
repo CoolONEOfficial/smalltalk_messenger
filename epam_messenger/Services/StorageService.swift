@@ -20,15 +20,6 @@ protocol StorageServiceProtocol: AutoMockable {
         data: Data,
         completion: @escaping (MessageModel.MessageKind?) -> Void
     )
-    func listChatFiles(
-        chatDocumentId: String,
-        data: Data,
-        completion: @escaping (MessageModel.MessageKind?) -> Void
-    )
-    func listChatMediaFiles(
-        chatDocumentId: String,
-        completion: @escaping ([StorageReference]?) -> Void
-    )
 }
 
 extension StorageServiceProtocol {
@@ -70,7 +61,7 @@ class StorageService: StorageServiceProtocol {
                 .child("\(timestamp.iso8601withFractionalSeconds)_\(index).jpg")
                 .putData(data, metadata: metadata) { metadata, _ in
                     if let path = metadata?.path {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) { // wait firebase functions
                             completion(.image(
                                 path: path,
                                 size: image.size
@@ -105,44 +96,6 @@ class StorageService: StorageServiceProtocol {
                 } else {
                     completion(nil)
                 }
-        }
-    }
-    
-    func listChatFiles(
-        chatDocumentId: String,
-        data: Data,
-        completion: @escaping (MessageModel.MessageKind?) -> Void
-    ) {
-        let metadata = StorageMetadata()
-        metadata.contentType = "audio/x-m4a"
-        
-        storage.child("chats")
-            .child(chatDocumentId)
-            .child("audio")
-            .child("\(Date().iso8601withFractionalSeconds).m4a")
-            .putData(data, metadata: metadata) { metadata, _ in
-                if let path = metadata?.path {
-                    completion(.audio(
-                        path: path
-                        ))
-                } else {
-                    completion(nil)
-                }
-        }
-    }
-    
-    func listChatMediaFiles(
-        chatDocumentId: String,
-        completion: @escaping ([StorageReference]?) -> Void
-    ) {
-        storage.child("chats").child(chatDocumentId).child("media")
-            .list(withMaxResults: 100) { result, err in
-                guard err == nil else {
-                    completion(nil)
-                    return
-                }
-                
-                completion(result.items)
         }
     }
 }

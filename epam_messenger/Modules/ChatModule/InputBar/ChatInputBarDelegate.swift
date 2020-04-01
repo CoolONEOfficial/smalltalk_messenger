@@ -22,7 +22,6 @@ extension ChatViewController: ChatInputBarDelegate {
     }
     
     func didVoiceMessageRecord(data: Data) {
-        
         didStartSendMessage()
         
         viewModel.sendMessage(
@@ -39,7 +38,7 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
     
     func inputBar(_ inputBar: InputBarAccessoryView, didPressSendButtonWith text: String) {
         didStartSendMessage()
-        
+
         viewModel.sendMessage(
             attachments: attachmentManager.attachments,
             messageText: text
@@ -56,6 +55,8 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
     }
     
     func inputBar(_ inputBar: InputBarAccessoryView, textViewTextDidChangeTo text: String) {
+        
+        guard !(inputBar.middleContentView?.isHidden ?? true) else { return }
         
         let inputBar = self.inputBar
         
