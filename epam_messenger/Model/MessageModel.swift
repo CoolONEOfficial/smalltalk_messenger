@@ -9,17 +9,36 @@ import Foundation
 import Firebase
 import CodableFirebase
 
-struct MessageModel: Codable, AutoDecodable {
+typealias ImageSize = CGSize
+
+struct MessageModel: AutoCodable {
     
-    var documentId: String = ""
-    let text: String
+    var documentId: String?
+    let kind: [MessageKind]
     let userId: Int
     let timestamp: Timestamp
     
-    static let defaultDocumentId: String = ""
+    enum CodingKeys: String, CodingKey {
+        case documentId
+        case kind
+        case userId
+        case timestamp
+        case filename
+        case enumCaseKey
+    }
+    
+    enum MessageKind: AutoCodable {
+        case text(_: String)
+        case image(path: String, size: ImageSize)
+        case audio(path: String)
+        case forward(_: UserModel)
+    }
+    
+    static let defaultDocumentId: String? = nil
+    static let defaultKind: [MessageKind] = []
     
     static func empty() -> MessageModel {
-        return MessageModel(text: "", userId: 0, timestamp: Timestamp.init())
+        return MessageModel(kind: [], userId: 0, timestamp: Timestamp.init())
     }
     
     static func fromSnapshot(_ snapshot: DocumentSnapshot) -> MessageModel? {
@@ -48,7 +67,7 @@ struct MessageModel: Codable, AutoDecodable {
         
         return try! container.decode(Timestamp.self, forKey: .timestamp)
     }
-
+    
     static func checkMerge(
         left: MessageProtocol,
         right: MessageProtocol
@@ -58,12 +77,65 @@ struct MessageModel: Codable, AutoDecodable {
     }
 }
 
-extension MessageModel: TextMessageProtocol {
+extension MessageModel: MessageProtocol {
     var date: Date {
         return timestamp.dateValue()
     }
     
     var isIncoming: Bool {
         return userId != 0 // TODO: auth user id
+    }
+    
+    func forwardedKind(_ userModel: UserModel) -> [MessageModel.MessageKind] {
+        var forwardedKind = kind
+        if case .forward = forwardedKind.first {
+            forwardedKind.remove(at: 0)
+        }
+        forwardedKind.insert(.forward(userModel), at: 0)
+        return forwardedKind
+    }
+}
+
+extension MessageModel: MessageTextProtocol {
+    func kindText(at: Int) -> String? {
+        switch kind[at] {
+        case .text(let text):
+            return text
+        default:
+            return nil
+        }
+    }
+}
+
+extension MessageModel: MessageImageProtocol {
+    func kindImage(at: Int) -> (path: String, size: ImageSize)? {
+        switch kind[at] {
+        case .image(let path, let size):
+            return (path: path, size: size)
+        default:
+            return nil
+        }
+    }
+}
+
+extension MessageModel: MessageAudioProtocol {
+    func kindAudio(at: Int) -> String? {
+        switch kind[at] {
+        case .audio(let path):
+            return path
+        default:
+            return nil
+        }
+    }
+}
+
+extension MessageModel: MessageForwardProtocol {
+    func kindForwardUser(at: Int) -> UserModel? {
+        switch kind[at] {
+        case .forward(let userModel):
+            return userModel
+        default:
+            return nil
+        }
     }
 }

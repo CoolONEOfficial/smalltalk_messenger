@@ -3,6 +3,7 @@ disabled_rules:
 - force_try
 - force_cast
 - identifier_name
+- empty_count
 opt_in_rules:
 - empty_count
 - empty_string

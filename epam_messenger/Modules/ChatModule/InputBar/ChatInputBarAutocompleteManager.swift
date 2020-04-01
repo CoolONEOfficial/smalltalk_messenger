@@ -15,7 +15,7 @@ extension ChatViewController: AutocompleteManagerDelegate, AutocompleteManagerDa
     func autocompleteManager(_ manager: AutocompleteManager, autocompleteSourceFor prefix: String) -> [AutocompleteCompletion] {
         
         if prefix == "@" {
-            return viewModel.getChatModel().users
+            return viewModel.chatModel.users
                 .filter { $0 != 0 }
                 .map { user in
                     return AutocompleteCompletion(text: "Ivan Ivanov", // TODO: user data
@@ -30,7 +30,7 @@ extension ChatViewController: AutocompleteManagerDelegate, AutocompleteManagerDa
         guard let cell = tableView.dequeueReusableCell(withIdentifier: AutocompleteCell.reuseIdentifier, for: indexPath) as? AutocompleteCell else {
             fatalError("Oops, some unknown error occurred")
         }
-        let users = viewModel.getChatModel().users
+        let users = viewModel.chatModel.users
         let name = session.completion?.text ?? ""
         let user = users.filter { _ in return false
             //$0.name == name TODO: user data

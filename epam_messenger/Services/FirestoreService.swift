@@ -16,7 +16,7 @@ protocol FirestoreServiceProtocol: AutoMockable {
     func createChatQuery(_ chatModel: ChatModel) -> Query
     func sendMessage(
         chatDocumentId: String,
-        messageText: String,
+        messageKind: [MessageModel.MessageKind],
         completion: @escaping (Bool) -> Void
     )
     func deleteMessage(
@@ -28,17 +28,21 @@ protocol FirestoreServiceProtocol: AutoMockable {
         chatDocumentId: String,
         completion: @escaping (Bool) -> Void
     )
+    func listChatMedia(
+        chatDocumentId: String,
+        completion: @escaping ([MediaModel]?) -> Void
+    )
 }
 
 extension FirestoreServiceProtocol {
     func sendMessage(
         chatDocumentId: String,
-        messageText: String,
+        messageKind: [MessageModel.MessageKind],
         completion: @escaping (Bool) -> Void = {_ in}
     ) {
         return sendMessage(
             chatDocumentId: chatDocumentId,
-            messageText: messageText,
+            messageKind: messageKind,
             completion: completion
         )
     }
@@ -68,9 +72,7 @@ extension FirestoreServiceProtocol {
 
 class FirestoreService: FirestoreServiceProtocol {
     
-    lazy var db: Firestore = {
-        return Firestore.firestore()
-    }()
+    lazy var db: Firestore = Firestore.firestore()
     
     lazy var chatListQuery: Query = {
         return db.collection("chats")
@@ -87,13 +89,13 @@ class FirestoreService: FirestoreServiceProtocol {
     
     func sendMessage(
         chatDocumentId: String,
-        messageText: String,
+        messageKind: [MessageModel.MessageKind],
         completion: @escaping (Bool) -> Void = {_ in}
     ) {
         do {
             let messageModel = MessageModel(
-                text: messageText,
-                userId: 1, // TODO: user id
+                kind: messageKind, // TODO: kinds
+                userId: 0, // TODO: user id
                 timestamp: Timestamp()
             )
             
@@ -119,7 +121,6 @@ class FirestoreService: FirestoreServiceProtocol {
             completion(false)
         }
     }
-    
 
     lazy var contactsListQuery: Query = {
         return db.collection("users").order(by: "name")
@@ -130,7 +131,6 @@ class FirestoreService: FirestoreServiceProtocol {
         return db.collection("users").document("\(documentId)").collection("contacts")
     }() // for contacts
     
-
     func deleteMessage(
         chatDocumentId: String,
         messageDocumentId: String,
@@ -152,5 +152,30 @@ class FirestoreService: FirestoreServiceProtocol {
             completion(err == nil)
         }
     }
-
+    
+    func listChatMedia(
+        chatDocumentId: String,
+        completion: @escaping ([MediaModel]?) -> Void
+    ) {
+        db.collection("chats")
+            .document(chatDocumentId).collection("media")
+            .order(by: "timestamp").getDocuments { snapshot, err in
+                guard err == nil else {
+                    debugPrint("Error while get chat media: \(err!.localizedDescription)")
+                    completion(nil)
+                    return
+                }
+                
+                completion(snapshot?.documents.map { MediaModel.fromSnapshot($0)! })
+        }
+    }
+    
+    lazy var contactsListQuery: Query = {
+        return db.collection("users").order(by: "name")
+    }()
+    
+    lazy var userContactsListQuery: Query = {
+        var documentId = "JfgyNfOJh8LlnIXKKFVd"
+        return db.collection("users").document("\(documentId)").collection("contacts")
+    }() // for contacts
 }

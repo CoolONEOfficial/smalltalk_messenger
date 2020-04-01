@@ -9,14 +9,47 @@ import UIKit
 import Reusable
 import TinyConstraints
 
-protocol Messagable: UIView {
+protocol MessageCellProtocol: UIView {
     func loadMessage(_ message: MessageProtocol, mergeNext: Bool, mergePrev: Bool)
     
     var mergeNext: Bool! { get set }
     var mergePrev: Bool! { get set }
+    
+    var delegate: MessageCellDelegate? { get }
 }
 
-class MessageCell: UITableViewCell, NibReusable, Messagable {
+protocol MessageCellContentProtocol: UIView {
+    func loadMessage(
+        _ message: MessageProtocol,
+        index: Int,
+        cell: MessageCellProtocol,
+        mergeContentNext: Bool,
+        mergeContentPrev: Bool
+    )
+    
+    var message: MessageProtocol! { get }
+    var kindIndex: Int! { get set }
+    
+    var cell: MessageCellProtocol! { get set }
+    var mergeContentNext: Bool! { get set }
+    var mergeContentPrev: Bool! { get set }
+    
+    var topMargin: CGFloat { get }
+    var bottomMargin: CGFloat { get }
+    
+    func didTap(_ recognizer: UITapGestureRecognizer)
+}
+
+extension MessageCellContentProtocol {
+    func didTap(_ recognizer: UITapGestureRecognizer) {}
+}
+
+protocol MessageCellDelegate {
+    func didTapContent(_ content: MessageCellContentProtocol)
+    func didError(_ text: String)
+}
+
+class MessageCell: UITableViewCell, NibReusable, MessageCellProtocol {
     
     // MARK: - Outlets
     
@@ -29,10 +62,36 @@ class MessageCell: UITableViewCell, NibReusable, Messagable {
     @IBOutlet var stackBottomAnchor: NSLayoutConstraint!
     @IBOutlet var stackTopAnchor: NSLayoutConstraint!
     
+    static let cornerRadius: CGFloat = 16.5
+    
     // MARK: - Vars
+    
     var mergeNext: Bool!
     var mergePrev: Bool!
-    var messageContent: Messagable!
+    
+    var delegate: MessageCellDelegate?
+    
+    var _contentStack: UIStackView?
+    var contentStack: UIStackView {
+        if _contentStack == nil {
+            let newStack = UIStackView()
+            newStack.translatesAutoresizingMaskIntoConstraints = false
+            newStack.axis = .vertical
+            newStack.spacing = 4
+            newStack.distribution = .fillProportionally
+            newStack.isUserInteractionEnabled = true
+            
+            bubbleImage.addSubview(newStack)
+            newStack.horizontalToSuperview(
+                insets: message.isIncoming
+                    ? .left(6) + .right(0)
+                    : .left(0) + .right(6)
+            )
+            _contentStack = newStack
+        }
+        
+        return _contentStack!
+    }
     
     internal static let bubbleImageCache: NSCache<NSString, UIImage> = {
         let cache = NSCache<NSString, UIImage>()
@@ -66,7 +125,7 @@ class MessageCell: UITableViewCell, NibReusable, Messagable {
             : stretchedImage.withHorizontallyFlippedOrientation()
     }
     
-    private var message: MessageProtocol! {
+    internal var message: MessageProtocol! {
         didSet {
             setupBubbleImage()
             setupMessageContent()
@@ -102,18 +161,34 @@ class MessageCell: UITableViewCell, NibReusable, Messagable {
     }
     
     private func setupMessageContent() {
-        switch self.message {
-        case let textMessage as TextMessageProtocol:
-            messageContent = MessageTextContent()
-            messageContent.loadMessage(
-                textMessage,
-                mergeNext: mergeNext,
-                mergePrev: mergePrev
+        for (index, kind) in message.kind.enumerated() {
+            var contentView: MessageCellContentProtocol!
+            switch kind {
+            case .text:
+                contentView = MessageTextContent()
+            case .image:
+                contentView = MessageImageContent()
+            case .audio:
+                contentView = MessageAudioContent()
+            case .forward(_):
+                contentView = MessageForwardContent()
+            }
+            contentView.loadMessage(
+                self.message,
+                index: index,
+                cell: self,
+                mergeContentNext: index != message.kind.count - 1,
+                mergeContentPrev: index != 0
             )
-        default:
-            fatalError("Incorrect protocol")
+            contentStack.addArrangedSubview(contentView)
+            
+            if index == 0 {
+                contentStack.topToSuperview(offset: contentView.topMargin)
+            }
+            if index == message.kind.count - 1 {
+                contentStack.bottomToSuperview(offset: -contentView.bottomMargin)
+            }
         }
-        bubbleImage.addSubview(messageContent)
     }
     
     private func setupBubbleImage() {
@@ -128,7 +203,7 @@ class MessageCell: UITableViewCell, NibReusable, Messagable {
         self.mergePrev = mergePrev
         self.message = message
     }
-    
+        
     // MARK: - Methods
     
     override func awakeFromNib() {
@@ -136,19 +211,36 @@ class MessageCell: UITableViewCell, NibReusable, Messagable {
         
         // Disable selection color
         selectedBackgroundView = UIView()
+        
+        isUserInteractionEnabled = true
+        addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didCellTap(_:))))
     }
     
     override func prepareForReuse() {
         super.prepareForReuse()
         
-        if let messageContent = messageContent {
-            messageContent.removeFromSuperview()
-        }
+        contentStack.removeFromSuperview()
+        _contentStack = nil
+        
         mergeNext = false
+        mergePrev = false
         
         stackTrailingAnchor.isActive = true
         stackLeadingAnchor.isActive = true
         stackTopAnchor.constant = 2
         stackBottomAnchor.constant = 2
+    }
+    
+    // MARK: - Actions
+    
+    @objc func didCellTap(_ recognizer: UITapGestureRecognizer) {
+        for content in contentStack.subviews {
+            let tapLocation = recognizer.location(in: contentStack)
+            if content.frame.contains(tapLocation),
+                let content = content as? MessageCellContentProtocol {
+                content.didTap(recognizer)
+                delegate?.didTapContent(content)
+            }
+        }
     }
 }

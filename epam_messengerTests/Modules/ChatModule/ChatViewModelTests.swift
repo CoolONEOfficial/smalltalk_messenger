@@ -6,32 +6,41 @@
 //
 
 import XCTest
+import Firebase
 @testable import epam_messenger
 
 class ChatViewModelTests: XCTestCase {
     
     var viewModel: ChatViewModel!
+    var viewController = ChatViewControllerProtocolMock()
     var firestoreService = FirestoreServiceProtocolMock()
+    var storageService = StorageServiceProtocolMock()
     
     override func setUp() {
         // Put setup code here. This method is called before the invocation of each test method in the class.
         viewModel = ChatViewModel(
+            viewController: viewController,
             router: RouterProtocolMock(),
             chatModel: ChatModel(
                 users: [23, 45, 12],
                 name: "test name",
                 lastMessage: nil
             ),
-            firestoreService: firestoreService
+            firestoreService: firestoreService,
+            storageService: storageService
         )
+        storageService.uploadImageChatDocumentIdImageNameSuffixCompletionClosure = { _, _, _, completion in
+            completion(.image(path: "testpath", size: .init(width: 300, height: 300)))
+        }
     }
     
     func testDeleteMessage() {
         viewModel.deleteMessage(
                 MessageModel.init(
-                text: "test message",
-                userId: 0,
-                timestamp: .init()
+                    documentId: "testdocid",
+                    kind: [ .text("testtext") ],
+                    userId: 0,
+                    timestamp: Timestamp()
             )
         )
         
@@ -39,15 +48,21 @@ class ChatViewModelTests: XCTestCase {
     }
     
     func testSendMessage() {
-        viewModel.deleteMessage(
-                MessageModel.init(
-                text: "test message",
-                userId: 0,
-                timestamp: .init()
-            )
-        )
+        viewModel.sendMessage("test message", attachments: [
+            .image(UIImage())
+        ])
         
-        XCTAssertTrue(firestoreService.deleteMessageChatDocumentIdMessageDocumentIdCompletionCalled)
+        XCTAssertTrue(storageService.uploadImageChatDocumentIdImageNameSuffixCompletionCalled)
+        
+        let expectation = XCTestExpectation(description: "Async storage images load")
+        
+        firestoreService.sendMessageChatDocumentIdMessageKindCompletionClosure = { _, _, _ in
+            expectation.fulfill()
+        }
+        
+        let result = XCTWaiter.wait(for: [expectation], timeout: 5.0)
+        XCTAssertEqual(result, .completed)
+        XCTAssertTrue(firestoreService.sendMessageChatDocumentIdMessageKindCompletionCalled)
     }
     
 }

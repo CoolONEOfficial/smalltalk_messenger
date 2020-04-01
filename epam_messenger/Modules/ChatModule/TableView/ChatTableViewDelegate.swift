@@ -51,8 +51,36 @@ extension ChatViewController: UITableViewDelegate {
                 image: UIImage(systemName: "doc.on.doc")
             ) { _ in
                 let pasteBoard = UIPasteboard.general
-                pasteBoard.string = (self.tableView.chatDataSource
-                    .messageAt(indexPath) as! TextMessageProtocol).text
+                var allText = ""
+                for kind in self.tableView.chatDataSource.messageAt(indexPath).kind {
+                    switch kind {
+                    case .text(let text):
+                        allText += text
+                    default: break
+                    }
+                }
+                pasteBoard.string = allText
+            }
+            
+            let forward = UIAction(
+                title: "Forward",
+                image: UIImage(systemName: "arrowshape.turn.up.right")
+            ) { _ in
+                let messageModel = self.tableView.chatDataSource.messageAt(indexPath)
+                self.presentForwardController()
+                self.forwardMessages = [messageModel]
+            }
+            
+            let savePhoto = UIAction(
+                title: "Save to camera roll",
+                image: UIImage(systemName: "square.and.arrow.down")
+            ) { _ in
+                
+                if let cell = tableView.cellForRow(at: indexPath) as? MessageCell,
+                    let imageContent = cell.contentStack.subviews.first(where: { $0 is MessageImageContent }) as? MessageImageContent,
+                    let image = imageContent.imageView.image {
+                    UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
+                }
             }
             
             let delete = UIAction(
@@ -74,10 +102,35 @@ extension ChatViewController: UITableViewDelegate {
                 self.didSelectionChange()
             }
             
+            var actions: [UIAction] = []
+            
+            let message = self.tableView.chatDataSource.messageAt(indexPath)
+            
+            if message.kind.filter({ content in
+                if case .image = content {
+                    return true
+                }
+                return false
+            }).count == 1 {
+                actions.append(savePhoto)
+            }
+            if !message.kind.contains(where: { content in
+                if case .audio = content {
+                    return true
+                }
+                return false
+            }) {
+                actions.append(copy)
+            }
+            
+            actions.append(forward)
+            
+            if !message.isIncoming {
+                actions.append(delete)
+            }
+            
             return UIMenu(title: "", children: [
-                UIMenu(title: "", options: .displayInline, children: [
-                    copy, delete
-                ]),
+                UIMenu(title: "", options: .displayInline, children: actions),
                 other
             ])
         }
@@ -94,28 +147,26 @@ extension ChatViewController: UITableViewDelegate {
         
         let messageCell: MessageCell = tableView.cellForRow(at: indexPath) as! MessageCell
         
-        switch messageCell.messageContent {
-        case let textContent as MessageTextContent:
-            let parameters = UIPreviewParameters()
-            parameters.backgroundColor = textContent.textMessage.isIncoming
-                ? .plainBackground
-                : .accent
-            
-            let bounds = textContent.bounds.inset(
-                by: .init(
-                    top: -4,
-                    left: -8,
-                    bottom: -4,
-                    right: -8
-                )
+        let parameters = UIPreviewParameters()
+        parameters.backgroundColor = messageCell.message.isIncoming
+            ? .plainBackground
+            : .accent
+        
+        let bounds = messageCell.contentStack.bounds.inset(
+            by: .init(
+                top: -(messageCell.contentStack.subviews.first as! MessageCellContentProtocol).topMargin,
+                left: 0,
+                bottom: -(messageCell.contentStack.subviews.last as! MessageCellContentProtocol).bottomMargin,
+                right: 0
             )
-            
-            parameters.visiblePath = UIBezierPath(roundedRect: bounds, cornerRadius: 14)
-            
-            return UITargetedPreview(view: messageCell.messageContent, parameters: parameters)
-        default:
-            return nil
-        }
+        )
+        
+        parameters.visiblePath = UIBezierPath(
+            roundedRect: bounds,
+            cornerRadius: MessageCell.cornerRadius
+        )
+        
+        return UITargetedPreview(view: messageCell.contentStack, parameters: parameters)
     }
     
     func tableView(_ tableView: UITableView, previewForHighlightingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
@@ -175,7 +226,7 @@ extension ChatViewController: UITableViewDelegate {
         
         title = rowsSelected
             ? "Selected \(tableView.indexPathsForSelectedRows!.count) messages"
-            : viewModel.getChatModel().name
+            : viewModel.chatModel.name
         
         navigationItem.leftBarButtonItem = .init(
             title: "Delete chat",
@@ -196,19 +247,30 @@ extension ChatViewController: UITableViewDelegate {
     }
     
     @objc internal func deleteSelectedMessages() {
-        for mIndexPath in tableView.indexPathsForSelectedRows! {
-            let mMessage = self.tableView.chatDataSource.messageAt(mIndexPath)
+        for indexPath in tableView.indexPathsForSelectedRows! {
+            let message = self.tableView.chatDataSource.messageAt(indexPath)
             
-            viewModel.deleteMessage(mMessage)
+            viewModel.deleteMessage(message) { _ in
+                self.didSelectionChange()
+            }
         }
     }
     
     @objc internal func deleteChat() {
-        // TODO: delete chat
+        viewModel.deleteChat() { _ in
+            self.navigationController?.popViewController(animated: true)
+        }
+    }
+    
+    internal func presentForwardController() {
+        let forwardController = viewModel.createForwardViewController(forwardDelegate: self)
+        let navigationController = UINavigationController(rootViewController: forwardController)
+        present(navigationController, animated: true, completion: nil)
     }
     
     @objc internal func forwardSelectedMessages() {
-        // TODO: forward messages
+        presentForwardController()
+        forwardMessages = tableView!.indexPathsForSelectedRows!.map { tableView!.chatDataSource.messageAt($0) }
     }
     
     private func enableEditMode() {
@@ -217,17 +279,16 @@ extension ChatViewController: UITableViewDelegate {
         
         inputBar.setMiddleContentView(stack, animated: false)
         inputBar.middleContentViewPadding.right = 0
-        inputBar.setRightStackViewWidthConstant(to: 0, animated: false)
+        inputBar.hideSideStacks()
     }
     
     @objc private func disableEditMode() {
-        didSelectionChange()
         tableView.setEditing(false, animated: true)
+        didSelectionChange()
         navigationItem.rightBarButtonItem = nil
         navigationItem.leftBarButtonItem = nil
         inputBar.setMiddleContentView(inputBar.inputTextView, animated: true)
-        inputBar.middleContentViewPadding.right = -ChatInputBar.defaultRightWidth
-        inputBar.setRightStackViewWidthConstant(to: ChatInputBar.defaultRightWidth, animated: false)
+        inputBar.showSideStacks()
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -248,6 +309,24 @@ extension ChatViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, shouldBeginMultipleSelectionInteractionAt indexPath: IndexPath) -> Bool {
         return true
+    }
+    
+}
+
+extension ChatViewController: ForwardDelegateProtocol {
+    
+    func didSelectChat(_ chatModel: ChatModel) {
+        if forwardMessages != nil {
+            for message in forwardMessages {
+                viewModel.forwardMessage(chatModel, message) { result in
+                    if result && self.viewModel.chatModel.documentId != chatModel.documentId {
+                        self.viewModel.goToChat(chatModel)
+                    }
+                }
+            }
+            forwardMessages = nil
+            disableEditMode()
+        }
     }
     
 }

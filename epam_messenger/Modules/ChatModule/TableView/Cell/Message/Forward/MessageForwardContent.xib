@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16086"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="MessageForwardContent" customModule="epam_messenger" customModuleProvider="target">
+            <connections>
+                <outlet property="contentView" destination="iN0-l3-epB" id="zQa-FR-I1G"/>
+                <outlet property="forwardLabel" destination="dTv-Y0-46z" id="Gld-hH-QaZ"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB">
+            <rect key="frame" x="0.0" y="0.0" width="306" height="15"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dTv-Y0-46z">
+                    <rect key="frame" x="0.0" y="0.0" width="306" height="15"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="15" id="RvN-ey-cLt"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="14"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+            </subviews>
+            <constraints>
+                <constraint firstAttribute="bottom" secondItem="dTv-Y0-46z" secondAttribute="bottom" id="QWQ-l7-cbD"/>
+                <constraint firstItem="dTv-Y0-46z" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="hsP-nF-Xh3"/>
+                <constraint firstAttribute="trailing" secondItem="dTv-Y0-46z" secondAttribute="trailing" id="na4-89-tn4"/>
+                <constraint firstItem="dTv-Y0-46z" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="twL-sk-YQ7"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <point key="canvasLocation" x="43.478260869565219" y="218.63839285714286"/>
+        </view>
+    </objects>
+</document>

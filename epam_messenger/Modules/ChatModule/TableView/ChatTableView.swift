@@ -18,6 +18,8 @@ class ChatTableView: UITableView {
     
     internal var lastSectionsChange: (type: ChatTableViewDataSource.ChangeType, change: IndexSet)?
     
+    var messageDelegate: MessageCellDelegate?
+    
     // MARK: - Override TableView
     
     override func reloadRows(at indexPaths: [IndexPath], with animation: UITableView.RowAnimation) {
@@ -118,9 +120,11 @@ class ChatTableView: UITableView {
     
     // MARK: Custom bind
     
-    func bind(toFirestoreQuery query: Query, populateCell: @escaping (UITableView, IndexPath) -> UITableViewCell) -> ChatTableViewDataSource {
+    func bind(toFirestoreQuery query: Query, populateCell: @escaping (UITableView, IndexPath) -> MessageCell) -> ChatTableViewDataSource {
         let dataSource = ChatTableViewDataSource(query: query) { tableView, indexPath, _ in
-            return populateCell(tableView, indexPath)
+            let cell = populateCell(tableView, indexPath)
+            cell.delegate = self.messageDelegate
+            return cell
         }
         dataSource.bind(to: self)
         return dataSource
@@ -128,13 +132,13 @@ class ChatTableView: UITableView {
     
     // MARK: - Helpers
     
-    func scrollToBottom() {
+    func scrollToBottom(animated: Bool) {
         guard !chatDataSource.messageItems.isEmpty else {
             return
         }
         
         let lastIndex = chatDataSource.messageItems.count - 1
         let lastItem = chatDataSource.messageItems[lastIndex]
-        scrollToRow(at: IndexPath(row: lastItem.value.count - 1, section: lastIndex), at: .none, animated: true)
+        scrollToRow(at: IndexPath(row: lastItem.value.count - 1, section: lastIndex), at: .bottom, animated: animated)
     }
 }

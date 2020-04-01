@@ -4,12 +4,17 @@
 //
 //  Created by Anton Pryakhin on 08.03.2020.
 //
-
 import UIKit
 import Firebase
 import FirebaseUI
 import CodableFirebase
 import InputBarAccessoryView
+import NYTPhotoViewer
+
+protocol ChatViewControllerProtocol: AutoMockable {
+    func presentPhotoViewer(_ storageRefs: [StorageReference], initialIndex: Int)
+    func presentErrorAlert(_ text: String)
+}
 
 class ChatViewController: UIViewController {
     
@@ -21,14 +26,19 @@ class ChatViewController: UIViewController {
     
     // MARK: - Vars
     
-    let inputBar: ChatInputBar = ChatInputBar()
+    let inputBar = ChatInputBar()
     var viewModel: ChatViewModelProtocol!
+    var photosViewerCoordinator: ChatPhotoViewerDataSource!
     
     var deleteButton = UIButton()
     var forwardButton = UIButton()
     let stack = UIStackView()
     
-    open lazy var autocompleteManager: AutocompleteManager = { [unowned self] in
+    var forwardMessages: [MessageProtocol]!
+    
+    var keyboardHeight: CGFloat = 0
+    
+    lazy var autocompleteManager: AutocompleteManager = { [unowned self] in
         let manager = AutocompleteManager(for: self.inputBar.inputTextView)
         
         manager.defaultTextAttributes[.foregroundColor] = UIColor.plainText
@@ -36,25 +46,65 @@ class ChatViewController: UIViewController {
         
         manager.delegate = self
         manager.dataSource = self
+        
         return manager
-        }()
+    }()
     
-    private var keyboardManager = KeyboardManager()
+    lazy var keyboardManager: KeyboardManager = { [unowned self] in
+        let manager = KeyboardManager()
+        
+        manager.bind(inputAccessoryView: inputBar)
+        manager.bind(to: tableView)
+        manager.on(event: .didShow) { [weak self] (notification) in
+            guard let self = self else { return }
+            
+            self.keyboardHeight = notification.endFrame.height
+            self.updateTableViewInset()
+            
+            if self.floatingBottomButton.isHidden {
+                self.tableView.scrollToBottom(animated: true)
+            }
+        }.on(event: .didHide) { [weak self] _ in
+            guard let self = self else { return }
+            
+            self.keyboardHeight = 0
+            self.updateTableViewInset()
+        }
+        
+        return manager
+    }()
     
-    // MARK: - Methods
+    typealias MessageAttachment = AttachmentManager.Attachment
+    
+    lazy var attachmentManager: AttachmentManager = { [unowned self] in
+        let manager = AttachmentManager()
+        manager.delegate = self
+        manager.attachmentView.backgroundColor = .systemBackground
+        manager.tintColor = .accent
+        manager.showAddAttachmentCell = false
+        return manager
+    }()
+    
+    // MARK: - Events
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        title = viewModel.getChatModel().name
+        title = viewModel.chatModel.name
         view.tintColor = .accent
         
         setupTableView()
         setupInputBar()
-        setupKeyboardManager()
         setupEditModeButtons()
         setupFloatingBottomButton()
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        updateTableViewInset()
+        tableView.scrollToBottom(animated: true)
+    }
+    
+    // MARK: - Methods
     
     private func setupFloatingBottomButton() {
         floatingBottomButton.layer.cornerRadius = floatingBottomButton.bounds.width / 2
@@ -69,7 +119,7 @@ class ChatViewController: UIViewController {
         stack.addArrangedSubview(deleteButton)
         stack.addArrangedSubview(forwardButton)
         stack.isLayoutMarginsRelativeArrangement = true
-        stack.directionalLayoutMargins = .init(top: 5, leading: 10, bottom: 10, trailing: 10)
+        stack.directionalLayoutMargins = .init(top: 5, leading: 10, bottom: 0, trailing: 10)
         
         deleteButton.contentHorizontalAlignment = .fill
         deleteButton.contentVerticalAlignment = .fill
@@ -84,17 +134,21 @@ class ChatViewController: UIViewController {
         forwardButton.setImage(UIImage(systemName: "arrowshape.turn.up.right"), for: .normal)
         forwardButton.addTarget(self, action: #selector(ChatViewController.forwardSelectedMessages), for: .touchUpInside)
         forwardButton.size(.init(width: 30, height: 25))
-
     }
     
     private func setupInputBar() {
-        inputBar.delegate = self
         view.addSubview(inputBar)
+        floatingBottomButton.bottomToTop(of: inputBar, offset: -10)
+        inputBar.delegate = self
+        inputBar.chatDelegate = self
+        _ = keyboardManager
+        inputBar.inputPlugins = [autocompleteManager, attachmentManager]
     }
     
     private func setupTableView() {
         tableView.register(cellType: MessageCell.self)
         tableView.delegate = self
+        tableView.messageDelegate = viewModel
         tableView.allowsMultipleSelection = false
         tableView.allowsMultipleSelectionDuringEditing = true
         
@@ -120,34 +174,123 @@ class ChatViewController: UIViewController {
         }
     }
     
-    private func setupKeyboardManager() {
-        keyboardManager.bind(inputAccessoryView: inputBar)
-        keyboardManager.bind(to: tableView)
+    // MARK: - Helpers
+    
+    internal func updateTableViewInset(_ additional: CGFloat = 0) {
+        let bottomSafeArea = view.safeAreaInsets.bottom
+        let barHeight = inputBar.bounds.height
+        let bottomInset =  barHeight + additional - bottomSafeArea + keyboardHeight
         
-        keyboardManager.on(event: .didShow) { [weak self] _ in
-            self?.tableView.scrollToBottom()
+        UIView.animate(withDuration: 0.5) {
+            self.tableView.contentInset.bottom = bottomInset
         }
-        
-        // Add some extra handling to manage content inset
-        keyboardManager.on(event: .didChangeFrame) { [weak self] (notification) in
-            //let barHeight = self?.inputBar.bounds.height ?? 0
-            self?.tableView.contentInset.bottom = notification.endFrame.height - 35
-            self?.tableView.verticalScrollIndicatorInsets.bottom = notification.endFrame.height - 35
-        }.on(event: .didHide) { [weak self] _ in
-            //let barHeight = self?.inputBar.bounds.height ?? 0
-            self?.tableView.contentInset.bottom = 0
-            self?.tableView.verticalScrollIndicatorInsets.bottom = 0
-        }
+        tableView.verticalScrollIndicatorInsets.bottom = bottomInset
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        tableView.scrollToBottom()
+    internal func didStartSendMessage() {
+        inputBar.sendButton.startAnimating()
+        inputBar.inputTextView.text = String()
+        inputBar.inputTextView.isEditable = false
+        inputBar.inputTextView.placeholder = "Sending..."
+    }
+    
+    internal func didEndSendMessage() {
+        inputBar.sendButton.stopAnimating()
+        inputBar.inputTextView.placeholder = "Message..."
+        inputBar.inputTextView.isEditable = true
+        tableView.scrollToBottom(animated: true)
+
+        inputBar.invalidatePlugins()
+        updateTableViewInset()
     }
     
     // MARK: Floating bottom button
     
     @IBAction func didFloatingBottomButtonClick(_ sender: UIButton) {
-        tableView.scrollToBottom()
+        tableView.scrollToBottom(animated: true)
     }
     
+}
+
+extension ChatViewController: ChatViewControllerProtocol {
+    
+    func presentPhotoViewer(_ storageRefs: [StorageReference], initialIndex: Int) {
+        var photosViewController: NYTPhotosViewController!
+        
+        if photosViewerCoordinator == nil {
+            photosViewerCoordinator = ChatPhotoViewerDataSource(
+                data: storageRefs.enumerated().map { (index, ref) -> PhotoBox in
+                    let photoBox = PhotoBox(ref.fullPath)
+                    let cacheKey = "gs://\(ref.bucket)/\(ref.fullPath)"
+                    
+                    photoBox.image = SDImageCache.shared.imageFromDiskCache(forKey: cacheKey)
+                    
+                    if photoBox.image == nil {
+                        ref.getData(maxSize: Int64.max) { data, err in
+                            guard err == nil else {
+                                debugPrint("Error while get image: \(err!.localizedDescription)")
+                                return
+                            }
+                            
+                            let image = UIImage(data: data!)
+                            SDImageCache.shared.storeImage(toMemory: image, forKey: cacheKey)
+                            photoBox.image = image
+                            
+                            photosViewController.updatePhoto(at: index)
+                        }
+                    }
+                    
+                    return photoBox
+                }
+            )
+        }
+        
+        photosViewController = .init(
+            dataSource: photosViewerCoordinator,
+            initialPhotoIndex: initialIndex,
+            delegate: self
+        )
+        
+        present(photosViewController, animated: true)
+    }
+    
+    func presentErrorAlert(_ text: String) {
+        let alert = UIAlertController(title: "Error",
+            message: text,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "Dismiss", style: .default))
+        
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+}
+
+extension ChatViewController: NYTPhotosViewControllerDelegate {
+    
+    func photosViewController(_ photosViewController: NYTPhotosViewController, referenceViewFor photo: NYTPhoto) -> UIView? {
+        guard let box = photo as? PhotoBox else { return nil }
+
+        for (sectionIndex, day) in tableView.chatDataSource.messageItems.enumerated() {
+            for (rowIndex, message) in day.value.enumerated() {
+                for (contentIndex, content) in message.kind.enumerated() {
+                    switch content {
+                    case .image(let path, _):
+                        if box.path == path {
+                            let cell = tableView.cellForRow(at: .init(row: rowIndex, section: sectionIndex)) as! MessageCell
+                            let imageContent = cell.contentStack.subviews[contentIndex] as! MessageImageContent
+                            return imageContent.imageView
+                        }
+                    default: break
+                    }
+                }
+            }
+        }
+        
+        return nil
+    }
+    
+    func photosViewController(_ photosViewController: NYTPhotosViewController, maximumZoomScaleFor photo: NYTPhoto) -> CGFloat {
+        return 2
+    }
 }

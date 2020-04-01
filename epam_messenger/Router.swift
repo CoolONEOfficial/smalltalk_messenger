@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 protocol RouterMain {
     var navigationController: UINavigationController? { get set }
@@ -18,19 +19,23 @@ protocol RouterProtocol: RouterMain, AutoMockable {
     func showChatList()
     func showChat(_ chatModel: ChatModel)
     func popToRoot()
-    func showContactsList()
-    func showUserContactsListViewController() // list user's contacts
 }
 
 class Router: RouterProtocol {
     var navigationController: UINavigationController?
     var assemblyBuilder: AssemblyBuilderProtocol?
     
-    var isAuthorized = false
+    var isAuthorized: Bool {
+        return Auth.auth().currentUser != nil
+    }
     
     var rootViewController: UIViewController? {
-        return isAuthorized ? assemblyBuilder?.createChatListModule(router: self) :
-            assemblyBuilder?.createAuthorizationModule(router: self)
+        if isAuthorized {
+            return assemblyBuilder?.createBottomBarModule(router: self)
+        } else {
+            guard let assemblyBuilder = assemblyBuilder as? AuthAssemblyBuilder else { return UIViewController() }
+            return assemblyBuilder.createAuthStart(router: self)
+        }
     }
     
     func initialViewController() {
@@ -69,20 +74,6 @@ class Router: RouterProtocol {
             navigationController.popToRootViewController(animated: true)
         }
     }
-    
-    func showContactsList() {
-        if let navigationController = navigationController {
-            guard let contactsListViewController = assemblyBuilder?.createContactsListModule(router: self) else { return }
-            navigationController.viewControllers = [contactsListViewController]
-        }
-    }
-
-    func showUserContactsListViewController() {
-           if let navigationController = navigationController {
-               guard let userContactsListViewController = assemblyBuilder?.createUserContactsListModule(router: self) else { return }
-               navigationController.viewControllers = [userContactsListViewController]
-           }
-       }
     
     init(navigationController: UINavigationController,
          assemblyBuilder: AssemblyBuilderProtocol) {

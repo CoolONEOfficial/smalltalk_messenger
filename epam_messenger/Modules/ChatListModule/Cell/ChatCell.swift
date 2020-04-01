@@ -17,7 +17,6 @@ class ChatCell: UITableViewCell, NibReusable {
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
         
         chatNameLabel.isHidden = true
         avatarImageView.image = #imageLiteral(resourceName: "Nathan-Tannar")
@@ -53,6 +52,23 @@ class ChatCell: UITableViewCell, NibReusable {
         lastMessage: MessageModel
     ) {
         senderNameLabel.text = String(lastMessage.userId) // load user name
-        lastMessageLabel.text = lastMessage.text
+        var imageCount = 0
+        var allText = ""
+        var icon = ""
+        for mKind in lastMessage.kind {
+            switch mKind {
+            case .image(_):
+                imageCount += 1
+                icon = "🖼️"
+            case .audio(_):
+                icon = "🎵"
+            case .text(let text):
+                allText += text
+            case .forward(_):
+                allText += "↪️"
+            }
+        }
+        lastMessageLabel.text = "\(imageCount > 1 ? "x\(imageCount)" : "") \(icon) \(allText)"
+        
     }
 }

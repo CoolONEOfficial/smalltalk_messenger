@@ -14,9 +14,9 @@ extension UIColor {
     
     static let accent = UIColor { (UITraitCollection: UITraitCollection) -> UIColor in
         if UITraitCollection.userInterfaceStyle == .dark {
-            return UIColor(red: 87/255, green: 85/255, blue: 218/255, alpha: 0.8)
+            return .systemIndigo
         } else {
-            return UIColor(red: 87/255, green: 85/255, blue: 218/255, alpha: 1)
+            return .systemIndigo
         }
     }
     
@@ -40,9 +40,11 @@ extension UIColor {
     
     static let plainBackground = UIColor.systemGray3.withAlphaComponent(0.5)
     
+    static let plainIcon = UIColor.systemGray
+    
     // MARK: - Chat header
     
-    static let chatDateHeaderText = UIColor { (UITraitCollection: UITraitCollection) -> UIColor in
+    static let chatRectLabelText = UIColor { (UITraitCollection: UITraitCollection) -> UIColor in
         if UITraitCollection.userInterfaceStyle == .dark {
             return UIColor.lightText.withAlphaComponent(0.8)
         } else {
@@ -50,7 +52,7 @@ extension UIColor {
         }
     }
     
-    static let chatDateHeaderBackground = UIColor { (UITraitCollection: UITraitCollection) -> UIColor in
+    static let chatRectLabelBackground = UIColor { (UITraitCollection: UITraitCollection) -> UIColor in
         if UITraitCollection.userInterfaceStyle == .dark {
             return UIColor(red: 0, green: 0, blue: 0, alpha: 0.65)
         } else {
