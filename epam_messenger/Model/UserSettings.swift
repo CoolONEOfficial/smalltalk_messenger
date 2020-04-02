@@ -15,11 +15,12 @@ struct UserSettingsModel: Codable, AutoDecodable {
     let userPhoneNumber: String
     let userLastLogin: Timestamp
     
+    
     static let defaultUserId: String = ""
     
+    
     static func empty() -> UserSettingsModel {
-        return UserSettingsModel(userId: "", userPhoneNumber: "", userLastLogin: Timestamp.init()
-        )
+        return UserSettingsModel(userId: "", userPhoneNumber: "", userLastLogin: Timestamp.init())
     }
     
     static func fromSnapshot(_ snapshot: DocumentSnapshot) -> UserSettingsModel? {
@@ -45,8 +46,13 @@ struct UserSettingsModel: Codable, AutoDecodable {
                 nanoseconds: Int32(exactly: dict["_nanoseconds"]!)!
             )
         }
-
+        
         return try! container.decode(Timestamp.self, forKey: .userLastLogin)
     }
 }
 
+extension UserSettingsModel: UserSettingsViewControllerProtocol {
+    var date: Date {
+        return userLastLogin.dateValue()
+    }
+}
