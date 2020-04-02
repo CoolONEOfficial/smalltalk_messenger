@@ -15,6 +15,10 @@ protocol ChatCellDelegateProtocol {
         _ userList: [String],
         completion: @escaping ([UserModel]?) -> Void
     )
+    func userData(
+        _ userId: String,
+        completion: @escaping (UserModel?) -> Void
+    )
 }
 
 class ChatCell: UITableViewCell, NibReusable {
@@ -30,32 +34,20 @@ class ChatCell: UITableViewCell, NibReusable {
     
     var delegate: ChatCellDelegateProtocol? {
         didSet {
-            delegate?.userListData(
-                chat.users.filter({ $0 != Auth.auth().currentUser?.uid })
-            ) { userModelList in
-                if let userModelList = userModelList {
-                    switch self.chat.type {
-                    case .personalCorr:
-                        let friendModel = userModelList.first!
-                        self.titleLabel.text = "\(friendModel.name) \(friendModel.surname)"
-                    case .chat(let title, _):
-                        self.titleLabel.text = title
-                    }
-                }
-            }
+            setupUi()
         }
     }
     
-    internal var chat: ChatModel! {
-        didSet {
-            titleLabel.isHidden = true
-            switch chat.type {
-            case .personalCorr:
-                setupPersonalCorr()
-            case .chat(let title, _):
-                setupChat(title)
-            }
+    internal var chat: ChatModel!
+    
+    private func setupUi() {
+        switch chat.type {
+        case .personalCorr:
+            setupPersonalCorr()
+        case .chat(let title, _):
+            setupChat(title)
         }
+        setupLastMessage()
     }
     
     private func setupChat(
@@ -64,13 +56,31 @@ class ChatCell: UITableViewCell, NibReusable {
         titleLabel.text = title
         senderNameLabel.isHidden = false
         setupAvatar("chats/\(chat.documentId)/avatar.jpg")
+        lastMessageLabel.numberOfLines = 1
+        
+        senderNameLabel.text = "..."
+        delegate?.userData(
+            chat.lastMessage.userId
+        ) { userModel in
+            if let userModel = userModel {
+                self.senderNameLabel.text = userModel.name
+            }
+        }
     }
     
     private func setupPersonalCorr() {
-        let friendId = chat.users.first(where: { $0 != Auth.auth().currentUser!.uid })!
         titleLabel.text = "..."
         senderNameLabel.isHidden = true
-        setupAvatar("users/\(friendId)/avatar.jpg")
+        setupAvatar("users/\(chat.friendId!)/avatar.jpg")
+        lastMessageLabel.numberOfLines = 2
+        
+        delegate?.userData(
+            chat.users.filter({ $0 != Auth.auth().currentUser!.uid }).first!
+        ) { friendModel in
+            if let friendModel = friendModel {
+                self.titleLabel.text = "\(friendModel.name) \(friendModel.surname)"
+            }
+        }
     }
     
     private func setupAvatar(_ path: String) {
@@ -79,46 +89,33 @@ class ChatCell: UITableViewCell, NibReusable {
         avatarImageView.layer.cornerRadius = avatarImageView.bounds.width / 2
     }
     
+    private func setupLastMessage() {
+        var imageCount = 0
+        var text = ""
+        var attachmentText = ""
+        var icon = ""
+        for mKind in chat.lastMessage.kind {
+            switch mKind {
+            case .image(_):
+                imageCount += 1
+                icon = "🖼️ "
+                attachmentText = "Image"
+            case .audio(_):
+                icon = "🎵 "
+                attachmentText = "Audio"
+            case .text(let kindText):
+                text = kindText
+            case .forward(_): break
+            }
+        }
+        lastMessageLabel.text = "\(imageCount > 1 ? "x\(imageCount) " : "")\(icon)\(text.isEmpty ? attachmentText : text)"
+    }
+    
     // MARK: - Init
     
     func loadChatModel(
         _ chatModel: ChatModel
     ) {
         self.chat = chatModel
-    }
-    
-    private func loadGroupChatData(
-        chatName: String,
-        lastMessage: MessageModel
-    ) {
-        titleLabel.text = chatName
-        loadChatData(lastMessage: lastMessage)
-    }
-    
-    private func loadChatData(
-        lastMessage: MessageModel
-    ) {
-        senderNameLabel.text = String(lastMessage.userId) // load user name
-        var imageCount = 0
-        var text = ""
-        var attachmentText = ""
-        var icon = ""
-        for mKind in lastMessage.kind {
-            switch mKind {
-            case .image(_):
-                imageCount += 1
-                icon = "🖼️"
-                attachmentText = "Image"
-            case .audio(_):
-                icon = "🎵"
-                attachmentText = "Audio"
-            case .text(let kindText):
-                text += " \(kindText.prefix(10))..."
-            case .forward(_):
-                text += "Forwarded message"
-            }
-        }
-        lastMessageLabel.text = "\(imageCount > 1 ? "x\(imageCount)" : "") \(icon) \(text.isEmpty ? attachmentText : text)"
-        
     }
 }

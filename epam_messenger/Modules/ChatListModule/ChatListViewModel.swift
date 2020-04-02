@@ -23,6 +23,10 @@ protocol ChatListViewModelProtocol: ViewModelProtocol {
         _ userList: [String],
         completion: @escaping ([UserModel]?) -> Void
     )
+    func userData(
+        _ userId: String,
+        completion: @escaping (UserModel?) -> Void
+    )
 }
 
 extension ChatListViewModelProtocol {
@@ -79,5 +83,9 @@ class ChatListViewModel: ChatListViewModelProtocol {
     
     func userListData(_ userList: [String], completion: @escaping ([UserModel]?) -> Void) {
         firestoreService.userListData(userList, completion: completion)
+    }
+    
+    func userData(_ userId: String, completion: @escaping (UserModel?) -> Void) {
+        firestoreService.userData(userId, completion: completion)
     }
 }

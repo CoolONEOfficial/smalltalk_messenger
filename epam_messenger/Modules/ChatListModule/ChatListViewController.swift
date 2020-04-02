@@ -340,6 +340,10 @@ extension ChatListViewController: UITableViewDataSource {
 
 extension ChatListViewController: ChatCellDelegateProtocol {
     
+    func userData(_ userId: String, completion: @escaping (UserModel?) -> Void) {
+        viewModel.userData(userId, completion: completion)
+    }
+    
     func userListData(_ userList: [String], completion: @escaping ([UserModel]?) -> Void) {
         viewModel.userListData(userList, completion: completion)
     }
