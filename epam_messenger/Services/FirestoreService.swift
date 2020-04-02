@@ -13,7 +13,7 @@ import CodableFirebase
 typealias FireQuery = Query
 
 protocol FirestoreServiceProtocol: AutoMockable {
-    func createChatQuery(_ chatModel: ChatModel) -> Query
+    func createChatQuery(_ chat: ChatProtocol) -> Query
     func sendMessage(
         chatDocumentId: String,
         messageKind: [MessageModel.MessageKind],
@@ -38,6 +38,10 @@ protocol FirestoreServiceProtocol: AutoMockable {
     func userData(
         _ userId: String,
         completion: @escaping (UserModel?) -> Void
+    )
+    func userListData(
+        _ userList: [String],
+        completion: @escaping ([UserModel]?) -> Void
     )
 }
 
@@ -87,9 +91,9 @@ class FirestoreService: FirestoreServiceProtocol {
             .order(by: "lastMessage.timestamp", descending: true)
     }()
     
-    func createChatQuery(_ chatModel: ChatModel) -> Query {
+    func createChatQuery(_ chat: ChatProtocol) -> Query {
         return db.collection("chats")
-            .document(chatModel.documentId)
+            .document(chat.documentId)
             .collection("messages")
             .order(by: "timestamp", descending: false)
     }
@@ -187,6 +191,22 @@ class FirestoreService: FirestoreServiceProtocol {
                 }
                 
                 completion(UserModel.fromSnapshot(snapshot!))
+        }
+    }
+    
+    func userListData(
+        _ userList: [String],
+        completion: @escaping ([UserModel]?) -> Void
+    ) {
+        db.collection("users").whereField(.documentID(), in: userList)
+            .getDocuments { snapshot, err in
+                guard err == nil else {
+                    debugPrint("Error while get user list: \(err!.localizedDescription)")
+                    completion(nil)
+                    return
+                }
+                
+                completion(snapshot?.documents.map { UserModel.fromSnapshot($0)! })
         }
     }
     

@@ -11,9 +11,11 @@ import CodableFirebase
 
 struct UserModel: Codable {
     
-    var documentId: String = ""
+    var documentId: String?
     let name: String
     let surname: String
+    
+    static let defaultDocumentId: String? = nil
     
     static func fromSnapshot(_ snapshot: DocumentSnapshot) -> UserModel? {
         var data = snapshot.data() ?? [:]
@@ -30,4 +32,12 @@ struct UserModel: Codable {
             return nil
         }
     }
+}
+
+extension UserModel: UserProtocol {
+    
+    var fullName: String {
+        return "\(name) \(surname)"
+    }
+    
 }

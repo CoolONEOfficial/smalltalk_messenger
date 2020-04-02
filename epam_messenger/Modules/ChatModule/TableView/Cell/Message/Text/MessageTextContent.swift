@@ -36,9 +36,7 @@ class MessageTextContent: UIView, MessageCellContentProtocol {
     var messageText: MessageTextProtocol! {
         didSet {
             
-            let textColor: UIColor = messageText.isIncoming
-                ? .plainText
-                : .accentText
+            let textColor: UIColor = messageText.textColor
             
             setupTextLabel(textColor)
             setupUsernameLabel(textColor)
@@ -126,8 +124,17 @@ class MessageTextContent: UIView, MessageCellContentProtocol {
         }
     }
     
-    func didLoadUser(_ userModel: UserModel) {
-        usernameLabel.text = "\(userModel.name) \(userModel.surname)"
+    func didLoadUser(_ user: UserProtocol) {
+        if !usernameLabel.isHidden {
+            usernameLabel.text = user.fullName
+        }
+    }
+    
+    func didDelegateSet(_ delegate: MessageCellDelegate?) {
+        if let delegate = delegate,
+            case .personalCorr = delegate.chatType {
+            usernameLabel.isHidden = true
+        }
     }
     
     var topMargin: CGFloat {

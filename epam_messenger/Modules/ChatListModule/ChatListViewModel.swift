@@ -14,19 +14,23 @@ protocol ChatListViewModelProtocol: ViewModelProtocol {
     func goToChat(_ chatModel: ChatModel)
     func firestoreQuery() -> FireQuery
     func searchChats(_ searchString: String, completion: @escaping AlgoliaService.SearchCompletion)
-    func createChatPreview(_ chatModel: ChatModel) -> UIViewController
+    func createChatPreview(_ chat: ChatProtocol) -> UIViewController
     func deleteChat(
-        _ chatModel: ChatModel,
+        _ chat: ChatProtocol,
         completion: @escaping (Bool) -> Void
+    )
+    func userListData(
+        _ userList: [String],
+        completion: @escaping ([UserModel]?) -> Void
     )
 }
 
 extension ChatListViewModelProtocol {
     func deleteChat(
-        _ chatModel: ChatModel,
+        _ chat: ChatProtocol,
         completion: @escaping (Bool) -> Void = {_ in}
     ) {
-        deleteChat(chatModel, completion: completion)
+        deleteChat(chat, completion: completion)
     }
 }
 
@@ -62,14 +66,18 @@ class ChatListViewModel: ChatListViewModelProtocol {
         }
     }
     
-    func createChatPreview(_ chatModel: ChatModel) -> UIViewController {
-        return AssemblyBuilder().createChatModule(router: router, chatModel: chatModel)
+    func createChatPreview(_ chat: ChatProtocol) -> UIViewController {
+        return AssemblyBuilder().createChatModule(router: router, chat: chat)
     }
     
-    func deleteChat(_ chatModel: ChatModel, completion: @escaping (Bool) -> Void = {_ in}) {
+    func deleteChat(_ chat: ChatProtocol, completion: @escaping (Bool) -> Void = {_ in}) {
         firestoreService.deleteChat(
-            chatDocumentId: chatModel.documentId,
+            chatDocumentId: chat.documentId,
             completion: completion
         )
+    }
+    
+    func userListData(_ userList: [String], completion: @escaping ([UserModel]?) -> Void) {
+        firestoreService.userListData(userList, completion: completion)
     }
 }

@@ -7,44 +7,91 @@
 
 import UIKit
 import Reusable
+import FirebaseAuth
+import FirebaseStorage
+
+protocol ChatCellDelegateProtocol {
+    func userListData(
+        _ userList: [String],
+        completion: @escaping ([UserModel]?) -> Void
+    )
+}
 
 class ChatCell: UITableViewCell, NibReusable {
 
+    // MARK: - Outlets
+    
     @IBOutlet private var avatarImageView: UIImageView!
-    @IBOutlet private var chatNameLabel: UILabel!
+    @IBOutlet private var titleLabel: UILabel!
     @IBOutlet private var senderNameLabel: UILabel!
     @IBOutlet private var lastMessageLabel: UILabel!
     
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        
-        chatNameLabel.isHidden = true
-        avatarImageView.image = #imageLiteral(resourceName: "Nathan-Tannar")
+    // MARK: - Vars
+    
+    var delegate: ChatCellDelegateProtocol? {
+        didSet {
+            delegate?.userListData(
+                chat.users.filter({ $0 != Auth.auth().currentUser?.uid })
+            ) { userModelList in
+                if let userModelList = userModelList {
+                    switch self.chat.type {
+                    case .personalCorr:
+                        let friendModel = userModelList.first!
+                        self.titleLabel.text = "\(friendModel.name) \(friendModel.surname)"
+                    case .chat(let title, _):
+                        self.titleLabel.text = title
+                    }
+                }
+            }
+        }
+    }
+    
+    internal var chat: ChatModel! {
+        didSet {
+            titleLabel.isHidden = true
+            switch chat.type {
+            case .personalCorr:
+                setupPersonalCorr()
+            case .chat(let title, _):
+                setupChat(title)
+            }
+        }
+    }
+    
+    private func setupChat(
+        _ title: String
+    ) {
+        titleLabel.text = title
+        senderNameLabel.isHidden = false
+        setupAvatar("chats/\(chat.documentId)/avatar.jpg")
+    }
+    
+    private func setupPersonalCorr() {
+        let friendId = chat.users.first(where: { $0 != Auth.auth().currentUser!.uid })!
+        titleLabel.text = "..."
+        senderNameLabel.isHidden = true
+        setupAvatar("users/\(friendId)/avatar.jpg")
+    }
+    
+    private func setupAvatar(_ path: String) {
+        let avatarRef = Storage.storage().reference(withPath: path)
+        avatarImageView.sd_setSmallImage(with: avatarRef, placeholderImage: #imageLiteral(resourceName: "logo"))
         avatarImageView.layer.cornerRadius = avatarImageView.bounds.width / 2
     }
+    
+    // MARK: - Init
     
     func loadChatModel(
         _ chatModel: ChatModel
     ) {
-        if chatModel.users.count > 2 {
-            chatNameLabel.isHidden = false
-            loadGroupChatData(
-                chatName: chatModel.name,
-                lastMessage: chatModel.lastMessage ?? MessageModel.empty()
-            )
-        } else {
-            chatNameLabel.isHidden = true
-            loadChatData(
-                lastMessage: chatModel.lastMessage ?? MessageModel.empty()
-            )
-        }
+        self.chat = chatModel
     }
     
     private func loadGroupChatData(
         chatName: String,
         lastMessage: MessageModel
     ) {
-        chatNameLabel.text = chatName
+        titleLabel.text = chatName
         loadChatData(lastMessage: lastMessage)
     }
     
@@ -53,22 +100,25 @@ class ChatCell: UITableViewCell, NibReusable {
     ) {
         senderNameLabel.text = String(lastMessage.userId) // load user name
         var imageCount = 0
-        var allText = ""
+        var text = ""
+        var attachmentText = ""
         var icon = ""
         for mKind in lastMessage.kind {
             switch mKind {
             case .image(_):
                 imageCount += 1
                 icon = "🖼️"
+                attachmentText = "Image"
             case .audio(_):
                 icon = "🎵"
-            case .text(let text):
-                allText += text
+                attachmentText = "Audio"
+            case .text(let kindText):
+                text += " \(kindText.prefix(10))..."
             case .forward(_):
-                allText += "↪️"
+                text += "Forwarded message"
             }
         }
-        lastMessageLabel.text = "\(imageCount > 1 ? "x\(imageCount)" : "") \(icon) \(allText)"
+        lastMessageLabel.text = "\(imageCount > 1 ? "x\(imageCount)" : "") \(icon) \(text.isEmpty ? attachmentText : text)"
         
     }
 }

@@ -83,7 +83,7 @@ class MessageForwardContent: UIView, MessageCellContentProtocol {
         }
     }
     
-    func didLoadUser(_ userModel: UserModel) {
+    func didLoadUser(_ user: UserProtocol) {
         cell.delegate?.cellUserData(messageForward.kindForwardUser(at: kindIndex)!) { userModel in
             let userName: String
             if let userModel = userModel {
