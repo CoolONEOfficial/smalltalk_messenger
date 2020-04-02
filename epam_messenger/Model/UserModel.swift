@@ -10,11 +10,14 @@ import Firebase
 import CodableFirebase
 
 struct UserModel: Codable {
+    
+    var documentId: String = ""
     let name: String
     let surname: String
     
     static func fromSnapshot(_ snapshot: DocumentSnapshot) -> UserModel? {
-        let data = snapshot.data() ?? [:]
+        var data = snapshot.data() ?? [:]
+        data["documentId"] = snapshot.documentID
         
         do {
             return try FirestoreDecoder()

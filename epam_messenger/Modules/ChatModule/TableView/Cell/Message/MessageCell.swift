@@ -7,6 +7,7 @@
 
 import UIKit
 import Reusable
+import FirebaseStorage
 import TinyConstraints
 
 protocol MessageCellProtocol: UIView {
@@ -38,15 +39,18 @@ protocol MessageCellContentProtocol: UIView {
     var bottomMargin: CGFloat { get }
     
     func didTap(_ recognizer: UITapGestureRecognizer)
+    func didLoadUser(_ userModel: UserModel)
 }
 
 extension MessageCellContentProtocol {
     func didTap(_ recognizer: UITapGestureRecognizer) {}
+    func didLoadUser(_ userModel: UserModel) {}
 }
 
 protocol MessageCellDelegate {
     func didTapContent(_ content: MessageCellContentProtocol)
     func didError(_ text: String)
+    func cellUserData(_ userId: String, completion: @escaping (UserModel?) -> Void)
 }
 
 class MessageCell: UITableViewCell, NibReusable, MessageCellProtocol {
@@ -69,7 +73,11 @@ class MessageCell: UITableViewCell, NibReusable, MessageCellProtocol {
     var mergeNext: Bool!
     var mergePrev: Bool!
     
-    var delegate: MessageCellDelegate?
+    var delegate: MessageCellDelegate? {
+        didSet {
+            loadUser()
+        }
+    }
     
     var _contentStack: UIStackView?
     var contentStack: UIStackView {
@@ -134,12 +142,30 @@ class MessageCell: UITableViewCell, NibReusable, MessageCellProtocol {
         }
     }
     
+    private func loadUser() {
+        if message.isIncoming {
+            delegate?.cellUserData(message.userId) { userModel in
+                if let userModel = userModel {
+                    for content in self.contentStack.subviews as? [MessageCellContentProtocol] ?? [] {
+                        content.didLoadUser(userModel)
+                    }
+                }
+            }
+        }
+    }
+    
     private func setupAvatarImage() {
         let isHidden = !message.isIncoming
         avatarImage.isHidden = isHidden
         
         if !isHidden {
-            avatarImage.image = mergeNext ? nil : #imageLiteral(resourceName: "Nathan-Tannar")
+            if !mergeNext {
+                avatarImage.image = #imageLiteral(resourceName: "Nathan-Tannar")
+                avatarImage.sd_setImage(with: Storage.storage().reference(
+                    withPath: "users/\(message.userId)/avatar.jpg"
+                ))
+            }
+            
             avatarImage.layer.cornerRadius = avatarImage.bounds.width / 2
         }
     }
@@ -170,7 +196,7 @@ class MessageCell: UITableViewCell, NibReusable, MessageCellProtocol {
                 contentView = MessageImageContent()
             case .audio:
                 contentView = MessageAudioContent()
-            case .forward(_):
+            case .forward:
                 contentView = MessageForwardContent()
             }
             contentView.loadMessage(

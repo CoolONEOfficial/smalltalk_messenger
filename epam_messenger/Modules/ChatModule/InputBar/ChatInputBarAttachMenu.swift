@@ -88,7 +88,7 @@ class ChatInputBarAttachMenu: UIAlertController {
         let contactAction = UIAlertAction(title: "Contact", style: .default)
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
         
-        addAction(photoAction) // TODO: photo select
+        addAction(photoAction)
         addAction(fileAction) // TODO: file select
         addAction(geoAction) // TODO: geolocations
         addAction(contactAction) // TODO: contacts select

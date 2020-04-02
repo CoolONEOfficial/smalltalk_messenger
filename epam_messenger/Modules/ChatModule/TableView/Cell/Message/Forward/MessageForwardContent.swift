@@ -24,7 +24,7 @@ class MessageForwardContent: UIView, MessageCellContentProtocol {
     var kindIndex: Int!
     var messageForward: MessageForwardProtocol! {
         didSet {
-            forwardLabel.text = "Forwarded from \(messageForward.kindForwardUser(at: kindIndex)?.name ?? "null")"
+            forwardLabel.text = "Forwarded from ..."
         }
     }
     
@@ -80,6 +80,19 @@ class MessageForwardContent: UIView, MessageCellContentProtocol {
             }
             
             shouldSetupConstraints = false
+        }
+    }
+    
+    func didLoadUser(_ userModel: UserModel) {
+        cell.delegate?.cellUserData(messageForward.kindForwardUser(at: kindIndex)!) { userModel in
+            let userName: String
+            if let userModel = userModel {
+                userName = "\(userModel.name)"
+            } else {
+                userName = "deleted user"
+            }
+            
+            self.forwardLabel.text = "Forwarded from \(userName)"
         }
     }
     

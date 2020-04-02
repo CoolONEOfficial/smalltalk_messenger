@@ -114,8 +114,8 @@ extension ChatViewController: UITableViewDelegate {
             }).count == 1 {
                 actions.append(savePhoto)
             }
-            if !message.kind.contains(where: { content in
-                if case .audio = content {
+            if message.kind.contains(where: { content in
+                if case .text = content {
                     return true
                 }
                 return false

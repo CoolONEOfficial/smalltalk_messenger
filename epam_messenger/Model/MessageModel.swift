@@ -15,7 +15,7 @@ struct MessageModel: AutoCodable {
     
     var documentId: String?
     let kind: [MessageKind]
-    let userId: Int
+    let userId: String
     let timestamp: Timestamp
     
     enum CodingKeys: String, CodingKey {
@@ -31,14 +31,14 @@ struct MessageModel: AutoCodable {
         case text(_: String)
         case image(path: String, size: ImageSize)
         case audio(path: String)
-        case forward(_: UserModel)
+        case forward(userId: String)
     }
     
     static let defaultDocumentId: String? = nil
     static let defaultKind: [MessageKind] = []
     
     static func empty() -> MessageModel {
-        return MessageModel(kind: [], userId: 0, timestamp: Timestamp.init())
+        return MessageModel(kind: [], userId: Auth.auth().currentUser!.uid, timestamp: Timestamp.init())
     }
     
     static func fromSnapshot(_ snapshot: DocumentSnapshot) -> MessageModel? {
@@ -83,15 +83,15 @@ extension MessageModel: MessageProtocol {
     }
     
     var isIncoming: Bool {
-        return userId != 0 // TODO: auth user id
+        return userId != Auth.auth().currentUser!.uid
     }
     
-    func forwardedKind(_ userModel: UserModel) -> [MessageModel.MessageKind] {
+    func forwardedKind(_ userId: String) -> [MessageModel.MessageKind] {
         var forwardedKind = kind
         if case .forward = forwardedKind.first {
             forwardedKind.remove(at: 0)
         }
-        forwardedKind.insert(.forward(userModel), at: 0)
+        forwardedKind.insert(.forward(userId: userId), at: 0)
         return forwardedKind
     }
 }
@@ -130,10 +130,10 @@ extension MessageModel: MessageAudioProtocol {
 }
 
 extension MessageModel: MessageForwardProtocol {
-    func kindForwardUser(at: Int) -> UserModel? {
+    func kindForwardUser(at: Int) -> String? {
         switch kind[at] {
-        case .forward(let userModel):
-            return userModel
+        case .forward(let userId):
+            return userId
         default:
             return nil
         }

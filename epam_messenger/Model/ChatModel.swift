@@ -12,7 +12,7 @@ import CodableFirebase
 struct ChatModel: AutoDecodable {
     
     var documentId: String = ""
-    let users: [Int]
+    let users: [String]
     let name: String
     let lastMessage: MessageModel?
     
