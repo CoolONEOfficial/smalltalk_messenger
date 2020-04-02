@@ -26,6 +26,8 @@ class ChatViewController: UIViewController {
     
     // MARK: - Vars
     
+    var defaultTitle = "..."
+    
     let inputBar = ChatInputBar()
     var viewModel: ChatViewModelProtocol!
     var photosViewerCoordinator: ChatPhotoViewerDataSource!
@@ -90,7 +92,22 @@ class ChatViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        title = viewModel.chatModel.name
+        switch viewModel.chat.type {
+        case .personalCorr:
+            viewModel.userData(viewModel.chat.friendId!) { user in
+                if let user = user {
+                    self.defaultTitle = user.fullName
+                    
+                    if !self.tableView.isEditing {
+                        self.title = self.defaultTitle
+                    }
+                }
+            }
+        case .chat(let title, _):
+            defaultTitle = title
+        }
+        
+        title = defaultTitle
         view.tintColor = .accent
         
         setupTableView()

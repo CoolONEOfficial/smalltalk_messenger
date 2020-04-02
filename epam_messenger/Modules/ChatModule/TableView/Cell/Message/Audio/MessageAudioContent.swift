@@ -62,8 +62,8 @@ class MessageAudioContent: UIView, MessageCellContentProtocol {
     }
     
     private func setupWaveform() {
-        waveform.wavesColor = UIColor.accentText.withAlphaComponent(0.3)
-        waveform.progressColor = .accentText
+        waveform.wavesColor = message.textColor.withAlphaComponent(0.3)
+        waveform.progressColor = message.textColor
         
         let kindAudio = messageAudio.kindAudio(at: kindIndex)!
         let imageRef = Storage.storage().reference().child(kindAudio)
@@ -103,9 +103,7 @@ class MessageAudioContent: UIView, MessageCellContentProtocol {
     }
     
     private func setupPlayButton() {
-        playButton.tintColor = message.isIncoming
-            ? .plainText
-            : .accentText
+        playButton.tintColor = message.textColor
     }
     
     // MARK: - Init

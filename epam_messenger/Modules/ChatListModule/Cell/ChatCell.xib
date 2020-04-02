@@ -60,9 +60,9 @@
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
             <connections>
                 <outlet property="avatarImageView" destination="HFB-Ps-PR0" id="Xp8-DO-snQ"/>
-                <outlet property="chatNameLabel" destination="fVM-no-UjM" id="rEG-Lk-wXU"/>
                 <outlet property="lastMessageLabel" destination="5kB-sn-dI7" id="WxG-TT-T2v"/>
                 <outlet property="senderNameLabel" destination="q87-XS-0l0" id="1Ay-G4-bj3"/>
+                <outlet property="titleLabel" destination="fVM-no-UjM" id="rEG-Lk-wXU"/>
             </connections>
             <point key="canvasLocation" x="113.04347826086958" y="132.58928571428572"/>
         </tableViewCell>

@@ -13,7 +13,7 @@ import CodableFirebase
 typealias FireQuery = Query
 
 protocol FirestoreServiceProtocol: AutoMockable {
-    func createChatQuery(_ chatModel: ChatModel) -> Query
+    func createChatQuery(_ chat: ChatProtocol) -> Query
     func sendMessage(
         chatDocumentId: String,
         messageKind: [MessageModel.MessageKind],
@@ -38,6 +38,10 @@ protocol FirestoreServiceProtocol: AutoMockable {
     func userData(
         _ userId: String,
         completion: @escaping (UserModel?) -> Void
+    )
+    func userListData(
+        _ userList: [String],
+        completion: @escaping ([UserModel]?) -> Void
     )
 }
 
@@ -87,9 +91,9 @@ class FirestoreService: FirestoreServiceProtocol {
             .order(by: "lastMessage.timestamp", descending: true)
     }()
     
-    func createChatQuery(_ chatModel: ChatModel) -> Query {
+    func createChatQuery(_ chat: ChatProtocol) -> Query {
         return db.collection("chats")
-            .document(chatModel.documentId)
+            .document(chat.documentId)
             .collection("messages")
             .order(by: "timestamp", descending: false)
     }
@@ -190,23 +194,23 @@ class FirestoreService: FirestoreServiceProtocol {
         }
     }
     
-    // MARK: - user's contacts list
-       
-       lazy var contactsListQuery: Query = {
-           var documentId = "7kEMVwxyIccl9bawojE3"
-           return db.collection("users").document("\(documentId)").collection("contacts")
-       }()
+    func userListData(
+        _ userList: [String],
+        completion: @escaping ([UserModel]?) -> Void
+    ) {
+        db.collection("users").whereField(.documentID(), in: userList)
+            .getDocuments { snapshot, err in
+                guard err == nil else {
+                    debugPrint("Error while get user list: \(err!.localizedDescription)")
+                    completion(nil)
+                    return
+                }
+                
+                completion(snapshot?.documents.map { UserModel.fromSnapshot($0)! })
+        }
+    }
     
-    // MARK: - users list with real user
-    
-//    lazy var usersListQuery: Query = {
-//           guard let currentUser = Auth.auth().currentUser?.uid else { return db.collection("users").order(by: "name") }
-//           return db.collection(currentUser).order(by: "name")
-//       }()
-    
-    // MARK: - hard codded users list
-    
-    lazy var usersListQuery: Query = {
+    lazy var contactsListQuery: Query = {
         return db.collection("users").order(by: "name")
     }()
     

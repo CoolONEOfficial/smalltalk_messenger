@@ -32,12 +32,18 @@ protocol ChatViewModelProtocol: ViewModelProtocol, AutoMockable, MessageCellDele
         viewController: UIViewController,
         completion: @escaping (UIImage) -> Void
     )
-    func createForwardViewController(forwardDelegate: ForwardDelegateProtocol) -> UIViewController
+    func createForwardViewController(
+        forwardDelegate: ForwardDelegateProtocol
+    ) -> UIViewController
     func goToChat(
         _ chatModel: ChatModel
     )
+    func userData(
+        _ userId: String,
+        completion: @escaping (UserModel?) -> Void
+    )
     
-    var chatModel: ChatModel { get }
+    var chat: ChatProtocol { get }
     var lastTapCellContent: MessageCellContentProtocol! { get }
 }
 
@@ -72,28 +78,28 @@ class ChatViewModel: ChatViewModelProtocol {
     
     let viewController: ChatViewControllerProtocol
     
-    let chatModel: ChatModel
+    let chat: ChatProtocol
     
     var lastTapCellContent: MessageCellContentProtocol!
     
     init(
         viewController: ChatViewControllerProtocol,
         router: RouterProtocol,
-        chatModel: ChatModel,
+        chat: ChatProtocol,
         firestoreService: FirestoreServiceProtocol = FirestoreService(),
         storageService: StorageServiceProtocol = StorageService(),
         imagePickerService: ImagePickerServiceProtocol = ImagePickerService()
     ) {
         self.viewController = viewController
         self.router = router
-        self.chatModel = chatModel
+        self.chat = chat
         self.firestoreService = firestoreService
         self.storageService = storageService
         self.imagePickerService = imagePickerService
     }
     
     func firestoreQuery() -> FireQuery {
-        return firestoreService.createChatQuery(chatModel)
+        return firestoreService.createChatQuery(chat)
     }
     
     func sendMessage(
@@ -113,7 +119,7 @@ class ChatViewModel: ChatViewModelProtocol {
             case .image(let image):
                 uploadGroup.enter()
                 storageService.uploadImage(
-                    chatDocumentId: chatModel.documentId,
+                    chatDocumentId: chat.documentId,
                     image: image,
                     timestamp: uploadStartTimestamp,
                     index: attachments.count - index
@@ -126,7 +132,7 @@ class ChatViewModel: ChatViewModelProtocol {
             case .data(let data):
                 uploadGroup.enter()
                 storageService.uploadAudio(
-                    chatDocumentId: chatModel.documentId,
+                    chatDocumentId: chat.documentId,
                     data: data
                 ) { kind in
                     if let kind = kind {
@@ -141,7 +147,7 @@ class ChatViewModel: ChatViewModelProtocol {
         
         uploadGroup.notify(queue: .main) {
             self.firestoreService.sendMessage(
-                chatDocumentId: self.chatModel.documentId,
+                chatDocumentId: self.chat.documentId,
                 messageKind: uploadKinds,
                 completion: completion
             )
@@ -165,7 +171,7 @@ class ChatViewModel: ChatViewModelProtocol {
         completion: @escaping (Bool) -> Void = {_ in}
     ) {
         firestoreService.deleteMessage(
-            chatDocumentId: chatModel.documentId,
+            chatDocumentId: chat.documentId,
             messageDocumentId: messageModel.documentId!,
             completion: completion
         )
@@ -175,13 +181,17 @@ class ChatViewModel: ChatViewModelProtocol {
         completion: @escaping (Bool) -> Void = {_ in}
     ) {
         firestoreService.deleteChat(
-            chatDocumentId: chatModel.documentId,
+            chatDocumentId: chat.documentId,
             completion: completion
         )
     }
     
     func goToChat(_ chatModel: ChatModel) {
         router.showChat(chatModel)
+    }
+    
+    func userData(_ userId: String, completion: @escaping (UserModel?) -> Void) {
+        firestoreService.userData(userId, completion: completion)
     }
     
     func pickImages(
@@ -202,7 +212,7 @@ extension ChatViewModel: MessageCellDelegate {
         lastTapCellContent = content
         switch content {
         case let messageContent as MessageImageContent:
-            firestoreService.listChatMedia(chatDocumentId: chatModel.documentId) { mediaItems in
+            firestoreService.listChatMedia(chatDocumentId: chat.documentId) { mediaItems in
                 let refs = mediaItems!.map { Storage.storage().reference(withPath: $0.path) }
                 
                 let initialIndex = refs.firstIndex { ref in
@@ -227,6 +237,10 @@ extension ChatViewModel: MessageCellDelegate {
     
     func cellUserData(_ userId: String, completion: @escaping (UserModel?) -> Void) {
         return firestoreService.userData(userId, completion: completion)
+    }
+    
+    var chatType: ChatType {
+        return chat.type
     }
     
 }

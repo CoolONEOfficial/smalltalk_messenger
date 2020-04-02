@@ -76,6 +76,7 @@ class ChatListViewController: UIViewController {
             if let chatModel = self.chatFrom(snapshot) {
                 cell.loadChatModel(chatModel)
             }
+            cell.delegate = self
             
             return cell
         }
@@ -321,9 +322,28 @@ extension ChatListViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell()
-        cell.textLabel?.text = searchItems[indexPath.row].name
+        let chatModel = searchItems[indexPath.row]
+        
+        let cellTitle: String
+        if case .chat(let title, _) = chatModel.type {
+            cellTitle = title
+        } else {
+            cellTitle = "..."
+        }
+        
+        cell.textLabel?.text = cellTitle
         return cell
     }
+}
+
+// MARK: - Cell delegate
+
+extension ChatListViewController: ChatCellDelegateProtocol {
+    
+    func userListData(_ userList: [String], completion: @escaping ([UserModel]?) -> Void) {
+        viewModel.userListData(userList, completion: completion)
+    }
+    
 }
 
 extension ChatListViewController: ChatListViewControllerProtocol {}

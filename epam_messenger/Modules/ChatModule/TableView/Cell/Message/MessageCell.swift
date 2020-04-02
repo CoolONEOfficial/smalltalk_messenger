@@ -39,18 +39,22 @@ protocol MessageCellContentProtocol: UIView {
     var bottomMargin: CGFloat { get }
     
     func didTap(_ recognizer: UITapGestureRecognizer)
-    func didLoadUser(_ userModel: UserModel)
+    func didLoadUser(_ user: UserProtocol)
+    func didDelegateSet(_ delegate: MessageCellDelegate?)
 }
 
 extension MessageCellContentProtocol {
     func didTap(_ recognizer: UITapGestureRecognizer) {}
-    func didLoadUser(_ userModel: UserModel) {}
+    func didLoadUser(_ user: UserProtocol) {}
+    func didDelegateSet(_ delegate: MessageCellDelegate?) {}
 }
 
 protocol MessageCellDelegate {
     func didTapContent(_ content: MessageCellContentProtocol)
     func didError(_ text: String)
     func cellUserData(_ userId: String, completion: @escaping (UserModel?) -> Void)
+    
+    var chatType: ChatType { get }
 }
 
 class MessageCell: UITableViewCell, NibReusable, MessageCellProtocol {
@@ -76,6 +80,12 @@ class MessageCell: UITableViewCell, NibReusable, MessageCellProtocol {
     var delegate: MessageCellDelegate? {
         didSet {
             loadUser()
+            if case .personalCorr = delegate!.chatType {
+                avatarImage.isHidden = true
+            }
+            for content in contentStack.subviews as! [MessageCellContentProtocol] {
+                content.didDelegateSet(delegate)
+            }
         }
     }
     
@@ -161,9 +171,11 @@ class MessageCell: UITableViewCell, NibReusable, MessageCellProtocol {
         if !isHidden {
             if !mergeNext {
                 avatarImage.image = #imageLiteral(resourceName: "Nathan-Tannar")
-                avatarImage.sd_setImage(with: Storage.storage().reference(
+                avatarImage.sd_setSmallImage(with: Storage.storage().reference(
                     withPath: "users/\(message.userId)/avatar.jpg"
                 ))
+            } else {
+                avatarImage.image = nil
             }
             
             avatarImage.layer.cornerRadius = avatarImage.bounds.width / 2
@@ -219,9 +231,7 @@ class MessageCell: UITableViewCell, NibReusable, MessageCellProtocol {
     
     private func setupBubbleImage() {
         bubbleImage.image = getCachedImage()
-        bubbleImage.tintColor = message.isIncoming
-            ? .plainBackground
-            : .accent
+        bubbleImage.tintColor = message.backgroundColor
     }
     
     func loadMessage(_ message: MessageProtocol, mergeNext: Bool, mergePrev: Bool) {

@@ -148,9 +148,7 @@ extension ChatViewController: UITableViewDelegate {
         let messageCell: MessageCell = tableView.cellForRow(at: indexPath) as! MessageCell
         
         let parameters = UIPreviewParameters()
-        parameters.backgroundColor = messageCell.message.isIncoming
-            ? .plainBackground
-            : .accent
+        parameters.backgroundColor = messageCell.message.backgroundColor
         
         let bounds = messageCell.contentStack.bounds.inset(
             by: .init(
@@ -226,7 +224,7 @@ extension ChatViewController: UITableViewDelegate {
         
         title = rowsSelected
             ? "Selected \(tableView.indexPathsForSelectedRows!.count) messages"
-            : viewModel.chatModel.name
+            : defaultTitle
         
         navigationItem.leftBarButtonItem = .init(
             title: "Delete chat",
@@ -319,7 +317,7 @@ extension ChatViewController: ForwardDelegateProtocol {
         if forwardMessages != nil {
             for message in forwardMessages {
                 viewModel.forwardMessage(chatModel, message) { result in
-                    if result && self.viewModel.chatModel.documentId != chatModel.documentId {
+                    if result && self.viewModel.chat.documentId != chatModel.documentId {
                         self.viewModel.goToChat(chatModel)
                     }
                 }

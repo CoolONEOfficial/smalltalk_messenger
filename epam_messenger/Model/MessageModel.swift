@@ -23,7 +23,6 @@ struct MessageModel: AutoCodable {
         case kind
         case userId
         case timestamp
-        case filename
         case enumCaseKey
     }
     
@@ -84,6 +83,18 @@ extension MessageModel: MessageProtocol {
     
     var isIncoming: Bool {
         return userId != Auth.auth().currentUser!.uid
+    }
+    
+    var textColor: UIColor {
+        return isIncoming
+            ? .plainText
+            : .accentText
+    }
+    
+    var backgroundColor: UIColor {
+        return isIncoming
+            ? .plainBackground
+            : .accent
     }
     
     func forwardedKind(_ userId: String) -> [MessageModel.MessageKind] {
