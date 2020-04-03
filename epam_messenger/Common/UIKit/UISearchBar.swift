@@ -32,9 +32,11 @@ extension UISearchBar {
                     let newActivityIndicator = UIActivityIndicatorView(style: .medium)
                     newActivityIndicator.startAnimating()
                     if #available(iOS 13.0, *) {
-                        newActivityIndicator.backgroundColor = UIColor.tertiarySystemBackground
+                        newActivityIndicator.backgroundColor = traitCollection.userInterfaceStyle == .dark
+                            ? .tertiarySystemBackground
+                            : .systemGray5
                     } else {
-                        newActivityIndicator.backgroundColor = UIColor.groupTableViewBackground
+                        newActivityIndicator.backgroundColor = .groupTableViewBackground
                     }
                     newActivityIndicator.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
                     textField?.leftView?.addSubview(newActivityIndicator)

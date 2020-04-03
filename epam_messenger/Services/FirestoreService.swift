@@ -43,6 +43,10 @@ protocol FirestoreServiceProtocol: AutoMockable {
         _ userList: [String],
         completion: @escaping ([UserModel]?) -> Void
     )
+    func chatData(
+        _ chatId: String,
+        completion: @escaping (ChatModel?) -> Void
+    )
 }
 
 extension FirestoreServiceProtocol {
@@ -207,6 +211,19 @@ class FirestoreService: FirestoreServiceProtocol {
                 }
                 
                 completion(snapshot?.documents.map { UserModel.fromSnapshot($0)! })
+        }
+    }
+    
+    func chatData(_ chatId: String, completion: @escaping (ChatModel?) -> Void) {
+        db.collection("chats")
+            .document(chatId).getDocument { snapshot, err in
+                guard err == nil else {
+                    debugPrint("Error while get chat data: \(err!.localizedDescription)")
+                    completion(nil)
+                    return
+                }
+                
+                completion(ChatModel.fromSnapshot(snapshot!))
         }
     }
     

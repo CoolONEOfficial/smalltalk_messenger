@@ -263,6 +263,7 @@ extension ChatViewController: UITableViewDelegate {
     internal func presentForwardController() {
         let forwardController = viewModel.createForwardViewController(forwardDelegate: self)
         let navigationController = UINavigationController(rootViewController: forwardController)
+        navigationController.view.tintColor = .accent
         present(navigationController, animated: true, completion: nil)
     }
     

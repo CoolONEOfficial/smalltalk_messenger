@@ -10,8 +10,15 @@ import InstantSearchClient
 import FirebaseAuth
 
 typealias AlgoliaQuery = Query
+typealias SearchChatsCompletion = ([ChatModel]?) -> Void
+typealias SearchMessagesCompletion = ([MessageModel]?) -> Void
 
-class AlgoliaService {
+protocol AlgoliaServiceProtocol: AutoMockable {
+    func searchChats(_ searchString: String, completion: @escaping SearchChatsCompletion)
+    func searchMessages(_ searchString: String, completion: @escaping SearchMessagesCompletion)
+}
+
+class AlgoliaService: AlgoliaServiceProtocol {
     
     // MARK: - Vars
     
@@ -23,17 +30,20 @@ class AlgoliaService {
         return searchClient.index(withName: "chats")
     }()
     
+    lazy var messagesIndex: Index! = {
+        return searchClient.index(withName: "messages")
+    }()
+    
     lazy var usersIndex: Index! = {
         return searchClient.index(withName: "users")
     }()
     
     // MARK: - Functions
     
-    typealias SearchCompletion = ([ChatModel]?) -> Void
-    func searchChats(_ searchString: String, completion: @escaping SearchCompletion) {
+    func searchChats(_ searchString: String, completion: @escaping SearchChatsCompletion) {
         let query = Query()
         query.hitsPerPage = 20
-        query.filters = "users = \(Auth.auth().currentUser!.uid)"
+        query.filters = "users:\(Auth.auth().currentUser!.uid)"
         query.query = searchString
         chatsIndex.search(query) { (content, error) in
             completion(self.parseContent(content: content, error: error))
@@ -46,6 +56,16 @@ class AlgoliaService {
         query.hitsPerPage = 20
         query.query = searchString
         usersIndex.search(query) { (content, error) in
+            completion(self.parseContent(content: content, error: error))
+        }
+    }
+    
+    func searchMessages(_ searchString: String, completion: @escaping SearchMessagesCompletion) {
+        let query = Query()
+        query.hitsPerPage = 20
+        query.filters = "chatUsers:\(Auth.auth().currentUser!.uid)"
+        query.query = searchString
+        messagesIndex.search(query) { (content, error) in
             completion(self.parseContent(content: content, error: error))
         }
     }
@@ -65,7 +85,8 @@ class AlgoliaService {
         return chats.map { record in
             var model = record
             model["documentId"] = record["objectID"]
-            return try! JSONDecoder().decode(T.self, from: JSONSerialization.data(withJSONObject: model))
+            let d = try! JSONDecoder().decode(T.self, from: JSONSerialization.data(withJSONObject: model))
+            return d
         }
     }
 }

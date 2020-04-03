@@ -71,10 +71,12 @@ extension MessageModel {
     internal init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
-        documentId = (try? container.decodeIfPresent(String.self, forKey: .documentId)) ?? MessageModel.defaultDocumentId
+        documentId = try container.decodeIfPresent(String.self, forKey: .documentId)
         kind = (try? container.decode([MessageKind].self, forKey: .kind)) ?? MessageModel.defaultKind
         userId = try container.decode(String.self, forKey: .userId)
         timestamp = MessageModel.decodeTimestamp(from: container)
+        chatId = try container.decodeIfPresent(String.self, forKey: .chatId)
+        chatUsers = try container.decodeIfPresent([String].self, forKey: .chatUsers)
     }
 
     internal func encode(to encoder: Encoder) throws {
@@ -84,6 +86,8 @@ extension MessageModel {
         try container.encode(kind, forKey: .kind)
         try container.encode(userId, forKey: .userId)
         try container.encode(timestamp, forKey: .timestamp)
+        try container.encodeIfPresent(chatId, forKey: .chatId)
+        try container.encodeIfPresent(chatUsers, forKey: .chatUsers)
     }
 
 }

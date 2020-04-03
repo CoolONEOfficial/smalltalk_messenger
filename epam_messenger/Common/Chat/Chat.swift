@@ -6,9 +6,11 @@
 //
 
 import Foundation
+import FirebaseStorage
 
 protocol ChatProtocol {
     var friendId: String? { get }
+    var avatarRef: StorageReference { get }
     
     var documentId: String! { get }
     var users: [String] { get }

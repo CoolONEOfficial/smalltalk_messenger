@@ -8,6 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		0ACEC4AD0E0E00254D9E165F /* Pods_epam_messenger.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6ADF9C4DB8D359ED9BE51E7 /* Pods_epam_messenger.framework */; };
+		850BCE6424369B1700643881 /* SearchDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850BCE6324369B1700643881 /* SearchDelegate.swift */; };
+		850BCE6624369B8700643881 /* SearchDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850BCE6524369B8700643881 /* SearchDataSource.swift */; };
+		850BCE7424375A2500643881 /* SearchMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850BCE7224375A2500643881 /* SearchMessageCell.swift */; };
+		850BCE7524375A2500643881 /* SearchMessageCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 850BCE7324375A2500643881 /* SearchMessageCell.xib */; };
+		850BCE7824377B1700643881 /* SearchChatCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850BCE7624377B1700643881 /* SearchChatCell.swift */; };
+		850BCE7924377B1700643881 /* SearchChatCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 850BCE7724377B1700643881 /* SearchChatCell.xib */; };
 		850C7FEC2424D82A008BAF24 /* UISearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850C7FEB2424D82A008BAF24 /* UISearchBar.swift */; };
 		850C7FFE2427FD89008BAF24 /* MessageImageContent.xib in Resources */ = {isa = PBXBuildFile; fileRef = 850C7FFD2427FD89008BAF24 /* MessageImageContent.xib */; };
 		850C8015242A7F34008BAF24 /* ChatPhotoViewerDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850C8014242A7F34008BAF24 /* ChatPhotoViewerDataSource.swift */; };
@@ -125,6 +131,12 @@
 
 /* Begin PBXFileReference section */
 		49191EC86ED2649B85CA6EF6 /* Pods-epam_messengerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-epam_messengerTests.debug.xcconfig"; path = "Target Support Files/Pods-epam_messengerTests/Pods-epam_messengerTests.debug.xcconfig"; sourceTree = "<group>"; };
+		850BCE6324369B1700643881 /* SearchDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchDelegate.swift; sourceTree = "<group>"; };
+		850BCE6524369B8700643881 /* SearchDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchDataSource.swift; sourceTree = "<group>"; };
+		850BCE7224375A2500643881 /* SearchMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchMessageCell.swift; sourceTree = "<group>"; };
+		850BCE7324375A2500643881 /* SearchMessageCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SearchMessageCell.xib; sourceTree = "<group>"; };
+		850BCE7624377B1700643881 /* SearchChatCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchChatCell.swift; sourceTree = "<group>"; };
+		850BCE7724377B1700643881 /* SearchChatCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SearchChatCell.xib; sourceTree = "<group>"; };
 		850C7FEB2424D82A008BAF24 /* UISearchBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UISearchBar.swift; sourceTree = "<group>"; };
 		850C7FED2425426E008BAF24 /* AlgoliaService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlgoliaService.swift; sourceTree = "<group>"; };
 		850C7FEF242765DC008BAF24 /* UIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImage.swift; sourceTree = "<group>"; };
@@ -270,6 +282,27 @@
 				FF442A0E4758E98A5ADEE32D /* Pods_epam_messengerTests.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		850BCE5F24369A9A00643881 /* Search */ = {
+			isa = PBXGroup;
+			children = (
+				850BCE71243759FC00643881 /* Cell */,
+				850BCE6324369B1700643881 /* SearchDelegate.swift */,
+				850BCE6524369B8700643881 /* SearchDataSource.swift */,
+			);
+			path = Search;
+			sourceTree = "<group>";
+		};
+		850BCE71243759FC00643881 /* Cell */ = {
+			isa = PBXGroup;
+			children = (
+				850BCE7624377B1700643881 /* SearchChatCell.swift */,
+				850BCE7724377B1700643881 /* SearchChatCell.xib */,
+				850BCE7224375A2500643881 /* SearchMessageCell.swift */,
+				850BCE7324375A2500643881 /* SearchMessageCell.xib */,
+			);
+			path = Cell;
 			sourceTree = "<group>";
 		};
 		850C7FFA2427FD57008BAF24 /* Image */ = {
@@ -720,6 +753,7 @@
 		E6B749772414281F00F00B29 /* ChatListModule */ = {
 			isa = PBXGroup;
 			children = (
+				850BCE5F24369A9A00643881 /* Search */,
 				85FF25652414DB1500A25D7A /* Cell */,
 				E6B749892414382300F00B29 /* ChatListViewModel.swift */,
 				85FD29F72417FC130035AC13 /* ChatListViewController.swift */,
@@ -900,10 +934,12 @@
 				85BE9A7524118CF200E6643B /* LaunchScreen.storyboard in Resources */,
 				E6846BA2242A95E9006818DE /* AuthStartViewController.xib in Resources */,
 				E6846BA6242A95E9006818DE /* AuthEnterNameViewController.xib in Resources */,
+				850BCE7524375A2500643881 /* SearchMessageCell.xib in Resources */,
 				949BF75324361534006C2AEC /* ContactsListViewController.xib in Resources */,
 				E6B74994241449C600F00B29 /* ChatViewController.xib in Resources */,
 				85FD29FA2417FC130035AC13 /* ChatListViewController.xib in Resources */,
 				85812D952433B6E000EA2626 /* MessageCell.xib in Resources */,
+				850BCE7924377B1700643881 /* SearchChatCell.xib in Resources */,
 				850C7FFE2427FD89008BAF24 /* MessageImageContent.xib in Resources */,
 				85FD29FE241818B70035AC13 /* AutoCodable.swifttemplate in Resources */,
 				85812D902433B68800EA2626 /* MessageTextContent.xib in Resources */,
@@ -1088,6 +1124,7 @@
 				851F5829241D92AE00D04F92 /* Message.swift in Sources */,
 				852C00F2242E188400BCC056 /* ImagePickerService.swift in Sources */,
 				85812DA62433B7F100EA2626 /* DateHeader.swift in Sources */,
+				850BCE7424375A2500643881 /* SearchMessageCell.swift in Sources */,
 				851F5823241D824E00D04F92 /* ChatTableViewDataSource.swift in Sources */,
 				E6B7499824144C5700F00B29 /* SceneDelegate.swift in Sources */,
 				85B3F1D8243388AF001F92D9 /* UIStackView.swift in Sources */,
@@ -1099,6 +1136,7 @@
 				85812D8D2433A9E700EA2626 /* AutoMockable.generated.swift in Sources */,
 				85812DA42433B7CC00EA2626 /* Array.swift in Sources */,
 				85812D912433B68800EA2626 /* MessageTextContent.swift in Sources */,
+				850BCE7824377B1700643881 /* SearchChatCell.swift in Sources */,
 				85812D9B2433B77600EA2626 /* ChatInputBarDelegate.swift in Sources */,
 				E6846BAA242A95E9006818DE /* AuthEnterNumberViewController.swift in Sources */,
 				949BF74E2436130A006C2AEC /* ContactsListCell.swift in Sources */,
@@ -1117,7 +1155,7 @@
 				851F581E241D7E2900D04F92 /* Date.swift in Sources */,
 				85B3F1D32433886F001F92D9 /* MessageForwardContent.swift in Sources */,
 				85FF256C2414DCDF00A25D7A /* ChatCell.swift in Sources */,
-				9450F54924373F5700E5B8AB /* UsersListCell.swift in Sources */,
+				850BCE6624369B8700643881 /* SearchDataSource.swift in Sources */,
 				85FD2A0724182CE80035AC13 /* AutoCodable.generated.swift in Sources */,
 				E6846BA4242A95E9006818DE /* AuthStartViewController.swift in Sources */,
 				E6B7499624144A4F00F00B29 /* ChatViewModel.swift in Sources */,
@@ -1125,6 +1163,7 @@
 				85812D972433B74C00EA2626 /* UserModel.swift in Sources */,
 				949BF7492436126D006C2AEC /* ContactsListModel.swift in Sources */,
 				85812DA22433B7A400EA2626 /* ChatTableView.swift in Sources */,
+				850BCE6424369B1700643881 /* SearchDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
