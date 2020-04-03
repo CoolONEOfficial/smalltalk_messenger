@@ -503,6 +503,19 @@ class RouterProtocolMock: RouterProtocol {
         popToRootClosure?()
     }
 
+    //MARK: - showContactsList
+
+    var showContactsListCallsCount = 0
+    var showContactsListCalled: Bool {
+        return showContactsListCallsCount > 0
+    }
+    var showContactsListClosure: (() -> Void)?
+
+    func showContactsList() {
+        showContactsListCallsCount += 1
+        showContactsListClosure?()
+    }
+
 }
 class StorageServiceProtocolMock: StorageServiceProtocol {
 

@@ -130,7 +130,7 @@ class FirestoreService: FirestoreServiceProtocol {
         db.collection("chats")
             .document(chatDocumentId).collection("messages")
             .document(messageDocumentId).delete { err in
-            completion(err == nil)
+                completion(err == nil)
         }
     }
     
@@ -140,7 +140,7 @@ class FirestoreService: FirestoreServiceProtocol {
     ) {
         db.collection("chats")
             .document(chatDocumentId).delete { err in
-            completion(err == nil)
+                completion(err == nil)
         }
     }
     
@@ -161,12 +161,12 @@ class FirestoreService: FirestoreServiceProtocol {
         }
     }
     
-    lazy var contactsListQuery: Query = {
-        return db.collection("users").order(by: "name")
-    }()
+    //    lazy var contactsListQuery: Query = {
+    //        return db.collection("users").order(by: "name")
+    //    }()
     
-    lazy var userContactsListQuery: Query = {
-        var documentId = "JfgyNfOJh8LlnIXKKFVd"
+    lazy var contactsListQuery: Query = {
+        var documentId = "7kEMVwxyIccl9bawojE3"
         return db.collection("users").document("\(documentId)").collection("contacts")
     }() // for contacts
     
