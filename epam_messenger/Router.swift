@@ -53,7 +53,10 @@ class Router: RouterProtocol {
     
     func showChatList() {
         if let navigationController = navigationController {
-            guard let chatViewController = assemblyBuilder?.createChatListModule(router: self) else { return }
+            guard let chatViewController = assemblyBuilder?.createChatListModule(
+                router: self,
+                forwardDelegate: nil
+            ) else { return }
             navigationController.viewControllers = [chatViewController]
         }
     }

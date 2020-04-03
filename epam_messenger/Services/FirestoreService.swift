@@ -47,6 +47,11 @@ protocol FirestoreServiceProtocol: AutoMockable {
         _ chatId: String,
         completion: @escaping (ChatModel?) -> Void
     )
+    func onlineCurrentUser() -> Void
+    func offlineCurrentUser() -> Void
+    
+    var contactListQuery: Query { get }
+    var chatListQuery: Query { get }
 }
 
 extension FirestoreServiceProtocol {
@@ -93,6 +98,10 @@ class FirestoreService: FirestoreServiceProtocol {
         return db.collection("chats")
             .whereField("users", arrayContains: Auth.auth().currentUser!.uid)
             .order(by: "lastMessage.timestamp", descending: true)
+    }()
+    
+    lazy var contactListQuery: Query = {
+        return db.collection("users").order(by: "name")
     }()
     
     func createChatQuery(_ chat: ChatProtocol) -> Query {
@@ -227,8 +236,19 @@ class FirestoreService: FirestoreServiceProtocol {
         }
     }
     
-    lazy var contactsListQuery: Query = {
-        return db.collection("users").order(by: "name")
-    }()
+    func onlineCurrentUser() {
+        updateOnlineStatus(true)
+    }
     
+    func offlineCurrentUser() {
+        updateOnlineStatus(false)
+    }
+    
+    private func updateOnlineStatus(_ online: Bool) {
+        db.collection("users")
+            .document(Auth.auth().currentUser!.uid)
+            .updateData([
+                "online": online
+            ])
+    }
 }

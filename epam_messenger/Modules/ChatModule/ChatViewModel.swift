@@ -83,8 +83,8 @@ class ChatViewModel: ChatViewModelProtocol {
     var lastTapCellContent: MessageCellContentProtocol!
     
     init(
-        viewController: ChatViewControllerProtocol,
         router: RouterProtocol,
+        viewController: ChatViewControllerProtocol,
         chat: ChatProtocol,
         firestoreService: FirestoreServiceProtocol = FirestoreService(),
         storageService: StorageServiceProtocol = StorageService(),
@@ -202,7 +202,10 @@ class ChatViewModel: ChatViewModelProtocol {
     }
     
     func createForwardViewController(forwardDelegate: ForwardDelegateProtocol) -> UIViewController {
-        return AssemblyBuilder().createChatListModule(router: router, forwardDelegate: forwardDelegate)
+        return AssemblyBuilder().createChatListModule(
+            router: router,
+            forwardDelegate: forwardDelegate
+        )
     }
 }
 

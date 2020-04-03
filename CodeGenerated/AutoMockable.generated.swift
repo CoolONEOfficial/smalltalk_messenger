@@ -398,6 +398,16 @@ class ChatViewModelProtocolMock: ChatViewModelProtocol {
 
 }
 class FirestoreServiceProtocolMock: FirestoreServiceProtocol {
+    var contactListQuery: Query {
+        get { return underlyingContactListQuery }
+        set(value) { underlyingContactListQuery = value }
+    }
+    var underlyingContactListQuery: Query!
+    var chatListQuery: Query {
+        get { return underlyingChatListQuery }
+        set(value) { underlyingChatListQuery = value }
+    }
+    var underlyingChatListQuery: Query!
 
     //MARK: - createChatQuery
 
@@ -551,6 +561,32 @@ class FirestoreServiceProtocolMock: FirestoreServiceProtocol {
         chatDataCompletionReceivedArguments = (chatId: chatId, completion: completion)
         chatDataCompletionReceivedInvocations.append((chatId: chatId, completion: completion))
         chatDataCompletionClosure?(chatId, completion)
+    }
+
+    //MARK: - onlineCurrentUser
+
+    var onlineCurrentUserCallsCount = 0
+    var onlineCurrentUserCalled: Bool {
+        return onlineCurrentUserCallsCount > 0
+    }
+    var onlineCurrentUserClosure: (() -> Void)?
+
+    func onlineCurrentUser() {
+        onlineCurrentUserCallsCount += 1
+        onlineCurrentUserClosure?()
+    }
+
+    //MARK: - offlineCurrentUser
+
+    var offlineCurrentUserCallsCount = 0
+    var offlineCurrentUserCalled: Bool {
+        return offlineCurrentUserCallsCount > 0
+    }
+    var offlineCurrentUserClosure: (() -> Void)?
+
+    func offlineCurrentUser() {
+        offlineCurrentUserCallsCount += 1
+        offlineCurrentUserClosure?()
     }
 
 }
