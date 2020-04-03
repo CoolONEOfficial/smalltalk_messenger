@@ -52,15 +52,19 @@ extension ChatListViewModelProtocol {
 class ChatListViewModel: ChatListViewModelProtocol {
     let router: RouterProtocol
     let viewController: ChatListViewControllerProtocol
-    let firestoreService: FirestoreService = .init()
-    let algoliaService: AlgoliaService = .init()
+    let firestoreService: FirestoreServiceProtocol
+    let algoliaService: AlgoliaServiceProtocol
     
     init(
         router: RouterProtocol,
-        viewController: ChatListViewControllerProtocol
+        viewController: ChatListViewControllerProtocol,
+        firestoreService: FirestoreServiceProtocol = FirestoreService(),
+        algoliaService: AlgoliaServiceProtocol = AlgoliaService()
     ) {
         self.router = router
         self.viewController = viewController
+        self.firestoreService = firestoreService
+        self.algoliaService = algoliaService
     }
     
     func goToChat(_ chatModel: ChatModel) {

@@ -15,14 +15,10 @@ protocol AssemblyBuilderProtocol {
     func createContactsListModule(router: RouterProtocol) -> UIViewController
 }
 
-extension AssemblyBuilderProtocol {
-    func createChatListModule(router: RouterProtocol, forwardDelegate: ForwardDelegateProtocol? = nil) -> UIViewController {
-        return createChatListModule(router: router, forwardDelegate: forwardDelegate)
-    }
-}
-
 class AssemblyBuilder: AssemblyBuilderProtocol {
-    func createBottomBarModule(router: RouterProtocol) -> UIViewController {
+    func createBottomBarModule(
+        router: RouterProtocol
+    ) -> UIViewController {
         let view = BottomBarViewController()
         view.chatList = createChatListModule(router: router)
         view.contacts = createUsersListModule(router: router) // TODO: contacts done
@@ -30,19 +26,28 @@ class AssemblyBuilder: AssemblyBuilderProtocol {
         return view
     }
     
-    func createChatListModule(router: RouterProtocol, forwardDelegate: ForwardDelegateProtocol? = nil) -> UIViewController {
+    func createChatListModule(
+        router: RouterProtocol,
+        forwardDelegate: ForwardDelegateProtocol? = nil
+    ) -> UIViewController {
         let view = ChatListViewController()
         view.forwardDelegate = forwardDelegate
-        let viewModel = ChatListViewModel(router: router, viewController: view)
+        let viewModel = ChatListViewModel(
+            router: router,
+            viewController: view
+        )
         view.viewModel = viewModel
         return view
     }
     
-    func createChatModule(router: RouterProtocol, chat: ChatProtocol) -> UIViewController {
+    func createChatModule(
+        router: RouterProtocol,
+        chat: ChatProtocol
+    ) -> UIViewController {
         let view = ChatViewController()
         let viewModel = ChatViewModel(
-            viewController: view,
             router: router,
+            viewController: view,
             chat: chat
         )
         view.viewModel = viewModel
