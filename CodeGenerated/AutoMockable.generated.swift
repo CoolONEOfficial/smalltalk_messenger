@@ -26,6 +26,43 @@ import Firebase
 
 
 
+class AlgoliaServiceProtocolMock: AlgoliaServiceProtocol {
+
+    //MARK: - searchChats
+
+    var searchChatsCompletionCallsCount = 0
+    var searchChatsCompletionCalled: Bool {
+        return searchChatsCompletionCallsCount > 0
+    }
+    var searchChatsCompletionReceivedArguments: (searchString: String, completion: SearchChatsCompletion)?
+    var searchChatsCompletionReceivedInvocations: [(searchString: String, completion: SearchChatsCompletion)] = []
+    var searchChatsCompletionClosure: ((String, @escaping SearchChatsCompletion) -> Void)?
+
+    func searchChats(_ searchString: String, completion: @escaping SearchChatsCompletion) {
+        searchChatsCompletionCallsCount += 1
+        searchChatsCompletionReceivedArguments = (searchString: searchString, completion: completion)
+        searchChatsCompletionReceivedInvocations.append((searchString: searchString, completion: completion))
+        searchChatsCompletionClosure?(searchString, completion)
+    }
+
+    //MARK: - searchMessages
+
+    var searchMessagesCompletionCallsCount = 0
+    var searchMessagesCompletionCalled: Bool {
+        return searchMessagesCompletionCallsCount > 0
+    }
+    var searchMessagesCompletionReceivedArguments: (searchString: String, completion: SearchMessagesCompletion)?
+    var searchMessagesCompletionReceivedInvocations: [(searchString: String, completion: SearchMessagesCompletion)] = []
+    var searchMessagesCompletionClosure: ((String, @escaping SearchMessagesCompletion) -> Void)?
+
+    func searchMessages(_ searchString: String, completion: @escaping SearchMessagesCompletion) {
+        searchMessagesCompletionCallsCount += 1
+        searchMessagesCompletionReceivedArguments = (searchString: searchString, completion: completion)
+        searchMessagesCompletionReceivedInvocations.append((searchString: searchString, completion: completion))
+        searchMessagesCompletionClosure?(searchString, completion)
+    }
+
+}
 class ChatViewControllerProtocolMock: ChatViewControllerProtocol {
 
     //MARK: - presentPhotoViewer
@@ -497,6 +534,23 @@ class FirestoreServiceProtocolMock: FirestoreServiceProtocol {
         userListDataCompletionReceivedArguments = (userList: userList, completion: completion)
         userListDataCompletionReceivedInvocations.append((userList: userList, completion: completion))
         userListDataCompletionClosure?(userList, completion)
+    }
+
+    //MARK: - chatData
+
+    var chatDataCompletionCallsCount = 0
+    var chatDataCompletionCalled: Bool {
+        return chatDataCompletionCallsCount > 0
+    }
+    var chatDataCompletionReceivedArguments: (chatId: String, completion: (ChatModel?) -> Void)?
+    var chatDataCompletionReceivedInvocations: [(chatId: String, completion: (ChatModel?) -> Void)] = []
+    var chatDataCompletionClosure: ((String, @escaping (ChatModel?) -> Void) -> Void)?
+
+    func chatData(        _ chatId: String,        completion: @escaping (ChatModel?) -> Void    ) {
+        chatDataCompletionCallsCount += 1
+        chatDataCompletionReceivedArguments = (chatId: chatId, completion: completion)
+        chatDataCompletionReceivedInvocations.append((chatId: chatId, completion: completion))
+        chatDataCompletionClosure?(chatId, completion)
     }
 
 }

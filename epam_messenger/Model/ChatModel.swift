@@ -53,4 +53,25 @@ extension ChatModel: ChatProtocol {
         return users.first(where: { Auth.auth().currentUser!.uid != $0 })
     }
     
+    var avatarRef: StorageReference {
+        let path: String?
+        
+        switch type {
+        case .personalCorr:
+            if let friendId = friendId {
+                path = "users/\(friendId)/avatar.jpg"
+            } else {
+                path = nil
+            }
+        case .chat:
+            if let docId = documentId {
+                path = "chats/\(docId)/avatar.jpg"
+            } else {
+                path = nil
+            }
+        }
+        
+        return Storage.storage().reference(withPath: path!)
+    }
+    
 }

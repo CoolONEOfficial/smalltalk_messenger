@@ -18,11 +18,16 @@ struct MessageModel: AutoCodable {
     let userId: String
     let timestamp: Timestamp
     
+    var chatId: String?
+    var chatUsers: [String]?
+    
     enum CodingKeys: String, CodingKey {
         case documentId
         case kind
         case userId
         case timestamp
+        case chatId
+        case chatUsers
         case enumCaseKey
     }
     
@@ -33,7 +38,6 @@ struct MessageModel: AutoCodable {
         case forward(userId: String)
     }
     
-    static let defaultDocumentId: String? = nil
     static let defaultKind: [MessageKind] = []
     
     static func empty() -> MessageModel {
@@ -104,6 +108,28 @@ extension MessageModel: MessageProtocol {
         }
         forwardedKind.insert(.forward(userId: userId), at: 0)
         return forwardedKind
+    }
+    
+    var previewText: String {
+        var imageCount = 0
+        var text = ""
+        var attachmentText = ""
+        var icon = ""
+        for mKind in kind {
+            switch mKind {
+            case .image:
+                imageCount += 1
+                icon = "🖼️ "
+                attachmentText = "Image"
+            case .audio:
+                icon = "🎵 "
+                attachmentText = "Audio"
+            case .text(let kindText):
+                text = kindText
+            case .forward: break
+            }
+        }
+        return "\(imageCount > 1 ? "x\(imageCount) " : "")\(icon)\(text.isEmpty ? attachmentText : text)"
     }
 }
 

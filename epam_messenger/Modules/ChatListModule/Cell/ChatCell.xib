@@ -44,6 +44,9 @@
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
+                        <constraints>
+                            <constraint firstAttribute="height" relation="lessThanOrEqual" constant="56" id="8yb-Bu-MaX"/>
+                        </constraints>
                     </stackView>
                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="HFB-Ps-PR0">
                         <rect key="frame" x="10" y="5" width="56" height="56"/>
@@ -60,14 +63,13 @@
                     <constraint firstItem="tOv-8i-GsP" firstAttribute="leading" secondItem="HFB-Ps-PR0" secondAttribute="trailing" constant="10" id="dX5-V9-1J5"/>
                     <constraint firstItem="HFB-Ps-PR0" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="10" id="iYf-nc-SVv"/>
                     <constraint firstItem="HFB-Ps-PR0" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="5" id="nFD-ae-N8E"/>
-                    <constraint firstAttribute="bottom" secondItem="tOv-8i-GsP" secondAttribute="bottom" constant="5" id="wPJ-NU-uIj"/>
                 </constraints>
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
             <connections>
-                <outlet property="avatarImageView" destination="HFB-Ps-PR0" id="Xp8-DO-snQ"/>
-                <outlet property="lastMessageLabel" destination="5kB-sn-dI7" id="WxG-TT-T2v"/>
-                <outlet property="senderNameLabel" destination="q87-XS-0l0" id="1Ay-G4-bj3"/>
+                <outlet property="avatarImage" destination="HFB-Ps-PR0" id="Xp8-DO-snQ"/>
+                <outlet property="messageLabel" destination="5kB-sn-dI7" id="WxG-TT-T2v"/>
+                <outlet property="senderLabel" destination="q87-XS-0l0" id="1Ay-G4-bj3"/>
                 <outlet property="titleLabel" destination="fVM-no-UjM" id="rEG-Lk-wXU"/>
             </connections>
             <point key="canvasLocation" x="113.04347826086958" y="132.58928571428572"/>

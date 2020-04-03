@@ -13,7 +13,14 @@ import CodableFirebase
 protocol ChatListViewModelProtocol: ViewModelProtocol {
     func goToChat(_ chatModel: ChatModel)
     func firestoreQuery() -> FireQuery
-    func searchChats(_ searchString: String, completion: @escaping AlgoliaService.SearchCompletion)
+    func searchChats(
+        _ searchString: String,
+        completion: @escaping SearchChatsCompletion
+    )
+    func searchMessages(
+        _ searchString: String,
+        completion: @escaping SearchMessagesCompletion
+    )
     func createChatPreview(_ chat: ChatProtocol) -> UIViewController
     func deleteChat(
         _ chat: ChatProtocol,
@@ -26,6 +33,10 @@ protocol ChatListViewModelProtocol: ViewModelProtocol {
     func userData(
         _ userId: String,
         completion: @escaping (UserModel?) -> Void
+    )
+    func chatData(
+        _ chatId: String,
+        completion: @escaping (ChatModel?) -> Void
     )
 }
 
@@ -60,14 +71,18 @@ class ChatListViewModel: ChatListViewModelProtocol {
         return firestoreService.chatListQuery
     }
     
-    func searchChats(_ searchString: String, completion: @escaping AlgoliaService.SearchCompletion) {
+    func searchChats(
+        _ searchString: String,
+        completion: @escaping SearchChatsCompletion
+    ) {
         return algoliaService.searchChats(searchString, completion: completion)
     }
     
-    func didChatLoad(snapshot: DocumentSnapshot, cell: ChatCell) {
-        if let chatModel = ChatModel.fromSnapshot(snapshot) {
-            cell.loadChatModel(chatModel)
-        }
+    func searchMessages(
+        _ searchString: String,
+        completion: @escaping SearchMessagesCompletion
+    ) {
+        return algoliaService.searchMessages(searchString, completion: completion)
     }
     
     func createChatPreview(_ chat: ChatProtocol) -> UIViewController {
@@ -87,5 +102,9 @@ class ChatListViewModel: ChatListViewModelProtocol {
     
     func userData(_ userId: String, completion: @escaping (UserModel?) -> Void) {
         firestoreService.userData(userId, completion: completion)
+    }
+    
+    func chatData(_ chatId: String, completion: @escaping (ChatModel?) -> Void) {
+        firestoreService.chatData(chatId, completion: completion)
     }
 }
