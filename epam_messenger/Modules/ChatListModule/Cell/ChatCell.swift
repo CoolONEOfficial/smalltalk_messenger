@@ -18,6 +18,7 @@ class ChatCell: UITableViewCell, NibReusable {
     @IBOutlet private var titleLabel: UILabel!
     @IBOutlet private var senderLabel: UILabel!
     @IBOutlet private var messageLabel: UILabel!
+    @IBOutlet private var timestampLabel: UILabel!
     
     // MARK: - Vars
     
@@ -38,6 +39,7 @@ class ChatCell: UITableViewCell, NibReusable {
         }
         messageLabel.text = chat.lastMessage.previewText
         setupAvatar()
+        timestampLabel.text = chat.lastMessage.timestampText
     }
     
     private func setupChat(

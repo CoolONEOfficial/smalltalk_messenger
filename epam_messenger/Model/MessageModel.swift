@@ -131,6 +131,29 @@ extension MessageModel: MessageProtocol {
         }
         return "\(imageCount > 1 ? "x\(imageCount) " : "")\(icon)\(text.isEmpty ? attachmentText : text)"
     }
+    
+    var timestampText: String {
+        let calendar = Calendar.current
+        let components = date.get(.day, .year)
+        let now = Date()
+
+        let formatter = DateFormatter()
+        if components.day == now.get(.day).day! {
+            formatter.dateFormat = "HH:mm"
+        } else if calendar.dateComponents(
+            [.day],
+            from: calendar.startOfDay(for: date),
+            to: calendar.startOfDay(for: now)
+        ).day! < 6 {
+            formatter.dateFormat = "E"
+        } else if components.year! == now.get(.year).year! {
+            formatter.dateFormat = "dd.MM"
+        } else {
+            formatter.dateFormat = "dd.MM.yy"
+        }
+        
+        return formatter.string(from: date)
+    }
 }
 
 extension MessageModel: MessageTextProtocol {
@@ -174,5 +197,17 @@ extension MessageModel: MessageForwardProtocol {
         default:
             return nil
         }
+    }
+}
+
+// MARK: - Date components helper
+
+extension Date {
+    func get(_ components: Calendar.Component..., calendar: Calendar = Calendar.current) -> DateComponents {
+        return calendar.dateComponents(Set(components), from: self)
+    }
+
+    func get(_ component: Calendar.Component, calendar: Calendar = Calendar.current) -> Int {
+        return calendar.component(component, from: self)
     }
 }

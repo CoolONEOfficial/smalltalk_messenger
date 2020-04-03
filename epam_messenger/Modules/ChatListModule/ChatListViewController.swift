@@ -229,6 +229,10 @@ class ChatListViewController: UIViewController {
     var isForward: Bool {
         return tabBarController == nil
     }
+    
+    var isSearch: Bool {
+        return !(searchController.searchBar.text?.isEmpty ?? true)
+    }
 }
 
 extension ChatListViewController: UITableViewDelegate {
@@ -266,12 +270,12 @@ extension ChatListViewController: UITableViewDelegate {
         if tableView.isEditing {
             didSelectionChange()
         } else {
-            if searchController.searchBar.text?.isEmpty ?? true {
-                didSelect(ChatModel.fromSnapshot(bindDataSource.items[indexPath.item]))
-            } else {
+            if isSearch {
                 chatModel(at: indexPath) { chatModel in
                     self.didSelect(chatModel)
                 }
+            } else {
+                didSelect(ChatModel.fromSnapshot(bindDataSource.items[indexPath.item]))
             }
         }
     }
@@ -281,17 +285,17 @@ extension ChatListViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, shouldBeginMultipleSelectionInteractionAt indexPath: IndexPath) -> Bool {
-        return !isForward
+        return !isForward && !isSearch
     }
     
     func tableView(_ tableView: UITableView, didBeginMultipleSelectionInteractionAt indexPath: IndexPath) {
-        if !isForward {
+        if !isForward && !isSearch {
             self.setEditing(true, animated: true)
         }
     }
     
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
-        if !isForward,
+        if !isForward, !isSearch,
             let chatModel = chatAt(indexPath.item) {
             let identifier = NSString(string: String(indexPath.item))
             let configuration = UIContextMenuConfiguration(identifier: identifier, previewProvider: { () -> UIViewController? in
