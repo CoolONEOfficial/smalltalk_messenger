@@ -190,12 +190,16 @@ class FirestoreService: FirestoreServiceProtocol {
         }
     }
     
-    //    lazy var contactsListQuery: Query = {
-    //        return db.collection("users").order(by: "name")
-    //    }()
+    // MARK - users list
+    
+    lazy var usersListQuery: Query = {
+        return db.collection("users").order(by: "name")
+    }()
+    
+    // MARK - user's contacts list
     
     lazy var contactsListQuery: Query = {
         var documentId = "7kEMVwxyIccl9bawojE3"
         return db.collection("users").document("\(documentId)").collection("contacts")
-    }() // for contacts
+    }()
 }

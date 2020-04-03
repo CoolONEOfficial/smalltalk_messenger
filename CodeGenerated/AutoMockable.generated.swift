@@ -554,6 +554,19 @@ class RouterProtocolMock: RouterProtocol {
         popToRootClosure?()
     }
 
+    //MARK: - showUsersList
+
+    var showUsersListCallsCount = 0
+    var showUsersListCalled: Bool {
+        return showUsersListCallsCount > 0
+    }
+    var showUsersListClosure: (() -> Void)?
+
+    func showUsersList() {
+        showUsersListCallsCount += 1
+        showUsersListClosure?()
+    }
+
     //MARK: - showContactsList
 
     var showContactsListCallsCount = 0

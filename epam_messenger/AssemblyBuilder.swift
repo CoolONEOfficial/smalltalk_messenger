@@ -11,6 +11,7 @@ protocol AssemblyBuilderProtocol {
     func createBottomBarModule(router: RouterProtocol) -> UIViewController
     func createChatListModule(router: RouterProtocol, forwardDelegate: ForwardDelegateProtocol?) -> UIViewController
     func createChatModule(router: RouterProtocol, chatModel: ChatModel) -> UIViewController
+    func createUsersListModule(router: RouterProtocol) -> UIViewController
     func createContactsListModule(router: RouterProtocol) -> UIViewController
 }
 
@@ -51,6 +52,13 @@ class AssemblyBuilder: AssemblyBuilderProtocol {
     func createContactsListModule(router: RouterProtocol) -> UIViewController {
         let view = ContactsListViewController()
         let viewModel = ContactsListViewModel(router: router, viewController: view)
+        view.viewModel = viewModel
+        return view
+    }
+    
+    func createUsersListModule(router: RouterProtocol) -> UIViewController {
+        let view = UsersListViewController()
+        let viewModel = UsersListViewModel(router: router, viewController: view)
         view.viewModel = viewModel
         return view
     }
