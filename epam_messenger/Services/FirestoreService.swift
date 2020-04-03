@@ -168,5 +168,34 @@ class FirestoreService: FirestoreServiceProtocol {
         }
     }
     
+    func currentUserData(
+        completion: @escaping (UserModel?) -> Void
+    ) {
+        return userData(Auth.auth().currentUser!.uid, completion: completion)
+    }
     
+    func userData(
+        _ userId: String,
+        completion: @escaping (UserModel?) -> Void
+    ) {
+        db.collection("users")
+            .document(userId).getDocument { snapshot, err in
+                guard err == nil else {
+                    debugPrint("Error while get user data: \(err!.localizedDescription)")
+                    completion(nil)
+                    return
+                }
+                
+                completion(UserModel.fromSnapshot(snapshot!))
+        }
+    }
+    
+    //    lazy var contactsListQuery: Query = {
+    //        return db.collection("users").order(by: "name")
+    //    }()
+    
+    lazy var contactsListQuery: Query = {
+        var documentId = "7kEMVwxyIccl9bawojE3"
+        return db.collection("users").document("\(documentId)").collection("contacts")
+    }() // for contacts
 }
