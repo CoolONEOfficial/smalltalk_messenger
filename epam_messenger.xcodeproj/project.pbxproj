@@ -69,6 +69,11 @@
 		85FF256D2414DCDF00A25D7A /* ChatCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 85FF256B2414DCDF00A25D7A /* ChatCell.xib */; };
 		85FF25752415976600A25D7A /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FF25742415976600A25D7A /* ViewModel.swift */; };
 		927429D84AFBD6822D379C95 /* Pods_epam_messengerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FF442A0E4758E98A5ADEE32D /* Pods_epam_messengerTests.framework */; };
+		942243D3243744C5003CD29E /* UsersListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 942243D1243744C5003CD29E /* UsersListViewController.swift */; };
+		942243D4243744C5003CD29E /* UsersListViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 942243D2243744C5003CD29E /* UsersListViewController.xib */; };
+		9450F54924373F5700E5B8AB /* UsersListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9450F54724373F5700E5B8AB /* UsersListCell.swift */; };
+		9450F54A24373F5700E5B8AB /* UsersListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9450F54824373F5700E5B8AB /* UsersListCell.xib */; };
+		9450F5502437414100E5B8AB /* UsersListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9450F54F2437414100E5B8AB /* UsersListViewModel.swift */; };
 		949BF7492436126D006C2AEC /* ContactsListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 949BF7482436126D006C2AEC /* ContactsListModel.swift */; };
 		949BF74E2436130A006C2AEC /* ContactsListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 949BF74C2436130A006C2AEC /* ContactsListCell.swift */; };
 		949BF74F2436130A006C2AEC /* ContactsListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 949BF74D2436130A006C2AEC /* ContactsListCell.xib */; };
@@ -186,6 +191,11 @@
 		85FF256A2414DCDF00A25D7A /* ChatCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatCell.swift; sourceTree = "<group>"; };
 		85FF256B2414DCDF00A25D7A /* ChatCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ChatCell.xib; sourceTree = "<group>"; };
 		85FF25742415976600A25D7A /* ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
+		942243D1243744C5003CD29E /* UsersListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersListViewController.swift; sourceTree = "<group>"; };
+		942243D2243744C5003CD29E /* UsersListViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UsersListViewController.xib; sourceTree = "<group>"; };
+		9450F54724373F5700E5B8AB /* UsersListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersListCell.swift; sourceTree = "<group>"; };
+		9450F54824373F5700E5B8AB /* UsersListCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UsersListCell.xib; sourceTree = "<group>"; };
+		9450F54F2437414100E5B8AB /* UsersListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersListViewModel.swift; sourceTree = "<group>"; };
 		949BF7482436126D006C2AEC /* ContactsListModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsListModel.swift; sourceTree = "<group>"; };
 		949BF74C2436130A006C2AEC /* ContactsListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsListCell.swift; sourceTree = "<group>"; };
 		949BF74D2436130A006C2AEC /* ContactsListCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ContactsListCell.xib; sourceTree = "<group>"; };
@@ -398,6 +408,7 @@
 		853FD19C24165E9C005A7985 /* Modules */ = {
 			isa = PBXGroup;
 			children = (
+				9450F54524373F1000E5B8AB /* UsersListModule */,
 				949BF74A243612CC006C2AEC /* ContactsListModule */,
 				E6846B8B242A95E9006818DE /* Auth */,
 				859330012417CD7F00F1F32E /* BottomBarModule */,
@@ -585,6 +596,26 @@
 				85FF25742415976600A25D7A /* ViewModel.swift */,
 			);
 			path = MVVM;
+			sourceTree = "<group>";
+		};
+		9450F54524373F1000E5B8AB /* UsersListModule */ = {
+			isa = PBXGroup;
+			children = (
+				9450F54624373F2700E5B8AB /* Cell */,
+				9450F54F2437414100E5B8AB /* UsersListViewModel.swift */,
+				942243D1243744C5003CD29E /* UsersListViewController.swift */,
+				942243D2243744C5003CD29E /* UsersListViewController.xib */,
+			);
+			path = UsersListModule;
+			sourceTree = "<group>";
+		};
+		9450F54624373F2700E5B8AB /* Cell */ = {
+			isa = PBXGroup;
+			children = (
+				9450F54724373F5700E5B8AB /* UsersListCell.swift */,
+				9450F54824373F5700E5B8AB /* UsersListCell.xib */,
+			);
+			path = Cell;
 			sourceTree = "<group>";
 		};
 		949BF74A243612CC006C2AEC /* ContactsListModule */ = {
@@ -838,7 +869,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				85FF256D2414DCDF00A25D7A /* ChatCell.xib in Resources */,
+				942243D4243744C5003CD29E /* UsersListViewController.xib in Resources */,
 				E6846BA0242A95E9006818DE /* AuthEnterCodeViewController.xib in Resources */,
+				9450F54A24373F5700E5B8AB /* UsersListCell.xib in Resources */,
 				85BE9A7524118CF200E6643B /* LaunchScreen.storyboard in Resources */,
 				E6846BA2242A95E9006818DE /* AuthStartViewController.xib in Resources */,
 				E6846BA6242A95E9006818DE /* AuthEnterNameViewController.xib in Resources */,
@@ -1011,6 +1044,7 @@
 				85FF25622414623200A25D7A /* ChatModel.swift in Sources */,
 				E6846BA1242A95E9006818DE /* AuthEnterCodeViewModel.swift in Sources */,
 				949BF7552436155B006C2AEC /* ContactsListViewModel.swift in Sources */,
+				942243D3243744C5003CD29E /* UsersListViewController.swift in Sources */,
 				E6846BA7242A95E9006818DE /* AuthEnterNameViewController.swift in Sources */,
 				857D7CC32418F0C300932457 /* FirestoreCodableInterfaces.swift in Sources */,
 				949BF75224361534006C2AEC /* ContactsListViewController.swift in Sources */,
@@ -1046,6 +1080,7 @@
 				85B3F1D424338875001F92D9 /* MessageAudioContent.swift in Sources */,
 				E6B7498A2414382300F00B29 /* ChatListViewModel.swift in Sources */,
 				850C8015242A7F34008BAF24 /* ChatPhotoViewerDataSource.swift in Sources */,
+				9450F5502437414100E5B8AB /* UsersListViewModel.swift in Sources */,
 				852C00EF242CF8FA00BCC056 /* MessageText.swift in Sources */,
 				85FD2A0A24182DED0035AC13 /* SourceryInterfaces.swift in Sources */,
 				85812DA02433B78F00EA2626 /* UIColor.swift in Sources */,
@@ -1054,6 +1089,7 @@
 				851F581E241D7E2900D04F92 /* Date.swift in Sources */,
 				85B3F1D32433886F001F92D9 /* MessageForwardContent.swift in Sources */,
 				85FF256C2414DCDF00A25D7A /* ChatCell.swift in Sources */,
+				9450F54924373F5700E5B8AB /* UsersListCell.swift in Sources */,
 				85FD2A0724182CE80035AC13 /* AutoCodable.generated.swift in Sources */,
 				E6846BA4242A95E9006818DE /* AuthStartViewController.swift in Sources */,
 				E6B7499624144A4F00F00B29 /* ChatViewModel.swift in Sources */,
