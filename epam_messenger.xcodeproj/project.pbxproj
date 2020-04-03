@@ -69,6 +69,12 @@
 		85FF256D2414DCDF00A25D7A /* ChatCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 85FF256B2414DCDF00A25D7A /* ChatCell.xib */; };
 		85FF25752415976600A25D7A /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FF25742415976600A25D7A /* ViewModel.swift */; };
 		927429D84AFBD6822D379C95 /* Pods_epam_messengerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FF442A0E4758E98A5ADEE32D /* Pods_epam_messengerTests.framework */; };
+		949BF7492436126D006C2AEC /* ContactsListModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 949BF7482436126D006C2AEC /* ContactsListModel.swift */; };
+		949BF74E2436130A006C2AEC /* ContactsListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 949BF74C2436130A006C2AEC /* ContactsListCell.swift */; };
+		949BF74F2436130A006C2AEC /* ContactsListCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 949BF74D2436130A006C2AEC /* ContactsListCell.xib */; };
+		949BF75224361534006C2AEC /* ContactsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 949BF75024361534006C2AEC /* ContactsListViewController.swift */; };
+		949BF75324361534006C2AEC /* ContactsListViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 949BF75124361534006C2AEC /* ContactsListViewController.xib */; };
+		949BF7552436155B006C2AEC /* ContactsListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 949BF7542436155B006C2AEC /* ContactsListViewModel.swift */; };
 		E6846B9E242A95E9006818DE /* AuthAssemblyBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6846B8C242A95E9006818DE /* AuthAssemblyBuilder.swift */; };
 		E6846B9F242A95E9006818DE /* AuthEnterCodeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6846B8E242A95E9006818DE /* AuthEnterCodeViewController.swift */; };
 		E6846BA0242A95E9006818DE /* AuthEnterCodeViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E6846B8F242A95E9006818DE /* AuthEnterCodeViewController.xib */; };
@@ -180,6 +186,12 @@
 		85FF256A2414DCDF00A25D7A /* ChatCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatCell.swift; sourceTree = "<group>"; };
 		85FF256B2414DCDF00A25D7A /* ChatCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ChatCell.xib; sourceTree = "<group>"; };
 		85FF25742415976600A25D7A /* ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
+		949BF7482436126D006C2AEC /* ContactsListModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsListModel.swift; sourceTree = "<group>"; };
+		949BF74C2436130A006C2AEC /* ContactsListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsListCell.swift; sourceTree = "<group>"; };
+		949BF74D2436130A006C2AEC /* ContactsListCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ContactsListCell.xib; sourceTree = "<group>"; };
+		949BF75024361534006C2AEC /* ContactsListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsListViewController.swift; sourceTree = "<group>"; };
+		949BF75124361534006C2AEC /* ContactsListViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ContactsListViewController.xib; sourceTree = "<group>"; };
+		949BF7542436155B006C2AEC /* ContactsListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsListViewModel.swift; sourceTree = "<group>"; };
 		9E6E660C66321369C3133DDA /* Pods-epam_messenger.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-epam_messenger.release.xcconfig"; path = "Target Support Files/Pods-epam_messenger/Pods-epam_messenger.release.xcconfig"; sourceTree = "<group>"; };
 		C6ADF9C4DB8D359ED9BE51E7 /* Pods_epam_messenger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_epam_messenger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CEE83F3F60854241A8E9797D /* Pods-epam_messengerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-epam_messengerTests.release.xcconfig"; path = "Target Support Files/Pods-epam_messengerTests/Pods-epam_messengerTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -386,6 +398,7 @@
 		853FD19C24165E9C005A7985 /* Modules */ = {
 			isa = PBXGroup;
 			children = (
+				949BF74A243612CC006C2AEC /* ContactsListModule */,
 				E6846B8B242A95E9006818DE /* Auth */,
 				859330012417CD7F00F1F32E /* BottomBarModule */,
 				E6B749772414281F00F00B29 /* ChatListModule */,
@@ -552,6 +565,7 @@
 				85FF25632414624B00A25D7A /* MessageModel.swift */,
 				85FF25612414623200A25D7A /* ChatModel.swift */,
 				852C01142431486000BCC056 /* MediaModel.swift */,
+				949BF7482436126D006C2AEC /* ContactsListModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -571,6 +585,26 @@
 				85FF25742415976600A25D7A /* ViewModel.swift */,
 			);
 			path = MVVM;
+			sourceTree = "<group>";
+		};
+		949BF74A243612CC006C2AEC /* ContactsListModule */ = {
+			isa = PBXGroup;
+			children = (
+				949BF74B243612E1006C2AEC /* Cell */,
+				949BF7542436155B006C2AEC /* ContactsListViewModel.swift */,
+				949BF75024361534006C2AEC /* ContactsListViewController.swift */,
+				949BF75124361534006C2AEC /* ContactsListViewController.xib */,
+			);
+			path = ContactsListModule;
+			sourceTree = "<group>";
+		};
+		949BF74B243612E1006C2AEC /* Cell */ = {
+			isa = PBXGroup;
+			children = (
+				949BF74C2436130A006C2AEC /* ContactsListCell.swift */,
+				949BF74D2436130A006C2AEC /* ContactsListCell.xib */,
+			);
+			path = Cell;
 			sourceTree = "<group>";
 		};
 		E6846B8B242A95E9006818DE /* Auth */ = {
@@ -808,6 +842,7 @@
 				85BE9A7524118CF200E6643B /* LaunchScreen.storyboard in Resources */,
 				E6846BA2242A95E9006818DE /* AuthStartViewController.xib in Resources */,
 				E6846BA6242A95E9006818DE /* AuthEnterNameViewController.xib in Resources */,
+				949BF75324361534006C2AEC /* ContactsListViewController.xib in Resources */,
 				E6B74994241449C600F00B29 /* ChatViewController.xib in Resources */,
 				85FD29FA2417FC130035AC13 /* ChatListViewController.xib in Resources */,
 				85812D952433B6E000EA2626 /* MessageCell.xib in Resources */,
@@ -816,6 +851,7 @@
 				85812D902433B68800EA2626 /* MessageTextContent.xib in Resources */,
 				85FD2A00241825840035AC13 /* AutoEquatable.stencil in Resources */,
 				E6846BAB242A95E9006818DE /* AuthEnterNumberViewController.xib in Resources */,
+				949BF74F2436130A006C2AEC /* ContactsListCell.xib in Resources */,
 				856A9C1F2411B8D10039E977 /* GoogleService-Info.plist in Resources */,
 				8526F3D32417907B00ED62E8 /* Assets.xcassets in Resources */,
 				85BE9A7224118CF200E6643B /* Assets.xcassets in Resources */,
@@ -974,8 +1010,10 @@
 				85B3F1D624338882001F92D9 /* MessageImageContent.swift in Sources */,
 				85FF25622414623200A25D7A /* ChatModel.swift in Sources */,
 				E6846BA1242A95E9006818DE /* AuthEnterCodeViewModel.swift in Sources */,
+				949BF7552436155B006C2AEC /* ContactsListViewModel.swift in Sources */,
 				E6846BA7242A95E9006818DE /* AuthEnterNameViewController.swift in Sources */,
 				857D7CC32418F0C300932457 /* FirestoreCodableInterfaces.swift in Sources */,
+				949BF75224361534006C2AEC /* ContactsListViewController.swift in Sources */,
 				E6846BA8242A95E9006818DE /* AuthRouter.swift in Sources */,
 				85812D942433B6E000EA2626 /* MessageCell.swift in Sources */,
 				85B3F1CF24338832001F92D9 /* StorageService.swift in Sources */,
@@ -1001,6 +1039,7 @@
 				85812D912433B68800EA2626 /* MessageTextContent.swift in Sources */,
 				85812D9B2433B77600EA2626 /* ChatInputBarDelegate.swift in Sources */,
 				E6846BAA242A95E9006818DE /* AuthEnterNumberViewController.swift in Sources */,
+				949BF74E2436130A006C2AEC /* ContactsListCell.swift in Sources */,
 				85812DA32433B7A900EA2626 /* ChatTableViewDelegate.swift in Sources */,
 				859330032417CD9C00F1F32E /* BottomBarViewController.swift in Sources */,
 				851553F0241983E500C89534 /* Message24HourDateFormatter.swift in Sources */,
@@ -1020,6 +1059,7 @@
 				E6B7499624144A4F00F00B29 /* ChatViewModel.swift in Sources */,
 				85BE9A6924118CF200E6643B /* AppDelegate.swift in Sources */,
 				85812D972433B74C00EA2626 /* UserModel.swift in Sources */,
+				949BF7492436126D006C2AEC /* ContactsListModel.swift in Sources */,
 				85812DA22433B7A400EA2626 /* ChatTableView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
