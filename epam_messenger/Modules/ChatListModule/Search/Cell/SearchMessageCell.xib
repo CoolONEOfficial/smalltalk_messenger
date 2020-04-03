@@ -24,19 +24,30 @@
                         </constraints>
                     </imageView>
                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="Fn8-uN-Wdd">
-                        <rect key="frame" x="76" y="5" width="259" height="56"/>
+                        <rect key="frame" x="76" y="5" width="259" height="53.5"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalCompressionResistancePriority="751" text="Chat name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Vmk-qP-Jak" userLabel="Chat Name Label">
-                                <rect key="frame" x="0.0" y="0.0" width="259" height="22"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1as-E7-qoF">
+                                <rect key="frame" x="0.0" y="0.0" width="259" height="19.5"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalCompressionResistancePriority="751" text="Chat name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Vmk-qP-Jak" userLabel="Chat Name Label">
+                                        <rect key="frame" x="0.0" y="0.0" width="187" height="19.5"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Timestamp" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bC8-XF-9Ry">
+                                        <rect key="frame" x="187" y="0.0" width="72" height="19.5"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="22" id="iGG-lY-LKA"/>
+                                    <constraint firstAttribute="height" constant="19.5" id="BSu-9n-914"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="16"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
+                            </stackView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Sender name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6hl-Ug-Rnj" userLabel="Sender Name Label">
-                                <rect key="frame" x="0.0" y="22" width="259" height="17"/>
+                                <rect key="frame" x="0.0" y="19.5" width="259" height="17"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="17" id="zZB-uq-iiw"/>
                                 </constraints>
@@ -45,7 +56,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Last Message" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BUo-wv-QZA">
-                                <rect key="frame" x="0.0" y="39" width="259" height="17"/>
+                                <rect key="frame" x="0.0" y="36.5" width="259" height="17"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
@@ -71,6 +82,7 @@
                 <outlet property="avatarImage" destination="rRz-Fp-MQF" id="quB-Nh-KpT"/>
                 <outlet property="messageLabel" destination="BUo-wv-QZA" id="m1j-bP-Quo"/>
                 <outlet property="senderLabel" destination="6hl-Ug-Rnj" id="1g9-zn-APP"/>
+                <outlet property="timestampLabel" destination="bC8-XF-9Ry" id="ueG-ju-7Fp"/>
                 <outlet property="titleLabel" destination="Vmk-qP-Jak" id="N2J-48-pHx"/>
             </connections>
             <point key="canvasLocation" x="152.17391304347828" y="158.03571428571428"/>

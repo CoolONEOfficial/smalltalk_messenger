@@ -13,10 +13,11 @@ class SearchMessageCell: UITableViewCell, NibReusable {
 
     // MARK: - Outlets
     
-    @IBOutlet var avatarImage: UIImageView!
-    @IBOutlet var titleLabel: UILabel!
-    @IBOutlet var senderLabel: UILabel!
-    @IBOutlet var messageLabel: UILabel!
+    @IBOutlet private var avatarImage: UIImageView!
+    @IBOutlet private var titleLabel: UILabel!
+    @IBOutlet private var senderLabel: UILabel!
+    @IBOutlet private var messageLabel: UILabel!
+    @IBOutlet private var timestampLabel: UILabel!
     
     // MARK: - Vars
     
@@ -39,6 +40,7 @@ class SearchMessageCell: UITableViewCell, NibReusable {
         self.messageLabel.numberOfLines = 2
         avatarImage.layer.cornerRadius = avatarImage.bounds.width / 2
         senderLabel.isHidden = true
+        timestampLabel.text = message.timestampText
     }
     
     private func didLoadChat(_ chatModel: ChatModel) {

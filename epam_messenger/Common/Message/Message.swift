@@ -12,6 +12,7 @@ protocol MessageProtocol {
     var textColor: UIColor { get }
     var backgroundColor: UIColor { get }
     var previewText: String { get }
+    var timestampText: String { get }
     
     var date: Date { get }
     var userId: String { get }
