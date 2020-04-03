@@ -168,17 +168,6 @@ class FirestoreService: FirestoreServiceProtocol {
         }
     }
     
-<<<<<<< HEAD
-    //    lazy var contactsListQuery: Query = {
-    //        return db.collection("users").order(by: "name")
-    //    }()
-    
-    lazy var contactsListQuery: Query = {
-        var documentId = "7kEMVwxyIccl9bawojE3"
-        return db.collection("users").document("\(documentId)").collection("contacts")
-    }() // for contacts
-    
-=======
     func currentUserData(
         completion: @escaping (UserModel?) -> Void
     ) {
@@ -201,9 +190,12 @@ class FirestoreService: FirestoreServiceProtocol {
         }
     }
     
-    lazy var contactsListQuery: Query = {
-        return db.collection("users").order(by: "name")
-    }()
+    //    lazy var contactsListQuery: Query = {
+    //        return db.collection("users").order(by: "name")
+    //    }()
     
->>>>>>> Integrate users structure
+    lazy var contactsListQuery: Query = {
+        var documentId = "7kEMVwxyIccl9bawojE3"
+        return db.collection("users").document("\(documentId)").collection("contacts")
+    }() // for contacts
 }
