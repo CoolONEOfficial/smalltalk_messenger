@@ -190,6 +190,13 @@ class FirestoreService: FirestoreServiceProtocol {
         }
     }
     
+    // MARK: - user's contacts list
+       
+       lazy var contactsListQuery: Query = {
+           var documentId = "7kEMVwxyIccl9bawojE3"
+           return db.collection("users").document("\(documentId)").collection("contacts")
+       }()
+    
     // MARK: - users list with real user
     
 //    lazy var usersListQuery: Query = {
@@ -203,10 +210,4 @@ class FirestoreService: FirestoreServiceProtocol {
         return db.collection("users").order(by: "name")
     }()
     
-    // MARK: - user's contacts list
-    
-    lazy var contactsListQuery: Query = {
-        var documentId = "7kEMVwxyIccl9bawojE3"
-        return db.collection("users").document("\(documentId)").collection("contacts")
-    }()
 }

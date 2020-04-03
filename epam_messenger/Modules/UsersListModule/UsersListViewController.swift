@@ -61,11 +61,11 @@ class UsersListViewController: UIViewController {
         }
     }
     
-//    override func viewWillAppear(_ animated: Bool) {
-//        super.viewWillAppear(animated)
-//        tabBarController?.title = "Contacts"
-//        tabBarController?.navigationItem.searchController = searchController
-//    }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        tabBarController?.title = "Contacts"
+        tabBarController?.navigationItem.searchController = searchController
+    }
 //    
 //    override func viewDidDisappear(_ animated: Bool) {
 //        super.viewDidDisappear(animated)
