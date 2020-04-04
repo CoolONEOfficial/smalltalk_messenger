@@ -17,7 +17,7 @@ class ChatInputBar: InputBarAccessoryView {
     
     let attachButton = InputBarButtonItem()
     let voiceCancelButton = InputBarButtonItem()
-    let voiceButton = InputBarButtonItem()
+    let voiceButton = InputBarSendButton()
     lazy var voiceTimerLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 20)
@@ -130,6 +130,7 @@ class ChatInputBar: InputBarAccessoryView {
         voiceButton.setSize(CGSize(width: 30, height: 30), animated: false)
         voiceButton.image = UIImage(systemName: "mic")
         voiceButton.tintColor = .plainIcon
+        voiceButton.activityViewColor = .plainText
         
         voiceButton.contentHorizontalAlignment = .fill
         voiceButton.contentVerticalAlignment = .fill
@@ -253,7 +254,6 @@ class ChatInputBar: InputBarAccessoryView {
         
         do {
             audioRecorder = try AVAudioRecorder(url: audioFilename, settings: settings)
-            audioRecorder.delegate = self
             audioRecorder.record()
             
             didStartRecording()
@@ -267,6 +267,11 @@ class ChatInputBar: InputBarAccessoryView {
         willFinishRecording()
         if audioRecorder != nil {
             audioRecorder.stop()
+            let stopTime = Date().timeIntervalSinceReferenceDate - startTime
+            if stopTime > 1 {
+                chatDelegate?.didVoiceMessageRecord(data: try! Data(contentsOf: audioRecorder.url))
+                audioRecorder.deleteRecording()
+            }
             audioRecorder = nil
         }
     }
@@ -374,24 +379,6 @@ extension ChatInputBar: UIImagePickerControllerDelegate, UINavigationControllerD
                 debugPrint("Error while unwrapping selected image")
             }
         }
-    }
-}
-
-extension ChatInputBar: AVAudioRecorderDelegate {
-    func audioRecorderDidFinishRecording(_ recorder: AVAudioRecorder, successfully flag: Bool) {
-        if flag {
-            let stopTime = Date().timeIntervalSinceReferenceDate - startTime
-            if stopTime > 1 {
-                chatDelegate?.didVoiceMessageRecord(data: try! Data(contentsOf: recorder.url))
-                recorder.deleteRecording()
-            }
-        } else {
-            debugPrint("Error while record voice message!")
-        }
-    }
-    
-    func audioRecorderEncodeErrorDidOccur(_ recorder: AVAudioRecorder, error: Error?) {
-        debugPrint("Recorder error! \(error!.localizedDescription)")
     }
 }
 
