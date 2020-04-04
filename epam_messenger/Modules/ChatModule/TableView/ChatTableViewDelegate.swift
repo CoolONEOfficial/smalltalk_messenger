@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 extension ChatViewController: ChatTableViewDelegate {
     func didInsertCellBottom() {
@@ -228,9 +229,18 @@ extension ChatViewController: UITableViewDelegate {
     // MARK: - Edit mode
     
     private func didSelectionChange() {
-        let rowsSelected = !(tableView.indexPathsForSelectedRows?.isEmpty ?? true)
+        let messagesSelected = !(tableView.indexPathsForSelectedRows?.isEmpty ?? true)
+        let myMessagesSelected = !(
+            tableView.indexPathsForSelectedRows?
+                .map { tableView.chatDataSource.messageAt($0).userId }
+                .contains { $0 != Auth.auth().currentUser!.uid }
+                ?? true
+        )
         
-        title = rowsSelected
+        deleteButton.isEnabled = myMessagesSelected
+        forwardButton.isEnabled = messagesSelected
+        
+        title = messagesSelected
             ? "Selected \(tableView.indexPathsForSelectedRows!.count) messages"
             : defaultTitle
         
@@ -247,9 +257,6 @@ extension ChatViewController: UITableViewDelegate {
             target: self,
             action: #selector(disableEditMode)
         )
-        
-        deleteButton.isEnabled = rowsSelected
-        forwardButton.isEnabled = rowsSelected
     }
     
     @objc internal func deleteSelectedMessages() {
@@ -310,11 +317,10 @@ extension ChatViewController: UITableViewDelegate {
         }
     }
     
-    func tableView(_ tableView: UITableView, didBeginMultipleSelectionInteractionAt indexPath: IndexPath) {
-        enableEditMode()
-    }
-    
     func tableView(_ tableView: UITableView, shouldBeginMultipleSelectionInteractionAt indexPath: IndexPath) -> Bool {
+        if !tableView.isEditing {
+            enableEditMode()
+        }
         return true
     }
     
