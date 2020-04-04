@@ -271,13 +271,13 @@ class ChatViewController: UIViewController {
     }
     
     internal func didStartSendMessage() {
-        inputBar.sendButton.startAnimating()
+        (inputBar.rightStackView.subviews.first as! InputBarSendButton).startAnimating()
         inputBar.inputTextView.text = String()
         inputBar.inputTextView.placeholder = "Sending..."
     }
     
     internal func didEndSendMessage() {
-        inputBar.sendButton.stopAnimating()
+        (inputBar.rightStackView.subviews.first as! InputBarSendButton).stopAnimating()
         inputBar.inputTextView.placeholder = "Message..."
         inputBar.invalidatePlugins()
     }
