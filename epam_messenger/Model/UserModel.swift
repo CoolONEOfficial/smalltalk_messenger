@@ -15,8 +15,8 @@ struct UserModel: AutoCodable {
     let name: String
     let surname: String
     let online: Bool
+    let typing: String?
     
-    static let defaultDocumentId: String? = nil
     static let defaultOnline: Bool = false
     
     static func fromSnapshot(_ snapshot: DocumentSnapshot) -> UserModel? {

@@ -44,6 +44,8 @@ class ChatViewController: UIViewController {
     
     var keyboardHeight: CGFloat = 0
     
+    var isTyping: Bool = false
+    
     lazy var autocompleteManager: AutocompleteManager = { [unowned self] in
         let manager = AutocompleteManager(for: self.inputBar.inputTextView)
         
@@ -101,7 +103,13 @@ class ChatViewController: UIViewController {
             viewModel.userData(viewModel.chat.friendId!) { user in
                 if let user = user {
                     self.defaultTitle = user.fullName
-                    self.subtitleLabel.text = user.onlineText
+                    self.transitionSubtitleLabel {
+                        if user.typing == self.viewModel.chat.documentId! {
+                            self.subtitleLabel.text = "\(user.name) typing"
+                        } else {
+                            self.subtitleLabel.text = user.onlineText
+                        }
+                    }
                     
                     if !self.tableView.isEditing {
                         self.titleLabel.text = self.defaultTitle
@@ -113,9 +121,25 @@ class ChatViewController: UIViewController {
             subtitleLabel.text = "\(viewModel.chat.users.count) users"
             
             viewModel.userListData(viewModel.chat.users) { userList in
-                if let onlineUsers = userList?.filter({ $0.online }),
-                    onlineUsers.count > 1 {
-                    self.subtitleLabel.text = "\(self.viewModel.chat.users.count) users, \(onlineUsers.count) online"
+                if let userList = userList {
+                    let typingUsers = userList.filter({
+                        $0.typing == self.viewModel.chat.documentId
+                            && $0.documentId != Auth.auth().currentUser!.uid
+                    })
+                    self.transitionSubtitleLabel {
+                        if typingUsers.isEmpty {
+                            let onlineUsers = userList.filter({ $0.online })
+                            var subtitleStr = "\(self.viewModel.chat.users.count) users"
+                            if onlineUsers.count > 1 {
+                                subtitleStr += ", \(onlineUsers.count) online"
+                            }
+                            self.subtitleLabel.text = subtitleStr
+                        } else {
+                            self.subtitleLabel.text = typingUsers
+                                .map({ $0.name + " typing" })
+                                .joined(separator: ", ")
+                        }
+                    }
                 }
             }
         }
@@ -128,6 +152,18 @@ class ChatViewController: UIViewController {
         setupInputBar()
         setupEditModeButtons()
         setupFloatingBottomButton()
+    }
+    
+    private func transitionSubtitleLabel(
+        animations: (() -> Void)?
+    ) {
+        UIView.transition(
+            with: self.subtitleLabel,
+            duration: 0.3,
+            options: .transitionCrossDissolve,
+            animations: animations,
+            completion: nil
+        )
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -144,6 +180,7 @@ class ChatViewController: UIViewController {
         subtitleLabel.font = .systemFont(ofSize: 12)
         subtitleLabel.textAlignment = .center
         subtitleLabel.textColor = .secondaryLabel
+        subtitleLabel.numberOfLines = 1
         
         let stackView = UIStackView(arrangedSubviews: [titleLabel, subtitleLabel])
         stackView.axis = .vertical
@@ -193,6 +230,7 @@ class ChatViewController: UIViewController {
     private func setupTableView() {
         tableView.register(cellType: MessageCell.self)
         tableView.delegate = self
+        tableView.chatDelegate = self
         tableView.messageDelegate = viewModel
         tableView.allowsMultipleSelection = false
         tableView.allowsMultipleSelectionDuringEditing = true
@@ -241,7 +279,6 @@ class ChatViewController: UIViewController {
     internal func didEndSendMessage() {
         inputBar.sendButton.stopAnimating()
         inputBar.inputTextView.placeholder = "Message..."
-        tableView.scrollToBottom(animated: true)
         inputBar.invalidatePlugins()
     }
     

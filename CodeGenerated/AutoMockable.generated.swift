@@ -276,6 +276,32 @@ class ChatViewModelProtocolMock: ChatViewModelProtocol {
         userListDataCompletionClosure?(userList, completion)
     }
 
+    //MARK: - startTypingCurrentUser
+
+    var startTypingCurrentUserCallsCount = 0
+    var startTypingCurrentUserCalled: Bool {
+        return startTypingCurrentUserCallsCount > 0
+    }
+    var startTypingCurrentUserClosure: (() -> Void)?
+
+    func startTypingCurrentUser() {
+        startTypingCurrentUserCallsCount += 1
+        startTypingCurrentUserClosure?()
+    }
+
+    //MARK: - endTypingCurrentUser
+
+    var endTypingCurrentUserCallsCount = 0
+    var endTypingCurrentUserCalled: Bool {
+        return endTypingCurrentUserCallsCount > 0
+    }
+    var endTypingCurrentUserClosure: (() -> Void)?
+
+    func endTypingCurrentUser() {
+        endTypingCurrentUserCallsCount += 1
+        endTypingCurrentUserClosure?()
+    }
+
     //MARK: - didTapContent
 
     var didTapContentCallsCount = 0
@@ -599,6 +625,36 @@ class FirestoreServiceProtocolMock: FirestoreServiceProtocol {
     func offlineCurrentUser() {
         offlineCurrentUserCallsCount += 1
         offlineCurrentUserClosure?()
+    }
+
+    //MARK: - startTypingCurrentUser
+
+    var startTypingCurrentUserCallsCount = 0
+    var startTypingCurrentUserCalled: Bool {
+        return startTypingCurrentUserCallsCount > 0
+    }
+    var startTypingCurrentUserReceivedChatId: String?
+    var startTypingCurrentUserReceivedInvocations: [String] = []
+    var startTypingCurrentUserClosure: ((String) -> Void)?
+
+    func startTypingCurrentUser(_ chatId: String) {
+        startTypingCurrentUserCallsCount += 1
+        startTypingCurrentUserReceivedChatId = chatId
+        startTypingCurrentUserReceivedInvocations.append(chatId)
+        startTypingCurrentUserClosure?(chatId)
+    }
+
+    //MARK: - endTypingCurrentUser
+
+    var endTypingCurrentUserCallsCount = 0
+    var endTypingCurrentUserCalled: Bool {
+        return endTypingCurrentUserCallsCount > 0
+    }
+    var endTypingCurrentUserClosure: (() -> Void)?
+
+    func endTypingCurrentUser() {
+        endTypingCurrentUserCallsCount += 1
+        endTypingCurrentUserClosure?()
     }
 
 }

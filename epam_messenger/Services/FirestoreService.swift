@@ -47,8 +47,10 @@ protocol FirestoreServiceProtocol: AutoMockable {
         _ chatId: String,
         completion: @escaping (ChatModel?) -> Void
     )
-    func onlineCurrentUser() -> Void
-    func offlineCurrentUser() -> Void
+    func onlineCurrentUser()
+    func offlineCurrentUser()
+    func startTypingCurrentUser(_ chatId: String)
+    func endTypingCurrentUser()
     
     var contactListQuery: Query { get }
     var chatListQuery: Query { get }
@@ -249,6 +251,22 @@ class FirestoreService: FirestoreServiceProtocol {
             .document(Auth.auth().currentUser!.uid)
             .updateData([
                 "online": online
+            ])
+    }
+    
+    func startTypingCurrentUser(_ chatId: String) {
+        updateTypingStatus(chatId)
+    }
+    
+    func endTypingCurrentUser() {
+        updateTypingStatus(FieldValue.delete())
+    }
+    
+    private func updateTypingStatus(_ typing: Any) {
+        db.collection("users")
+            .document(Auth.auth().currentUser!.uid)
+            .updateData([
+                "typing": typing
             ])
     }
 }

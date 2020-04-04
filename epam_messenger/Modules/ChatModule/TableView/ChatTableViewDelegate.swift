@@ -7,6 +7,14 @@
 
 import UIKit
 
+extension ChatViewController: ChatTableViewDelegate {
+    func didInsertCellBottom() {
+        if floatingBottomButton.isHidden {
+            tableView.scrollToBottom(animated: true)
+        }
+    }
+}
+
 extension ChatViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
