@@ -32,9 +32,13 @@ class ChatViewController: UIViewController {
     var viewModel: ChatViewModelProtocol!
     var photosViewerCoordinator: ChatPhotoViewerDataSource!
     
+    let titleStack = UIStackView()
+    let titleLabel = UILabel()
+    let subtitleLabel = UILabel()
+    
     var deleteButton = UIButton()
     var forwardButton = UIButton()
-    let stack = UIStackView()
+    let editStack = UIStackView()
     
     var forwardMessages: [MessageProtocol]!
     
@@ -97,19 +101,29 @@ class ChatViewController: UIViewController {
             viewModel.userData(viewModel.chat.friendId!) { user in
                 if let user = user {
                     self.defaultTitle = user.fullName
+                    self.subtitleLabel.text = user.onlineText
                     
                     if !self.tableView.isEditing {
-                        self.title = self.defaultTitle
+                        self.titleLabel.text = self.defaultTitle
                     }
                 }
             }
         case .chat(let title, _):
             defaultTitle = title
+            subtitleLabel.text = "\(viewModel.chat.users.count) users"
+            
+            viewModel.userListData(viewModel.chat.users) { userList in
+                if let onlineUsers = userList?.filter({ $0.online }),
+                    onlineUsers.count > 1 {
+                    self.subtitleLabel.text = "\(self.viewModel.chat.users.count) users, \(onlineUsers.count) online"
+                }
+            }
         }
         
-        title = defaultTitle
+        titleLabel.text = defaultTitle
         view.tintColor = .accent
         
+        setupTitle()
         setupTableView()
         setupInputBar()
         setupEditModeButtons()
@@ -123,6 +137,20 @@ class ChatViewController: UIViewController {
     
     // MARK: - Methods
     
+    private func setupTitle() {
+        titleLabel.font = .systemFont(ofSize: 18, weight: .semibold)
+        titleLabel.textAlignment = .center
+        
+        subtitleLabel.font = .systemFont(ofSize: 12)
+        subtitleLabel.textAlignment = .center
+        subtitleLabel.textColor = .secondaryLabel
+        
+        let stackView = UIStackView(arrangedSubviews: [titleLabel, subtitleLabel])
+        stackView.axis = .vertical
+        
+        navigationItem.titleView = stackView
+    }
+    
     private func setupFloatingBottomButton() {
         floatingBottomButton.layer.cornerRadius = floatingBottomButton.bounds.width / 2
         floatingBottomButton.layer.borderWidth = 0.5
@@ -130,13 +158,13 @@ class ChatViewController: UIViewController {
     }
     
     private func setupEditModeButtons() {
-        stack.axis = .horizontal
-        stack.alignment = .fill
-        stack.distribution = .equalSpacing
-        stack.addArrangedSubview(deleteButton)
-        stack.addArrangedSubview(forwardButton)
-        stack.isLayoutMarginsRelativeArrangement = true
-        stack.directionalLayoutMargins = .init(top: 5, leading: 10, bottom: 0, trailing: 10)
+        editStack.axis = .horizontal
+        editStack.alignment = .fill
+        editStack.distribution = .equalSpacing
+        editStack.addArrangedSubview(deleteButton)
+        editStack.addArrangedSubview(forwardButton)
+        editStack.isLayoutMarginsRelativeArrangement = true
+        editStack.directionalLayoutMargins = .init(top: 5, leading: 10, bottom: 0, trailing: 10)
         
         deleteButton.contentHorizontalAlignment = .fill
         deleteButton.contentVerticalAlignment = .fill

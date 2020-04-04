@@ -24,8 +24,13 @@ class MessageForwardContent: UIView, MessageCellContentProtocol {
     var kindIndex: Int!
     var messageForward: MessageForwardProtocol! {
         didSet {
-            forwardLabel.text = "Forwarded from ..."
+            setupForwardLabel()
         }
+    }
+    
+    private func setupForwardLabel() {
+        forwardLabel.text = "Forwarded from ..."
+        forwardLabel.textColor = message.textColor
     }
     
     var message: MessageProtocol! {
@@ -83,7 +88,7 @@ class MessageForwardContent: UIView, MessageCellContentProtocol {
         }
     }
     
-    func didLoadUser(_ user: UserProtocol) {
+    func didDelegateSet(_ delegate: MessageCellDelegate?) {
         cell.delegate?.cellUserData(messageForward.kindForwardUser(at: kindIndex)!) { userModel in
             let userName: String
             if let userModel = userModel {

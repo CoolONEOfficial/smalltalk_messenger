@@ -195,8 +195,8 @@ class FirestoreService: FirestoreServiceProtocol {
         _ userId: String,
         completion: @escaping (UserModel?) -> Void
     ) {
-        db.collection("users")
-            .document(userId).getDocument { snapshot, err in
+        db.collection("users").document(userId)
+            .addSnapshotListener { snapshot, err in
                 guard err == nil else {
                     debugPrint("Error while get user data: \(err!.localizedDescription)")
                     completion(nil)
@@ -212,7 +212,7 @@ class FirestoreService: FirestoreServiceProtocol {
         completion: @escaping ([UserModel]?) -> Void
     ) {
         db.collection("users").whereField(.documentID(), in: userList)
-            .getDocuments { snapshot, err in
+            .addSnapshotListener { snapshot, err in
                 guard err == nil else {
                     debugPrint("Error while get user list: \(err!.localizedDescription)")
                     completion(nil)

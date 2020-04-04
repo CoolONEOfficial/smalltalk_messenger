@@ -276,7 +276,7 @@ extension ChatViewController: UITableViewDelegate {
         tableView.setEditing(true, animated: true)
         didSelectionChange()
         
-        inputBar.setMiddleContentView(stack, animated: false)
+        inputBar.setMiddleContentView(editStack, animated: false)
         inputBar.middleContentViewPadding.right = 0
         inputBar.hideSideStacks()
     }

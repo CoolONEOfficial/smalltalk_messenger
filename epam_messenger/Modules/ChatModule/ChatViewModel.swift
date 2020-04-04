@@ -42,6 +42,10 @@ protocol ChatViewModelProtocol: ViewModelProtocol, AutoMockable, MessageCellDele
         _ userId: String,
         completion: @escaping (UserModel?) -> Void
     )
+    func userListData(
+        _ userList: [String],
+        completion: @escaping ([UserModel]?) -> Void
+    )
     
     var chat: ChatProtocol { get }
     var lastTapCellContent: MessageCellContentProtocol! { get }
@@ -190,8 +194,18 @@ class ChatViewModel: ChatViewModelProtocol {
         router.showChat(chatModel)
     }
     
-    func userData(_ userId: String, completion: @escaping (UserModel?) -> Void) {
+    func userData(
+        _ userId: String,
+        completion: @escaping (UserModel?) -> Void
+    ) {
         firestoreService.userData(userId, completion: completion)
+    }
+    
+    func userListData(
+        _ userList: [String],
+        completion: @escaping ([UserModel]?) -> Void
+    ) {
+        firestoreService.userListData(userList, completion: completion)
     }
     
     func pickImages(
@@ -240,10 +254,6 @@ extension ChatViewModel: MessageCellDelegate {
     
     func cellUserData(_ userId: String, completion: @escaping (UserModel?) -> Void) {
         return firestoreService.userData(userId, completion: completion)
-    }
-    
-    var chatType: ChatType {
-        return chat.type
     }
     
 }

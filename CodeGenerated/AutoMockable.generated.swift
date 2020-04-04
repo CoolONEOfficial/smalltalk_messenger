@@ -107,11 +107,6 @@ class ChatViewModelProtocolMock: ChatViewModelProtocol {
     }
     var underlyingChat: ChatProtocol!
     var lastTapCellContent: MessageCellContentProtocol!
-    var chatType: ChatType {
-        get { return underlyingChatType }
-        set(value) { underlyingChatType = value }
-    }
-    var underlyingChatType: ChatType!
 
     //MARK: - firestoreQuery
 
@@ -262,6 +257,23 @@ class ChatViewModelProtocolMock: ChatViewModelProtocol {
         userDataCompletionReceivedArguments = (userId: userId, completion: completion)
         userDataCompletionReceivedInvocations.append((userId: userId, completion: completion))
         userDataCompletionClosure?(userId, completion)
+    }
+
+    //MARK: - userListData
+
+    var userListDataCompletionCallsCount = 0
+    var userListDataCompletionCalled: Bool {
+        return userListDataCompletionCallsCount > 0
+    }
+    var userListDataCompletionReceivedArguments: (userList: [String], completion: ([UserModel]?) -> Void)?
+    var userListDataCompletionReceivedInvocations: [(userList: [String], completion: ([UserModel]?) -> Void)] = []
+    var userListDataCompletionClosure: (([String], @escaping ([UserModel]?) -> Void) -> Void)?
+
+    func userListData(        _ userList: [String],        completion: @escaping ([UserModel]?) -> Void    ) {
+        userListDataCompletionCallsCount += 1
+        userListDataCompletionReceivedArguments = (userList: userList, completion: completion)
+        userListDataCompletionReceivedInvocations.append((userList: userList, completion: completion))
+        userListDataCompletionClosure?(userList, completion)
     }
 
     //MARK: - didTapContent

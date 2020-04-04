@@ -54,7 +54,7 @@ protocol MessageCellDelegate {
     func didError(_ text: String)
     func cellUserData(_ userId: String, completion: @escaping (UserModel?) -> Void)
     
-    var chatType: ChatType { get }
+    var chat: ChatProtocol { get }
 }
 
 class MessageCell: UITableViewCell, NibReusable, MessageCellProtocol {
@@ -80,7 +80,7 @@ class MessageCell: UITableViewCell, NibReusable, MessageCellProtocol {
     var delegate: MessageCellDelegate? {
         didSet {
             loadUser()
-            if case .personalCorr = delegate!.chatType {
+            if case .personalCorr = delegate!.chat.type {
                 avatarImage.isHidden = true
             }
             for content in contentStack.subviews as! [MessageCellContentProtocol] {
