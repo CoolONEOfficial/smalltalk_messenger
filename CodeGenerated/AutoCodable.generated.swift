@@ -156,3 +156,23 @@ extension MessageModel.MessageKind {
     }
 
 }
+
+extension UserModel {
+
+    enum CodingKeys: String, CodingKey {
+        case documentId
+        case name
+        case surname
+        case online
+    }
+
+    internal init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        documentId = (try? container.decodeIfPresent(String.self, forKey: .documentId)) ?? UserModel.defaultDocumentId
+        name = try container.decode(String.self, forKey: .name)
+        surname = try container.decode(String.self, forKey: .surname)
+        online = (try? container.decode(Bool.self, forKey: .online)) ?? UserModel.defaultOnline
+    }
+
+}

@@ -9,13 +9,15 @@ import Foundation
 import Firebase
 import CodableFirebase
 
-struct UserModel: Codable {
+struct UserModel: AutoCodable {
     
     var documentId: String?
     let name: String
     let surname: String
+    let online: Bool
     
     static let defaultDocumentId: String? = nil
+    static let defaultOnline: Bool = false
     
     static func fromSnapshot(_ snapshot: DocumentSnapshot) -> UserModel? {
         var data = snapshot.data() ?? [:]
@@ -38,6 +40,12 @@ extension UserModel: UserProtocol {
     
     var fullName: String {
         return "\(name) \(surname)"
+    }
+    
+    var onlineText: String {
+        return online
+            ? "Online"
+            : "Offline"
     }
     
 }

@@ -132,7 +132,7 @@ class MessageTextContent: UIView, MessageCellContentProtocol {
     
     func didDelegateSet(_ delegate: MessageCellDelegate?) {
         if let delegate = delegate,
-            case .personalCorr = delegate.chatType {
+            case .personalCorr = delegate.chat.type {
             usernameLabel.isHidden = true
         }
     }
