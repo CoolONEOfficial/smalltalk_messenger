@@ -8,6 +8,10 @@
 import UIKit
 import Firebase
 
+protocol ChatTableViewDelegate {
+    func didInsertCellBottom()
+}
+
 class ChatTableView: UITableView {
     
     // MARK: - Vars
@@ -18,7 +22,10 @@ class ChatTableView: UITableView {
     
     internal var lastSectionsChange: (type: ChatTableViewDataSource.ChangeType, change: IndexSet)?
     
+    var lastInsertedPath: IndexPath?
+    
     var messageDelegate: MessageCellDelegate?
+    var chatDelegate: ChatTableViewDelegate?
     
     // MARK: - Override TableView
     
@@ -65,6 +72,21 @@ class ChatTableView: UITableView {
                     at: [prevPath],
                     with: .fade
                 )
+            }
+        }
+        
+        if indexPaths.last!.item == chatDataSource.items.count - 1 {
+            lastInsertedPath = indexPaths.last!
+        }
+    }
+
+    override func endUpdates() {
+        super.endUpdates()
+
+        if lastInsertedPath != nil {
+            lastInsertedPath = nil
+            DispatchQueue.main.async {
+                self.chatDelegate?.didInsertCellBottom()
             }
         }
     }
@@ -139,6 +161,6 @@ class ChatTableView: UITableView {
         
         let lastIndex = chatDataSource.messageItems.count - 1
         let lastItem = chatDataSource.messageItems[lastIndex]
-        scrollToRow(at: IndexPath(row: lastItem.value.count - 1, section: lastIndex), at: .bottom, animated: animated)
+        scrollToRow(at: IndexPath(row: lastItem.value.count - 1, section: lastIndex), at: .none, animated: animated)
     }
 }

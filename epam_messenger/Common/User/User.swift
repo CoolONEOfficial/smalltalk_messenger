@@ -15,4 +15,5 @@ protocol UserProtocol {
     var name: String { get }
     var surname: String { get }
     var online: Bool { get }
+    var typing: String? { get }
 }

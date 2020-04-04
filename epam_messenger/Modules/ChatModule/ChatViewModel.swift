@@ -46,6 +46,8 @@ protocol ChatViewModelProtocol: ViewModelProtocol, AutoMockable, MessageCellDele
         _ userList: [String],
         completion: @escaping ([UserModel]?) -> Void
     )
+    func startTypingCurrentUser()
+    func endTypingCurrentUser()
     
     var chat: ChatProtocol { get }
     var lastTapCellContent: MessageCellContentProtocol! { get }
@@ -206,6 +208,14 @@ class ChatViewModel: ChatViewModelProtocol {
         completion: @escaping ([UserModel]?) -> Void
     ) {
         firestoreService.userListData(userList, completion: completion)
+    }
+    
+    func startTypingCurrentUser() {
+        firestoreService.startTypingCurrentUser(chat.documentId)
+    }
+    
+    func endTypingCurrentUser() {
+        firestoreService.endTypingCurrentUser()
     }
     
     func pickImages(
