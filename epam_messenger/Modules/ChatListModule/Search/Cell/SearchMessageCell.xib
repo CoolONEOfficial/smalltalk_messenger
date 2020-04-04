@@ -24,19 +24,19 @@
                         </constraints>
                     </imageView>
                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="Fn8-uN-Wdd">
-                        <rect key="frame" x="76" y="5" width="259" height="53.5"/>
+                        <rect key="frame" x="76" y="5" width="254" height="53.5"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1as-E7-qoF">
-                                <rect key="frame" x="0.0" y="0.0" width="259" height="19.5"/>
+                                <rect key="frame" x="0.0" y="0.0" width="254" height="19.5"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalCompressionResistancePriority="751" text="Chat name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Vmk-qP-Jak" userLabel="Chat Name Label">
-                                        <rect key="frame" x="0.0" y="0.0" width="187" height="19.5"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="182" height="19.5"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Timestamp" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bC8-XF-9Ry">
-                                        <rect key="frame" x="187" y="0.0" width="72" height="19.5"/>
+                                        <rect key="frame" x="182" y="0.0" width="72" height="19.5"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
                                         <nil key="highlightedColor"/>
@@ -47,7 +47,7 @@
                                 </constraints>
                             </stackView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Sender name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6hl-Ug-Rnj" userLabel="Sender Name Label">
-                                <rect key="frame" x="0.0" y="19.5" width="259" height="17"/>
+                                <rect key="frame" x="0.0" y="19.5" width="254" height="17"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="17" id="zZB-uq-iiw"/>
                                 </constraints>
@@ -56,7 +56,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Last Message" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BUo-wv-QZA">
-                                <rect key="frame" x="0.0" y="36.5" width="259" height="17"/>
+                                <rect key="frame" x="0.0" y="36.5" width="254" height="17"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
@@ -73,7 +73,7 @@
                     <constraint firstItem="rRz-Fp-MQF" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="5" id="Ykm-ug-l73"/>
                     <constraint firstItem="Fn8-uN-Wdd" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="5" id="q9o-6R-dvT"/>
                     <constraint firstItem="rRz-Fp-MQF" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="10" id="xJl-aR-dGz"/>
-                    <constraint firstAttribute="trailing" secondItem="Fn8-uN-Wdd" secondAttribute="trailing" constant="5" id="yZg-KE-KMm"/>
+                    <constraint firstAttribute="trailing" secondItem="Fn8-uN-Wdd" secondAttribute="trailing" constant="10" id="yZg-KE-KMm"/>
                 </constraints>
             </tableViewCellContentView>
             <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>

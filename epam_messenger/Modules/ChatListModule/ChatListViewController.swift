@@ -237,6 +237,10 @@ class ChatListViewController: UIViewController {
 
 extension ChatListViewController: UITableViewDelegate {
     
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        searchController.searchBar.resignFirstResponder()
+    }
+    
     private func chatModel(
         at indexPath: IndexPath,
         completion: @escaping (ChatModel?) -> Void
