@@ -190,13 +190,20 @@ class FirestoreService: FirestoreServiceProtocol {
         }
     }
     
-    // MARK - users list
+    // MARK: - users list with real user
+    
+//    lazy var usersListQuery: Query = {
+//           guard let currentUser = Auth.auth().currentUser?.uid else { return db.collection("users").order(by: "name") }
+//           return db.collection(currentUser).order(by: "name")
+//       }()
+    
+    // MARK: - hard codded users list
     
     lazy var usersListQuery: Query = {
         return db.collection("users").order(by: "name")
     }()
     
-    // MARK - user's contacts list
+    // MARK: - user's contacts list
     
     lazy var contactsListQuery: Query = {
         var documentId = "7kEMVwxyIccl9bawojE3"
