@@ -15,8 +15,8 @@ class UsersListCell: UITableViewCell, NibReusable {
     @IBOutlet weak var avatarImageView: UIImageView!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var surnameLabel: UILabel!
-
-override func awakeFromNib() {
+    
+    override func awakeFromNib() {
         super.awakeFromNib()
         
         avatarImageView.image = #imageLiteral(resourceName: "Nathan-Tannar")

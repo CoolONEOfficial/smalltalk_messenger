@@ -8,11 +8,13 @@
 import Foundation
 import Firebase
 import CodableFirebase
+import InstantSearchClient
 
 protocol UsersListViewModelProtocol: ViewModelProtocol {
     //func goToContacts() // понадобится для отображения конкретного контакта
-    func firestoreQuery() -> Query
+    func firestoreQuery() -> FireQuery
     func didUsersListLoad(snapshot: DocumentSnapshot, cell: UsersListCell)
+    func searchUsers(_ searchString: String, completion: @escaping AlgoliaService.SearchUsersCompletion)
 }
 
 class UsersListViewModel: UsersListViewModelProtocol {
@@ -20,6 +22,7 @@ class UsersListViewModel: UsersListViewModelProtocol {
     let router: RouterProtocol
     let viewController: UsersListViewControllerProtocol
     let firestoreService: FirestoreService = FirestoreService()
+    let algoliaService: AlgoliaService = .init()
     
     init(
         router: RouterProtocol,
@@ -29,7 +32,7 @@ class UsersListViewModel: UsersListViewModelProtocol {
         self.viewController = viewController
     }
     
-    func firestoreQuery() -> Query {
+    func firestoreQuery() -> FireQuery {
         return firestoreService.usersListQuery
     }
     
@@ -43,4 +46,9 @@ class UsersListViewModel: UsersListViewModelProtocol {
             cell.loadUserModel(user)
         }
     }
+    
+    func searchUsers(_ searchString: String, completion: @escaping AlgoliaService.SearchUsersCompletion) {
+        return algoliaService.searchUsers(searchString, completion: completion)
+    }
+    
 }

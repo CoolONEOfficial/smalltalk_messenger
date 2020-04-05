@@ -41,7 +41,7 @@ class AlgoliaService {
     }
     
     typealias SearchUsersCompletion = ([UserModel]?) -> Void
-    func searchChats(_ searchString: String, completion: @escaping SearchUsersCompletion) {
+    func searchUsers(_ searchString: String, completion: @escaping SearchUsersCompletion) {
         let query = Query()
         query.hitsPerPage = 20
         query.query = searchString

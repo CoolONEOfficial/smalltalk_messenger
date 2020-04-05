@@ -28,6 +28,11 @@ class UsersListViewController: UIViewController {
         }
     }
     
+    var searchDataSource: FUIFirestoreTableViewDataSource!
+    
+    let searchController = UISearchController(searchResultsController: nil)
+    private var searchItems: [UserModel] = .init()
+    
     @IBOutlet weak var tableView: UITableView!
     
     override func viewDidLoad() {
@@ -36,6 +41,12 @@ class UsersListViewController: UIViewController {
         
         title = "User's list"
         tableView.register(cellType: UsersListCell.self)
+        
+        searchController.searchResultsUpdater = self
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.searchBar.placeholder = "Search by users"
+        tableView.tableHeaderView = searchController.searchBar
+        //tabBarController?.navigationItem.searchController = searchController
         
         bindDataSource = self.tableView.bind(
             toFirestoreQuery: viewModel.firestoreQuery()
@@ -47,12 +58,15 @@ class UsersListViewController: UIViewController {
     }
 }
 
+
+// MARK: - delete user from users list
+
 extension UsersListViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let deleteAction = UIContextualAction(style: .normal, title: "Delete") { _, _, complete in
             let cell = self.tableView.cellForRow(at: indexPath) as? UsersListCell
-            self.db.collection("users").document(cell!.model.documentId).delete()
+            self.db.collection("users").document(cell!.model.documentId).delete()// Auth.auth().currentUser.uid - for real user
             tableView.reloadData()
             complete(true)
         }
@@ -62,6 +76,56 @@ extension UsersListViewController: UITableViewDelegate {
         let configuration = UISwipeActionsConfiguration(actions: [deleteAction])
         configuration.performsFirstActionWithFullSwipe = false
         return configuration
+    }
+}
+
+// MARK: - Search bar
+
+extension UsersListViewController: UISearchResultsUpdating, UISearchControllerDelegate {
+    
+    func updateSearchResults(for searchController: UISearchController) {
+        NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(reload), object: nil)
+        if searchController.searchBar.text?.isEmpty ?? true {
+            if !bindDataSource.isEqual(tableView.dataSource) {
+                bindDataSource.bind(to: tableView)
+                tableView.reloadData()
+            }
+        } else {
+            self.perform(#selector(reload), with: nil, afterDelay: 0.5)
+        }
+    }
+    
+    @objc func reload() {
+        if bindDataSource.isEqual(tableView.dataSource) {
+            bindDataSource.unbind()
+        }
+        tableView.dataSource = nil
+        searchController.searchBar.isLoading = true
+        viewModel.searchUsers(searchController.searchBar.text!) { users in
+            if let users = users {
+                self.searchItems = users
+                if !(self.tableView.dataSource?.isEqual(self) ?? false) {
+                    self.tableView.dataSource = self
+                }
+            } else {
+                // TODO: handle error
+            }
+            self.searchController.searchBar.isLoading = false
+            self.tableView.reloadData()
+        }
+    }
+}
+
+extension UsersListViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return searchItems.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = UITableViewCell()
+        let item = searchItems[indexPath.row]
+        cell.textLabel?.text = "\(item.name) \(item.surname)"
+        return cell
     }
 }
 
