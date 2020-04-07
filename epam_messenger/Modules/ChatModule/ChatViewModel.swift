@@ -10,22 +10,6 @@ import Firebase
 import InputBarAccessoryView
 
 protocol ChatViewModelProtocol: ViewModelProtocol, AutoMockable, MessageCellDelegate {
-    func listChatAtStart(
-        completion: @escaping ([MessageModel]?) -> Void
-    ) -> ListenerRegistration
-    func listChatAtEnd(
-        completion: @escaping ([MessageModel]?) -> Void
-    ) -> ListenerRegistration
-    func listChat(
-        end: Timestamp,
-        visibleCellCount: Int,
-        completion: @escaping ([MessageModel]?) -> Void
-    ) -> ListenerRegistration
-    func listChat(
-        start: Timestamp,
-        visibleCellCount: Int,
-        completion: @escaping ([MessageModel]?) -> Void
-    ) -> ListenerRegistration
     func sendMessage(
         attachments: [ChatViewController.MessageAttachment],
         messageText: String?,
@@ -65,6 +49,7 @@ protocol ChatViewModelProtocol: ViewModelProtocol, AutoMockable, MessageCellDele
     func endTypingCurrentUser()
     
     var chat: ChatProtocol { get }
+    var baseQuery: FireQuery { get }
     var lastTapCellContent: MessageCellContentProtocol! { get }
 }
 
@@ -119,24 +104,8 @@ class ChatViewModel: ChatViewModelProtocol {
         self.imagePickerService = imagePickerService
     }
     
-    func listChatAtStart(
-        completion: @escaping ([MessageModel]?) -> Void
-    ) -> ListenerRegistration {
-        firestoreService.listChatAtStart(chat, completion: completion)
-    }
-    
-    func listChatAtEnd(
-        completion: @escaping ([MessageModel]?) -> Void
-    ) -> ListenerRegistration {
-        firestoreService.listChatAtEnd(chat, completion: completion)
-    }
-    
-    func listChat(end: Timestamp, visibleCellCount: Int, completion: @escaping ([MessageModel]?) -> Void) -> ListenerRegistration {
-        firestoreService.listChat(chat, end: end, visibleCellCount: visibleCellCount, completion: completion)
-    }
-    
-    func listChat(start: Timestamp, visibleCellCount: Int, completion: @escaping ([MessageModel]?) -> Void) -> ListenerRegistration {
-        firestoreService.listChat(chat, start: start, visibleCellCount: visibleCellCount, completion: completion)
+    var baseQuery: FireQuery {
+        firestoreService.chatBaseQuery(chat.documentId)
     }
     
     func sendMessage(

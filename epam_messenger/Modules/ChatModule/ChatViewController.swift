@@ -12,34 +12,6 @@ import InputBarAccessoryView
 import NYTPhotoViewer
 import Differ
 
-struct SectionArray: Equatable, Collection {
-
-    let elements: [MessageModel]
-    let key: Date
-
-    typealias Index = Int
-
-    var startIndex: Int {
-        return elements.startIndex
-    }
-
-    var endIndex: Int {
-        return elements.endIndex
-    }
-
-    subscript(i: Int) -> MessageModel {
-        return elements[i]
-    }
-
-    public func index(after i: Int) -> Int {
-        return elements.index(after: i)
-    }
-
-    static func == (fst: SectionArray, snd: SectionArray) -> Bool {
-        return fst.key == snd.key
-    }
-}
-
 protocol ChatViewControllerProtocol: AutoMockable {
     func presentPhotoViewer(_ storageRefs: [StorageReference], initialIndex: Int)
     func presentErrorAlert(_ text: String)
@@ -49,28 +21,15 @@ class ChatViewController: UIViewController {
     
     // MARK: - Outlets
     
-    @IBOutlet var tableView: UITableView!
     @IBOutlet var floatingBottomButton: UIButton!
     
     // MARK: - Vars
     
     var defaultTitle = "..."
     
-    var dataAtStart = false
-    var dataAtEnd = false
-    var data: [SectionArray] = []
-    var listener: ListenerRegistration! {
-        didSet {
-            oldValue?.remove()
-        }
-    }
-    var flattenData: [MessageModel] {
-        return data.map { $0.elements }.reduce([], +)
-    }
+    var tableView: PaginatedTableView<Date, MessageModel>!
     
     var bottomScrollAnimationsLock = false
-    var paginationLock = false
-    var lastContentOffset: CGFloat = 0
     
     let inputBar = ChatInputBar()
     var viewModel: ChatViewModelProtocol!
@@ -114,7 +73,7 @@ class ChatViewController: UIViewController {
             self.updateTableViewInset()
             
             if self.floatingBottomButton.isHidden {
-                self.scrollToBottom(animated: true)
+                self.tableView.scrollToBottom(animated: true)
             }
         }.on(event: .didHide) { [weak self] _ in
             guard let self = self else { return }
@@ -212,7 +171,7 @@ class ChatViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         updateTableViewInset()
-        scrollToBottom(animated: true)
+        tableView.scrollToBottom(animated: true)
     }
     
     // MARK: - Methods
@@ -272,20 +231,47 @@ class ChatViewController: UIViewController {
     }
     
     private func setupTableView() {
+        tableView = .init(
+            baseQuery: viewModel.baseQuery,
+            initialPosition: .bottom,
+            cellForRowAt: { indexPath -> UITableViewCell in
+                let cell = self.tableView.dequeueReusableCell(for: indexPath, cellType: MessageCell.self)
+                
+                let section = self.tableView.data[indexPath.section].elements
+                let message = section[indexPath.row]
+                
+                cell.loadMessage(
+                    message,
+                    mergeNext: section.count > indexPath.row + 1
+                        && MessageModel.checkMerge(message, section[indexPath.row + 1]),
+                    mergePrev: 0 < indexPath.row
+                        && MessageModel.checkMerge(message, section[indexPath.row - 1])
+                )
+                cell.delegate = self.viewModel
+                
+                return cell
+            },
+            querySideTransform: { message in
+                message.date
+            },
+            groupingBy: { message in
+                message.date.midnight
+            },
+            sortedBy: { l, r in
+                l.compare(r) == .orderedAscending
+            },
+            fromSnapshot: MessageModel.fromSnapshot
+        )
         tableView.register(cellType: MessageCell.self)
-        tableView.delegate = self
+        tableView.paginatedDelegate = self
         tableView.allowsMultipleSelection = false
         tableView.allowsMultipleSelectionDuringEditing = true
+        tableView.separatorStyle = .none
         
-        paginationLock = true
-        loadChatAtEnd { messages in
-            self.listChatListener(
-                messages: messages,
-                unlockPagination: messages?.count == FirestoreService.chatQueryCount
-            )
-        }
+        view.addSubview(tableView)
+        tableView.edgesToSuperview()
         
-        tableView.dataSource = self
+        view.bringSubviewToFront(floatingBottomButton)
     }
     
     // MARK: - Helpers
@@ -317,12 +303,12 @@ class ChatViewController: UIViewController {
     // MARK: Floating bottom button
     
     @IBAction func didFloatingBottomButtonClick(_ sender: UIButton) {
-        if dataAtEnd {
-            scrollToBottom(animated: true)
+        if tableView.dataAtEnd {
+            tableView.scrollToBottom(animated: true)
         } else {
-            loadChatAtEnd { messages in
-                self.listChatListener(messages: messages, animate: false)
-                self.scrollToBottom(animated: true)
+            tableView.loadAtEnd { messages in
+                self.tableView.updateElements(elements: messages, animate: false)
+                self.tableView.scrollToBottom(animated: true)
             }
         }
     }
@@ -373,8 +359,8 @@ extension ChatViewController: ChatViewControllerProtocol {
     
     func presentErrorAlert(_ text: String) {
         let alert = UIAlertController(title: "Error",
-            message: text,
-            preferredStyle: .alert
+                                      message: text,
+                                      preferredStyle: .alert
         )
         alert.addAction(UIAlertAction(title: "Dismiss", style: .default))
         
@@ -387,8 +373,8 @@ extension ChatViewController: NYTPhotosViewControllerDelegate {
     
     func photosViewController(_ photosViewController: NYTPhotosViewController, referenceViewFor photo: NYTPhoto) -> UIView? {
         guard let box = photo as? PhotoBox else { return nil }
-
-        for (sectionIndex, day) in data.enumerated() {
+        
+        for (sectionIndex, day) in tableView.data.enumerated() {
             for (rowIndex, message) in day.elements.enumerated() {
                 for (contentIndex, content) in message.kind.enumerated() {
                     switch content {
