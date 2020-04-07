@@ -278,7 +278,12 @@ class ChatViewController: UIViewController {
         tableView.allowsMultipleSelectionDuringEditing = true
         
         paginationLock = true
-        loadChatAtEnd()
+        loadChatAtEnd { messages in
+            self.listChatListener(
+                messages: messages,
+                unlockPagination: messages?.count == FirestoreService.chatQueryCount
+            )
+        }
         
         tableView.dataSource = self
     }

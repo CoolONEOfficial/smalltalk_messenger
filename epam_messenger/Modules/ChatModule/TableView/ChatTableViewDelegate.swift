@@ -209,7 +209,8 @@ extension ChatViewController: UITableViewDelegate {
     func listChatListener(
         messages: [MessageModel]?,
         scrollView: UIScrollView? = nil,
-        animate: Bool = true
+        animate: Bool = true,
+        unlockPagination: Bool = true
     ) {
         if let messages = messages {
             let oldData = self.data
@@ -221,7 +222,9 @@ extension ChatViewController: UITableViewDelegate {
             if animate {
                 CATransaction.begin()
                 CATransaction.setCompletionBlock {
-                    self.unlockPagination(scrollView)
+                    if unlockPagination {
+                        self.unlockPagination(scrollView)
+                    }
                 }
                 tableView.animateRowAndSectionChanges(
                     oldData: oldData,
@@ -230,7 +233,9 @@ extension ChatViewController: UITableViewDelegate {
                 CATransaction.commit()
             } else {
                 tableView.reloadData()
-                unlockPagination(scrollView)
+                if unlockPagination {
+                    self.unlockPagination(scrollView)
+                }
             }
             
             if dataAtEnd {
