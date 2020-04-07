@@ -26,7 +26,7 @@ extension ChatViewController: AttachmentManagerDelegate {
             updateTableViewInset(attachmentManager.attachmentView.bounds.height)
             
             if floatingBottomButton.isHidden {
-                tableView.scrollToBottom(animated: true)
+                scrollToBottom(animated: true)
             }
             
             inputBar.setStackViewItems([inputBar.sendButton], forStack: .right, animated: true)
@@ -37,7 +37,7 @@ extension ChatViewController: AttachmentManagerDelegate {
             inputBar.inputTextViewDidChange()
             
             if floatingBottomButton.isHidden {
-                tableView.scrollToBottom(animated: true)
+                scrollToBottom(animated: true)
             }
         }
     }

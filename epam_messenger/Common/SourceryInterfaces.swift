@@ -7,8 +7,8 @@
 
 import Foundation
 
-protocol AutoDecodable: Decodable {}
-protocol AutoEncodable: Encodable {}
-protocol AutoCodable: AutoDecodable, AutoEncodable {}
-protocol AutoEquatable {}
-protocol AutoMockable {}
+public protocol AutoDecodable: Decodable {}
+public protocol AutoEncodable: Encodable {}
+public protocol AutoCodable: AutoDecodable, AutoEncodable {}
+public protocol AutoEquatable {}
+public protocol AutoMockable {}

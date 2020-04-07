@@ -10,6 +10,35 @@ import FirebaseUI
 import CodableFirebase
 import InputBarAccessoryView
 import NYTPhotoViewer
+import Differ
+
+struct SectionArray: Equatable, Collection {
+
+    let elements: [MessageModel]
+    let key: Date
+
+    typealias Index = Int
+
+    var startIndex: Int {
+        return elements.startIndex
+    }
+
+    var endIndex: Int {
+        return elements.endIndex
+    }
+
+    subscript(i: Int) -> MessageModel {
+        return elements[i]
+    }
+
+    public func index(after i: Int) -> Int {
+        return elements.index(after: i)
+    }
+
+    static func == (fst: SectionArray, snd: SectionArray) -> Bool {
+        return fst.key == snd.key
+    }
+}
 
 protocol ChatViewControllerProtocol: AutoMockable {
     func presentPhotoViewer(_ storageRefs: [StorageReference], initialIndex: Int)
@@ -20,13 +49,28 @@ class ChatViewController: UIViewController {
     
     // MARK: - Outlets
     
-    @IBOutlet var tableView: ChatTableView!
-    var bottomScrollAnimationsLock = false
+    @IBOutlet var tableView: UITableView!
     @IBOutlet var floatingBottomButton: UIButton!
     
     // MARK: - Vars
     
     var defaultTitle = "..."
+    
+    var dataAtStart = false
+    var dataAtEnd = false
+    var data: [SectionArray] = []
+    var listener: ListenerRegistration! {
+        didSet {
+            oldValue?.remove()
+        }
+    }
+    var flattenData: [MessageModel] {
+        return data.map { $0.elements }.reduce([], +)
+    }
+    
+    var bottomScrollAnimationsLock = false
+    var paginationLock = false
+    var lastContentOffset: CGFloat = 0
     
     let inputBar = ChatInputBar()
     var viewModel: ChatViewModelProtocol!
@@ -70,7 +114,7 @@ class ChatViewController: UIViewController {
             self.updateTableViewInset()
             
             if self.floatingBottomButton.isHidden {
-                self.tableView.scrollToBottom(animated: true)
+                self.scrollToBottom(animated: true)
             }
         }.on(event: .didHide) { [weak self] _ in
             guard let self = self else { return }
@@ -105,7 +149,7 @@ class ChatViewController: UIViewController {
                     self.defaultTitle = user.fullName
                     self.transitionSubtitleLabel {
                         if user.typing == self.viewModel.chat.documentId! {
-                            self.subtitleLabel.text = "\(user.name) typing"
+                            self.subtitleLabel.text = "\(user.name) typing..."
                         } else {
                             self.subtitleLabel.text = user.onlineText
                         }
@@ -136,8 +180,8 @@ class ChatViewController: UIViewController {
                             self.subtitleLabel.text = subtitleStr
                         } else {
                             self.subtitleLabel.text = typingUsers
-                                .map({ $0.name + " typing" })
-                                .joined(separator: ", ")
+                                .map({ $0.name })
+                                .joined(separator: ", ") + " typing..."
                         }
                     }
                 }
@@ -168,7 +212,7 @@ class ChatViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         updateTableViewInset()
-        tableView.scrollToBottom(animated: true)
+        scrollToBottom(animated: true)
     }
     
     // MARK: - Methods
@@ -230,31 +274,13 @@ class ChatViewController: UIViewController {
     private func setupTableView() {
         tableView.register(cellType: MessageCell.self)
         tableView.delegate = self
-        tableView.chatDelegate = self
-        tableView.messageDelegate = viewModel
         tableView.allowsMultipleSelection = false
         tableView.allowsMultipleSelectionDuringEditing = true
         
-        tableView.dataSource = tableView.bind(
-            toFirestoreQuery: viewModel.firestoreQuery()
-        ) { tableView, indexPath in
-            let cell = tableView.dequeueReusableCell(for: indexPath, cellType: MessageCell.self)
-            
-            let section = self.tableView
-                .chatDataSource
-                .messageItems[indexPath.section].value
-            let message = section[indexPath.row]
-            
-            cell.loadMessage(
-                message,
-                mergeNext: section.count > indexPath.row + 1
-                    && MessageModel.checkMerge(left: message, right: section[indexPath.row + 1]),
-                mergePrev: 0 < indexPath.row
-                    && MessageModel.checkMerge(left: message, right: section[indexPath.row - 1])
-            )
-            
-            return cell
-        }
+        paginationLock = true
+        loadChatAtEnd()
+        
+        tableView.dataSource = self
     }
     
     // MARK: - Helpers
@@ -277,7 +303,8 @@ class ChatViewController: UIViewController {
     }
     
     internal func didEndSendMessage() {
-        (inputBar.rightStackView.subviews.first as! InputBarSendButton).stopAnimating()
+        inputBar.sendButton.stopAnimating()
+        inputBar.voiceButton.stopAnimating()
         inputBar.inputTextView.placeholder = "Message..."
         inputBar.invalidatePlugins()
     }
@@ -285,7 +312,14 @@ class ChatViewController: UIViewController {
     // MARK: Floating bottom button
     
     @IBAction func didFloatingBottomButtonClick(_ sender: UIButton) {
-        tableView.scrollToBottom(animated: true)
+        if dataAtEnd {
+            scrollToBottom(animated: true)
+        } else {
+            loadChatAtEnd { messages in
+                self.listChatListener(messages: messages, animate: false)
+                self.scrollToBottom(animated: true)
+            }
+        }
     }
     
 }
@@ -349,8 +383,8 @@ extension ChatViewController: NYTPhotosViewControllerDelegate {
     func photosViewController(_ photosViewController: NYTPhotosViewController, referenceViewFor photo: NYTPhoto) -> UIView? {
         guard let box = photo as? PhotoBox else { return nil }
 
-        for (sectionIndex, day) in tableView.chatDataSource.messageItems.enumerated() {
-            for (rowIndex, message) in day.value.enumerated() {
+        for (sectionIndex, day) in data.enumerated() {
+            for (rowIndex, message) in day.elements.enumerated() {
                 for (contentIndex, content) in message.kind.enumerated() {
                     switch content {
                     case .image(let path, _):

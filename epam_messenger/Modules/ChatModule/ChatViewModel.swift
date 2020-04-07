@@ -10,7 +10,22 @@ import Firebase
 import InputBarAccessoryView
 
 protocol ChatViewModelProtocol: ViewModelProtocol, AutoMockable, MessageCellDelegate {
-    func firestoreQuery() -> FireQuery
+    func listChatAtStart(
+        completion: @escaping ([MessageModel]?) -> Void
+    ) -> ListenerRegistration
+    func listChatAtEnd(
+        completion: @escaping ([MessageModel]?) -> Void
+    ) -> ListenerRegistration
+    func listChat(
+        end: Timestamp,
+        visibleCellCount: Int,
+        completion: @escaping ([MessageModel]?) -> Void
+    ) -> ListenerRegistration
+    func listChat(
+        start: Timestamp,
+        visibleCellCount: Int,
+        completion: @escaping ([MessageModel]?) -> Void
+    ) -> ListenerRegistration
     func sendMessage(
         attachments: [ChatViewController.MessageAttachment],
         messageText: String?,
@@ -104,8 +119,24 @@ class ChatViewModel: ChatViewModelProtocol {
         self.imagePickerService = imagePickerService
     }
     
-    func firestoreQuery() -> FireQuery {
-        return firestoreService.createChatQuery(chat)
+    func listChatAtStart(
+        completion: @escaping ([MessageModel]?) -> Void
+    ) -> ListenerRegistration {
+        firestoreService.listChatAtStart(chat, completion: completion)
+    }
+    
+    func listChatAtEnd(
+        completion: @escaping ([MessageModel]?) -> Void
+    ) -> ListenerRegistration {
+        firestoreService.listChatAtEnd(chat, completion: completion)
+    }
+    
+    func listChat(end: Timestamp, visibleCellCount: Int, completion: @escaping ([MessageModel]?) -> Void) -> ListenerRegistration {
+        firestoreService.listChat(chat, end: end, visibleCellCount: visibleCellCount, completion: completion)
+    }
+    
+    func listChat(start: Timestamp, visibleCellCount: Int, completion: @escaping ([MessageModel]?) -> Void) -> ListenerRegistration {
+        firestoreService.listChat(chat, start: start, visibleCellCount: visibleCellCount, completion: completion)
     }
     
     func sendMessage(
