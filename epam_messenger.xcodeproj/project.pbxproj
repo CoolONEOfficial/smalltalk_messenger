@@ -42,7 +42,6 @@
 		85812D9D2433B77700EA2626 /* ChatInputBarAutocompleteManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85812D9A2433B77600EA2626 /* ChatInputBarAutocompleteManager.swift */; };
 		85812DA02433B78F00EA2626 /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85812D9E2433B78F00EA2626 /* UIColor.swift */; };
 		85812DA12433B78F00EA2626 /* UIDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85812D9F2433B78F00EA2626 /* UIDevice.swift */; };
-		85812DA22433B7A400EA2626 /* ChatTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 851F5820241D81D400D04F92 /* ChatTableView.swift */; };
 		85812DA32433B7A900EA2626 /* ChatTableViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 851F582D241D990900D04F92 /* ChatTableViewDelegate.swift */; };
 		85812DA42433B7CC00EA2626 /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = 851F581A241D792A00D04F92 /* Array.swift */; };
 		85812DA52433B7DA00EA2626 /* AlgoliaService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850C7FED2425426E008BAF24 /* AlgoliaService.swift */; };
@@ -150,7 +149,6 @@
 		851553EF241983E500C89534 /* Message24HourDateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message24HourDateFormatter.swift; sourceTree = "<group>"; };
 		851F581A241D792A00D04F92 /* Array.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Array.swift; sourceTree = "<group>"; };
 		851F581D241D7E2900D04F92 /* Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
-		851F5820241D81D400D04F92 /* ChatTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatTableView.swift; sourceTree = "<group>"; };
 		851F5822241D824E00D04F92 /* ChatTableViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatTableViewDataSource.swift; sourceTree = "<group>"; };
 		851F5828241D92AE00D04F92 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		851F582B241D987300D04F92 /* DateHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateHeader.swift; sourceTree = "<group>"; };
@@ -387,7 +385,6 @@
 			children = (
 				851F582A241D985800D04F92 /* Header */,
 				851F580C241BE7E400D04F92 /* Cell */,
-				851F5820241D81D400D04F92 /* ChatTableView.swift */,
 				851F5822241D824E00D04F92 /* ChatTableViewDataSource.swift */,
 				851F582D241D990900D04F92 /* ChatTableViewDelegate.swift */,
 			);
@@ -848,8 +845,8 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 85BE9A7924118CF200E6643B /* Build configuration list for PBXNativeTarget "epam_messenger" */;
 			buildPhases = (
-				85812DA72433B85900EA2626 /* Sourcery */,
 				69085C1067B72E4811D9C9E3 /* [CP] Check Pods Manifest.lock */,
+				85812DA72433B85900EA2626 /* Sourcery */,
 				85BE9A6124118CF200E6643B /* Sources */,
 				85BE9A6224118CF200E6643B /* Frameworks */,
 				85BE9A6324118CF200E6643B /* Resources */,

@@ -7,19 +7,29 @@
 
 import UIKit
 import FirebaseAuth
-
-extension ChatViewController: ChatTableViewDelegate {
-    func didInsertCellBottom() {
-        if floatingBottomButton.isHidden {
-            tableView.scrollToBottom(animated: true)
-        }
-    }
-}
+import FirebaseFirestore
 
 extension ChatViewController: UITableViewDelegate {
     
+    func scrollToBottom(animated: Bool) {
+        guard !data.isEmpty else {
+            return
+        }
+        
+        let lastIndex = data.count - 1
+        let lastSections = data[lastIndex]
+        tableView.scrollToRow(
+            at: IndexPath(
+                row: lastSections.elements.count - 1,
+                section: lastIndex
+            ),
+            at: .none,
+            animated: animated
+        )
+    }
+    
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let date = self.tableView.chatDataSource.dayAt(section)
+        let date = dayAt(section)
         let dateString = Message24HourDateFormatter.shared.string(from: date)
         
         let label = DateHeaderLabel()
@@ -61,7 +71,7 @@ extension ChatViewController: UITableViewDelegate {
             ) { _ in
                 let pasteBoard = UIPasteboard.general
                 var allText = ""
-                for kind in self.tableView.chatDataSource.messageAt(indexPath).kind {
+                for kind in self.messageAt(indexPath).kind {
                     switch kind {
                     case .text(let text):
                         allText += text
@@ -75,7 +85,7 @@ extension ChatViewController: UITableViewDelegate {
                 title: "Forward",
                 image: UIImage(systemName: "arrowshape.turn.up.right")
             ) { _ in
-                let messageModel = self.tableView.chatDataSource.messageAt(indexPath)
+                let messageModel = self.messageAt(indexPath)
                 self.presentForwardController()
                 self.forwardMessages = [messageModel]
             }
@@ -98,7 +108,7 @@ extension ChatViewController: UITableViewDelegate {
                 attributes: .destructive
             ) { _ in
                 self.viewModel.deleteMessage(
-                    self.tableView.chatDataSource.messageAt(indexPath)
+                    self.messageAt(indexPath)
                 )
             }
             
@@ -113,7 +123,7 @@ extension ChatViewController: UITableViewDelegate {
             
             var actions: [UIAction] = []
             
-            let message = self.tableView.chatDataSource.messageAt(indexPath)
+            let message = self.messageAt(indexPath)
             
             if message.kind.filter({ content in
                 if case .image = content {
@@ -184,46 +194,204 @@ extension ChatViewController: UITableViewDelegate {
         return makeTargetedPreview(for: configuration)
     }
     
-    // MARK: Floating bottom button
+    func listChatListener(messages: [MessageModel]?) {
+        listChatListener(messages: messages, scrollView: nil)
+    }
     
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+    func unlockPagination(_ scrollView: UIScrollView? = nil) {
+        self.paginationLock = false
         
-        guard !bottomScrollAnimationsLock else {
-            return
+        if let scrollView = scrollView {
+            self.didScroll(scrollView, afterUnlock: true)
         }
-        
-        let hidden = scrollView.contentSize.height
-            - scrollView.contentOffset.y
-            - scrollView.bounds.height < 100
-        if self.floatingBottomButton.isHidden != hidden {
-            bottomScrollAnimationsLock = true
+    }
+    
+    func listChatListener(
+        messages: [MessageModel]?,
+        scrollView: UIScrollView? = nil,
+        animate: Bool = true
+    ) {
+        if let messages = messages {
+            let oldData = self.data
             
-            self.floatingBottomButton.alpha = hidden ? 1.0 : 0.0
-            self.inputBar.separatorLine.alpha = hidden ? 1.0 : 0.0
+            self.data = Dictionary(grouping: messages) { $0.date.midnight }
+                .sorted { ($0.key as Date).compare($1.key as Date) == .orderedAscending }
+                .map { SectionArray(elements: $0.value, key: $0.key) }
             
-            if !hidden { // show before alpha transition
-                self.floatingBottomButton.isHidden = hidden
-                self.inputBar.separatorLine.isHidden = hidden
+            if animate {
+                CATransaction.begin()
+                CATransaction.setCompletionBlock {
+                    self.unlockPagination(scrollView)
+                }
+                tableView.animateRowAndSectionChanges(
+                    oldData: oldData,
+                    newData: self.data
+                )
+                CATransaction.commit()
+            } else {
+                tableView.reloadData()
+                unlockPagination(scrollView)
             }
             
-            UIView.transition(
-                with: floatingBottomButton,
-                duration: 0.5,
-                options: .transitionCrossDissolve,
-                animations: {
-                    self.floatingBottomButton.alpha = hidden ? 0.0 : 1.0
-                    self.inputBar.separatorLine.alpha = hidden ? 0.0 : 1.0
-            }) { _ in
-                self.bottomScrollAnimationsLock = false
+            if dataAtEnd {
+                scrollToBottom(animated: true)
+                let flattened = flattenData
+                if flattened.count >= 2, MessageModel.checkMerge(
+                    flattened[flattened.count - 1],
+                    flattened[flattened.count - 2]
+                ) {
+                    let section = data.count - 1
+                    let lastRow = data[section].elements.count - 1
+                    tableView.reloadRows(
+                        at: [
+                            .init(row: lastRow - 1, section: section)
+                        ],
+                        with: .automatic
+                    )
+                }
                 
-                if hidden { // hide after alpha transition
+            }
+        }
+    }
+    
+    func loadChatAtStart() {
+        dataAtStart = true
+        dataAtEnd = false
+        
+        listener = viewModel.listChatAtStart(completion: listChatListener)
+    }
+    
+    func loadChatAtEnd(completion: (([MessageModel]?) -> Void)? = nil) {
+        dataAtStart = false
+        dataAtEnd = true
+        
+        listener = viewModel.listChatAtEnd(completion: completion ?? listChatListener)
+    }
+    
+    func didScroll(_ scrollView: UIScrollView, afterUnlock: Bool = false) {
+        if let visiblePathList = tableView.indexPathsForVisibleRows,
+            !paginationLock {
+            if !dataAtStart,
+                scrollView.contentOffset.y < 250,
+                lastContentOffset >= scrollView.contentOffset.y,
+                let lastVisiblePath = visiblePathList.last {
+                paginationLock = true
+                
+                debugPrint("chat top scroll")
+                
+                let flattened = flattenData
+                
+                if let visibleIndex = flattened.firstIndex(where: { $0 == messageAt(lastVisiblePath) }) {
+                    dataAtStart = false
+                    dataAtEnd = false
+                    
+                    let endMessageIndex: Int
+                    let visibleCellCount: Int = visiblePathList.count
+                    if visibleIndex + 5 < flattened.count {
+                        endMessageIndex = visibleIndex + 5
+                    } else {
+                        endMessageIndex = flattened.count - 1
+                    }
+                    listener = viewModel.listChat(
+                        end: Timestamp(date: flattened[endMessageIndex].date),
+                        visibleCellCount: visibleCellCount
+                    ) { messages in
+                        if messages?.count == FirestoreService.chatPaginationQueryCount + visibleCellCount {
+                            debugPrint("chat load pagination")
+                            self.listChatListener(
+                                messages: messages,
+                                scrollView: afterUnlock ? nil : scrollView
+                            )
+                        } else {
+                            debugPrint("chat load start")
+                            self.loadChatAtStart()
+                        }
+                    }
+                }
+            } else if !dataAtEnd,
+                scrollView.contentSize.height
+                    - scrollView.contentOffset.y
+                    - scrollView.bounds.height < 250,
+                lastContentOffset <= scrollView.contentOffset.y,
+                let firstVisiblePath = visiblePathList.first {
+                paginationLock = true
+                
+                debugPrint("chat bottom scroll")
+
+                let flattened = flattenData
+
+                if let visibleIndex = flattened.firstIndex(where: { $0 == messageAt(firstVisiblePath) }) {
+                    dataAtStart = false
+                    dataAtEnd = false
+                    
+                    let startMessageIndex: Int
+                    let visibleCellCount: Int = visiblePathList.count
+                    if visibleIndex - 5 >= 0 {
+                        startMessageIndex = visibleIndex - 5
+                    } else {
+                        startMessageIndex = 0
+                    }
+                    listener = viewModel.listChat(
+                        start: Timestamp(date: flattened[startMessageIndex].date),
+                        visibleCellCount: visibleCellCount
+                    ) { messages in
+                        if let messagesCount = messages?.count {
+                            if messagesCount == FirestoreService.chatPaginationQueryCount + visibleCellCount {
+                                debugPrint("chat load pagination")
+                                self.listChatListener(
+                                    messages: messages,
+                                    scrollView: afterUnlock ? nil : scrollView
+                                )
+                            } else {
+                                debugPrint("chat load end")
+                                self.loadChatAtEnd()
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        if !bottomScrollAnimationsLock {
+            let hidden = scrollView.contentSize.height
+                - scrollView.contentOffset.y
+                - scrollView.bounds.height < 100
+            if self.floatingBottomButton.isHidden != hidden {
+                bottomScrollAnimationsLock = true
+                
+                self.floatingBottomButton.alpha = hidden ? 1.0 : 0.0
+                self.inputBar.separatorLine.alpha = hidden ? 1.0 : 0.0
+                
+                if !hidden { // show before alpha transition
                     self.floatingBottomButton.isHidden = hidden
                     self.inputBar.separatorLine.isHidden = hidden
                 }
                 
-                self.scrollViewDidScroll(scrollView)
+                UIView.transition(
+                    with: floatingBottomButton,
+                    duration: 0.5,
+                    options: .transitionCrossDissolve,
+                    animations: {
+                        self.floatingBottomButton.alpha = hidden ? 0.0 : 1.0
+                        self.inputBar.separatorLine.alpha = hidden ? 0.0 : 1.0
+                }) { _ in
+                    self.bottomScrollAnimationsLock = false
+                    
+                    if hidden { // hide after alpha transition
+                        self.floatingBottomButton.isHidden = hidden
+                        self.inputBar.separatorLine.isHidden = hidden
+                    }
+                    
+                    self.scrollViewDidScroll(scrollView)
+                }
             }
         }
+        
+        lastContentOffset = scrollView.contentOffset.y
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        didScroll(scrollView)
     }
     
     // MARK: - Edit mode
@@ -232,7 +400,7 @@ extension ChatViewController: UITableViewDelegate {
         let messagesSelected = !(tableView.indexPathsForSelectedRows?.isEmpty ?? true)
         let myMessagesSelected = !(
             tableView.indexPathsForSelectedRows?
-                .map { tableView.chatDataSource.messageAt($0).userId }
+                .map { messageAt($0).userId }
                 .contains { $0 != Auth.auth().currentUser!.uid }
                 ?? true
         )
@@ -261,7 +429,7 @@ extension ChatViewController: UITableViewDelegate {
     
     @objc internal func deleteSelectedMessages() {
         for indexPath in tableView.indexPathsForSelectedRows! {
-            let message = self.tableView.chatDataSource.messageAt(indexPath)
+            let message = messageAt(indexPath)
             
             viewModel.deleteMessage(message) { _ in
                 self.didSelectionChange()
@@ -284,7 +452,7 @@ extension ChatViewController: UITableViewDelegate {
     
     @objc internal func forwardSelectedMessages() {
         presentForwardController()
-        forwardMessages = tableView!.indexPathsForSelectedRows!.map { tableView!.chatDataSource.messageAt($0) }
+        forwardMessages = tableView!.indexPathsForSelectedRows!.map { messageAt($0) }
     }
     
     private func enableEditMode() {

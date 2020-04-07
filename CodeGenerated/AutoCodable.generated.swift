@@ -68,7 +68,7 @@ extension ChatType {
 
 extension MessageModel {
 
-    internal init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         documentId = try container.decodeIfPresent(String.self, forKey: .documentId)
@@ -79,7 +79,7 @@ extension MessageModel {
         chatUsers = try container.decodeIfPresent([String].self, forKey: .chatUsers)
     }
 
-    internal func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
         try container.encodeIfPresent(documentId, forKey: .documentId)

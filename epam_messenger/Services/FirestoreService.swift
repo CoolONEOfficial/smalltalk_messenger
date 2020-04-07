@@ -13,7 +13,26 @@ import CodableFirebase
 typealias FireQuery = Query
 
 protocol FirestoreServiceProtocol: AutoMockable {
-    func createChatQuery(_ chat: ChatProtocol) -> Query
+    func listChatAtStart(
+        _ chat: ChatProtocol,
+        completion: @escaping ([MessageModel]?) -> Void
+    ) -> ListenerRegistration
+    func listChatAtEnd(
+        _ chat: ChatProtocol,
+        completion: @escaping ([MessageModel]?) -> Void
+    ) -> ListenerRegistration
+    func listChat(
+        _ chat: ChatProtocol,
+        end: Timestamp,
+        visibleCellCount: Int,
+        completion: @escaping ([MessageModel]?) -> Void
+    ) -> ListenerRegistration
+    func listChat(
+        _ chat: ChatProtocol,
+        start: Timestamp,
+        visibleCellCount: Int,
+        completion: @escaping ([MessageModel]?) -> Void
+    ) -> ListenerRegistration
     func sendMessage(
         chatDocumentId: String,
         messageKind: [MessageModel.MessageKind],
@@ -106,11 +125,88 @@ class FirestoreService: FirestoreServiceProtocol {
         return db.collection("users").order(by: "name")
     }()
     
-    func createChatQuery(_ chat: ChatProtocol) -> Query {
+    static let chatPaginationQueryCount = 30
+    static let chatQueryCount = 40
+    
+    func chatQuery(
+        _ chat: ChatProtocol,
+        start: Timestamp
+    ) -> Query {
+        return chatBaseQuery(chat)
+            .limit(toLast: FirestoreService.chatQueryCount)
+            .end(before: [start])
+    }
+    
+    func listChatAtStart(
+        _ chat: ChatProtocol,
+        completion: @escaping ([MessageModel]?) -> Void
+    ) -> ListenerRegistration {
+        return chatBaseQuery(chat)
+            .limit(to: FirestoreService.chatQueryCount)
+            .addSnapshotListener { snapshot, err in
+                self.parseListChat(snapshot, err, completion)
+        }
+    }
+    
+    func listChatAtEnd(
+        _ chat: ChatProtocol,
+        completion: @escaping ([MessageModel]?) -> Void
+    ) -> ListenerRegistration {
+        return chatBaseQuery(chat)
+            .limit(toLast: FirestoreService.chatQueryCount)
+            .addSnapshotListener { snapshot, err in
+                self.parseListChat(snapshot, err, completion)
+        }
+    }
+    
+    func listChat(
+        _ chat: ChatProtocol,
+        end: Timestamp,
+        visibleCellCount: Int,
+        completion: @escaping ([MessageModel]?) -> Void
+    ) -> ListenerRegistration {
+        return chatBaseQuery(chat)
+            .limit(toLast: FirestoreService.chatPaginationQueryCount + visibleCellCount)
+            .end(before: [end])
+            .addSnapshotListener { snapshot, err in
+                self.parseListChat(snapshot, err, completion)
+        }
+    }
+    
+    func listChat(
+        _ chat: ChatProtocol,
+        start: Timestamp,
+        visibleCellCount: Int,
+        completion: @escaping ([MessageModel]?) -> Void
+    ) -> ListenerRegistration {
+        return chatBaseQuery(chat)
+            .limit(to: FirestoreService.chatPaginationQueryCount + visibleCellCount)
+            .start(after: [start])
+            .addSnapshotListener { snapshot, err in
+                self.parseListChat(snapshot, err, completion)
+        }
+    }
+    
+    private func chatBaseQuery(_ chat: ChatProtocol) -> Query {
         return db.collection("chats")
             .document(chat.documentId)
             .collection("messages")
             .order(by: "timestamp", descending: false)
+    }
+    
+    private func parseListChat(
+        _ snapshot: QuerySnapshot?,
+        _ err: Error?,
+        _ completion: @escaping ([MessageModel]?) -> Void
+    ) {
+        guard err == nil else {
+            debugPrint("Error while get ")
+            return
+        }
+        
+        if let snapshot = snapshot {
+            completion(snapshot.documents.map { MessageModel.fromSnapshot($0)! })
+        }
     }
     
     func sendMessage(

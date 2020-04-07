@@ -108,18 +108,76 @@ class ChatViewModelProtocolMock: ChatViewModelProtocol {
     var underlyingChat: ChatProtocol!
     var lastTapCellContent: MessageCellContentProtocol!
 
-    //MARK: - firestoreQuery
+    //MARK: - listChatAtStart
 
-    var firestoreQueryCallsCount = 0
-    var firestoreQueryCalled: Bool {
-        return firestoreQueryCallsCount > 0
+    var listChatAtStartCompletionCallsCount = 0
+    var listChatAtStartCompletionCalled: Bool {
+        return listChatAtStartCompletionCallsCount > 0
     }
-    var firestoreQueryReturnValue: FireQuery!
-    var firestoreQueryClosure: (() -> FireQuery)?
+    var listChatAtStartCompletionReceivedCompletion: (([MessageModel]?) -> Void)?
+    var listChatAtStartCompletionReceivedInvocations: [(([MessageModel]?) -> Void)] = []
+    var listChatAtStartCompletionReturnValue: ListenerRegistration!
+    var listChatAtStartCompletionClosure: ((@escaping ([MessageModel]?) -> Void) -> ListenerRegistration)?
 
-    func firestoreQuery() -> FireQuery {
-        firestoreQueryCallsCount += 1
-        return firestoreQueryClosure.map({ $0() }) ?? firestoreQueryReturnValue
+    func listChatAtStart(        completion: @escaping ([MessageModel]?) -> Void    ) -> ListenerRegistration {
+        listChatAtStartCompletionCallsCount += 1
+        listChatAtStartCompletionReceivedCompletion = completion
+        listChatAtStartCompletionReceivedInvocations.append(completion)
+        return listChatAtStartCompletionClosure.map({ $0(completion) }) ?? listChatAtStartCompletionReturnValue
+    }
+
+    //MARK: - listChatAtEnd
+
+    var listChatAtEndCompletionCallsCount = 0
+    var listChatAtEndCompletionCalled: Bool {
+        return listChatAtEndCompletionCallsCount > 0
+    }
+    var listChatAtEndCompletionReceivedCompletion: (([MessageModel]?) -> Void)?
+    var listChatAtEndCompletionReceivedInvocations: [(([MessageModel]?) -> Void)] = []
+    var listChatAtEndCompletionReturnValue: ListenerRegistration!
+    var listChatAtEndCompletionClosure: ((@escaping ([MessageModel]?) -> Void) -> ListenerRegistration)?
+
+    func listChatAtEnd(        completion: @escaping ([MessageModel]?) -> Void    ) -> ListenerRegistration {
+        listChatAtEndCompletionCallsCount += 1
+        listChatAtEndCompletionReceivedCompletion = completion
+        listChatAtEndCompletionReceivedInvocations.append(completion)
+        return listChatAtEndCompletionClosure.map({ $0(completion) }) ?? listChatAtEndCompletionReturnValue
+    }
+
+    //MARK: - listChat
+
+    var listChatEndVisibleCellCountCompletionCallsCount = 0
+    var listChatEndVisibleCellCountCompletionCalled: Bool {
+        return listChatEndVisibleCellCountCompletionCallsCount > 0
+    }
+    var listChatEndVisibleCellCountCompletionReceivedArguments: (end: Timestamp, visibleCellCount: Int, completion: ([MessageModel]?) -> Void)?
+    var listChatEndVisibleCellCountCompletionReceivedInvocations: [(end: Timestamp, visibleCellCount: Int, completion: ([MessageModel]?) -> Void)] = []
+    var listChatEndVisibleCellCountCompletionReturnValue: ListenerRegistration!
+    var listChatEndVisibleCellCountCompletionClosure: ((Timestamp, Int, @escaping ([MessageModel]?) -> Void) -> ListenerRegistration)?
+
+    func listChat(        end: Timestamp,        visibleCellCount: Int,        completion: @escaping ([MessageModel]?) -> Void    ) -> ListenerRegistration {
+        listChatEndVisibleCellCountCompletionCallsCount += 1
+        listChatEndVisibleCellCountCompletionReceivedArguments = (end: end, visibleCellCount: visibleCellCount, completion: completion)
+        listChatEndVisibleCellCountCompletionReceivedInvocations.append((end: end, visibleCellCount: visibleCellCount, completion: completion))
+        return listChatEndVisibleCellCountCompletionClosure.map({ $0(end, visibleCellCount, completion) }) ?? listChatEndVisibleCellCountCompletionReturnValue
+    }
+
+    //MARK: - listChat
+
+    var listChatStartVisibleCellCountCompletionCallsCount = 0
+    var listChatStartVisibleCellCountCompletionCalled: Bool {
+        return listChatStartVisibleCellCountCompletionCallsCount > 0
+    }
+    var listChatStartVisibleCellCountCompletionReceivedArguments: (start: Timestamp, visibleCellCount: Int, completion: ([MessageModel]?) -> Void)?
+    var listChatStartVisibleCellCountCompletionReceivedInvocations: [(start: Timestamp, visibleCellCount: Int, completion: ([MessageModel]?) -> Void)] = []
+    var listChatStartVisibleCellCountCompletionReturnValue: ListenerRegistration!
+    var listChatStartVisibleCellCountCompletionClosure: ((Timestamp, Int, @escaping ([MessageModel]?) -> Void) -> ListenerRegistration)?
+
+    func listChat(        start: Timestamp,        visibleCellCount: Int,        completion: @escaping ([MessageModel]?) -> Void    ) -> ListenerRegistration {
+        listChatStartVisibleCellCountCompletionCallsCount += 1
+        listChatStartVisibleCellCountCompletionReceivedArguments = (start: start, visibleCellCount: visibleCellCount, completion: completion)
+        listChatStartVisibleCellCountCompletionReceivedInvocations.append((start: start, visibleCellCount: visibleCellCount, completion: completion))
+        return listChatStartVisibleCellCountCompletionClosure.map({ $0(start, visibleCellCount, completion) }) ?? listChatStartVisibleCellCountCompletionReturnValue
     }
 
     //MARK: - sendMessage
@@ -447,22 +505,76 @@ class FirestoreServiceProtocolMock: FirestoreServiceProtocol {
     }
     var underlyingChatListQuery: Query!
 
-    //MARK: - createChatQuery
+    //MARK: - listChatAtStart
 
-    var createChatQueryCallsCount = 0
-    var createChatQueryCalled: Bool {
-        return createChatQueryCallsCount > 0
+    var listChatAtStartCompletionCallsCount = 0
+    var listChatAtStartCompletionCalled: Bool {
+        return listChatAtStartCompletionCallsCount > 0
     }
-    var createChatQueryReceivedChat: ChatProtocol?
-    var createChatQueryReceivedInvocations: [ChatProtocol] = []
-    var createChatQueryReturnValue: Query!
-    var createChatQueryClosure: ((ChatProtocol) -> Query)?
+    var listChatAtStartCompletionReceivedArguments: (chat: ChatProtocol, completion: ([MessageModel]?) -> Void)?
+    var listChatAtStartCompletionReceivedInvocations: [(chat: ChatProtocol, completion: ([MessageModel]?) -> Void)] = []
+    var listChatAtStartCompletionReturnValue: ListenerRegistration!
+    var listChatAtStartCompletionClosure: ((ChatProtocol, @escaping ([MessageModel]?) -> Void) -> ListenerRegistration)?
 
-    func createChatQuery(_ chat: ChatProtocol) -> Query {
-        createChatQueryCallsCount += 1
-        createChatQueryReceivedChat = chat
-        createChatQueryReceivedInvocations.append(chat)
-        return createChatQueryClosure.map({ $0(chat) }) ?? createChatQueryReturnValue
+    func listChatAtStart(        _ chat: ChatProtocol,        completion: @escaping ([MessageModel]?) -> Void    ) -> ListenerRegistration {
+        listChatAtStartCompletionCallsCount += 1
+        listChatAtStartCompletionReceivedArguments = (chat: chat, completion: completion)
+        listChatAtStartCompletionReceivedInvocations.append((chat: chat, completion: completion))
+        return listChatAtStartCompletionClosure.map({ $0(chat, completion) }) ?? listChatAtStartCompletionReturnValue
+    }
+
+    //MARK: - listChatAtEnd
+
+    var listChatAtEndCompletionCallsCount = 0
+    var listChatAtEndCompletionCalled: Bool {
+        return listChatAtEndCompletionCallsCount > 0
+    }
+    var listChatAtEndCompletionReceivedArguments: (chat: ChatProtocol, completion: ([MessageModel]?) -> Void)?
+    var listChatAtEndCompletionReceivedInvocations: [(chat: ChatProtocol, completion: ([MessageModel]?) -> Void)] = []
+    var listChatAtEndCompletionReturnValue: ListenerRegistration!
+    var listChatAtEndCompletionClosure: ((ChatProtocol, @escaping ([MessageModel]?) -> Void) -> ListenerRegistration)?
+
+    func listChatAtEnd(        _ chat: ChatProtocol,        completion: @escaping ([MessageModel]?) -> Void    ) -> ListenerRegistration {
+        listChatAtEndCompletionCallsCount += 1
+        listChatAtEndCompletionReceivedArguments = (chat: chat, completion: completion)
+        listChatAtEndCompletionReceivedInvocations.append((chat: chat, completion: completion))
+        return listChatAtEndCompletionClosure.map({ $0(chat, completion) }) ?? listChatAtEndCompletionReturnValue
+    }
+
+    //MARK: - listChat
+
+    var listChatEndVisibleCellCountCompletionCallsCount = 0
+    var listChatEndVisibleCellCountCompletionCalled: Bool {
+        return listChatEndVisibleCellCountCompletionCallsCount > 0
+    }
+    var listChatEndVisibleCellCountCompletionReceivedArguments: (chat: ChatProtocol, end: Timestamp, visibleCellCount: Int, completion: ([MessageModel]?) -> Void)?
+    var listChatEndVisibleCellCountCompletionReceivedInvocations: [(chat: ChatProtocol, end: Timestamp, visibleCellCount: Int, completion: ([MessageModel]?) -> Void)] = []
+    var listChatEndVisibleCellCountCompletionReturnValue: ListenerRegistration!
+    var listChatEndVisibleCellCountCompletionClosure: ((ChatProtocol, Timestamp, Int, @escaping ([MessageModel]?) -> Void) -> ListenerRegistration)?
+
+    func listChat(        _ chat: ChatProtocol,        end: Timestamp,        visibleCellCount: Int,        completion: @escaping ([MessageModel]?) -> Void    ) -> ListenerRegistration {
+        listChatEndVisibleCellCountCompletionCallsCount += 1
+        listChatEndVisibleCellCountCompletionReceivedArguments = (chat: chat, end: end, visibleCellCount: visibleCellCount, completion: completion)
+        listChatEndVisibleCellCountCompletionReceivedInvocations.append((chat: chat, end: end, visibleCellCount: visibleCellCount, completion: completion))
+        return listChatEndVisibleCellCountCompletionClosure.map({ $0(chat, end, visibleCellCount, completion) }) ?? listChatEndVisibleCellCountCompletionReturnValue
+    }
+
+    //MARK: - listChat
+
+    var listChatStartVisibleCellCountCompletionCallsCount = 0
+    var listChatStartVisibleCellCountCompletionCalled: Bool {
+        return listChatStartVisibleCellCountCompletionCallsCount > 0
+    }
+    var listChatStartVisibleCellCountCompletionReceivedArguments: (chat: ChatProtocol, start: Timestamp, visibleCellCount: Int, completion: ([MessageModel]?) -> Void)?
+    var listChatStartVisibleCellCountCompletionReceivedInvocations: [(chat: ChatProtocol, start: Timestamp, visibleCellCount: Int, completion: ([MessageModel]?) -> Void)] = []
+    var listChatStartVisibleCellCountCompletionReturnValue: ListenerRegistration!
+    var listChatStartVisibleCellCountCompletionClosure: ((ChatProtocol, Timestamp, Int, @escaping ([MessageModel]?) -> Void) -> ListenerRegistration)?
+
+    func listChat(        _ chat: ChatProtocol,        start: Timestamp,        visibleCellCount: Int,        completion: @escaping ([MessageModel]?) -> Void    ) -> ListenerRegistration {
+        listChatStartVisibleCellCountCompletionCallsCount += 1
+        listChatStartVisibleCellCountCompletionReceivedArguments = (chat: chat, start: start, visibleCellCount: visibleCellCount, completion: completion)
+        listChatStartVisibleCellCountCompletionReceivedInvocations.append((chat: chat, start: start, visibleCellCount: visibleCellCount, completion: completion))
+        return listChatStartVisibleCellCountCompletionClosure.map({ $0(chat, start, visibleCellCount, completion) }) ?? listChatStartVisibleCellCountCompletionReturnValue
     }
 
     //MARK: - sendMessage

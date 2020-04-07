@@ -11,7 +11,7 @@ import CodableFirebase
 
 typealias ImageSize = CGSize
 
-struct MessageModel: AutoCodable {
+public struct MessageModel: AutoCodable {
     
     var documentId: String?
     let kind: [MessageKind]
@@ -72,11 +72,17 @@ struct MessageModel: AutoCodable {
     }
     
     static func checkMerge(
-        left: MessageProtocol,
-        right: MessageProtocol
+        _ left: MessageProtocol,
+        _ right: MessageProtocol
     ) -> Bool {
         return left.userId == right.userId
             && abs(left.date.timeIntervalSince(right.date)) < 60 * 5 // 5 minutes interval
+    }
+}
+
+extension MessageModel: Equatable {
+    public static func == (lhs: MessageModel, rhs: MessageModel) -> Bool {
+            return lhs.documentId == rhs.documentId
     }
 }
 
@@ -85,7 +91,7 @@ extension MessageModel: MessageProtocol {
         return timestamp.dateValue()
     }
     
-    var isIncoming: Bool {
+    public var isIncoming: Bool {
         return userId != Auth.auth().currentUser!.uid
     }
     
