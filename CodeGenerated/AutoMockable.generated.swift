@@ -26,6 +26,43 @@ import Firebase
 
 
 
+class AlgoliaServiceProtocolMock: AlgoliaServiceProtocol {
+
+    //MARK: - searchChats
+
+    var searchChatsCompletionCallsCount = 0
+    var searchChatsCompletionCalled: Bool {
+        return searchChatsCompletionCallsCount > 0
+    }
+    var searchChatsCompletionReceivedArguments: (searchString: String, completion: SearchChatsCompletion)?
+    var searchChatsCompletionReceivedInvocations: [(searchString: String, completion: SearchChatsCompletion)] = []
+    var searchChatsCompletionClosure: ((String, @escaping SearchChatsCompletion) -> Void)?
+
+    func searchChats(_ searchString: String, completion: @escaping SearchChatsCompletion) {
+        searchChatsCompletionCallsCount += 1
+        searchChatsCompletionReceivedArguments = (searchString: searchString, completion: completion)
+        searchChatsCompletionReceivedInvocations.append((searchString: searchString, completion: completion))
+        searchChatsCompletionClosure?(searchString, completion)
+    }
+
+    //MARK: - searchMessages
+
+    var searchMessagesCompletionCallsCount = 0
+    var searchMessagesCompletionCalled: Bool {
+        return searchMessagesCompletionCallsCount > 0
+    }
+    var searchMessagesCompletionReceivedArguments: (searchString: String, completion: SearchMessagesCompletion)?
+    var searchMessagesCompletionReceivedInvocations: [(searchString: String, completion: SearchMessagesCompletion)] = []
+    var searchMessagesCompletionClosure: ((String, @escaping SearchMessagesCompletion) -> Void)?
+
+    func searchMessages(_ searchString: String, completion: @escaping SearchMessagesCompletion) {
+        searchMessagesCompletionCallsCount += 1
+        searchMessagesCompletionReceivedArguments = (searchString: searchString, completion: completion)
+        searchMessagesCompletionReceivedInvocations.append((searchString: searchString, completion: completion))
+        searchMessagesCompletionClosure?(searchString, completion)
+    }
+
+}
 class ChatViewControllerProtocolMock: ChatViewControllerProtocol {
 
     //MARK: - presentPhotoViewer
@@ -64,11 +101,11 @@ class ChatViewControllerProtocolMock: ChatViewControllerProtocol {
 
 }
 class ChatViewModelProtocolMock: ChatViewModelProtocol {
-    var chatModel: ChatModel {
-        get { return underlyingChatModel }
-        set(value) { underlyingChatModel = value }
+    var chat: ChatProtocol {
+        get { return underlyingChat }
+        set(value) { underlyingChat = value }
     }
-    var underlyingChatModel: ChatModel!
+    var underlyingChat: ChatProtocol!
     var lastTapCellContent: MessageCellContentProtocol!
 
     //MARK: - firestoreQuery
@@ -181,7 +218,7 @@ class ChatViewModelProtocolMock: ChatViewModelProtocol {
     var createForwardViewControllerForwardDelegateReturnValue: UIViewController!
     var createForwardViewControllerForwardDelegateClosure: ((ForwardDelegateProtocol) -> UIViewController)?
 
-    func createForwardViewController(forwardDelegate: ForwardDelegateProtocol) -> UIViewController {
+    func createForwardViewController(        forwardDelegate: ForwardDelegateProtocol    ) -> UIViewController {
         createForwardViewControllerForwardDelegateCallsCount += 1
         createForwardViewControllerForwardDelegateReceivedForwardDelegate = forwardDelegate
         createForwardViewControllerForwardDelegateReceivedInvocations.append(forwardDelegate)
@@ -203,6 +240,66 @@ class ChatViewModelProtocolMock: ChatViewModelProtocol {
         goToChatReceivedChatModel = chatModel
         goToChatReceivedInvocations.append(chatModel)
         goToChatClosure?(chatModel)
+    }
+
+    //MARK: - userData
+
+    var userDataCompletionCallsCount = 0
+    var userDataCompletionCalled: Bool {
+        return userDataCompletionCallsCount > 0
+    }
+    var userDataCompletionReceivedArguments: (userId: String, completion: (UserModel?) -> Void)?
+    var userDataCompletionReceivedInvocations: [(userId: String, completion: (UserModel?) -> Void)] = []
+    var userDataCompletionClosure: ((String, @escaping (UserModel?) -> Void) -> Void)?
+
+    func userData(        _ userId: String,        completion: @escaping (UserModel?) -> Void    ) {
+        userDataCompletionCallsCount += 1
+        userDataCompletionReceivedArguments = (userId: userId, completion: completion)
+        userDataCompletionReceivedInvocations.append((userId: userId, completion: completion))
+        userDataCompletionClosure?(userId, completion)
+    }
+
+    //MARK: - userListData
+
+    var userListDataCompletionCallsCount = 0
+    var userListDataCompletionCalled: Bool {
+        return userListDataCompletionCallsCount > 0
+    }
+    var userListDataCompletionReceivedArguments: (userList: [String], completion: ([UserModel]?) -> Void)?
+    var userListDataCompletionReceivedInvocations: [(userList: [String], completion: ([UserModel]?) -> Void)] = []
+    var userListDataCompletionClosure: (([String], @escaping ([UserModel]?) -> Void) -> Void)?
+
+    func userListData(        _ userList: [String],        completion: @escaping ([UserModel]?) -> Void    ) {
+        userListDataCompletionCallsCount += 1
+        userListDataCompletionReceivedArguments = (userList: userList, completion: completion)
+        userListDataCompletionReceivedInvocations.append((userList: userList, completion: completion))
+        userListDataCompletionClosure?(userList, completion)
+    }
+
+    //MARK: - startTypingCurrentUser
+
+    var startTypingCurrentUserCallsCount = 0
+    var startTypingCurrentUserCalled: Bool {
+        return startTypingCurrentUserCallsCount > 0
+    }
+    var startTypingCurrentUserClosure: (() -> Void)?
+
+    func startTypingCurrentUser() {
+        startTypingCurrentUserCallsCount += 1
+        startTypingCurrentUserClosure?()
+    }
+
+    //MARK: - endTypingCurrentUser
+
+    var endTypingCurrentUserCallsCount = 0
+    var endTypingCurrentUserCalled: Bool {
+        return endTypingCurrentUserCallsCount > 0
+    }
+    var endTypingCurrentUserClosure: (() -> Void)?
+
+    func endTypingCurrentUser() {
+        endTypingCurrentUserCallsCount += 1
+        endTypingCurrentUserClosure?()
     }
 
     //MARK: - didTapContent
@@ -339,6 +436,16 @@ class ChatViewModelProtocolMock: ChatViewModelProtocol {
 
 }
 class FirestoreServiceProtocolMock: FirestoreServiceProtocol {
+    var contactListQuery: Query {
+        get { return underlyingContactListQuery }
+        set(value) { underlyingContactListQuery = value }
+    }
+    var underlyingContactListQuery: Query!
+    var chatListQuery: Query {
+        get { return underlyingChatListQuery }
+        set(value) { underlyingChatListQuery = value }
+    }
+    var underlyingChatListQuery: Query!
 
     //MARK: - createChatQuery
 
@@ -346,16 +453,16 @@ class FirestoreServiceProtocolMock: FirestoreServiceProtocol {
     var createChatQueryCalled: Bool {
         return createChatQueryCallsCount > 0
     }
-    var createChatQueryReceivedChatModel: ChatModel?
-    var createChatQueryReceivedInvocations: [ChatModel] = []
+    var createChatQueryReceivedChat: ChatProtocol?
+    var createChatQueryReceivedInvocations: [ChatProtocol] = []
     var createChatQueryReturnValue: Query!
-    var createChatQueryClosure: ((ChatModel) -> Query)?
+    var createChatQueryClosure: ((ChatProtocol) -> Query)?
 
-    func createChatQuery(_ chatModel: ChatModel) -> Query {
+    func createChatQuery(_ chat: ChatProtocol) -> Query {
         createChatQueryCallsCount += 1
-        createChatQueryReceivedChatModel = chatModel
-        createChatQueryReceivedInvocations.append(chatModel)
-        return createChatQueryClosure.map({ $0(chatModel) }) ?? createChatQueryReturnValue
+        createChatQueryReceivedChat = chat
+        createChatQueryReceivedInvocations.append(chat)
+        return createChatQueryClosure.map({ $0(chat) }) ?? createChatQueryReturnValue
     }
 
     //MARK: - sendMessage
@@ -460,6 +567,96 @@ class FirestoreServiceProtocolMock: FirestoreServiceProtocol {
         userDataCompletionClosure?(userId, completion)
     }
 
+    //MARK: - userListData
+
+    var userListDataCompletionCallsCount = 0
+    var userListDataCompletionCalled: Bool {
+        return userListDataCompletionCallsCount > 0
+    }
+    var userListDataCompletionReceivedArguments: (userList: [String], completion: ([UserModel]?) -> Void)?
+    var userListDataCompletionReceivedInvocations: [(userList: [String], completion: ([UserModel]?) -> Void)] = []
+    var userListDataCompletionClosure: (([String], @escaping ([UserModel]?) -> Void) -> Void)?
+
+    func userListData(        _ userList: [String],        completion: @escaping ([UserModel]?) -> Void    ) {
+        userListDataCompletionCallsCount += 1
+        userListDataCompletionReceivedArguments = (userList: userList, completion: completion)
+        userListDataCompletionReceivedInvocations.append((userList: userList, completion: completion))
+        userListDataCompletionClosure?(userList, completion)
+    }
+
+    //MARK: - chatData
+
+    var chatDataCompletionCallsCount = 0
+    var chatDataCompletionCalled: Bool {
+        return chatDataCompletionCallsCount > 0
+    }
+    var chatDataCompletionReceivedArguments: (chatId: String, completion: (ChatModel?) -> Void)?
+    var chatDataCompletionReceivedInvocations: [(chatId: String, completion: (ChatModel?) -> Void)] = []
+    var chatDataCompletionClosure: ((String, @escaping (ChatModel?) -> Void) -> Void)?
+
+    func chatData(        _ chatId: String,        completion: @escaping (ChatModel?) -> Void    ) {
+        chatDataCompletionCallsCount += 1
+        chatDataCompletionReceivedArguments = (chatId: chatId, completion: completion)
+        chatDataCompletionReceivedInvocations.append((chatId: chatId, completion: completion))
+        chatDataCompletionClosure?(chatId, completion)
+    }
+
+    //MARK: - onlineCurrentUser
+
+    var onlineCurrentUserCallsCount = 0
+    var onlineCurrentUserCalled: Bool {
+        return onlineCurrentUserCallsCount > 0
+    }
+    var onlineCurrentUserClosure: (() -> Void)?
+
+    func onlineCurrentUser() {
+        onlineCurrentUserCallsCount += 1
+        onlineCurrentUserClosure?()
+    }
+
+    //MARK: - offlineCurrentUser
+
+    var offlineCurrentUserCallsCount = 0
+    var offlineCurrentUserCalled: Bool {
+        return offlineCurrentUserCallsCount > 0
+    }
+    var offlineCurrentUserClosure: (() -> Void)?
+
+    func offlineCurrentUser() {
+        offlineCurrentUserCallsCount += 1
+        offlineCurrentUserClosure?()
+    }
+
+    //MARK: - startTypingCurrentUser
+
+    var startTypingCurrentUserCallsCount = 0
+    var startTypingCurrentUserCalled: Bool {
+        return startTypingCurrentUserCallsCount > 0
+    }
+    var startTypingCurrentUserReceivedChatId: String?
+    var startTypingCurrentUserReceivedInvocations: [String] = []
+    var startTypingCurrentUserClosure: ((String) -> Void)?
+
+    func startTypingCurrentUser(_ chatId: String) {
+        startTypingCurrentUserCallsCount += 1
+        startTypingCurrentUserReceivedChatId = chatId
+        startTypingCurrentUserReceivedInvocations.append(chatId)
+        startTypingCurrentUserClosure?(chatId)
+    }
+
+    //MARK: - endTypingCurrentUser
+
+    var endTypingCurrentUserCallsCount = 0
+    var endTypingCurrentUserCalled: Bool {
+        return endTypingCurrentUserCallsCount > 0
+    }
+    var endTypingCurrentUserClosure: (() -> Void)?
+
+    func endTypingCurrentUser() {
+        endTypingCurrentUserCallsCount += 1
+        endTypingCurrentUserClosure?()
+    }
+
 }
 class ImagePickerServiceProtocolMock: ImagePickerServiceProtocol {
 
@@ -530,15 +727,15 @@ class RouterProtocolMock: RouterProtocol {
     var showChatCalled: Bool {
         return showChatCallsCount > 0
     }
-    var showChatReceivedChatModel: ChatModel?
-    var showChatReceivedInvocations: [ChatModel] = []
-    var showChatClosure: ((ChatModel) -> Void)?
+    var showChatReceivedChat: ChatProtocol?
+    var showChatReceivedInvocations: [ChatProtocol] = []
+    var showChatClosure: ((ChatProtocol) -> Void)?
 
-    func showChat(_ chatModel: ChatModel) {
+    func showChat(_ chat: ChatProtocol) {
         showChatCallsCount += 1
-        showChatReceivedChatModel = chatModel
-        showChatReceivedInvocations.append(chatModel)
-        showChatClosure?(chatModel)
+        showChatReceivedChat = chat
+        showChatReceivedInvocations.append(chat)
+        showChatClosure?(chat)
     }
 
     //MARK: - popToRoot

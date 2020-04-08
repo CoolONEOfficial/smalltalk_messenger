@@ -17,7 +17,7 @@ protocol RouterProtocol: RouterMain, AutoMockable {
     func initialViewController()
     func showBottomBar()
     func showChatList()
-    func showChat(_ chatModel: ChatModel)
+    func showChat(_ chat: ChatProtocol)
     func popToRoot()
 }
 
@@ -53,17 +53,20 @@ class Router: RouterProtocol {
     
     func showChatList() {
         if let navigationController = navigationController {
-            guard let chatViewController = assemblyBuilder?.createChatListModule(router: self) else { return }
+            guard let chatViewController = assemblyBuilder?.createChatListModule(
+                router: self,
+                forwardDelegate: nil
+            ) else { return }
             navigationController.viewControllers = [chatViewController]
         }
     }
     
-    func showChat(_ chatModel: ChatModel) {
+    func showChat(_ chat: ChatProtocol) {
         if let navigationController = navigationController {
             guard let chatViewController =
                 assemblyBuilder?.createChatModule(
                     router: self,
-                    chatModel: chatModel
+                    chat: chat
                 ) else { return }
             navigationController.pushViewController(chatViewController, animated: true)
         }

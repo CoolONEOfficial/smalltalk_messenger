@@ -9,18 +9,25 @@ import Foundation
 import Firebase
 import CodableFirebase
 
-struct ChatModel: AutoDecodable {
+struct ChatModel: AutoCodable {
     
-    var documentId: String = ""
+    var documentId: String!
     let users: [String]
-    let name: String
-    let lastMessage: MessageModel?
+    let lastMessage: MessageModel
+    let type: ChatType
     
-    static let defaultDocumentId: String = ""
-    static let defaultLastMessage: MessageModel? = nil
+    enum CodingKeys: String, CodingKey {
+        case documentId
+        case users
+        case lastMessage
+        case type
+        case enumCaseKey
+    }
+    
+    static let defaultDocumentId: String! = nil
     
     static func empty() -> ChatModel {
-        return ChatModel(users: [], name: "", lastMessage: MessageModel.empty())
+        return ChatModel(users: [], lastMessage: MessageModel.empty(), type: .personalCorr)
     }
     
     static func fromSnapshot(_ snapshot: DocumentSnapshot) -> ChatModel? {
@@ -38,4 +45,33 @@ struct ChatModel: AutoDecodable {
             return nil
         }
     }
+}
+
+extension ChatModel: ChatProtocol {
+    
+    var friendId: String? {
+        return users.first(where: { Auth.auth().currentUser!.uid != $0 })
+    }
+    
+    var avatarRef: StorageReference {
+        let path: String?
+        
+        switch type {
+        case .personalCorr:
+            if let friendId = friendId {
+                path = "users/\(friendId)/avatar.jpg"
+            } else {
+                path = nil
+            }
+        case .chat:
+            if let docId = documentId {
+                path = "chats/\(docId)/avatar.jpg"
+            } else {
+                path = nil
+            }
+        }
+        
+        return Storage.storage().reference(withPath: path!)
+    }
+    
 }

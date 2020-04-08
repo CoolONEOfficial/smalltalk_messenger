@@ -18,12 +18,16 @@ struct MessageModel: AutoCodable {
     let userId: String
     let timestamp: Timestamp
     
+    var chatId: String?
+    var chatUsers: [String]?
+    
     enum CodingKeys: String, CodingKey {
         case documentId
         case kind
         case userId
         case timestamp
-        case filename
+        case chatId
+        case chatUsers
         case enumCaseKey
     }
     
@@ -34,7 +38,6 @@ struct MessageModel: AutoCodable {
         case forward(userId: String)
     }
     
-    static let defaultDocumentId: String? = nil
     static let defaultKind: [MessageKind] = []
     
     static func empty() -> MessageModel {
@@ -86,6 +89,18 @@ extension MessageModel: MessageProtocol {
         return userId != Auth.auth().currentUser!.uid
     }
     
+    var textColor: UIColor {
+        return isIncoming
+            ? .plainText
+            : .accentText
+    }
+    
+    var backgroundColor: UIColor {
+        return isIncoming
+            ? .plainBackground
+            : .accent
+    }
+    
     func forwardedKind(_ userId: String) -> [MessageModel.MessageKind] {
         var forwardedKind = kind
         if case .forward = forwardedKind.first {
@@ -93,6 +108,51 @@ extension MessageModel: MessageProtocol {
         }
         forwardedKind.insert(.forward(userId: userId), at: 0)
         return forwardedKind
+    }
+    
+    var previewText: String {
+        var imageCount = 0
+        var text = ""
+        var attachmentText = ""
+        var icon = ""
+        for mKind in kind {
+            switch mKind {
+            case .image:
+                imageCount += 1
+                icon = "🖼️ "
+                attachmentText = "Image"
+            case .audio:
+                icon = "🎵 "
+                attachmentText = "Audio"
+            case .text(let kindText):
+                text = kindText
+            case .forward: break
+            }
+        }
+        return "\(imageCount > 1 ? "x\(imageCount) " : "")\(icon)\(text.isEmpty ? attachmentText : text)"
+    }
+    
+    var timestampText: String {
+        let calendar = Calendar.current
+        let components = date.get(.day, .year)
+        let now = Date()
+
+        let formatter = DateFormatter()
+        if components.day == now.get(.day).day! {
+            formatter.dateFormat = "HH:mm"
+        } else if calendar.dateComponents(
+            [.day],
+            from: calendar.startOfDay(for: date),
+            to: calendar.startOfDay(for: now)
+        ).day! < 6 {
+            formatter.dateFormat = "E"
+        } else if components.year! == now.get(.year).year! {
+            formatter.dateFormat = "dd.MM"
+        } else {
+            formatter.dateFormat = "dd.MM.yy"
+        }
+        
+        return formatter.string(from: date)
     }
 }
 
@@ -137,5 +197,17 @@ extension MessageModel: MessageForwardProtocol {
         default:
             return nil
         }
+    }
+}
+
+// MARK: - Date components helper
+
+extension Date {
+    func get(_ components: Calendar.Component..., calendar: Calendar = Calendar.current) -> DateComponents {
+        return calendar.dateComponents(Set(components), from: self)
+    }
+
+    func get(_ component: Calendar.Component, calendar: Calendar = Calendar.current) -> Int {
+        return calendar.component(component, from: self)
     }
 }

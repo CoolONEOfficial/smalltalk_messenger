@@ -4,20 +4,63 @@
 
 extension ChatModel {
 
+    internal init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        documentId = (try? container.decodeIfPresent(String.self, forKey: .documentId)) ?? ChatModel.defaultDocumentId
+        users = try container.decode([String].self, forKey: .users)
+        lastMessage = try container.decode(MessageModel.self, forKey: .lastMessage)
+        type = try container.decode(ChatType.self, forKey: .type)
+    }
+
+    internal func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+
+        try container.encodeIfPresent(documentId, forKey: .documentId)
+        try container.encode(users, forKey: .users)
+        try container.encode(lastMessage, forKey: .lastMessage)
+        try container.encode(type, forKey: .type)
+    }
+
+}
+
+extension ChatType {
+
     enum CodingKeys: String, CodingKey {
-        case documentId
-        case users
-        case name
-        case lastMessage
+        case personalCorr
+        case chat
+        case title
+        case adminId
     }
 
     internal init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
-        documentId = (try? container.decode(String.self, forKey: .documentId)) ?? ChatModel.defaultDocumentId
-        users = try container.decode([String].self, forKey: .users)
-        name = try container.decode(String.self, forKey: .name)
-        lastMessage = (try? container.decodeIfPresent(MessageModel.self, forKey: .lastMessage)) ?? ChatModel.defaultLastMessage
+        if container.allKeys.contains(.personalCorr), try container.decodeNil(forKey: .personalCorr) == false {
+            self = .personalCorr
+            return
+        }
+        if container.allKeys.contains(.chat), try container.decodeNil(forKey: .chat) == false {
+            let associatedValues = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: .chat)
+            let title = try associatedValues.decode(String.self, forKey: .title)
+            let adminId = try associatedValues.decode(String.self, forKey: .adminId)
+            self = .chat(title: title, adminId: adminId)
+            return
+        }
+        throw DecodingError.dataCorrupted(.init(codingPath: decoder.codingPath, debugDescription: "Unknown enum case"))
+    }
+
+    internal func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+
+        switch self {
+        case .personalCorr:
+            _ = container.nestedContainer(keyedBy: CodingKeys.self, forKey: .personalCorr)
+        case let .chat(title, adminId):
+            var associatedValues = container.nestedContainer(keyedBy: CodingKeys.self, forKey: .chat)
+            try associatedValues.encode(title, forKey: .title)
+            try associatedValues.encode(adminId, forKey: .adminId)
+        }
     }
 
 }
@@ -28,10 +71,12 @@ extension MessageModel {
     internal init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
-        documentId = (try? container.decodeIfPresent(String.self, forKey: .documentId)) ?? MessageModel.defaultDocumentId
+        documentId = try container.decodeIfPresent(String.self, forKey: .documentId)
         kind = (try? container.decode([MessageKind].self, forKey: .kind)) ?? MessageModel.defaultKind
         userId = try container.decode(String.self, forKey: .userId)
         timestamp = MessageModel.decodeTimestamp(from: container)
+        chatId = try container.decodeIfPresent(String.self, forKey: .chatId)
+        chatUsers = try container.decodeIfPresent([String].self, forKey: .chatUsers)
     }
 
     internal func encode(to encoder: Encoder) throws {
@@ -41,6 +86,8 @@ extension MessageModel {
         try container.encode(kind, forKey: .kind)
         try container.encode(userId, forKey: .userId)
         try container.encode(timestamp, forKey: .timestamp)
+        try container.encodeIfPresent(chatId, forKey: .chatId)
+        try container.encodeIfPresent(chatUsers, forKey: .chatUsers)
     }
 
 }
@@ -106,6 +153,28 @@ extension MessageModel.MessageKind {
             var associatedValues = container.nestedContainer(keyedBy: CodingKeys.self, forKey: .forward)
             try associatedValues.encode(userId, forKey: .userId)
         }
+    }
+
+}
+
+extension UserModel {
+
+    enum CodingKeys: String, CodingKey {
+        case documentId
+        case name
+        case surname
+        case online
+        case typing
+    }
+
+    internal init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        documentId = try container.decodeIfPresent(String.self, forKey: .documentId)
+        name = try container.decode(String.self, forKey: .name)
+        surname = try container.decode(String.self, forKey: .surname)
+        online = (try? container.decode(Bool.self, forKey: .online)) ?? UserModel.defaultOnline
+        typing = try container.decodeIfPresent(String.self, forKey: .typing)
     }
 
 }

@@ -7,68 +7,76 @@
 
 import UIKit
 import Reusable
+import FirebaseAuth
+import FirebaseStorage
 
 class ChatCell: UITableViewCell, NibReusable {
 
-    @IBOutlet private var avatarImageView: UIImageView!
-    @IBOutlet private var chatNameLabel: UILabel!
-    @IBOutlet private var senderNameLabel: UILabel!
-    @IBOutlet private var lastMessageLabel: UILabel!
+    // MARK: - Outlets
     
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        
-        chatNameLabel.isHidden = true
-        avatarImageView.image = #imageLiteral(resourceName: "Nathan-Tannar")
-        avatarImageView.layer.cornerRadius = avatarImageView.bounds.width / 2
-    }
+    @IBOutlet private var avatarImage: UIImageView!
+    @IBOutlet private var titleLabel: UILabel!
+    @IBOutlet private var senderLabel: UILabel!
+    @IBOutlet private var messageLabel: UILabel!
+    @IBOutlet private var timestampLabel: UILabel!
     
-    func loadChatModel(
-        _ chatModel: ChatModel
-    ) {
-        if chatModel.users.count > 2 {
-            chatNameLabel.isHidden = false
-            loadGroupChatData(
-                chatName: chatModel.name,
-                lastMessage: chatModel.lastMessage ?? MessageModel.empty()
-            )
-        } else {
-            chatNameLabel.isHidden = true
-            loadChatData(
-                lastMessage: chatModel.lastMessage ?? MessageModel.empty()
-            )
+    // MARK: - Vars
+    
+    var delegate: ChatListCellDelegateProtocol? {
+        didSet {
+            setupUi()
         }
     }
     
-    private func loadGroupChatData(
-        chatName: String,
-        lastMessage: MessageModel
-    ) {
-        chatNameLabel.text = chatName
-        loadChatData(lastMessage: lastMessage)
+    internal var chat: ChatModel!
+    
+    private func setupUi() {
+        switch chat.type {
+        case .personalCorr:
+            setupPersonalCorr()
+        case .chat(let title, _):
+            setupChat(title)
+        }
+        messageLabel.text = chat.lastMessage.previewText
+        setupAvatar()
+        timestampLabel.text = chat.lastMessage.timestampText
     }
     
-    private func loadChatData(
-        lastMessage: MessageModel
+    private func setupChat(
+        _ title: String
     ) {
-        senderNameLabel.text = String(lastMessage.userId) // load user name
-        var imageCount = 0
-        var allText = ""
-        var icon = ""
-        for mKind in lastMessage.kind {
-            switch mKind {
-            case .image(_):
-                imageCount += 1
-                icon = "🖼️"
-            case .audio(_):
-                icon = "🎵"
-            case .text(let text):
-                allText += text
-            case .forward(_):
-                allText += "↪️"
+        titleLabel.text = title
+        senderLabel.isHidden = false
+        messageLabel.numberOfLines = 1
+        
+        senderLabel.text = "..."
+        delegate?.userData(
+            chat.lastMessage.userId
+        ) { userModel in
+            if let userModel = userModel {
+                self.senderLabel.text = userModel.name
             }
         }
-        lastMessageLabel.text = "\(imageCount > 1 ? "x\(imageCount)" : "") \(icon) \(allText)"
+    }
+    
+    private func setupPersonalCorr() {
+        titleLabel.text = "..."
+        senderLabel.isHidden = true
+        messageLabel.numberOfLines = 2
         
+        delegate?.userData(
+            chat.users.filter({ $0 != Auth.auth().currentUser!.uid }).first!
+        ) { friendModel in
+            if let friendModel = friendModel {
+                self.titleLabel.text = friendModel.fullName
+            } else {
+                self.titleLabel.text = "Deleted user"
+            }
+        }
+    }
+    
+    private func setupAvatar() {
+        avatarImage.sd_setSmallImage(with: chat.avatarRef, placeholderImage: #imageLiteral(resourceName: "logo"))
+        avatarImage.layer.cornerRadius = avatarImage.bounds.width / 2
     }
 }

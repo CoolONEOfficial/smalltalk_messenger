@@ -26,17 +26,25 @@ class ChatViewController: UIViewController {
     
     // MARK: - Vars
     
+    var defaultTitle = "..."
+    
     let inputBar = ChatInputBar()
     var viewModel: ChatViewModelProtocol!
     var photosViewerCoordinator: ChatPhotoViewerDataSource!
     
+    let titleStack = UIStackView()
+    let titleLabel = UILabel()
+    let subtitleLabel = UILabel()
+    
     var deleteButton = UIButton()
     var forwardButton = UIButton()
-    let stack = UIStackView()
+    let editStack = UIStackView()
     
     var forwardMessages: [MessageProtocol]!
     
     var keyboardHeight: CGFloat = 0
+    
+    var isTyping: Bool = false
     
     lazy var autocompleteManager: AutocompleteManager = { [unowned self] in
         let manager = AutocompleteManager(for: self.inputBar.inputTextView)
@@ -90,13 +98,72 @@ class ChatViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        title = viewModel.chatModel.name
+        switch viewModel.chat.type {
+        case .personalCorr:
+            viewModel.userData(viewModel.chat.friendId!) { user in
+                if let user = user {
+                    self.defaultTitle = user.fullName
+                    self.transitionSubtitleLabel {
+                        if user.typing == self.viewModel.chat.documentId! {
+                            self.subtitleLabel.text = "\(user.name) typing"
+                        } else {
+                            self.subtitleLabel.text = user.onlineText
+                        }
+                    }
+                    
+                    if !self.tableView.isEditing {
+                        self.titleLabel.text = self.defaultTitle
+                    }
+                }
+            }
+        case .chat(let title, _):
+            defaultTitle = title
+            subtitleLabel.text = "\(viewModel.chat.users.count) users"
+            
+            viewModel.userListData(viewModel.chat.users) { userList in
+                if let userList = userList {
+                    let typingUsers = userList.filter({
+                        $0.typing == self.viewModel.chat.documentId
+                            && $0.documentId != Auth.auth().currentUser!.uid
+                    })
+                    self.transitionSubtitleLabel {
+                        if typingUsers.isEmpty {
+                            let onlineUsers = userList.filter({ $0.online })
+                            var subtitleStr = "\(self.viewModel.chat.users.count) users"
+                            if onlineUsers.count > 1 {
+                                subtitleStr += ", \(onlineUsers.count) online"
+                            }
+                            self.subtitleLabel.text = subtitleStr
+                        } else {
+                            self.subtitleLabel.text = typingUsers
+                                .map({ $0.name + " typing" })
+                                .joined(separator: ", ")
+                        }
+                    }
+                }
+            }
+        }
+        
+        titleLabel.text = defaultTitle
         view.tintColor = .accent
         
+        setupTitle()
         setupTableView()
         setupInputBar()
         setupEditModeButtons()
         setupFloatingBottomButton()
+    }
+    
+    private func transitionSubtitleLabel(
+        animations: (() -> Void)?
+    ) {
+        UIView.transition(
+            with: self.subtitleLabel,
+            duration: 0.3,
+            options: .transitionCrossDissolve,
+            animations: animations,
+            completion: nil
+        )
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -106,6 +173,21 @@ class ChatViewController: UIViewController {
     
     // MARK: - Methods
     
+    private func setupTitle() {
+        titleLabel.font = .systemFont(ofSize: 18, weight: .semibold)
+        titleLabel.textAlignment = .center
+        
+        subtitleLabel.font = .systemFont(ofSize: 12)
+        subtitleLabel.textAlignment = .center
+        subtitleLabel.textColor = .secondaryLabel
+        subtitleLabel.numberOfLines = 1
+        
+        let stackView = UIStackView(arrangedSubviews: [titleLabel, subtitleLabel])
+        stackView.axis = .vertical
+        
+        navigationItem.titleView = stackView
+    }
+    
     private func setupFloatingBottomButton() {
         floatingBottomButton.layer.cornerRadius = floatingBottomButton.bounds.width / 2
         floatingBottomButton.layer.borderWidth = 0.5
@@ -113,13 +195,13 @@ class ChatViewController: UIViewController {
     }
     
     private func setupEditModeButtons() {
-        stack.axis = .horizontal
-        stack.alignment = .fill
-        stack.distribution = .equalSpacing
-        stack.addArrangedSubview(deleteButton)
-        stack.addArrangedSubview(forwardButton)
-        stack.isLayoutMarginsRelativeArrangement = true
-        stack.directionalLayoutMargins = .init(top: 5, leading: 10, bottom: 0, trailing: 10)
+        editStack.axis = .horizontal
+        editStack.alignment = .fill
+        editStack.distribution = .equalSpacing
+        editStack.addArrangedSubview(deleteButton)
+        editStack.addArrangedSubview(forwardButton)
+        editStack.isLayoutMarginsRelativeArrangement = true
+        editStack.directionalLayoutMargins = .init(top: 5, leading: 10, bottom: 0, trailing: 10)
         
         deleteButton.contentHorizontalAlignment = .fill
         deleteButton.contentVerticalAlignment = .fill
@@ -148,6 +230,7 @@ class ChatViewController: UIViewController {
     private func setupTableView() {
         tableView.register(cellType: MessageCell.self)
         tableView.delegate = self
+        tableView.chatDelegate = self
         tableView.messageDelegate = viewModel
         tableView.allowsMultipleSelection = false
         tableView.allowsMultipleSelectionDuringEditing = true
@@ -188,15 +271,14 @@ class ChatViewController: UIViewController {
     }
     
     internal func didStartSendMessage() {
-        inputBar.sendButton.startAnimating()
+        (inputBar.rightStackView.subviews.first as! InputBarSendButton).startAnimating()
         inputBar.inputTextView.text = String()
         inputBar.inputTextView.placeholder = "Sending..."
     }
     
     internal func didEndSendMessage() {
-        inputBar.sendButton.stopAnimating()
+        (inputBar.rightStackView.subviews.first as! InputBarSendButton).stopAnimating()
         inputBar.inputTextView.placeholder = "Message..."
-        tableView.scrollToBottom(animated: true)
         inputBar.invalidatePlugins()
     }
     

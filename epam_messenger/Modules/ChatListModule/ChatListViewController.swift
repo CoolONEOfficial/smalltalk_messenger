@@ -15,6 +15,21 @@ protocol ForwardDelegateProtocol {
     func didSelectChat(_ chatModel: ChatModel)
 }
 
+protocol ChatListCellDelegateProtocol {
+    func userListData(
+        _ userList: [String],
+        completion: @escaping ([UserModel]?) -> Void
+    )
+    func userData(
+        _ userId: String,
+        completion: @escaping (UserModel?) -> Void
+    )
+    func chatData(
+        _ chatId: String,
+        completion: @escaping (ChatModel?) -> Void
+    )
+}
+
 protocol ChatListViewControllerProtocol {
 }
 
@@ -28,7 +43,8 @@ class ChatListViewController: UIViewController {
     
     var viewModel: ChatListViewModelProtocol!
     let searchController = UISearchController(searchResultsController: nil)
-    private var searchItems: [ChatModel] = .init()
+    internal var searchChatItems = [ChatModel]()
+    internal var searchMessageItems = [MessageModel]()
     
     var forwardDelegate: ForwardDelegateProtocol?
     
@@ -55,6 +71,12 @@ class ChatListViewController: UIViewController {
         
         if isForward {
             title = "Forward"
+            let backItem = UIBarButtonItem()
+            backItem.title = "Cancel"
+            backItem.tintColor = .accent
+            backItem.action = #selector(didCancelTap)
+            backItem.target = self
+            navigationItem.leftBarButtonItem = backItem
         }
         
         setupTableView()
@@ -64,8 +86,14 @@ class ChatListViewController: UIViewController {
         didSelectionChange()
     }
     
+    @objc func didCancelTap() {
+        navigationController?.dismiss(animated: true, completion: nil)
+    }
+    
     private func setupTableView() {
         tableView.register(cellType: ChatCell.self)
+        tableView.register(cellType: SearchChatCell.self)
+        tableView.register(cellType: SearchMessageCell.self)
         tableView.delegate = self
         
         bindDataSource = self.tableView.bind(
@@ -74,8 +102,9 @@ class ChatListViewController: UIViewController {
             let cell = tableView.dequeueReusableCell(for: indexPath, cellType: ChatCell.self)
             
             if let chatModel = self.chatFrom(snapshot) {
-                cell.loadChatModel(chatModel)
+                cell.chat = chatModel
             }
+            cell.delegate = self
             
             return cell
         }
@@ -92,6 +121,7 @@ class ChatListViewController: UIViewController {
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = "Search by chats"
+        searchController.navigationItem.rightBarButtonItem?.tintColor = .red
         if isForward {
             navigationItem.searchController = searchController
         } else {
@@ -199,28 +229,57 @@ class ChatListViewController: UIViewController {
     var isForward: Bool {
         return tabBarController == nil
     }
+    
+    var isSearch: Bool {
+        return !(searchController.searchBar.text?.isEmpty ?? true)
+    }
 }
 
 extension ChatListViewController: UITableViewDelegate {
+    
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        searchController.searchBar.resignFirstResponder()
+    }
+    
+    private func chatModel(
+        at indexPath: IndexPath,
+        completion: @escaping (ChatModel?) -> Void
+    ) {
+        switch indexPath.section {
+        case 0:
+            completion(searchChatItems[indexPath.item])
+        case 1:
+            let message = searchMessageItems[indexPath.item]
+            viewModel.chatData(message.chatId!, completion: completion)
+        default:
+            fatalError("Unknown section")
+        }
+    }
+    
+    private func didSelect(_ chatModel: ChatModel?) {
+        if let chatModel = chatModel {
+            if isForward {
+                navigationController?.dismiss(animated: true) {
+                    self.forwardDelegate?.didSelectChat(chatModel)
+                }
+            } else {
+                viewModel.goToChat(chatModel)
+            }
+        } else {
+            debugPrint("Error while parse selected chat")
+        }
+    }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if tableView.isEditing {
             didSelectionChange()
         } else {
-            let chatModel = (searchController.searchBar.text?.isEmpty ?? true)
-                ? ChatModel.fromSnapshot(bindDataSource.items[indexPath.item])
-                : searchItems[indexPath.item]
-            
-            if let chatModel = chatModel {
-                if isForward {
-                    navigationController?.dismiss(animated: true) {
-                        self.forwardDelegate?.didSelectChat(chatModel)
-                    }
-                } else {
-                    viewModel.goToChat(chatModel)
+            if isSearch {
+                chatModel(at: indexPath) { chatModel in
+                    self.didSelect(chatModel)
                 }
             } else {
-                debugPrint("Error while parse selected chat")
+                didSelect(ChatModel.fromSnapshot(bindDataSource.items[indexPath.item]))
             }
         }
     }
@@ -230,17 +289,17 @@ extension ChatListViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, shouldBeginMultipleSelectionInteractionAt indexPath: IndexPath) -> Bool {
-        return !isForward
+        return !isForward && !isSearch
     }
     
     func tableView(_ tableView: UITableView, didBeginMultipleSelectionInteractionAt indexPath: IndexPath) {
-        if !isForward {
+        if !isForward && !isSearch {
             self.setEditing(true, animated: true)
         }
     }
     
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
-        if !isForward,
+        if !isForward, !isSearch,
             let chatModel = chatAt(indexPath.item) {
             let identifier = NSString(string: String(indexPath.item))
             let configuration = UIContextMenuConfiguration(identifier: identifier, previewProvider: { () -> UIViewController? in
@@ -278,52 +337,22 @@ extension ChatListViewController: UITableViewDelegate {
     
 }
 
-// MARK: - Search bar
+// MARK: - Cell delegate
 
-extension ChatListViewController: UISearchResultsUpdating, UISearchControllerDelegate {
+extension ChatListViewController: ChatListCellDelegateProtocol {
     
-    func updateSearchResults(for searchController: UISearchController) {
-        NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(reload), object: nil)
-        if searchController.searchBar.text?.isEmpty ?? true {
-            if !bindDataSource.isEqual(tableView.dataSource) {
-                bindDataSource.bind(to: tableView)
-                tableView.reloadData()
-            }
-        } else {
-            self.perform(#selector(reload), with: nil, afterDelay: 0.5)
-        }
+    func userData(_ userId: String, completion: @escaping (UserModel?) -> Void) {
+        viewModel.userData(userId, completion: completion)
     }
     
-    @objc func reload() {
-        if bindDataSource.isEqual(tableView.dataSource) {
-            bindDataSource.unbind()
-        }
-        tableView.dataSource = nil
-        searchController.searchBar.isLoading = true
-        viewModel.searchChats(searchController.searchBar.text!) { chats in
-            if let chats = chats {
-                self.searchItems = chats
-                if !(self.tableView.dataSource?.isEqual(self) ?? false) {
-                    self.tableView.dataSource = self
-                }
-            }
-            self.searchController.searchBar.isLoading = false
-            self.tableView.reloadData()
-        }
+    func userListData(_ userList: [String], completion: @escaping ([UserModel]?) -> Void) {
+        viewModel.userListData(userList, completion: completion)
     }
     
-}
-
-extension ChatListViewController: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return searchItems.count
+    func chatData(_ chatId: String, completion: @escaping (ChatModel?) -> Void) {
+        viewModel.chatData(chatId, completion: completion)
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell()
-        cell.textLabel?.text = searchItems[indexPath.row].name
-        return cell
-    }
 }
 
 extension ChatListViewController: ChatListViewControllerProtocol {}

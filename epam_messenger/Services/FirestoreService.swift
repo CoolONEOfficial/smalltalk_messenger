@@ -13,7 +13,7 @@ import CodableFirebase
 typealias FireQuery = Query
 
 protocol FirestoreServiceProtocol: AutoMockable {
-    func createChatQuery(_ chatModel: ChatModel) -> Query
+    func createChatQuery(_ chat: ChatProtocol) -> Query
     func sendMessage(
         chatDocumentId: String,
         messageKind: [MessageModel.MessageKind],
@@ -39,6 +39,21 @@ protocol FirestoreServiceProtocol: AutoMockable {
         _ userId: String,
         completion: @escaping (UserModel?) -> Void
     )
+    func userListData(
+        _ userList: [String],
+        completion: @escaping ([UserModel]?) -> Void
+    )
+    func chatData(
+        _ chatId: String,
+        completion: @escaping (ChatModel?) -> Void
+    )
+    func onlineCurrentUser()
+    func offlineCurrentUser()
+    func startTypingCurrentUser(_ chatId: String)
+    func endTypingCurrentUser()
+    
+    var contactListQuery: Query { get }
+    var chatListQuery: Query { get }
 }
 
 extension FirestoreServiceProtocol {
@@ -87,9 +102,13 @@ class FirestoreService: FirestoreServiceProtocol {
             .order(by: "lastMessage.timestamp", descending: true)
     }()
     
-    func createChatQuery(_ chatModel: ChatModel) -> Query {
+    lazy var contactListQuery: Query = {
+        return db.collection("users").order(by: "name")
+    }()
+    
+    func createChatQuery(_ chat: ChatProtocol) -> Query {
         return db.collection("chats")
-            .document(chatModel.documentId)
+            .document(chat.documentId)
             .collection("messages")
             .order(by: "timestamp", descending: false)
     }
@@ -178,8 +197,8 @@ class FirestoreService: FirestoreServiceProtocol {
         _ userId: String,
         completion: @escaping (UserModel?) -> Void
     ) {
-        db.collection("users")
-            .document(userId).getDocument { snapshot, err in
+        db.collection("users").document(userId)
+            .addSnapshotListener { snapshot, err in
                 guard err == nil else {
                     debugPrint("Error while get user data: \(err!.localizedDescription)")
                     completion(nil)
@@ -190,8 +209,64 @@ class FirestoreService: FirestoreServiceProtocol {
         }
     }
     
-    lazy var contactsListQuery: Query = {
-        return db.collection("users").order(by: "name")
-    }()
+    func userListData(
+        _ userList: [String],
+        completion: @escaping ([UserModel]?) -> Void
+    ) {
+        db.collection("users").whereField(.documentID(), in: userList)
+            .addSnapshotListener { snapshot, err in
+                guard err == nil else {
+                    debugPrint("Error while get user list: \(err!.localizedDescription)")
+                    completion(nil)
+                    return
+                }
+                
+                completion(snapshot?.documents.map { UserModel.fromSnapshot($0)! })
+        }
+    }
     
+    func chatData(_ chatId: String, completion: @escaping (ChatModel?) -> Void) {
+        db.collection("chats")
+            .document(chatId).getDocument { snapshot, err in
+                guard err == nil else {
+                    debugPrint("Error while get chat data: \(err!.localizedDescription)")
+                    completion(nil)
+                    return
+                }
+                
+                completion(ChatModel.fromSnapshot(snapshot!))
+        }
+    }
+    
+    func onlineCurrentUser() {
+        updateOnlineStatus(true)
+    }
+    
+    func offlineCurrentUser() {
+        updateOnlineStatus(false)
+    }
+    
+    private func updateOnlineStatus(_ online: Bool) {
+        db.collection("users")
+            .document(Auth.auth().currentUser!.uid)
+            .updateData([
+                "online": online
+            ])
+    }
+    
+    func startTypingCurrentUser(_ chatId: String) {
+        updateTypingStatus(chatId)
+    }
+    
+    func endTypingCurrentUser() {
+        updateTypingStatus(FieldValue.delete())
+    }
+    
+    private func updateTypingStatus(_ typing: Any) {
+        db.collection("users")
+            .document(Auth.auth().currentUser!.uid)
+            .updateData([
+                "typing": typing
+            ])
+    }
 }

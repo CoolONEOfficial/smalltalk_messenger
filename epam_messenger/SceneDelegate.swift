@@ -6,10 +6,17 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+    
+    // MARK: - Vars
+    
     var window: UIWindow?
+    let firestoreService = FirestoreService()
 
+    // MARK: - Methods
+    
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession,
                options connectionOptions: UIScene.ConnectionOptions) {
 
@@ -29,13 +36,25 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.makeKeyAndVisible()
     }
 
-    func sceneDidDisconnect(_ scene: UIScene) {}
+    func sceneDidDisconnect(_ scene: UIScene) {
+        if Auth.auth().currentUser != nil {
+            firestoreService.offlineCurrentUser()
+        }
+    }
 
     func sceneDidBecomeActive(_ scene: UIScene) {}
 
     func sceneWillResignActive(_ scene: UIScene) {}
 
-    func sceneWillEnterForeground(_ scene: UIScene) {}
+    func sceneWillEnterForeground(_ scene: UIScene) {
+        if Auth.auth().currentUser != nil {
+            firestoreService.onlineCurrentUser()
+        }
+    }
 
-    func sceneDidEnterBackground(_ scene: UIScene) {}
+    func sceneDidEnterBackground(_ scene: UIScene) {
+        if Auth.auth().currentUser != nil {
+            firestoreService.offlineCurrentUser()
+        }
+    }
 }

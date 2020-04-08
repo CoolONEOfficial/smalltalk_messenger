@@ -56,6 +56,15 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
     
     func inputBar(_ inputBar: InputBarAccessoryView, textViewTextDidChangeTo text: String) {
         
+        if isTyping == false {
+            isTyping = true
+            
+            viewModel.startTypingCurrentUser()
+        }
+        
+        NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(self.didEndTyping), object: nil)
+        self.perform(#selector(self.didEndTyping), with: nil, afterDelay: 0.5)
+        
         guard !(inputBar.middleContentView?.isHidden ?? true) else { return }
         
         let inputBar = self.inputBar
@@ -80,5 +89,10 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
                 self?.autocompleteManager.reloadData()
             }
         }
+    }
+    
+    @objc private func didEndTyping() {
+        isTyping = false
+        viewModel.endTypingCurrentUser()
     }
 }
