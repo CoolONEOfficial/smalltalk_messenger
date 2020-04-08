@@ -154,9 +154,11 @@ class ChatInputBar: InputBarAccessoryView {
                 ]
             )
             try recordingSession.setActive(true)
-            recordingSession.requestRecordPermission() { result in
+            recordingSession.requestRecordPermission { result in
                 if result {
-                    self.voiceButton.isEnabled = true
+                    DispatchQueue.main.async {
+                        self.voiceButton.isEnabled = true
+                    }
                 }
             }
         } catch {

@@ -1,60 +1,39 @@
 //
-//  PaginatedTableVIew.swift
+//  PaginatedTableView.swift
 //  epam_messenger
 //
-//  Created by Nickolay Truhin on 07.04.2020.
+//  Created by Nickolay Truhin on 08.04.2020.
 //
 
 import UIKit
 import FirebaseFirestore
-
-struct SectionArray<KeyT: Equatable, ElementT: Equatable>: Equatable, Collection {
-
-    let elements: [ElementT]
-    let key: KeyT
-
-    typealias Index = Int
-
-    var startIndex: Int {
-        return elements.startIndex
-    }
-
-    var endIndex: Int {
-        return elements.endIndex
-    }
-    
-    public func at(i: Int) -> ElementT {
-        return elements[i]
-    }
-
-    subscript(i: Int) -> ElementT {
-        return elements[i]
-    }
-
-    public func index(after i: Int) -> Int {
-        return elements.index(after: i)
-    }
-
-    static func == (fst: SectionArray, snd: SectionArray) -> Bool {
-        return fst.key == snd.key
-    }
-}
 
 protocol PaginatedTableViewDelegate: UITableViewDelegate {}
 
 private let paginationQueryCount = 30
 private let queryCount = 40
 
-class PaginatedTableView<KeyT: Hashable, ElementT: Equatable>: UITableView, UITableViewDelegate, UITableViewDataSource {
+enum InitialPosition {
+    case top
+    case bottom
+}
+
+class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate, UITableViewDataSource {
+    
+    // MARK: - Vars
     
     var dataAtStart = false
     var dataAtEnd = false
-    var data: [SectionArray<KeyT, ElementT>] = [] {
-        didSet {
-            flattenData = data.map { $0.elements }.reduce([], +)
-        }
-    }
+    
     var flattenData: [ElementT] = []
+    
+    weak var paginatedDelegate: PaginatedTableViewDelegate?
+    
+    var baseQuery: FireQuery!
+    var initialPosition: InitialPosition!
+    var cellForRowAt: ((IndexPath) -> UITableViewCell)!
+    var querySideTransform: ((ElementT) -> Any)!
+    var fromSnapshot: ((_ snapshot: DocumentSnapshot) -> ElementT?)!
     
     var paginationLock = false
     var lastContentOffset: CGFloat = 0
@@ -64,21 +43,6 @@ class PaginatedTableView<KeyT: Hashable, ElementT: Equatable>: UITableView, UITa
             oldValue?.remove()
         }
     }
-
-    weak var paginatedDelegate: PaginatedTableViewDelegate?
-    
-    var baseQuery: FireQuery!
-    var initialPosition: InitialPosition!
-    var cellForRowAt: ((IndexPath) -> UITableViewCell)!
-    var querySideTransform: ((ElementT) -> Any)!
-    var groupingBy: ((ElementT) -> KeyT)!
-    var sortedBy: ((KeyT, KeyT) -> Bool)!
-    var fromSnapshot: ((_ snapshot: DocumentSnapshot) -> ElementT?)!
-    
-    enum InitialPosition {
-        case top
-        case bottom
-    }
     
     // MARK: - Init
     
@@ -87,8 +51,6 @@ class PaginatedTableView<KeyT: Hashable, ElementT: Equatable>: UITableView, UITa
         initialPosition: InitialPosition,
         cellForRowAt: @escaping ((IndexPath) -> UITableViewCell),
         querySideTransform: @escaping ((ElementT) -> Any),
-        groupingBy: @escaping ((ElementT) -> KeyT),
-        sortedBy: @escaping ((KeyT, KeyT) -> Bool),
         fromSnapshot: @escaping ((_ snapshot: DocumentSnapshot) -> ElementT?)
     ) {
         super.init(frame: .init(), style: .plain)
@@ -96,22 +58,21 @@ class PaginatedTableView<KeyT: Hashable, ElementT: Equatable>: UITableView, UITa
         self.initialPosition = initialPosition
         self.cellForRowAt = cellForRowAt
         self.querySideTransform = querySideTransform
-        self.groupingBy = groupingBy
-        self.sortedBy = sortedBy
         self.fromSnapshot = fromSnapshot
+        
         commonInit()
         
         switch initialPosition {
         case .top:
             loadAtStart { self.updateElements(
-                elements: $0,
+                $0,
                 unlockPagination: $0?.count == queryCount
             ) }
         case .bottom:
             paginationLock = true
             loadAtEnd {
                 self.updateElements(
-                    elements: $0,
+                    $0,
                     unlockPagination: $0?.count == queryCount
                 )
                 self.scrollToBottom(animated: true)
@@ -130,7 +91,7 @@ class PaginatedTableView<KeyT: Hashable, ElementT: Equatable>: UITableView, UITa
     }
     
     // MARK: - UITableViewDelegate
-    
+        
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         paginatedDelegate?.scrollViewDidScroll?(scrollView)
         
@@ -168,7 +129,7 @@ class PaginatedTableView<KeyT: Hashable, ElementT: Equatable>: UITableView, UITa
                         .addSnapshotListener(snapshotListener { elements in
                             if elements?.count == paginationQueryCount + visibleCellCount {
                                 self.updateElements(
-                                    elements: elements,
+                                    elements,
                                     scrollView: afterUnlock ? nil : scrollView
                                 )
                             } else {
@@ -205,7 +166,7 @@ class PaginatedTableView<KeyT: Hashable, ElementT: Equatable>: UITableView, UITa
                         .addSnapshotListener(snapshotListener { elements in
                             if elements?.count == paginationQueryCount + visibleCellCount {
                                 self.updateElements(
-                                    elements: elements,
+                                    elements,
                                     scrollView: afterUnlock ? nil : scrollView
                                 )
                             } else {
@@ -253,22 +214,31 @@ class PaginatedTableView<KeyT: Hashable, ElementT: Equatable>: UITableView, UITa
     }
     
     func updateElements(elements: [ElementT]?) {
-        updateElements(elements: elements, animate: true)
+        updateElements(elements)
+    }
+    
+    func updateData(_ elements: [ElementT]) -> Any {
+        let oldData = self.flattenData
+        self.flattenData = elements
+        return oldData
+    }
+    
+    func animateChanges(_ oldData: Any) {
+        animateRowChanges(
+            oldData: oldData as! [ElementT],
+            newData: self.flattenData
+        )
     }
     
     func updateElements(
-        elements: [ElementT]?,
+        _ elements: [ElementT]?,
         animate: Bool = true,
         scrollView: UIScrollView? = nil,
         unlockPagination: Bool = true
     ) {
         if let elements = elements {
-            let oldData = self.data
-            
-            self.data = Dictionary(grouping: elements, by: groupingBy)
-                .sorted { self.sortedBy($0.key, $1.key) }
-                .map { SectionArray<KeyT, ElementT>(elements: $0.value, key: $0.key) }
-            
+            let oldData = updateData(elements)
+
             if animate {
                 CATransaction.begin()
                 CATransaction.setCompletionBlock {
@@ -276,10 +246,7 @@ class PaginatedTableView<KeyT: Hashable, ElementT: Equatable>: UITableView, UITa
                         self.unlockPagination(scrollView)
                     }
                 }
-                animateRowAndSectionChanges(
-                    oldData: oldData,
-                    newData: self.data
-                )
+                animateChanges(oldData)
                 CATransaction.commit()
             } else {
                 reloadData()
@@ -287,24 +254,6 @@ class PaginatedTableView<KeyT: Hashable, ElementT: Equatable>: UITableView, UITa
                     self.unlockPagination(scrollView)
                 }
             }
-            
-//            if dataAtEnd {
-//                scrollToBottom(animated: true)
-//                if flattenData.count >= 2, MessageModel.checkMerge(
-//                    flattenData[flattenData.count - 1],
-//                    flattenData[flattenData.count - 2]
-//                ) {
-//                    let section = data.count - 1
-//                    let lastRow = data[section].elements.count - 1
-//                    reloadRows(
-//                        at: [
-//                            .init(row: lastRow - 1, section: section)
-//                        ],
-//                        with: .automatic
-//                    )
-//                }
-//
-//            }
         }
     }
     
@@ -328,7 +277,6 @@ class PaginatedTableView<KeyT: Hashable, ElementT: Equatable>: UITableView, UITa
                 snapshotListener(
                     completion: completion ?? updateElements
             ))
-
     }
     
     func unlockPagination(_ scrollView: UIScrollView? = nil) {
@@ -339,41 +287,32 @@ class PaginatedTableView<KeyT: Hashable, ElementT: Equatable>: UITableView, UITa
         }
     }
     
-    // MARK: - UITableView DataSource & Delegate
+    // MARK: - UITableView DataSource
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        data.count
+        return flattenData.isEmpty ? 0 : 1
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        data[section].elements.count
+        flattenData.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         cellForRowAt(indexPath)
     }
     
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        paginatedDelegate?.tableView?(tableView, viewForHeaderInSection: section)
-    }
-    
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        paginatedDelegate?.tableView?(tableView, heightForHeaderInSection: section) ?? UITableView.automaticDimension
-    }
-    
     // MARK: - Helpers
     
     func scrollToBottom(animated: Bool) {
-        guard !data.isEmpty else {
+        guard !flattenData.isEmpty else {
             return
         }
         
-        let lastIndex = data.count - 1
-        let lastSections = data[lastIndex]
+        let lastIndex = flattenData.count - 1
         scrollToRow(
             at: IndexPath(
-                row: lastSections.elements.count - 1,
-                section: lastIndex
+                row: lastIndex,
+                section: 0
             ),
             at: .none,
             animated: animated
@@ -381,14 +320,6 @@ class PaginatedTableView<KeyT: Hashable, ElementT: Equatable>: UITableView, UITa
     }
     
     public func elementAt(_ indexPath: IndexPath) -> ElementT {
-        return data[indexPath.section].elements[indexPath.row]
-    }
-    
-    public func keyAt(_ indexPath: IndexPath) -> KeyT {
-        return keyAt(indexPath.section)
-    }
-    
-    public func keyAt(_ section: Int) -> KeyT {
-        return data[section].key
+        return flattenData[indexPath.row]
     }
 }

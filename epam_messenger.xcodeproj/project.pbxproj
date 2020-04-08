@@ -14,7 +14,9 @@
 		850BCE7524375A2500643881 /* SearchMessageCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 850BCE7324375A2500643881 /* SearchMessageCell.xib */; };
 		850BCE7824377B1700643881 /* SearchChatCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850BCE7624377B1700643881 /* SearchChatCell.swift */; };
 		850BCE7924377B1700643881 /* SearchChatCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 850BCE7724377B1700643881 /* SearchChatCell.xib */; };
-		850BCE7E243CD24E00643881 /* PaginatedTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850BCE7D243CD24E00643881 /* PaginatedTableView.swift */; };
+		850BCE7E243CD24E00643881 /* PaginatedSectionedTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850BCE7D243CD24E00643881 /* PaginatedSectionedTableView.swift */; };
+		850BCE80243D484D00643881 /* PaginatedTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850BCE7F243D484D00643881 /* PaginatedTableView.swift */; };
+		850BCE82243D486D00643881 /* SectionArray.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850BCE81243D486D00643881 /* SectionArray.swift */; };
 		850C7FEC2424D82A008BAF24 /* UISearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850C7FEB2424D82A008BAF24 /* UISearchBar.swift */; };
 		850C7FFE2427FD89008BAF24 /* MessageImageContent.xib in Resources */ = {isa = PBXBuildFile; fileRef = 850C7FFD2427FD89008BAF24 /* MessageImageContent.xib */; };
 		850C8015242A7F34008BAF24 /* ChatPhotoViewerDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850C8014242A7F34008BAF24 /* ChatPhotoViewerDataSource.swift */; };
@@ -136,7 +138,9 @@
 		850BCE7324375A2500643881 /* SearchMessageCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SearchMessageCell.xib; sourceTree = "<group>"; };
 		850BCE7624377B1700643881 /* SearchChatCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchChatCell.swift; sourceTree = "<group>"; };
 		850BCE7724377B1700643881 /* SearchChatCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SearchChatCell.xib; sourceTree = "<group>"; };
-		850BCE7D243CD24E00643881 /* PaginatedTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaginatedTableView.swift; sourceTree = "<group>"; };
+		850BCE7D243CD24E00643881 /* PaginatedSectionedTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaginatedSectionedTableView.swift; sourceTree = "<group>"; };
+		850BCE7F243D484D00643881 /* PaginatedTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaginatedTableView.swift; sourceTree = "<group>"; };
+		850BCE81243D486D00643881 /* SectionArray.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionArray.swift; sourceTree = "<group>"; };
 		850C7FEB2424D82A008BAF24 /* UISearchBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UISearchBar.swift; sourceTree = "<group>"; };
 		850C7FED2425426E008BAF24 /* AlgoliaService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlgoliaService.swift; sourceTree = "<group>"; };
 		850C7FEF242765DC008BAF24 /* UIImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImage.swift; sourceTree = "<group>"; };
@@ -306,7 +310,9 @@
 		850BCE7C243CD0CD00643881 /* Pagination */ = {
 			isa = PBXGroup;
 			children = (
-				850BCE7D243CD24E00643881 /* PaginatedTableView.swift */,
+				850BCE81243D486D00643881 /* SectionArray.swift */,
+				850BCE7F243D484D00643881 /* PaginatedTableView.swift */,
+				850BCE7D243CD24E00643881 /* PaginatedSectionedTableView.swift */,
 			);
 			path = Pagination;
 			sourceTree = "<group>";
@@ -1127,11 +1133,13 @@
 				85812DB52436596D00EA2626 /* UIImageView.swift in Sources */,
 				E6846B9E242A95E9006818DE /* AuthAssemblyBuilder.swift in Sources */,
 				851F5829241D92AE00D04F92 /* Message.swift in Sources */,
+				850BCE80243D484D00643881 /* PaginatedTableView.swift in Sources */,
 				852C00F2242E188400BCC056 /* ImagePickerService.swift in Sources */,
 				85812DA62433B7F100EA2626 /* DateHeader.swift in Sources */,
 				850BCE7424375A2500643881 /* SearchMessageCell.swift in Sources */,
 				E6B7499824144C5700F00B29 /* SceneDelegate.swift in Sources */,
 				85B3F1D8243388AF001F92D9 /* UIStackView.swift in Sources */,
+				850BCE82243D486D00643881 /* SectionArray.swift in Sources */,
 				85FF25642414624B00A25D7A /* MessageModel.swift in Sources */,
 				E6846BA3242A95E9006818DE /* AuthStartViewModel.swift in Sources */,
 				853FD19E24165EDE005A7985 /* FirestoreService.swift in Sources */,
@@ -1154,7 +1162,7 @@
 				852C00EF242CF8FA00BCC056 /* MessageText.swift in Sources */,
 				85FD2A0A24182DED0035AC13 /* SourceryInterfaces.swift in Sources */,
 				85812DA02433B78F00EA2626 /* UIColor.swift in Sources */,
-				850BCE7E243CD24E00643881 /* PaginatedTableView.swift in Sources */,
+				850BCE7E243CD24E00643881 /* PaginatedSectionedTableView.swift in Sources */,
 				850C7FEC2424D82A008BAF24 /* UISearchBar.swift in Sources */,
 				85B3F1D02433883A001F92D9 /* MessageImage.swift in Sources */,
 				851F581E241D7E2900D04F92 /* Date.swift in Sources */,
