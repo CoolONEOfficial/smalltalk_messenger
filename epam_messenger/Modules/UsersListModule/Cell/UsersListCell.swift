@@ -29,4 +29,3 @@ class UsersListCell: UITableViewCell, NibReusable {
         self.model = userModel
     }
 }
-

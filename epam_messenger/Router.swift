@@ -44,6 +44,11 @@ class Router: RouterProtocol {
         if let navigationController = navigationController, let rootViewController = rootViewController {
             navigationController.viewControllers = [rootViewController]
         }
+        
+//        if let navigationController = navigationController {
+//            guard let usersListViewController = assemblyBuilder?.createUsersListModule(router: self) else { return }
+//            navigationController.viewControllers = [usersListViewController]
+//        }
     }
     
     func showBottomBar() {
