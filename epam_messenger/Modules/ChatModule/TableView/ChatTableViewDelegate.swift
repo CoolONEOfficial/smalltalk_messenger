@@ -35,7 +35,7 @@ extension ChatViewController: PaginatedTableViewDelegate {
     
     func didUpdateElements() {
         if tableView.dataAtEnd {
-            tableView.scrollToBottom(animated: true)
+            tableView.scrollToBottom()
             let flattenData = tableView.flattenData
             if flattenData.count >= 2, MessageModel.checkMerge(
                 flattenData[flattenData.count - 1],

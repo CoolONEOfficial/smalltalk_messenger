@@ -26,21 +26,16 @@ struct ChatModel: AutoCodable {
     
     static let defaultDocumentId: String! = nil
     
-    static func empty() -> ChatModel {
-        return ChatModel(users: [], lastMessage: MessageModel.empty(), type: .personalCorr)
-    }
-    
     static func fromSnapshot(_ snapshot: DocumentSnapshot) -> ChatModel? {
         var data = snapshot.data() ?? [:]
         data["documentId"] = snapshot.documentID
         
         do {
-            let d = try FirestoreDecoder()
+            return try FirestoreDecoder()
                 .decode(
                     ChatModel.self,
                     from: data
             )
-            return d
         } catch let err {
             debugPrint("error while parse chat model: \(err)")
             return nil
