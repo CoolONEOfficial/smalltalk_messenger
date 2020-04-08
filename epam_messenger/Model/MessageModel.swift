@@ -9,7 +9,7 @@ import Foundation
 import Firebase
 import CodableFirebase
 
-typealias ImageSize = CGSize
+public typealias ImageSize = CGSize
 
 public struct MessageModel: AutoCodable {
     
@@ -31,7 +31,7 @@ public struct MessageModel: AutoCodable {
         case enumCaseKey
     }
     
-    enum MessageKind: AutoCodable {
+    public enum MessageKind: AutoCodable, AutoEquatable {
         case text(_: String)
         case image(path: String, size: ImageSize)
         case audio(path: String)
@@ -82,7 +82,8 @@ public struct MessageModel: AutoCodable {
 
 extension MessageModel: Equatable {
     public static func == (lhs: MessageModel, rhs: MessageModel) -> Bool {
-            return lhs.documentId == rhs.documentId
+        lhs.documentId == rhs.documentId
+            && lhs.kind == rhs.kind
     }
 }
 

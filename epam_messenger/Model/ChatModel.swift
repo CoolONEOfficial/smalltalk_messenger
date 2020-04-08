@@ -35,15 +35,23 @@ struct ChatModel: AutoCodable {
         data["documentId"] = snapshot.documentID
         
         do {
-            return try FirestoreDecoder()
+            let d = try FirestoreDecoder()
                 .decode(
                     ChatModel.self,
                     from: data
             )
+            return d
         } catch let err {
             debugPrint("error while parse chat model: \(err)")
             return nil
         }
+    }
+}
+
+extension ChatModel: Equatable {
+    public static func == (lhs: ChatModel, rhs: ChatModel) -> Bool {
+        lhs.documentId == rhs.documentId
+            && lhs.lastMessage == rhs.lastMessage
     }
 }
 

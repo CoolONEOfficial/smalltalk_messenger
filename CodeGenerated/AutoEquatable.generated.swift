@@ -26,3 +26,20 @@ fileprivate func compareArrays<T>(lhs: [T], rhs: [T], compare: (_ lhs: T, _ rhs:
 // MARK: - AutoEquatable for classes, protocols, structs
 
 // MARK: - AutoEquatable for Enums
+// MARK: - MessageModel.MessageKind AutoEquatable
+extension MessageModel.MessageKind: Equatable {}
+public func == (lhs: MessageModel.MessageKind, rhs: MessageModel.MessageKind) -> Bool {
+    switch (lhs, rhs) {
+    case (.text(let lhs), .text(let rhs)):
+        return lhs == rhs
+    case (.image(let lhs), .image(let rhs)):
+        if lhs.path != rhs.path { return false }
+        if lhs.size != rhs.size { return false }
+        return true
+    case (.audio(let lhs), .audio(let rhs)):
+        return lhs == rhs
+    case (.forward(let lhs), .forward(let rhs)):
+        return lhs == rhs
+    default: return false
+    }
+}

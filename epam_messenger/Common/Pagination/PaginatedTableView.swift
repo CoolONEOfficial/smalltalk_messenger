@@ -8,10 +8,18 @@
 import UIKit
 import FirebaseFirestore
 
-protocol PaginatedTableViewDelegate: UITableViewDelegate {}
+protocol PaginatedTableViewDelegate: UITableViewDelegate {
+    func didUpdateElements()
+}
 
-private let paginationQueryCount = 30
+extension PaginatedTableViewDelegate {
+    func didUpdateElements() {}
+}
+
 private let queryCount = 40
+private let paginationQueryCount = 30
+private let paginationTriggerAreaHeight: CGFloat = 250
+private let paginationCellsOffset = 5
 
 enum InitialPosition {
     case top
@@ -105,7 +113,7 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
         if let visiblePathList = indexPathsForVisibleRows,
             !paginationLock {
             if !dataAtStart,
-                scrollView.contentOffset.y + safeAreaInsets.top < 250,
+                scrollView.contentOffset.y + safeAreaInsets.top < paginationTriggerAreaHeight,
                 lastContentOffset >= scrollView.contentOffset.y,
                 let lastVisiblePath = visiblePathList.last {
                 paginationLock = true
@@ -118,8 +126,8 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
 
                     let endMessageIndex: Int
                     let visibleCellCount: Int = visiblePathList.count
-                    if visibleIndex + 5 < flattened.count {
-                        endMessageIndex = visibleIndex + 5
+                    if visibleIndex + paginationCellsOffset < flattened.count {
+                        endMessageIndex = visibleIndex + paginationCellsOffset
                     } else {
                         endMessageIndex = flattened.count - 1
                     }
@@ -142,7 +150,7 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
                     - scrollView.contentOffset.y
                     - scrollView.bounds.height
                     + scrollView.contentInset.bottom
-                    + safeAreaInsets.bottom < 250,
+                    + safeAreaInsets.bottom < paginationTriggerAreaHeight,
                 lastContentOffset <= scrollView.contentOffset.y,
                 let firstVisiblePath = visiblePathList.first {
                 paginationLock = true
@@ -155,8 +163,8 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
 
                     let startMessageIndex: Int
                     let visibleCellCount: Int = visiblePathList.count
-                    if visibleIndex - 5 >= 0 {
-                        startMessageIndex = visibleIndex - 5
+                    if visibleIndex - paginationCellsOffset >= 0 {
+                        startMessageIndex = visibleIndex - paginationCellsOffset
                     } else {
                         startMessageIndex = 0
                     }
@@ -185,7 +193,7 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
     ) -> ((QuerySnapshot?, Error?) -> Void) {
         { snapshot, err in
             guard err == nil else {
-                debugPrint("Error while get ")
+                debugPrint("Error while get snapshot")
                 return
             }
             
@@ -195,21 +203,6 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
             } else {
                 completion(nil)
             }
-        }
-    }
-    
-    private func parseListChat(
-        _ snapshot: QuerySnapshot?,
-        _ err: Error?,
-        _ completion: @escaping ([MessageModel]?) -> Void
-    ) {
-        guard err == nil else {
-            debugPrint("Error while get ")
-            return
-        }
-        
-        if let snapshot = snapshot {
-            completion(snapshot.documents.map { MessageModel.fromSnapshot($0)! })
         }
     }
     
@@ -226,7 +219,9 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
     func animateChanges(_ oldData: Any) {
         animateRowChanges(
             oldData: oldData as! [ElementT],
-            newData: self.flattenData
+            newData: self.flattenData,
+            deletionAnimation: .fade,
+            insertionAnimation: .fade
         )
     }
     
@@ -254,6 +249,8 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
                     self.unlockPagination(scrollView)
                 }
             }
+            
+            paginatedDelegate?.didUpdateElements()
         }
     }
     
@@ -290,7 +287,7 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
     // MARK: - UITableView DataSource
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return flattenData.isEmpty ? 0 : 1
+        return 1
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -320,6 +317,40 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
     }
     
     public func elementAt(_ indexPath: IndexPath) -> ElementT {
-        return flattenData[indexPath.row]
+        return elementAt(indexPath.row)
+    }
+    
+    public func elementAt(_ index: Int) -> ElementT {
+        return flattenData[index]
+    }
+    
+    // MARK: - PaginatedDelegate
+        
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        paginatedDelegate?.scrollViewWillBeginDragging?(scrollView)
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        paginatedDelegate?.tableView?(tableView, didSelectRowAt: indexPath)
+    }
+    
+    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        paginatedDelegate?.tableView?(tableView, didDeselectRowAt: indexPath)
+    }
+    
+    func tableView(_ tableView: UITableView, shouldBeginMultipleSelectionInteractionAt indexPath: IndexPath) -> Bool {
+        paginatedDelegate?.tableView?(tableView, shouldBeginMultipleSelectionInteractionAt: indexPath) ?? false
+    }
+    
+    func tableView(_ tableView: UITableView, didBeginMultipleSelectionInteractionAt indexPath: IndexPath) {
+        paginatedDelegate?.tableView?(tableView, didBeginMultipleSelectionInteractionAt: indexPath)
+    }
+    
+    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        paginatedDelegate?.tableView?(tableView, contextMenuConfigurationForRowAt: indexPath, point: point)
+    }
+    
+    func tableView(_ tableView: UITableView, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating) {
+        paginatedDelegate?.tableView?(tableView, willPerformPreviewActionForMenuWith: configuration, animator: animator)
     }
 }
