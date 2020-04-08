@@ -21,18 +21,20 @@ private let paginationQueryCount = 30
 private let paginationTriggerAreaHeight: CGFloat = 250
 private let paginationCellsOffset = 5
 
-enum InitialPosition {
-    case top
-    case bottom
-}
-
+/// Custom UITableView with realtime updates and pagination support.
+///
+/// - Warning: Don't override `delegate`, use `paginatedDelegate`
 class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate, UITableViewDataSource {
     
     // MARK: - Vars
     
+    /// Active if scroll at start.
     var dataAtStart = false
+    
+    /// Active if scroll at end.
     var dataAtEnd = false
     
+    /// Flatten data.
     var flattenData: [ElementT] = []
     
     weak var paginatedDelegate: PaginatedTableViewDelegate?
@@ -43,8 +45,8 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
     var querySideTransform: ((ElementT) -> Any)!
     var fromSnapshot: ((_ snapshot: DocumentSnapshot) -> ElementT?)!
     
-    var paginationLock = false
-    var lastContentOffset: CGFloat = 0
+    private var paginationLock = false
+    private var lastContentOffset: CGFloat = 0
     
     var listener: ListenerRegistration! {
         didSet {
@@ -52,8 +54,26 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
         }
     }
     
+    /// UITableView initial position
+    enum InitialPosition {
+        case top
+        case bottom
+    }
+    
     // MARK: - Init
     
+    /**
+    Initializes a new PaginatedTableView.
+
+    - Parameters:
+       - baseQuery: Firebase query with collection which will be displayed
+       - initialPosition: UITableView scroll position at start
+       - cellForRowAt: Closure returns UITableViewCell from given indexPath
+       - querySideTransform: Closure returns start and/or end of `baseQuery` that will be diplayed
+       - fromSnapshot: Closure returns parsed model from given snapshot
+
+    - Returns: New PaginatedTableView.
+    */
     init(
         baseQuery: FireQuery,
         initialPosition: InitialPosition,
@@ -276,7 +296,7 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
             ))
     }
     
-    func unlockPagination(_ scrollView: UIScrollView? = nil) {
+    private func unlockPagination(_ scrollView: UIScrollView? = nil) {
         paginationLock = false
         
         if let scrollView = scrollView {
@@ -300,6 +320,11 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
     
     // MARK: - Helpers
     
+    /**
+      Scroll to last element of UITableView.
+
+      - Parameter animated: Use animation for scroll.
+    */
     func scrollToBottom(animated: Bool) {
         guard !flattenData.isEmpty else {
             return

@@ -14,6 +14,7 @@ extension ChatListViewController: UISearchResultsUpdating, UISearchControllerDel
         if searchController.searchBar.text?.isEmpty ?? true {
             if !tableView.dataSource!.isEqual(tableView) {
                 tableView.dataSource = tableView
+                tableView.delegate = tableView
                 self.tableView.separatorInset.left = 75
                 tableView.reloadData()
             }
@@ -51,6 +52,7 @@ extension ChatListViewController: UISearchResultsUpdating, UISearchControllerDel
         searchGroup.notify(queue: .main) {
             if !(self.tableView.dataSource?.isEqual(self) ?? false) {
                 self.tableView.dataSource = self
+                self.tableView.delegate = self
             }
             self.searchController.searchBar.isLoading = false
             self.tableView.separatorInset.left = 10

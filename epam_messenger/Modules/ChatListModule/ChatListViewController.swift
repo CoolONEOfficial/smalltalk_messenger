@@ -111,6 +111,7 @@ class ChatListViewController: UIViewController {
         tableView.paginatedDelegate = self
         tableView.allowsMultipleSelectionDuringEditing = true
         tableView.separatorInset.left = separatorInsetPlain
+        tableView.sectionHeaderHeight = 20
         
         view.addSubview(tableView)
         tableView.edgesToSuperview()
