@@ -32,6 +32,7 @@ class UsersListViewController: UIViewController {
     
     let searchController = UISearchController(searchResultsController: nil)
     private var searchItems: [UserModel] = .init()
+//    let viewController: UIViewController!
     
     @IBOutlet weak var tableView: UITableView!
     
@@ -39,14 +40,17 @@ class UsersListViewController: UIViewController {
         super.viewDidLoad()
         tableView.delegate = self
         
-        title = "User's list"
+        //title = "Contacts"
         tableView.register(cellType: UsersListCell.self)
         
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
-        searchController.searchBar.placeholder = "Search by users"
-        tableView.tableHeaderView = searchController.searchBar
-        //tabBarController?.navigationItem.searchController = searchController
+        searchController.searchBar.placeholder = "Search contacts"
+        tabBarController?.title = "Contacts"
+        //tableView.tableHeaderView = searchController.searchBar
+        tabBarController?.navigationItem.searchController = searchController
+        //navigationItem.searchController = searchController
+        definesPresentationContext = true
         
         bindDataSource = self.tableView.bind(
             toFirestoreQuery: viewModel.firestoreQuery()
@@ -56,8 +60,18 @@ class UsersListViewController: UIViewController {
             return cell
         }
     }
+    
+//    override func viewWillAppear(_ animated: Bool) {
+//        super.viewWillAppear(animated)
+//        tabBarController?.title = "Contacts"
+//        tabBarController?.navigationItem.searchController = searchController
+//    }
+//    
+//    override func viewDidDisappear(_ animated: Bool) {
+//        super.viewDidDisappear(animated)
+//        tabBarController?.navigationItem.searchController = nil
+//    }
 }
-
 
 // MARK: - delete user from users list
 
@@ -66,7 +80,7 @@ extension UsersListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let deleteAction = UIContextualAction(style: .normal, title: "Delete") { _, _, complete in
             let cell = self.tableView.cellForRow(at: indexPath) as? UsersListCell
-            self.db.collection("users").document(cell!.model.documentId).delete()// Auth.auth().currentUser.uid - for real user
+            self.db.collection("users").document(Auth.auth().currentUser!.uid).delete()// Auth.auth().currentUser.uid - for real user
             tableView.reloadData()
             complete(true)
         }
