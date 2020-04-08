@@ -27,7 +27,7 @@ class ChatViewController: UIViewController {
     
     var defaultTitle = "..."
     
-    var tableView: PaginatedTableView<Date, MessageModel>!
+    var tableView: PaginatedSectionedTableView<Date, MessageModel>!
     
     var bottomScrollAnimationsLock = false
     
@@ -307,7 +307,7 @@ class ChatViewController: UIViewController {
             tableView.scrollToBottom(animated: true)
         } else {
             tableView.loadAtEnd { messages in
-                self.tableView.updateElements(elements: messages, animate: false)
+                self.tableView.updateElements(messages, animate: false)
                 self.tableView.scrollToBottom(animated: true)
             }
         }
