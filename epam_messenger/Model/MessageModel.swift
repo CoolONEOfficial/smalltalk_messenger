@@ -40,10 +40,6 @@ public struct MessageModel: AutoCodable {
     
     static let defaultKind: [MessageKind] = []
     
-    static func empty() -> MessageModel {
-        return MessageModel(kind: [], userId: Auth.auth().currentUser!.uid, timestamp: Timestamp.init())
-    }
-    
     static func fromSnapshot(_ snapshot: DocumentSnapshot) -> MessageModel? {
         var data = snapshot.data() ?? [:]
         data["documentId"] = snapshot.documentID
@@ -61,14 +57,7 @@ public struct MessageModel: AutoCodable {
     }
     
     static func decodeTimestamp(from container: KeyedDecodingContainer<CodingKeys>) -> Timestamp {
-        if let dict = try? container.decode([String: Int64].self, forKey: .timestamp) {
-            return Timestamp.init(
-                seconds: dict["_seconds"]!,
-                nanoseconds: Int32(exactly: dict["_nanoseconds"]!)!
-            )
-        }
-        
-        return try! container.decode(Timestamp.self, forKey: .timestamp)
+        Timestamp.decodeTimestamp(from: container, forKey: CodingKeys.timestamp)
     }
     
     static func checkMerge(

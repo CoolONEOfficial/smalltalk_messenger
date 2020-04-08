@@ -11,6 +11,7 @@ import FirebaseFirestore
 import CodableFirebase
 
 typealias FireQuery = Query
+typealias FireTimestamp = Timestamp
 
 protocol FirestoreServiceProtocol: AutoMockable {
     func chatBaseQuery(_ chatDocumentId: String) -> FireQuery

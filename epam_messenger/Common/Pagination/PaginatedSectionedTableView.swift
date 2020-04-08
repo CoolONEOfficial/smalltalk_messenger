@@ -108,7 +108,7 @@ class PaginatedSectionedTableView<KeyT: Hashable, ElementT: Equatable>: Paginate
 
       - Parameter animated: Use animation for scroll.
     */
-    override func scrollToBottom(animated: Bool) {
+    override func scrollToBottom(completion: ((Bool) -> Void)? = nil) {
         guard !data.isEmpty else {
             return
         }
@@ -121,7 +121,7 @@ class PaginatedSectionedTableView<KeyT: Hashable, ElementT: Equatable>: Paginate
                 section: lastIndex
             ),
             at: .none,
-            animated: animated
+            completion: completion
         )
     }
     

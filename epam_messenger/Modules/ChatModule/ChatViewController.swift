@@ -73,7 +73,7 @@ class ChatViewController: UIViewController {
             self.updateTableViewInset()
             
             if self.floatingBottomButton.isHidden {
-                self.tableView.scrollToBottom(animated: true)
+                self.tableView.scrollToBottom()
             }
         }.on(event: .didHide) { [weak self] _ in
             guard let self = self else { return }
@@ -171,7 +171,7 @@ class ChatViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         updateTableViewInset()
-        tableView.scrollToBottom(animated: true)
+        tableView.scrollToBottom()
     }
     
     // MARK: - Methods
@@ -304,11 +304,11 @@ class ChatViewController: UIViewController {
     
     @IBAction func didFloatingBottomButtonClick(_ sender: UIButton) {
         if tableView.dataAtEnd {
-            tableView.scrollToBottom(animated: true)
+            tableView.scrollToBottom()
         } else {
             tableView.loadAtEnd { messages in
                 self.tableView.updateElements(messages, animate: false)
-                self.tableView.scrollToBottom(animated: true)
+                self.tableView.scrollToBottom()
             }
         }
     }
