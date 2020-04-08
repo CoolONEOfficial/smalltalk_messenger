@@ -106,21 +106,12 @@ class ChatViewModelProtocolMock: ChatViewModelProtocol {
         set(value) { underlyingChat = value }
     }
     var underlyingChat: ChatProtocol!
+    var baseQuery: FireQuery {
+        get { return underlyingBaseQuery }
+        set(value) { underlyingBaseQuery = value }
+    }
+    var underlyingBaseQuery: FireQuery!
     var lastTapCellContent: MessageCellContentProtocol!
-
-    //MARK: - firestoreQuery
-
-    var firestoreQueryCallsCount = 0
-    var firestoreQueryCalled: Bool {
-        return firestoreQueryCallsCount > 0
-    }
-    var firestoreQueryReturnValue: FireQuery!
-    var firestoreQueryClosure: (() -> FireQuery)?
-
-    func firestoreQuery() -> FireQuery {
-        firestoreQueryCallsCount += 1
-        return firestoreQueryClosure.map({ $0() }) ?? firestoreQueryReturnValue
-    }
 
     //MARK: - sendMessage
 
@@ -447,22 +438,22 @@ class FirestoreServiceProtocolMock: FirestoreServiceProtocol {
     }
     var underlyingChatListQuery: Query!
 
-    //MARK: - createChatQuery
+    //MARK: - chatBaseQuery
 
-    var createChatQueryCallsCount = 0
-    var createChatQueryCalled: Bool {
-        return createChatQueryCallsCount > 0
+    var chatBaseQueryCallsCount = 0
+    var chatBaseQueryCalled: Bool {
+        return chatBaseQueryCallsCount > 0
     }
-    var createChatQueryReceivedChat: ChatProtocol?
-    var createChatQueryReceivedInvocations: [ChatProtocol] = []
-    var createChatQueryReturnValue: Query!
-    var createChatQueryClosure: ((ChatProtocol) -> Query)?
+    var chatBaseQueryReceivedChatDocumentId: String?
+    var chatBaseQueryReceivedInvocations: [String] = []
+    var chatBaseQueryReturnValue: FireQuery!
+    var chatBaseQueryClosure: ((String) -> FireQuery)?
 
-    func createChatQuery(_ chat: ChatProtocol) -> Query {
-        createChatQueryCallsCount += 1
-        createChatQueryReceivedChat = chat
-        createChatQueryReceivedInvocations.append(chat)
-        return createChatQueryClosure.map({ $0(chat) }) ?? createChatQueryReturnValue
+    func chatBaseQuery(_ chatDocumentId: String) -> FireQuery {
+        chatBaseQueryCallsCount += 1
+        chatBaseQueryReceivedChatDocumentId = chatDocumentId
+        chatBaseQueryReceivedInvocations.append(chatDocumentId)
+        return chatBaseQueryClosure.map({ $0(chatDocumentId) }) ?? chatBaseQueryReturnValue
     }
 
     //MARK: - sendMessage

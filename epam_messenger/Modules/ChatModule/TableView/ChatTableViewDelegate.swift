@@ -6,19 +6,13 @@
 //
 
 import UIKit
+import FirebaseAuth
+import FirebaseFirestore
 
-extension ChatViewController: ChatTableViewDelegate {
-    func didInsertCellBottom() {
-        if floatingBottomButton.isHidden {
-            tableView.scrollToBottom(animated: true)
-        }
-    }
-}
-
-extension ChatViewController: UITableViewDelegate {
+extension ChatViewController: PaginatedTableViewDelegate {
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let date = self.tableView.chatDataSource.dayAt(section)
+        let date = self.tableView.keyAt(section)
         let dateString = Message24HourDateFormatter.shared.string(from: date)
         
         let label = DateHeaderLabel()
@@ -31,11 +25,6 @@ extension ChatViewController: UITableViewDelegate {
         label.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
         
         return containerView
-        
-    }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UITableView.automaticDimension
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -53,6 +42,7 @@ extension ChatViewController: UITableViewDelegate {
             indexPath.row,
             indexPath.section
         ])
+        let messageModel = self.tableView.elementAt(indexPath)
         let config = UIContextMenuConfiguration(identifier: identifier, previewProvider: nil) { _ in
             let copy = UIAction(
                 title: "Copy",
@@ -60,7 +50,7 @@ extension ChatViewController: UITableViewDelegate {
             ) { _ in
                 let pasteBoard = UIPasteboard.general
                 var allText = ""
-                for kind in self.tableView.chatDataSource.messageAt(indexPath).kind {
+                for kind in self.tableView.elementAt(indexPath).kind {
                     switch kind {
                     case .text(let text):
                         allText += text
@@ -74,7 +64,6 @@ extension ChatViewController: UITableViewDelegate {
                 title: "Forward",
                 image: UIImage(systemName: "arrowshape.turn.up.right")
             ) { _ in
-                let messageModel = self.tableView.chatDataSource.messageAt(indexPath)
                 self.presentForwardController()
                 self.forwardMessages = [messageModel]
             }
@@ -96,9 +85,7 @@ extension ChatViewController: UITableViewDelegate {
                 image: UIImage(systemName: "trash"),
                 attributes: .destructive
             ) { _ in
-                self.viewModel.deleteMessage(
-                    self.tableView.chatDataSource.messageAt(indexPath)
-                )
+                self.viewModel.deleteMessage(messageModel)
             }
             
             let other = UIAction(
@@ -112,9 +99,7 @@ extension ChatViewController: UITableViewDelegate {
             
             var actions: [UIAction] = []
             
-            let message = self.tableView.chatDataSource.messageAt(indexPath)
-            
-            if message.kind.filter({ content in
+            if messageModel.kind.filter({ content in
                 if case .image = content {
                     return true
                 }
@@ -122,7 +107,7 @@ extension ChatViewController: UITableViewDelegate {
             }).count == 1 {
                 actions.append(savePhoto)
             }
-            if message.kind.contains(where: { content in
+            if messageModel.kind.contains(where: { content in
                 if case .text = content {
                     return true
                 }
@@ -133,7 +118,7 @@ extension ChatViewController: UITableViewDelegate {
             
             actions.append(forward)
             
-            if !message.isIncoming {
+            if !messageModel.isIncoming {
                 actions.append(delete)
             }
             
@@ -183,54 +168,64 @@ extension ChatViewController: UITableViewDelegate {
         return makeTargetedPreview(for: configuration)
     }
     
-    // MARK: Floating bottom button
-    
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        
-        guard !bottomScrollAnimationsLock else {
-            return
-        }
-        
-        let hidden = scrollView.contentSize.height
-            - scrollView.contentOffset.y
-            - scrollView.bounds.height < 100
-        if self.floatingBottomButton.isHidden != hidden {
-            bottomScrollAnimationsLock = true
-            
-            self.floatingBottomButton.alpha = hidden ? 1.0 : 0.0
-            self.inputBar.separatorLine.alpha = hidden ? 1.0 : 0.0
-            
-            if !hidden { // show before alpha transition
-                self.floatingBottomButton.isHidden = hidden
-                self.inputBar.separatorLine.isHidden = hidden
-            }
-            
-            UIView.transition(
-                with: floatingBottomButton,
-                duration: 0.5,
-                options: .transitionCrossDissolve,
-                animations: {
-                    self.floatingBottomButton.alpha = hidden ? 0.0 : 1.0
-                    self.inputBar.separatorLine.alpha = hidden ? 0.0 : 1.0
-            }) { _ in
-                self.bottomScrollAnimationsLock = false
+    func didScroll(_ scrollView: UIScrollView, afterUnlock: Bool = false) {
+        if !bottomScrollAnimationsLock {
+            let hidden = scrollView.contentSize.height
+                - scrollView.contentOffset.y
+                - scrollView.bounds.height
+                + scrollView.contentInset.bottom
+                + tableView.safeAreaInsets.bottom < 100
+            if self.floatingBottomButton.isHidden != hidden {
+                bottomScrollAnimationsLock = true
                 
-                if hidden { // hide after alpha transition
+                self.floatingBottomButton.alpha = hidden ? 1.0 : 0.0
+                self.inputBar.separatorLine.alpha = hidden ? 1.0 : 0.0
+                
+                if !hidden { // show before alpha transition
                     self.floatingBottomButton.isHidden = hidden
                     self.inputBar.separatorLine.isHidden = hidden
                 }
                 
-                self.scrollViewDidScroll(scrollView)
+                UIView.transition(
+                    with: floatingBottomButton,
+                    duration: 0.5,
+                    options: .transitionCrossDissolve,
+                    animations: {
+                        self.floatingBottomButton.alpha = hidden ? 0.0 : 1.0
+                        self.inputBar.separatorLine.alpha = hidden ? 0.0 : 1.0
+                }) { _ in
+                    self.bottomScrollAnimationsLock = false
+                    
+                    if hidden { // hide after alpha transition
+                        self.floatingBottomButton.isHidden = hidden
+                        self.inputBar.separatorLine.isHidden = hidden
+                    }
+                    
+                    self.scrollViewDidScroll(scrollView)
+                }
             }
         }
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        didScroll(scrollView)
     }
     
     // MARK: - Edit mode
     
     private func didSelectionChange() {
-        let rowsSelected = !(tableView.indexPathsForSelectedRows?.isEmpty ?? true)
+        let messagesSelected = !(tableView.indexPathsForSelectedRows?.isEmpty ?? true)
+        let myMessagesSelected = !(
+            tableView.indexPathsForSelectedRows?
+                .map { tableView.elementAt($0).userId }
+                .contains { $0 != Auth.auth().currentUser!.uid }
+                ?? true
+        )
         
-        title = rowsSelected
+        deleteButton.isEnabled = myMessagesSelected
+        forwardButton.isEnabled = messagesSelected
+        
+        title = messagesSelected
             ? "Selected \(tableView.indexPathsForSelectedRows!.count) messages"
             : defaultTitle
         
@@ -247,14 +242,11 @@ extension ChatViewController: UITableViewDelegate {
             target: self,
             action: #selector(disableEditMode)
         )
-        
-        deleteButton.isEnabled = rowsSelected
-        forwardButton.isEnabled = rowsSelected
     }
     
     @objc internal func deleteSelectedMessages() {
         for indexPath in tableView.indexPathsForSelectedRows! {
-            let message = self.tableView.chatDataSource.messageAt(indexPath)
+            let message = tableView.elementAt(indexPath)
             
             viewModel.deleteMessage(message) { _ in
                 self.didSelectionChange()
@@ -277,7 +269,7 @@ extension ChatViewController: UITableViewDelegate {
     
     @objc internal func forwardSelectedMessages() {
         presentForwardController()
-        forwardMessages = tableView!.indexPathsForSelectedRows!.map { tableView!.chatDataSource.messageAt($0) }
+        forwardMessages = tableView.indexPathsForSelectedRows!.map { tableView.elementAt($0) }
     }
     
     private func enableEditMode() {
@@ -310,11 +302,10 @@ extension ChatViewController: UITableViewDelegate {
         }
     }
     
-    func tableView(_ tableView: UITableView, didBeginMultipleSelectionInteractionAt indexPath: IndexPath) {
-        enableEditMode()
-    }
-    
     func tableView(_ tableView: UITableView, shouldBeginMultipleSelectionInteractionAt indexPath: IndexPath) -> Bool {
+        if !tableView.isEditing {
+            enableEditMode()
+        }
         return true
     }
     

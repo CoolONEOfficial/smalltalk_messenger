@@ -13,7 +13,7 @@ import CodableFirebase
 typealias FireQuery = Query
 
 protocol FirestoreServiceProtocol: AutoMockable {
-    func createChatQuery(_ chat: ChatProtocol) -> Query
+    func chatBaseQuery(_ chatDocumentId: String) -> FireQuery
     func sendMessage(
         chatDocumentId: String,
         messageKind: [MessageModel.MessageKind],
@@ -106,9 +106,9 @@ class FirestoreService: FirestoreServiceProtocol {
         return db.collection("users").order(by: "name")
     }()
     
-    func createChatQuery(_ chat: ChatProtocol) -> Query {
-        return db.collection("chats")
-            .document(chat.documentId)
+    func chatBaseQuery(_ chatDocumentId: String) -> FireQuery {
+        db.collection("chats")
+            .document(chatDocumentId)
             .collection("messages")
             .order(by: "timestamp", descending: false)
     }

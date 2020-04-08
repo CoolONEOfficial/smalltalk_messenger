@@ -10,6 +10,7 @@ import FirebaseUI
 import CodableFirebase
 import InputBarAccessoryView
 import NYTPhotoViewer
+import Differ
 
 protocol ChatViewControllerProtocol: AutoMockable {
     func presentPhotoViewer(_ storageRefs: [StorageReference], initialIndex: Int)
@@ -20,13 +21,15 @@ class ChatViewController: UIViewController {
     
     // MARK: - Outlets
     
-    @IBOutlet var tableView: ChatTableView!
-    var bottomScrollAnimationsLock = false
     @IBOutlet var floatingBottomButton: UIButton!
     
     // MARK: - Vars
     
     var defaultTitle = "..."
+    
+    var tableView: PaginatedSectionedTableView<Date, MessageModel>!
+    
+    var bottomScrollAnimationsLock = false
     
     let inputBar = ChatInputBar()
     var viewModel: ChatViewModelProtocol!
@@ -105,7 +108,7 @@ class ChatViewController: UIViewController {
                     self.defaultTitle = user.fullName
                     self.transitionSubtitleLabel {
                         if user.typing == self.viewModel.chat.documentId! {
-                            self.subtitleLabel.text = "\(user.name) typing"
+                            self.subtitleLabel.text = "\(user.name) typing..."
                         } else {
                             self.subtitleLabel.text = user.onlineText
                         }
@@ -136,8 +139,8 @@ class ChatViewController: UIViewController {
                             self.subtitleLabel.text = subtitleStr
                         } else {
                             self.subtitleLabel.text = typingUsers
-                                .map({ $0.name + " typing" })
-                                .joined(separator: ", ")
+                                .map({ $0.name })
+                                .joined(separator: ", ") + " typing..."
                         }
                     }
                 }
@@ -228,33 +231,47 @@ class ChatViewController: UIViewController {
     }
     
     private func setupTableView() {
+        tableView = .init(
+            baseQuery: viewModel.baseQuery,
+            initialPosition: .bottom,
+            cellForRowAt: { indexPath -> UITableViewCell in
+                let cell = self.tableView.dequeueReusableCell(for: indexPath, cellType: MessageCell.self)
+                
+                let section = self.tableView.data[indexPath.section].elements
+                let message = section[indexPath.row]
+                
+                cell.loadMessage(
+                    message,
+                    mergeNext: section.count > indexPath.row + 1
+                        && MessageModel.checkMerge(message, section[indexPath.row + 1]),
+                    mergePrev: 0 < indexPath.row
+                        && MessageModel.checkMerge(message, section[indexPath.row - 1])
+                )
+                cell.delegate = self.viewModel
+                
+                return cell
+            },
+            querySideTransform: { message in
+                message.date
+            },
+            groupingBy: { message in
+                message.date.midnight
+            },
+            sortedBy: { l, r in
+                l.compare(r) == .orderedAscending
+            },
+            fromSnapshot: MessageModel.fromSnapshot
+        )
         tableView.register(cellType: MessageCell.self)
-        tableView.delegate = self
-        tableView.chatDelegate = self
-        tableView.messageDelegate = viewModel
+        tableView.paginatedDelegate = self
         tableView.allowsMultipleSelection = false
         tableView.allowsMultipleSelectionDuringEditing = true
+        tableView.separatorStyle = .none
         
-        tableView.dataSource = tableView.bind(
-            toFirestoreQuery: viewModel.firestoreQuery()
-        ) { tableView, indexPath in
-            let cell = tableView.dequeueReusableCell(for: indexPath, cellType: MessageCell.self)
-            
-            let section = self.tableView
-                .chatDataSource
-                .messageItems[indexPath.section].value
-            let message = section[indexPath.row]
-            
-            cell.loadMessage(
-                message,
-                mergeNext: section.count > indexPath.row + 1
-                    && MessageModel.checkMerge(left: message, right: section[indexPath.row + 1]),
-                mergePrev: 0 < indexPath.row
-                    && MessageModel.checkMerge(left: message, right: section[indexPath.row - 1])
-            )
-            
-            return cell
-        }
+        view.addSubview(tableView)
+        tableView.edgesToSuperview()
+        
+        view.bringSubviewToFront(floatingBottomButton)
     }
     
     // MARK: - Helpers
@@ -277,7 +294,8 @@ class ChatViewController: UIViewController {
     }
     
     internal func didEndSendMessage() {
-        (inputBar.rightStackView.subviews.first as! InputBarSendButton).stopAnimating()
+        inputBar.sendButton.stopAnimating()
+        inputBar.voiceButton.stopAnimating()
         inputBar.inputTextView.placeholder = "Message..."
         inputBar.invalidatePlugins()
     }
@@ -285,7 +303,14 @@ class ChatViewController: UIViewController {
     // MARK: Floating bottom button
     
     @IBAction func didFloatingBottomButtonClick(_ sender: UIButton) {
-        tableView.scrollToBottom(animated: true)
+        if tableView.dataAtEnd {
+            tableView.scrollToBottom(animated: true)
+        } else {
+            tableView.loadAtEnd { messages in
+                self.tableView.updateElements(messages, animate: false)
+                self.tableView.scrollToBottom(animated: true)
+            }
+        }
     }
     
 }
@@ -334,8 +359,8 @@ extension ChatViewController: ChatViewControllerProtocol {
     
     func presentErrorAlert(_ text: String) {
         let alert = UIAlertController(title: "Error",
-            message: text,
-            preferredStyle: .alert
+                                      message: text,
+                                      preferredStyle: .alert
         )
         alert.addAction(UIAlertAction(title: "Dismiss", style: .default))
         
@@ -348,9 +373,9 @@ extension ChatViewController: NYTPhotosViewControllerDelegate {
     
     func photosViewController(_ photosViewController: NYTPhotosViewController, referenceViewFor photo: NYTPhoto) -> UIView? {
         guard let box = photo as? PhotoBox else { return nil }
-
-        for (sectionIndex, day) in tableView.chatDataSource.messageItems.enumerated() {
-            for (rowIndex, message) in day.value.enumerated() {
+        
+        for (sectionIndex, day) in tableView.data.enumerated() {
+            for (rowIndex, message) in day.elements.enumerated() {
                 for (contentIndex, content) in message.kind.enumerated() {
                     switch content {
                     case .image(let path, _):

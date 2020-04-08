@@ -10,7 +10,6 @@ import Firebase
 import InputBarAccessoryView
 
 protocol ChatViewModelProtocol: ViewModelProtocol, AutoMockable, MessageCellDelegate {
-    func firestoreQuery() -> FireQuery
     func sendMessage(
         attachments: [ChatViewController.MessageAttachment],
         messageText: String?,
@@ -50,6 +49,7 @@ protocol ChatViewModelProtocol: ViewModelProtocol, AutoMockable, MessageCellDele
     func endTypingCurrentUser()
     
     var chat: ChatProtocol { get }
+    var baseQuery: FireQuery { get }
     var lastTapCellContent: MessageCellContentProtocol! { get }
 }
 
@@ -104,8 +104,8 @@ class ChatViewModel: ChatViewModelProtocol {
         self.imagePickerService = imagePickerService
     }
     
-    func firestoreQuery() -> FireQuery {
-        return firestoreService.createChatQuery(chat)
+    var baseQuery: FireQuery {
+        firestoreService.chatBaseQuery(chat.documentId)
     }
     
     func sendMessage(

@@ -10,7 +10,6 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ChatViewController" customModule="epam_messenger" customModuleProvider="target">
             <connections>
                 <outlet property="floatingBottomButton" destination="P1E-k8-TIq" id="bcw-Op-Q3c"/>
-                <outlet property="tableView" destination="JMF-4e-zBG" id="gfE-Nb-8Ea"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -19,12 +18,6 @@
             <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="none" allowsSelection="NO" allowsSelectionDuringEditing="YES" allowsMultipleSelectionDuringEditing="YES" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="JMF-4e-zBG" customClass="ChatTableView" customModule="epam_messenger" customModuleProvider="target">
-                    <rect key="frame" x="0.0" y="44" width="414" height="852"/>
-                    <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                    <viewLayoutGuide key="contentLayoutGuide" id="2og-PZ-eS6"/>
-                    <viewLayoutGuide key="frameLayoutGuide" id="rtv-H6-ya7"/>
-                </tableView>
                 <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="P1E-k8-TIq">
                     <rect key="frame" x="368" y="776" width="36" height="36"/>
                     <color key="backgroundColor" systemColor="secondarySystemBackgroundColor" red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -42,11 +35,7 @@
             </subviews>
             <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
             <constraints>
-                <constraint firstItem="JMF-4e-zBG" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" id="7uG-fS-Uz7"/>
-                <constraint firstItem="JMF-4e-zBG" firstAttribute="bottom" secondItem="i5M-Pr-FkT" secondAttribute="bottom" id="Old-dt-87l"/>
-                <constraint firstItem="JMF-4e-zBG" firstAttribute="trailing" secondItem="fnl-2z-Ty3" secondAttribute="trailing" id="Uuy-Xp-RNs"/>
                 <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="P1E-k8-TIq" secondAttribute="trailing" constant="10" id="nBd-7R-QFR"/>
-                <constraint firstItem="JMF-4e-zBG" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="qvi-GF-F9o"/>
             </constraints>
             <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
             <point key="canvasLocation" x="140.57971014492756" y="89.732142857142847"/>
