@@ -33,13 +33,14 @@ protocol ChatListCellDelegateProtocol {
 protocol ChatListViewControllerProtocol {
 }
 
+let separatorInsetEdit: CGFloat = 120
+let separatorInsetPlain: CGFloat = 75
+
 class ChatListViewController: UIViewController {
     
-    // MARK: - Outlets
-    
-    @IBOutlet var tableView: UITableView!
-    
     // MARK: - Vars
+    
+    var tableView: PaginatedTableView<ChatModel>!
     
     var viewModel: ChatListViewModelProtocol!
     let searchController = UISearchController(searchResultsController: nil)
@@ -48,11 +49,6 @@ class ChatListViewController: UIViewController {
     
     var forwardDelegate: ForwardDelegateProtocol?
     
-    var bindDataSource: FUIFirestoreTableViewDataSource! {
-        didSet {
-            tableView.dataSource = bindDataSource
-        }
-    }
     var searchDataSource: FUIFirestoreTableViewDataSource!
     
     lazy var deleteButton: UIBarButtonItem = {
@@ -91,23 +87,33 @@ class ChatListViewController: UIViewController {
     }
     
     private func setupTableView() {
+        tableView = .init(
+            baseQuery: viewModel.firestoreQuery(),
+            initialPosition: .top,
+            cellForRowAt: { indexPath in
+                let cell = self.tableView.dequeueReusableCell(for: indexPath, cellType: ChatCell.self)
+                let chatModel = self.tableView.elementAt(indexPath)
+                
+                cell.chat = chatModel
+                cell.delegate = self
+                
+                return cell
+            },
+            querySideTransform: { chat in
+                return chat.lastMessage.date
+            },
+            fromSnapshot: ChatModel.fromSnapshot
+        )
+        
         tableView.register(cellType: ChatCell.self)
         tableView.register(cellType: SearchChatCell.self)
         tableView.register(cellType: SearchMessageCell.self)
-        tableView.delegate = self
+        tableView.paginatedDelegate = self
+        tableView.allowsMultipleSelectionDuringEditing = true
+        tableView.separatorInset.left = separatorInsetPlain
         
-        bindDataSource = self.tableView.bind(
-            toFirestoreQuery: viewModel.firestoreQuery()
-        ) { tableView, indexPath, snapshot in
-            let cell = tableView.dequeueReusableCell(for: indexPath, cellType: ChatCell.self)
-            
-            if let chatModel = self.chatFrom(snapshot) {
-                cell.chat = chatModel
-            }
-            cell.delegate = self
-            
-            return cell
-        }
+        view.addSubview(tableView)
+        tableView.edgesToSuperview()
     }
     
     private func setupToolbarItems() {
@@ -143,7 +149,9 @@ class ChatListViewController: UIViewController {
     
     @objc private func toggleEditMode(_ sender: UIBarButtonItem) {
         tableView.setEditing(!tableView.isEditing, animated: true)
-        tableView.separatorInset.left = tableView.isEditing ? 120 : 75
+        tableView.separatorInset.left = tableView.isEditing
+            ? separatorInsetEdit
+            : separatorInsetPlain
         sender.title = tableView.isEditing ? "Done" : "Edit"
         
         setToolbarHidden(!tableView.isEditing)
@@ -160,7 +168,7 @@ class ChatListViewController: UIViewController {
     
     @objc private func deleteSelectedChats() {
         for indexPath in tableView.indexPathsForSelectedRows! {
-            let chatModel = ChatModel.fromSnapshot(bindDataSource.items[indexPath.row])!
+            let chatModel = self.tableView.elementAt(indexPath)
             
             viewModel.deleteChat(chatModel)
         }
@@ -177,27 +185,6 @@ class ChatListViewController: UIViewController {
     }
     
     // MARK: - Helpers
-    
-    private func chatAt(_ itemIndex: Int) -> ChatModel? {
-        let snapshot = bindDataSource.items[itemIndex]
-        return chatFrom(snapshot)
-    }
-    
-    private func chatFrom(_ snapshot: DocumentSnapshot) -> ChatModel? {
-        var data = snapshot.data() ?? [:]
-        data["documentId"] = snapshot.documentID
-        
-        do {
-            return try FirestoreDecoder()
-                .decode(
-                    ChatModel.self,
-                    from: data
-            )
-        } catch let err {
-            debugPrint("error while parse chat model: \(err)")
-            return nil
-        }
-    }
     
     func setTabBarHidden(
         _ hidden: Bool,
@@ -235,7 +222,7 @@ class ChatListViewController: UIViewController {
     }
 }
 
-extension ChatListViewController: UITableViewDelegate {
+extension ChatListViewController: PaginatedTableViewDelegate {
     
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         searchController.searchBar.resignFirstResponder()
@@ -279,7 +266,7 @@ extension ChatListViewController: UITableViewDelegate {
                     self.didSelect(chatModel)
                 }
             } else {
-                didSelect(ChatModel.fromSnapshot(bindDataSource.items[indexPath.item]))
+                didSelect(self.tableView.elementAt(indexPath))
             }
         }
     }
@@ -299,9 +286,9 @@ extension ChatListViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
-        if !isForward, !isSearch,
-            let chatModel = chatAt(indexPath.item) {
+        if !isForward, !isSearch {
             let identifier = NSString(string: String(indexPath.item))
+            let chatModel = self.tableView.elementAt(indexPath)
             let configuration = UIContextMenuConfiguration(identifier: identifier, previewProvider: { () -> UIViewController? in
                 // Return Preview View Controller here
                 return self.viewModel.createChatPreview(chatModel)
@@ -327,10 +314,10 @@ extension ChatListViewController: UITableViewDelegate {
             guard let identifier = configuration.identifier as? String else { return }
             guard let itemIndex = Int(identifier) else { return }
             
-            if let chatModel = chatAt(itemIndex) {
-                animator.addCompletion {
-                    self.viewModel.goToChat(chatModel)
-                }
+            let chatModel = self.tableView.elementAt(itemIndex)
+            
+            animator.addCompletion {
+                self.viewModel.goToChat(chatModel)
             }
         }
     }

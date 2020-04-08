@@ -9,7 +9,6 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ChatListViewController" customModule="epam_messenger" customModuleProvider="target">
             <connections>
-                <outlet property="tableView" destination="h4Y-ed-QEh" id="Ff5-oO-6Us"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -17,19 +16,6 @@
         <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
             <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-            <subviews>
-                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" allowsSelectionDuringEditing="YES" allowsMultipleSelectionDuringEditing="YES" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="h4Y-ed-QEh">
-                    <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                    <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                    <inset key="separatorInset" minX="75" minY="0.0" maxX="0.0" maxY="0.0"/>
-                </tableView>
-            </subviews>
-            <constraints>
-                <constraint firstAttribute="bottom" secondItem="h4Y-ed-QEh" secondAttribute="bottom" id="CyT-NJ-jHy" userLabel="Safe Area.bottom = Table View.bottom"/>
-                <constraint firstItem="h4Y-ed-QEh" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="FZK-vr-WpF" userLabel="Table View.leading = Safe Area.leading"/>
-                <constraint firstItem="h4Y-ed-QEh" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="g7N-80-3lt"/>
-                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="h4Y-ed-QEh" secondAttribute="trailing" id="u5g-6E-aUa" userLabel="Safe Area.trailing = Table View.trailing"/>
-            </constraints>
             <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
             <point key="canvasLocation" x="139" y="84"/>
         </view>

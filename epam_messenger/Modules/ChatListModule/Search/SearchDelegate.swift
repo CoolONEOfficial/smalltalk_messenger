@@ -12,8 +12,8 @@ extension ChatListViewController: UISearchResultsUpdating, UISearchControllerDel
     func updateSearchResults(for searchController: UISearchController) {
         NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(reload), object: nil)
         if searchController.searchBar.text?.isEmpty ?? true {
-            if !bindDataSource.isEqual(tableView.dataSource) {
-                bindDataSource.bind(to: tableView)
+            if !tableView.dataSource!.isEqual(tableView) {
+                tableView.dataSource = tableView
                 self.tableView.separatorInset.left = 75
                 tableView.reloadData()
             }
@@ -23,8 +23,8 @@ extension ChatListViewController: UISearchResultsUpdating, UISearchControllerDel
     }
     
     @objc func reload() {
-        if bindDataSource.isEqual(tableView.dataSource) {
-            bindDataSource.unbind()
+        if tableView.isEqual(tableView.dataSource) {
+            tableView.listener.remove()
         }
         tableView.dataSource = nil
         searchController.searchBar.isLoading = true
