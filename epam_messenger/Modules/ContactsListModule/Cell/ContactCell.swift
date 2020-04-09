@@ -9,14 +9,12 @@ import UIKit
 import Reusable
 import Firebase
 
-class ContactsListCell: UITableViewCell, NibReusable {
+class ContactCell: UITableViewCell, NibReusable {
     
     @IBOutlet weak var avatarImageView: UIImageView!
     @IBOutlet weak var localName: UILabel!
-    
 
-
-var model: ContactsListModel!
+    var model: ContactModel!
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -25,9 +23,9 @@ var model: ContactsListModel!
         avatarImageView.layer.cornerRadius = avatarImageView.bounds.width / 2
     }
     
-    func loadContactsListModel(_ contactsModel: ContactsListModel) {
-        self.model = contactsModel
-        localName.text = contactsModel.localName
+    func loadContact(_ contact: ContactModel) {
+        self.model = contact
+        localName.text = contact.localName
         //userIdLabel.text = contactsModel.userId
     }
 }

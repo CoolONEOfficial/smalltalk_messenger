@@ -9,17 +9,17 @@ import Foundation
 import Firebase
 import CodableFirebase
 
-struct ContactsListModel: Decodable {
+public struct ContactModel: Decodable, AutoEquatable {
     let localName: String
     let userId: String
     
-    static func fromSnapshot(_ snapshot: DocumentSnapshot) -> ContactsListModel? {
+    static func fromSnapshot(_ snapshot: DocumentSnapshot) -> ContactModel? {
         let data = snapshot.data() ?? [:]
         
         do {
             return try FirestoreDecoder()
                 .decode(
-                    ContactsListModel.self,
+                    ContactModel.self,
                     from: data
             )
         } catch let err {

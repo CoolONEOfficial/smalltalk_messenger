@@ -24,6 +24,13 @@ fileprivate func compareArrays<T>(lhs: [T], rhs: [T], compare: (_ lhs: T, _ rhs:
 
 
 // MARK: - AutoEquatable for classes, protocols, structs
+// MARK: - ContactModel AutoEquatable
+extension ContactModel: Equatable {}
+public func == (lhs: ContactModel, rhs: ContactModel) -> Bool {
+    guard lhs.localName == rhs.localName else { return false }
+    guard lhs.userId == rhs.userId else { return false }
+    return true
+}
 
 // MARK: - AutoEquatable for Enums
 // MARK: - MessageModel.MessageKind AutoEquatable

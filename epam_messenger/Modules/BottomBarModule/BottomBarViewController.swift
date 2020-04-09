@@ -23,9 +23,7 @@ class BottomBarViewController: UITabBarController {
     }
     var contacts: UIViewController! {
         didSet {
-            //contacts.tabBarItem = .init(tabBarSystemItem: .contacts, tag: 0)
-            contacts.tabBarItem = .init(title: "Сontacts", image: #imageLiteral(resourceName: "TabBar_Contacts.png"), selectedImage: #imageLiteral(resourceName: "TabBar_Contacts.png"))
-            contacts.tabBarItem.tag = 0
+            contacts.tabBarItem = .init(tabBarSystemItem: .contacts, tag: 0)
         }
     }
     
@@ -37,6 +35,6 @@ class BottomBarViewController: UITabBarController {
         super.viewWillAppear(animated)
         
         viewControllers = controllers
-        selectedIndex = 0
+        selectedIndex = 1
     }
 }

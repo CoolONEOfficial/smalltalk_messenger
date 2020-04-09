@@ -16,43 +16,98 @@ protocol ContactsListViewControllerProtocol {
 
 class ContactsListViewController: UIViewController {
     
+    // MARK: - Vars
+    
     var db: Firestore = {
         return Firestore.firestore()
     }()
     
     var viewModel: ContactsListViewModelProtocol!
     
-    var bindDataSource: FUIFirestoreTableViewDataSource! {
-        didSet {
-            tableView.dataSource = bindDataSource
-        }
-    }
+    var tableView: PaginatedSectionedTableView<String, ContactModel>!
     
-    @IBOutlet weak var tableView: UITableView!
+    // MARK: - Methods
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.delegate = self
         
         title = "Contacts"
-        tableView.register(cellType: ContactsListCell.self)
         
-        bindDataSource = self.tableView.bind(
-            toFirestoreQuery: viewModel.firestoreContactsListQuery()
-        ) { tableView, indexPath, snapshot in
-            let cell = tableView.dequeueReusableCell(for: indexPath, cellType: ContactsListCell.self)
-            self.viewModel.didContactsListLoad(snapshot: snapshot, cell: cell)
-            //let snapshot = self.bindDataSource.items[indexPath.row]
-            return cell
-        }
+        setupTableView()
+    }
+    
+    private func setupTableView() {
+        tableView = .init(
+            baseQuery: viewModel.baseQuery,
+            initialPosition: .top,
+            cellForRowAt: { indexPath in
+                let cell = self.tableView.dequeueReusableCell(for: indexPath, cellType: ContactCell.self)
+
+                let section = self.tableView.data[indexPath.section].elements
+                let contact = section[indexPath.row]
+
+                cell.loadContact(contact)
+
+                return cell
+            },
+            querySideTransform: { contact in
+                contact.localName
+            },
+            groupingBy: { contact in
+                String(contact.localName.prefix(1))
+            },
+            sortedBy: { l, r in
+                l > r
+            },
+            fromSnapshot: ContactModel.fromSnapshot
+        )
+//        self.tableView = .init(
+//            baseQuery: viewModel.baseQuery,
+//            initialPosition: .top,
+//            cellForRowAt: { indexPath -> UITableViewCell in
+//                let cell = self.tableView.dequeueReusableCell(for: indexPath, cellType: MessageCell.self)
+//
+//                let section = self.tableView.data[indexPath.section].elements
+//                let message = section[indexPath.row]
+//
+//                cell.loadMessage(
+//                    message,
+//                    mergeNext: section.count > indexPath.row + 1
+//                        && MessageModel.checkMerge(message, section[indexPath.row + 1]),
+//                    mergePrev: 0 < indexPath.row
+//                        && MessageModel.checkMerge(message, section[indexPath.row - 1])
+//                )
+//                cell.delegate = self.viewModel
+//
+//                return cell
+//            },
+//            querySideTransform: { message in
+//                message.date
+//            },
+//            groupingBy: { message in
+//                message.date.midnight
+//            },
+//            sortedBy: { l, r in
+//                l.compare(r) == .orderedAscending
+//            },
+//            fromSnapshot: MessageModel.fromSnapshot
+//        )
+        tableView.register(cellType: ContactCell.self)
+        tableView.paginatedDelegate = self
+        tableView.allowsMultipleSelection = false
+        tableView.allowsMultipleSelectionDuringEditing = true
+        tableView.separatorStyle = .none
+        
+        view.addSubview(tableView)
+        tableView.edgesToSuperview()
     }
 }
 
-extension ContactsListViewController: UITableViewDelegate {
+extension ContactsListViewController: PaginatedTableViewDelegate {
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let deleteAction = UIContextualAction(style: .normal, title: "Delete") { _, _, complete in
-            let cell = self.tableView.cellForRow(at: indexPath) as? ContactsListCell
+            let cell = self.tableView.cellForRow(at: indexPath) as? ContactCell
             self.db.collection("users").document("7kEMVwxyIccl9bawojE3").collection("contacts").document(cell!.model.userId).delete()
             tableView.reloadData()
             complete(true)

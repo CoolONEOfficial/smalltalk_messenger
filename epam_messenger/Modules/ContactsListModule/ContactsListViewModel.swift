@@ -10,37 +10,34 @@ import Firebase
 import CodableFirebase
 
 protocol ContactsListViewModelProtocol: ViewModelProtocol {
-    //func goToContacts() // понадобится для отображения конкретного контакта
-    func firestoreContactsListQuery() -> Query
-    func didContactsListLoad(snapshot: DocumentSnapshot, cell: ContactsListCell)
+    func didContactsListLoad(snapshot: DocumentSnapshot, cell: ContactCell)
+    
+    var baseQuery: FireQuery { get }
 }
 
 class ContactsListViewModel: ContactsListViewModelProtocol {
     
     let router: RouterProtocol
     let viewController: ContactsListViewControllerProtocol
-    let firestoreService: FirestoreService = FirestoreService()
+    let firestoreService: FirestoreService
     
     init(
         router: RouterProtocol,
-        viewController: ContactsListViewControllerProtocol
+        viewController: ContactsListViewControllerProtocol,
+        firestoreService: FirestoreService = FirestoreService()
     ) {
         self.router = router
         self.viewController = viewController
+        self.firestoreService = firestoreService
     }
     
-    func firestoreContactsListQuery() -> Query {
-        return firestoreService.contactsListQuery
+    var baseQuery: FireQuery {
+        return firestoreService.contactListQuery
     }
     
-    //    func goToProfile() {
-    //        router.showContactsList()
-    //    }
-    
-    func didContactsListLoad(snapshot: DocumentSnapshot, cell: ContactsListCell) {
-        if let contactsList = ContactsListModel.fromSnapshot(snapshot)
-        {
-            cell.loadContactsListModel(contactsList)
+    func didContactsListLoad(snapshot: DocumentSnapshot, cell: ContactCell) {
+        if let contact = ContactModel.fromSnapshot(snapshot) {
+            cell.loadContact(contact)
         }
     }
 }

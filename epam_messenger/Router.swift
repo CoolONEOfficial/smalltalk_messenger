@@ -17,9 +17,8 @@ protocol RouterProtocol: RouterMain, AutoMockable {
     func initialViewController()
     func showBottomBar()
     func showChatList()
-    func showChat(_ chat: ChatProtocol)
+    func showChat(_ chat: ChatModel)
     func popToRoot()
-    func showUsersList()
     func showContactsList()
 }
 
@@ -41,24 +40,9 @@ class Router: RouterProtocol {
     }
     
     func initialViewController() {
-//        if let navigationController = navigationController, let rootViewController = rootViewController {
-//            navigationController.viewControllers = [rootViewController]
-//        }
-        
-        if let navigationController = navigationController {
-            guard let contactsListViewController = assemblyBuilder?.createContactsListModule(router: self) else { return }
-            navigationController.viewControllers = [contactsListViewController]
+        if let navigationController = navigationController, let rootViewController = rootViewController {
+            navigationController.viewControllers = [rootViewController]
         }
-        
-//        if let navigationController = navigationController {
-//            guard let contactsListViewController = assemblyBuilder?.createContactsListModule(router: self) else { return }
-//            navigationController.viewControllers = [contactsListViewController]
-//        }
-        
-//        if let navigationController = navigationController {
-//            guard let usersListViewController = assemblyBuilder?.createUsersListModule(router: self) else { return }
-//            navigationController.viewControllers = [usersListViewController]
-//        }
     }
     
     func showBottomBar() {
@@ -78,7 +62,7 @@ class Router: RouterProtocol {
         }
     }
     
-    func showChat(_ chat: ChatProtocol) {
+    func showChat(_ chat: ChatModel) {
         if let navigationController = navigationController {
             guard let chatViewController =
                 assemblyBuilder?.createChatModule(
@@ -92,13 +76,6 @@ class Router: RouterProtocol {
     func popToRoot() {
         if let navigationController = navigationController {
             navigationController.popToRootViewController(animated: true)
-        }
-    }
-    
-    func showUsersList() {
-        if let navigationController = navigationController {
-            guard let usersListViewController = assemblyBuilder?.createUsersListModule(router: self) else { return }
-            navigationController.viewControllers = [usersListViewController]
         }
     }
     

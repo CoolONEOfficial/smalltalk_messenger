@@ -718,11 +718,11 @@ class RouterProtocolMock: RouterProtocol {
     var showChatCalled: Bool {
         return showChatCallsCount > 0
     }
-    var showChatReceivedChat: ChatProtocol?
-    var showChatReceivedInvocations: [ChatProtocol] = []
-    var showChatClosure: ((ChatProtocol) -> Void)?
+    var showChatReceivedChat: ChatModel?
+    var showChatReceivedInvocations: [ChatModel] = []
+    var showChatClosure: ((ChatModel) -> Void)?
 
-    func showChat(_ chat: ChatProtocol) {
+    func showChat(_ chat: ChatModel) {
         showChatCallsCount += 1
         showChatReceivedChat = chat
         showChatReceivedInvocations.append(chat)
@@ -740,19 +740,6 @@ class RouterProtocolMock: RouterProtocol {
     func popToRoot() {
         popToRootCallsCount += 1
         popToRootClosure?()
-    }
-
-    //MARK: - showUsersList
-
-    var showUsersListCallsCount = 0
-    var showUsersListCalled: Bool {
-        return showUsersListCallsCount > 0
-    }
-    var showUsersListClosure: (() -> Void)?
-
-    func showUsersList() {
-        showUsersListCallsCount += 1
-        showUsersListClosure?()
     }
 
     //MARK: - showContactsList
