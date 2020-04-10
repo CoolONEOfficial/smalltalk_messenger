@@ -79,6 +79,10 @@
 		85FF256D2414DCDF00A25D7A /* ChatCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 85FF256B2414DCDF00A25D7A /* ChatCell.xib */; };
 		85FF25752415976600A25D7A /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FF25742415976600A25D7A /* ViewModel.swift */; };
 		927429D84AFBD6822D379C95 /* Pods_epam_messengerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FF442A0E4758E98A5ADEE32D /* Pods_epam_messengerTests.framework */; };
+		94389AA0243F74D200587218 /* SearchContactCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94389A9E243F74D200587218 /* SearchContactCell.swift */; };
+		94389AA1243F74D200587218 /* SearchContactCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 94389A9F243F74D200587218 /* SearchContactCell.xib */; };
+		94389AA3243F756600587218 /* ContactsSearchDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94389AA2243F756600587218 /* ContactsSearchDelegate.swift */; };
+		94389AA5243F757C00587218 /* ContactsSearchDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94389AA4243F757C00587218 /* ContactsSearchDataSource.swift */; };
 		949BF7492436126D006C2AEC /* ContactModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 949BF7482436126D006C2AEC /* ContactModel.swift */; };
 		949BF74E2436130A006C2AEC /* ContactCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 949BF74C2436130A006C2AEC /* ContactCell.swift */; };
 		949BF74F2436130A006C2AEC /* ContactCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 949BF74D2436130A006C2AEC /* ContactCell.xib */; };
@@ -206,6 +210,10 @@
 		85FF256A2414DCDF00A25D7A /* ChatCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatCell.swift; sourceTree = "<group>"; };
 		85FF256B2414DCDF00A25D7A /* ChatCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ChatCell.xib; sourceTree = "<group>"; };
 		85FF25742415976600A25D7A /* ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
+		94389A9E243F74D200587218 /* SearchContactCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchContactCell.swift; sourceTree = "<group>"; };
+		94389A9F243F74D200587218 /* SearchContactCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SearchContactCell.xib; sourceTree = "<group>"; };
+		94389AA2243F756600587218 /* ContactsSearchDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsSearchDelegate.swift; sourceTree = "<group>"; };
+		94389AA4243F757C00587218 /* ContactsSearchDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsSearchDataSource.swift; sourceTree = "<group>"; };
 		949BF7482436126D006C2AEC /* ContactModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactModel.swift; sourceTree = "<group>"; };
 		949BF74C2436130A006C2AEC /* ContactCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactCell.swift; sourceTree = "<group>"; };
 		949BF74D2436130A006C2AEC /* ContactCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ContactCell.xib; sourceTree = "<group>"; };
@@ -656,9 +664,29 @@
 			path = MVVM;
 			sourceTree = "<group>";
 		};
+		94389A9C243F748D00587218 /* Search */ = {
+			isa = PBXGroup;
+			children = (
+				94389A9D243F749E00587218 /* Cell */,
+				94389AA2243F756600587218 /* ContactsSearchDelegate.swift */,
+				94389AA4243F757C00587218 /* ContactsSearchDataSource.swift */,
+			);
+			path = Search;
+			sourceTree = "<group>";
+		};
+		94389A9D243F749E00587218 /* Cell */ = {
+			isa = PBXGroup;
+			children = (
+				94389A9E243F74D200587218 /* SearchContactCell.swift */,
+				94389A9F243F74D200587218 /* SearchContactCell.xib */,
+			);
+			path = Cell;
+			sourceTree = "<group>";
+		};
 		949BF74A243612CC006C2AEC /* ContactsListModule */ = {
 			isa = PBXGroup;
 			children = (
+				94389A9C243F748D00587218 /* Search */,
 				949BF74B243612E1006C2AEC /* Cell */,
 				949BF7542436155B006C2AEC /* ContactsListViewModel.swift */,
 				949BF75024361534006C2AEC /* ContactsListViewController.swift */,
@@ -918,6 +946,7 @@
 				85FD29FA2417FC130035AC13 /* ChatListViewController.xib in Resources */,
 				85812D952433B6E000EA2626 /* MessageCell.xib in Resources */,
 				850BCE7924377B1700643881 /* SearchChatCell.xib in Resources */,
+				94389AA1243F74D200587218 /* SearchContactCell.xib in Resources */,
 				850C7FFE2427FD89008BAF24 /* MessageImageContent.xib in Resources */,
 				85FD29FE241818B70035AC13 /* AutoCodable.swifttemplate in Resources */,
 				85812D902433B68800EA2626 /* MessageTextContent.xib in Resources */,
@@ -1102,6 +1131,8 @@
 				850BCE80243D484D00643881 /* PaginatedTableView.swift in Sources */,
 				852C00F2242E188400BCC056 /* ImagePickerService.swift in Sources */,
 				85812DA62433B7F100EA2626 /* DateHeader.swift in Sources */,
+				94389AA5243F757C00587218 /* ContactsSearchDataSource.swift in Sources */,
+				94389AA3243F756600587218 /* ContactsSearchDelegate.swift in Sources */,
 				850BCE7424375A2500643881 /* SearchMessageCell.swift in Sources */,
 				E6B7499824144C5700F00B29 /* SceneDelegate.swift in Sources */,
 				85B3F1D8243388AF001F92D9 /* UIStackView.swift in Sources */,
@@ -1122,6 +1153,7 @@
 				859330032417CD9C00F1F32E /* BottomBarViewController.swift in Sources */,
 				851553F0241983E500C89534 /* Message24HourDateFormatter.swift in Sources */,
 				85B3F1D424338875001F92D9 /* MessageAudioContent.swift in Sources */,
+				94389AA0243F74D200587218 /* SearchContactCell.swift in Sources */,
 				E6B7498A2414382300F00B29 /* ChatListViewModel.swift in Sources */,
 				850C8015242A7F34008BAF24 /* ChatPhotoViewerDataSource.swift in Sources */,
 				852C00EF242CF8FA00BCC056 /* MessageText.swift in Sources */,
