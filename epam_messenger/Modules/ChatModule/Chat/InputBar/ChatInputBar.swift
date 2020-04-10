@@ -56,6 +56,7 @@ class ChatInputBar: InputBarAccessoryView {
         setupInputTextView()
         setupLeftStack()
         setupRightStack()
+        separatorLine.isHidden = true
         separatorLine.backgroundColor = .plainBackground
         backgroundView.backgroundColor = .systemBackground
     }
