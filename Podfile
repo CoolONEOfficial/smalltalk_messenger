@@ -23,6 +23,8 @@ target 'epam_messenger' do
   pod 'BSImagePicker', '~> 3.1.1'
   pod 'FDWaveformView'
   pod 'Differ'
+  pod 'Hero'
+  pod 'FaceAware'
 
   target 'epam_messengerTests' do
       inherit! :search_paths

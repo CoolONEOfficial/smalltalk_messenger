@@ -167,6 +167,7 @@ PODS:
   - BSImagePicker (3.1.1)
   - CodableFirebase (0.2.1)
   - Differ (1.4.5)
+  - FaceAware (2.1.0)
   - FDWaveformView (5.0.1)
   - Firebase (6.21.0):
     - Firebase/Core (= 6.21.0)
@@ -285,6 +286,7 @@ PODS:
     - nanopb (~> 0.3)
   - gRPC-Core/Interface (1.21.0)
   - GTMSessionFetcher/Core (1.3.1)
+  - Hero (1.5.0)
   - InputBarAccessoryView (4.3.2):
     - InputBarAccessoryView/Core (= 4.3.2)
   - InputBarAccessoryView/Core (4.3.2)
@@ -334,6 +336,7 @@ DEPENDENCIES:
   - BSImagePicker (~> 3.1.1)
   - CodableFirebase
   - Differ
+  - FaceAware
   - FDWaveformView
   - Firebase
   - Firebase/Analytics
@@ -342,6 +345,7 @@ DEPENDENCIES:
   - Firebase/Storage
   - FirebaseUI/Firestore (~> 8.4.2)
   - FirebaseUI/Storage (~> 8.4.2)
+  - Hero
   - InputBarAccessoryView
   - InstantSearchClient (~> 7.0)
   - NYTPhotoViewer
@@ -357,6 +361,7 @@ SPEC REPOS:
     - BSImagePicker
     - CodableFirebase
     - Differ
+    - FaceAware
     - FDWaveformView
     - Firebase
     - FirebaseAnalytics
@@ -376,6 +381,7 @@ SPEC REPOS:
     - "gRPC-C++"
     - gRPC-Core
     - GTMSessionFetcher
+    - Hero
     - InputBarAccessoryView
     - InstantSearchClient
     - leveldb-library
@@ -397,6 +403,7 @@ SPEC CHECKSUMS:
   BSImagePicker: 86f28e0f63b78d35fec7c6f0174b7af9e6f1431e
   CodableFirebase: 0bf201991eeec35eb9fcd987d271ea463cf34a80
   Differ: 3b6bd78e2b20cc795d9a86f7641d087524e4273e
+  FaceAware: f1266b8719a1a90da3d763b8cb428554edf0fa61
   FDWaveformView: c188be613947273cc83d6f0056505f60e6c4b9ac
   Firebase: f378c80340dd41c0ad0914af740c021eb282a04b
   FirebaseAnalytics: a1a0b3327ceb5cd5b4bacffdb293f6c909aa087d
@@ -416,6 +423,7 @@ SPEC CHECKSUMS:
   "gRPC-C++": 9dfe7b44821e7b3e44aacad2af29d2c21f7cde83
   gRPC-Core: c9aef9a261a1247e881b18059b84d597293c9947
   GTMSessionFetcher: cea130bbfe5a7edc8d06d3f0d17288c32ffe9925
+  Hero: b7385b75e7259da62f4f85462f59a5082d66b058
   InputBarAccessoryView: 7985d418040a05fe894bd4b8328dd43ab35517c3
   InstantSearchClient: 289fad11a1bd3bab759bbd80376b3a30a897cbee
   leveldb-library: 55d93ee664b4007aac644a782d11da33fba316f7
@@ -431,6 +439,6 @@ SPEC CHECKSUMS:
   SwiftLint: 55e96a4a4d537d4a3156859fc1c54bd24851a046
   TinyConstraints: 8dd91295e56797648c7bc335dd20e1d91ec4c192
 
-PODFILE CHECKSUM: d49f412d3812d02c1ed7b34fb9338d3159513998
+PODFILE CHECKSUM: ed9fece79a14f4201a45091285b51ac9151ffd8f
 
 COCOAPODS: 1.9.0
