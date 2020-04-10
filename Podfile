@@ -25,6 +25,7 @@ target 'epam_messenger' do
   pod 'Differ'
   pod 'Hero'
   pod 'FaceAware'
+  pod 'XLPagerTabStrip', '~> 9.0'
 
   target 'epam_messengerTests' do
       inherit! :search_paths
