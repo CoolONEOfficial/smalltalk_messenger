@@ -68,6 +68,8 @@ class ChatListViewModel: ChatListViewModelProtocol {
     }
     
     func goToChat(_ chatModel: ChatModel) {
+        guard let router = router as? ChatRouter else { return }
+        
         router.showChat(chatModel)
     }
     
@@ -90,7 +92,7 @@ class ChatListViewModel: ChatListViewModelProtocol {
     }
     
     func createChatPreview(_ chat: ChatProtocol) -> UIViewController {
-        return AssemblyBuilder().createChatModule(router: router, chat: chat)
+        return AssemblyBuilder().createChat(router: router, chat: chat)
     }
     
     func deleteChat(_ chat: ChatProtocol, completion: @escaping (Bool) -> Void = {_ in}) {

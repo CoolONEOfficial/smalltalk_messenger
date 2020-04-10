@@ -222,11 +222,11 @@ class ChatViewModelProtocolMock: ChatViewModelProtocol {
     var goToChatCalled: Bool {
         return goToChatCallsCount > 0
     }
-    var goToChatReceivedChatModel: ChatModel?
-    var goToChatReceivedInvocations: [ChatModel] = []
-    var goToChatClosure: ((ChatModel) -> Void)?
+    var goToChatReceivedChatModel: ChatProtocol?
+    var goToChatReceivedInvocations: [ChatProtocol] = []
+    var goToChatClosure: ((ChatProtocol) -> Void)?
 
-    func goToChat(        _ chatModel: ChatModel    ) {
+    func goToChat(        _ chatModel: ChatProtocol    ) {
         goToChatCallsCount += 1
         goToChatReceivedChatModel = chatModel
         goToChatReceivedInvocations.append(chatModel)
@@ -291,6 +291,19 @@ class ChatViewModelProtocolMock: ChatViewModelProtocol {
     func endTypingCurrentUser() {
         endTypingCurrentUserCallsCount += 1
         endTypingCurrentUserClosure?()
+    }
+
+    //MARK: - goToDetails
+
+    var goToDetailsCallsCount = 0
+    var goToDetailsCalled: Bool {
+        return goToDetailsCallsCount > 0
+    }
+    var goToDetailsClosure: (() -> Void)?
+
+    func goToDetails() {
+        goToDetailsCallsCount += 1
+        goToDetailsClosure?()
     }
 
     //MARK: - didTapContent
@@ -710,23 +723,6 @@ class RouterProtocolMock: RouterProtocol {
     func showChatList() {
         showChatListCallsCount += 1
         showChatListClosure?()
-    }
-
-    //MARK: - showChat
-
-    var showChatCallsCount = 0
-    var showChatCalled: Bool {
-        return showChatCallsCount > 0
-    }
-    var showChatReceivedChat: ChatModel?
-    var showChatReceivedInvocations: [ChatModel] = []
-    var showChatClosure: ((ChatModel) -> Void)?
-
-    func showChat(_ chat: ChatModel) {
-        showChatCallsCount += 1
-        showChatReceivedChat = chat
-        showChatReceivedInvocations.append(chat)
-        showChatClosure?(chat)
     }
 
     //MARK: - popToRoot

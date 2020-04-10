@@ -11,6 +11,7 @@ import FirebaseStorage
 protocol ChatProtocol {
     var friendId: String? { get }
     var avatarRef: StorageReference { get }
+    func loadInfo(completion: @escaping (String, String) -> Void)
     
     var documentId: String! { get }
     var users: [String] { get }

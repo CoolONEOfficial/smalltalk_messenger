@@ -31,6 +31,16 @@ public func == (lhs: ContactModel, rhs: ContactModel) -> Bool {
     guard lhs.userId == rhs.userId else { return false }
     return true
 }
+// MARK: - UserModel AutoEquatable
+extension UserModel: Equatable {}
+public func == (lhs: UserModel, rhs: UserModel) -> Bool {
+    guard compareOptionals(lhs: lhs.documentId, rhs: rhs.documentId, compare: ==) else { return false }
+    guard lhs.name == rhs.name else { return false }
+    guard lhs.surname == rhs.surname else { return false }
+    guard lhs.online == rhs.online else { return false }
+    guard compareOptionals(lhs: lhs.typing, rhs: rhs.typing, compare: ==) else { return false }
+    return true
+}
 
 // MARK: - AutoEquatable for Enums
 // MARK: - MessageModel.MessageKind AutoEquatable

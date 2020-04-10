@@ -167,7 +167,7 @@ extension UserModel {
         case typing
     }
 
-    internal init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         documentId = try container.decodeIfPresent(String.self, forKey: .documentId)
