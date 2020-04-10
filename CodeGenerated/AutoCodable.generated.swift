@@ -104,7 +104,7 @@ extension MessageModel.MessageKind {
         case userId
     }
 
-    internal init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         if container.allKeys.contains(.text), try container.decodeNil(forKey: .text) == false {
@@ -135,7 +135,7 @@ extension MessageModel.MessageKind {
         throw DecodingError.dataCorrupted(.init(codingPath: decoder.codingPath, debugDescription: "Unknown enum case"))
     }
 
-    internal func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
         switch self {
@@ -167,7 +167,7 @@ extension UserModel {
         case typing
     }
 
-    internal init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         documentId = try container.decodeIfPresent(String.self, forKey: .documentId)

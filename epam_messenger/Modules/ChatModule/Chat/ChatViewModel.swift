@@ -35,7 +35,7 @@ protocol ChatViewModelProtocol: ViewModelProtocol, AutoMockable, MessageCellDele
         forwardDelegate: ForwardDelegateProtocol
     ) -> UIViewController
     func goToChat(
-        _ chatModel: ChatModel
+        _ chatModel: ChatProtocol
     )
     func userData(
         _ userId: String,
@@ -47,6 +47,7 @@ protocol ChatViewModelProtocol: ViewModelProtocol, AutoMockable, MessageCellDele
     )
     func startTypingCurrentUser()
     func endTypingCurrentUser()
+    func goToDetails()
     
     var chat: ChatProtocol { get }
     var baseQuery: FireQuery { get }
@@ -77,16 +78,25 @@ extension ChatViewModelProtocol {
 }
 
 class ChatViewModel: ChatViewModelProtocol {
+    
+    // MARK: - Vars
+    
     let router: RouterProtocol
+    let viewController: ChatViewControllerProtocol
+    
     let firestoreService: FirestoreServiceProtocol
     let storageService: StorageServiceProtocol
     let imagePickerService: ImagePickerServiceProtocol
     
-    let viewController: ChatViewControllerProtocol
-    
     let chat: ChatProtocol
     
     var lastTapCellContent: MessageCellContentProtocol!
+    
+    var baseQuery: FireQuery {
+        firestoreService.chatBaseQuery(chat.documentId)
+    }
+    
+    // MARK: - Init
     
     init(
         router: RouterProtocol,
@@ -102,10 +112,6 @@ class ChatViewModel: ChatViewModelProtocol {
         self.firestoreService = firestoreService
         self.storageService = storageService
         self.imagePickerService = imagePickerService
-    }
-    
-    var baseQuery: FireQuery {
-        firestoreService.chatBaseQuery(chat.documentId)
     }
     
     func sendMessage(
@@ -192,10 +198,6 @@ class ChatViewModel: ChatViewModelProtocol {
         )
     }
     
-    func goToChat(_ chatModel: ChatModel) {
-        router.showChat(chatModel)
-    }
-    
     func userData(
         _ userId: String,
         completion: @escaping (UserModel?) -> Void
@@ -216,6 +218,18 @@ class ChatViewModel: ChatViewModelProtocol {
     
     func endTypingCurrentUser() {
         firestoreService.endTypingCurrentUser()
+    }
+    
+    func goToChat(_ chatModel: ChatProtocol) {
+        guard let router = router as? ChatRouter else { return }
+        
+        router.showChat(chatModel)
+    }
+    
+    func goToDetails() {
+        guard let router = router as? ChatRouter else { return }
+        
+        router.showChatDetails(chat)
     }
     
     func pickImages(

@@ -26,10 +26,6 @@ struct ChatModel: AutoCodable {
     
     static let defaultDocumentId: String! = nil
     
-    static func empty() -> ChatModel {
-        return ChatModel(users: [], lastMessage: MessageModel.empty(), type: .personalCorr)
-    }
-    
     static func fromSnapshot(_ snapshot: DocumentSnapshot) -> ChatModel? {
         var data = snapshot.data() ?? [:]
         data["documentId"] = snapshot.documentID
@@ -44,6 +40,13 @@ struct ChatModel: AutoCodable {
             debugPrint("error while parse chat model: \(err)")
             return nil
         }
+    }
+}
+
+extension ChatModel: Equatable {
+    public static func == (lhs: ChatModel, rhs: ChatModel) -> Bool {
+        lhs.documentId == rhs.documentId
+            && lhs.lastMessage == rhs.lastMessage
     }
 }
 
@@ -72,6 +75,49 @@ extension ChatModel: ChatProtocol {
         }
         
         return Storage.storage().reference(withPath: path!)
+    }
+    
+    func loadInfo(completion: @escaping (String, String) -> Void) {
+        let firestoreService = FirestoreService()
+        
+        switch type {
+        case .personalCorr:
+            firestoreService.userData(friendId!) { user in
+                if let user = user {
+                    let title = user.fullName
+                    completion(title, user.typing == self.documentId!
+                        ? "\(user.name) typing..."
+                        : user.onlineText
+                    )
+                }
+            }
+        case .chat(let title, _):
+            completion(title, "\(users.count) users")
+            
+            firestoreService.userListData(users) { userList in
+                if let userList = userList {
+                    let typingUsers = userList.filter({
+                        $0.typing == self.documentId
+                            && $0.documentId != Auth.auth().currentUser!.uid
+                    })
+                    if typingUsers.isEmpty {
+                        let onlineUsers = userList.filter({ $0.online })
+                        var subtitleStr = "\(self.users.count) users"
+                        if onlineUsers.count > 1 {
+                            subtitleStr += ", \(onlineUsers.count) online"
+                        }
+                        
+                        completion(title, subtitleStr)
+                    } else {
+                        
+                        completion(title, typingUsers
+                            .map({ $0.name })
+                            .joined(separator: ", ") + " typing..."
+                        )
+                    }
+                }
+            }
+        }
     }
     
 }

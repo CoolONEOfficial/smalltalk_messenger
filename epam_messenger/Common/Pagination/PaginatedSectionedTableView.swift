@@ -8,10 +8,14 @@
 import UIKit
 import FirebaseFirestore
 
+/// Custom UITableView with realtime updates, sections grouping and pagination support.
+///
+/// - Warning: Don't override `delegate`, use `paginatedDelegate`
 class PaginatedSectionedTableView<KeyT: Hashable, ElementT: Equatable>: PaginatedTableView<ElementT> {
     
     // MARK: - Vars
     
+    /// Sectioned data.
     var data: [SectionArray<KeyT, ElementT>] = [] {
         didSet {
             flattenData = data.map { $0.elements }.reduce([], +)
@@ -23,6 +27,20 @@ class PaginatedSectionedTableView<KeyT: Hashable, ElementT: Equatable>: Paginate
 
     // MARK: - Init
     
+    /**
+    Initializes a new PaginatedTableView.
+
+    - Parameters:
+       - baseQuery: Firebase query with collection which will be displayed
+       - initialPosition: UITableView scroll position at start
+       - cellForRowAt: Closure returns UITableViewCell from given indexPath
+       - querySideTransform: Closure returns start and/or end of `baseQuery` that will be diplayed
+       - groupingBy: Closure returns variable that will be used for grouping models by sections
+       - sortedBy: Closure that will be used for sort sections
+       - fromSnapshot: Closure returns parsed model from given snapshot
+
+    - Returns: New PaginatedTableView.
+    */
     init(
         baseQuery: FireQuery,
         initialPosition: InitialPosition,
@@ -85,7 +103,12 @@ class PaginatedSectionedTableView<KeyT: Hashable, ElementT: Equatable>: Paginate
     
     // MARK: - Helpers
     
-    override func scrollToBottom(animated: Bool) {
+    /**
+      Scroll to last element of last section of UITableView.
+
+      - Parameter animated: Use animation for scroll.
+    */
+    override func scrollToBottom(completion: ((Bool) -> Void)? = nil) {
         guard !data.isEmpty else {
             return
         }
@@ -98,7 +121,7 @@ class PaginatedSectionedTableView<KeyT: Hashable, ElementT: Equatable>: Paginate
                 section: lastIndex
             ),
             at: .none,
-            animated: animated
+            completion: completion
         )
     }
     

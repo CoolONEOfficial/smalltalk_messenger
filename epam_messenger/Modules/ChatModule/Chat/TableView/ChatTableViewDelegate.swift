@@ -31,6 +31,30 @@ extension ChatViewController: PaginatedTableViewDelegate {
         return 30
     }
     
+    // MARK: - Reload messages merge
+    
+    func didUpdateElements() {
+        if tableView.dataAtEnd {
+            tableView.scrollToBottom()
+            let flattenData = tableView.flattenData
+            if flattenData.count >= 2, MessageModel.checkMerge(
+                flattenData[flattenData.count - 1],
+                flattenData[flattenData.count - 2]
+            ) {
+                let data = tableView.data
+                let section = data.count - 1
+                let lastRow = data[section].elements.count - 1
+                tableView.reloadRows(
+                    at: [
+                        .init(row: lastRow - 1, section: section)
+                    ],
+                    with: .automatic
+                )
+            }
+
+        }
+    }
+    
     // MARK: - Context menu
     
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {

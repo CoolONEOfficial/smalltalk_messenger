@@ -8,23 +8,33 @@
 import UIKit
 import FirebaseFirestore
 
-protocol PaginatedTableViewDelegate: UITableViewDelegate {}
-
-private let paginationQueryCount = 30
-private let queryCount = 40
-
-enum InitialPosition {
-    case top
-    case bottom
+protocol PaginatedTableViewDelegate: UITableViewDelegate {
+    func didUpdateElements()
 }
 
+extension PaginatedTableViewDelegate {
+    func didUpdateElements() {}
+}
+
+private let queryCount = 40
+private let paginationQueryCount = 30
+private let paginationTriggerAreaHeight: CGFloat = 250
+private let paginationCellsOffset = 5
+
+/// Custom UITableView with realtime updates and pagination support.
+///
+/// - Warning: Don't override `delegate`, use `paginatedDelegate`
 class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate, UITableViewDataSource {
     
     // MARK: - Vars
     
+    /// Active if scroll at start.
     var dataAtStart = false
+    
+    /// Active if scroll at end.
     var dataAtEnd = false
     
+    /// Flatten data.
     var flattenData: [ElementT] = []
     
     weak var paginatedDelegate: PaginatedTableViewDelegate?
@@ -34,9 +44,13 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
     var cellForRowAt: ((IndexPath) -> UITableViewCell)!
     var querySideTransform: ((ElementT) -> Any)!
     var fromSnapshot: ((_ snapshot: DocumentSnapshot) -> ElementT?)!
+    var startElement: ElementT!
+    var endElement: ElementT!
     
-    var paginationLock = false
-    var lastContentOffset: CGFloat = 0
+    private let sideGroup = DispatchGroup()
+    
+    private var paginationLock = false
+    private var lastContentOffset: CGFloat = 0
     
     var listener: ListenerRegistration! {
         didSet {
@@ -44,8 +58,26 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
         }
     }
     
+    /// UITableView initial position
+    enum InitialPosition {
+        case top
+        case bottom
+    }
+    
     // MARK: - Init
     
+    /**
+    Initializes a new PaginatedTableView.
+
+    - Parameters:
+       - baseQuery: Firebase query with collection which will be displayed
+       - initialPosition: UITableView scroll position at start
+       - cellForRowAt: Closure returns UITableViewCell from given indexPath
+       - querySideTransform: Closure returns start and/or end of `baseQuery` that will be diplayed
+       - fromSnapshot: Closure returns parsed model from given snapshot
+
+    - Returns: New PaginatedTableView.
+    */
     init(
         baseQuery: FireQuery,
         initialPosition: InitialPosition,
@@ -60,22 +92,37 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
         self.querySideTransform = querySideTransform
         self.fromSnapshot = fromSnapshot
         
+        sideGroup.enter()
+        baseQuery.limit(to: 1).addSnapshotListener(snapshotListener { elements in
+            guard let elements = elements else { return }
+
+            self.startElement = elements.first
+            self.sideGroup.leave()
+        })
+
+        sideGroup.enter()
+        baseQuery.limit(toLast: 1).addSnapshotListener(snapshotListener { elements in
+            guard let elements = elements else { return }
+
+            self.endElement = elements.last
+            self.sideGroup.leave()
+        })
+        
         commonInit()
         
         switch initialPosition {
         case .top:
-            loadAtStart { self.updateElements(
-                $0,
-                unlockPagination: $0?.count == queryCount
-            ) }
+            loadAtStart()
         case .bottom:
             paginationLock = true
             loadAtEnd {
                 self.updateElements(
                     $0,
-                    unlockPagination: $0?.count == queryCount
+                    unlockPagination: false
                 )
-                self.scrollToBottom(animated: true)
+                self.scrollToBottom { _ in
+                    self.unlockPagination()
+                }
             }
         }
     }
@@ -91,7 +138,7 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
     }
     
     // MARK: - UITableViewDelegate
-        
+    
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         paginatedDelegate?.scrollViewDidScroll?(scrollView)
         
@@ -105,35 +152,45 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
         if let visiblePathList = indexPathsForVisibleRows,
             !paginationLock {
             if !dataAtStart,
-                scrollView.contentOffset.y + safeAreaInsets.top < 250,
+                scrollView.contentOffset.y + safeAreaInsets.top < paginationTriggerAreaHeight,
                 lastContentOffset >= scrollView.contentOffset.y,
                 let lastVisiblePath = visiblePathList.last {
                 paginationLock = true
 
+                debugPrint("pa top scroll")
+                
                 let flattened = flattenData
 
                 if let visibleIndex = flattened.firstIndex(where: { $0 == elementAt(lastVisiblePath) }) {
-                    dataAtStart = false
-                    dataAtEnd = false
-
                     let endMessageIndex: Int
                     let visibleCellCount: Int = visiblePathList.count
-                    if visibleIndex + 5 < flattened.count {
-                        endMessageIndex = visibleIndex + 5
+                    if !dataAtEnd, visibleIndex + paginationCellsOffset < flattened.count {
+                        endMessageIndex = visibleIndex + paginationCellsOffset
                     } else {
                         endMessageIndex = flattened.count - 1
                     }
+                    
+                    dataAtStart = false
+                    dataAtEnd = false
+                    
+                    let limit = paginationQueryCount + visibleCellCount
                     listener = baseQuery
                         .end(at: [querySideTransform(flattened[endMessageIndex])])
-                        .limit(toLast: paginationQueryCount + visibleCellCount)
+                        .limit(toLast: limit)
                         .addSnapshotListener(snapshotListener { elements in
-                            if elements?.count == paginationQueryCount + visibleCellCount {
-                                self.updateElements(
-                                    elements,
-                                    scrollView: afterUnlock ? nil : scrollView
-                                )
-                            } else {
-                                self.loadAtStart()
+                            guard let elements = elements else { return }
+                            
+                            self.sideGroup.notify(queue: .main) {
+                                if elements.suffix(limit / 2).contains(self.startElement) {
+                                    debugPrint("pa top start scroll")
+
+                                    self.loadAtStart()
+                                } else {
+                                    self.updateElements(
+                                        elements,
+                                        scrollView: afterUnlock ? nil : scrollView
+                                    )
+                                }
                             }
                         })
                 }
@@ -142,36 +199,45 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
                     - scrollView.contentOffset.y
                     - scrollView.bounds.height
                     + scrollView.contentInset.bottom
-                    + safeAreaInsets.bottom < 250,
+                    + safeAreaInsets.bottom < paginationTriggerAreaHeight,
                 lastContentOffset <= scrollView.contentOffset.y,
                 let firstVisiblePath = visiblePathList.first {
                 paginationLock = true
 
-                let flattened = flattenData
+                debugPrint("pa bottom scroll")
 
-                if let visibleIndex = flattened.firstIndex(where: { $0 == elementAt(firstVisiblePath) }) {
-                    dataAtStart = false
-                    dataAtEnd = false
-
+                if let visibleIndex = flattenData.firstIndex(where: { $0 == elementAt(firstVisiblePath) }) {
                     let startMessageIndex: Int
                     let visibleCellCount: Int = visiblePathList.count
-                    if visibleIndex - 5 >= 0 {
-                        startMessageIndex = visibleIndex - 5
+                    if !dataAtStart, visibleIndex - paginationCellsOffset >= 0 {
+                        startMessageIndex = visibleIndex - paginationCellsOffset
                     } else {
                         startMessageIndex = 0
                     }
+                    
+                    dataAtStart = false
+                    dataAtEnd = false
+                    
+                    let limit = paginationQueryCount + visibleCellCount
                     listener = baseQuery
-                        .start(at: [querySideTransform(flattened[startMessageIndex])])
-                        .limit(to: paginationQueryCount + visibleCellCount)
+                        .start(at: [querySideTransform(flattenData[startMessageIndex])])
+                        .limit(to: limit)
                         .addSnapshotListener(snapshotListener { elements in
-                            if elements?.count == paginationQueryCount + visibleCellCount {
-                                self.updateElements(
-                                    elements,
-                                    scrollView: afterUnlock ? nil : scrollView
-                                )
-                            } else {
-                                self.loadAtEnd()
+                            guard let elements = elements else { return }
+                            
+                            self.sideGroup.notify(queue: .main) {
+                                if elements.prefix(limit / 2).contains(self.endElement) {
+                                    debugPrint("pa bottom end scroll")
+
+                                    self.loadAtEnd()
+                                } else {
+                                    self.updateElements(
+                                        elements,
+                                        scrollView: afterUnlock ? nil : scrollView
+                                    )
+                                }
                             }
+                            
                         })
                 }
             }
@@ -185,7 +251,7 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
     ) -> ((QuerySnapshot?, Error?) -> Void) {
         { snapshot, err in
             guard err == nil else {
-                debugPrint("Error while get ")
+                debugPrint("Error while get snapshot")
                 return
             }
             
@@ -195,21 +261,6 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
             } else {
                 completion(nil)
             }
-        }
-    }
-    
-    private func parseListChat(
-        _ snapshot: QuerySnapshot?,
-        _ err: Error?,
-        _ completion: @escaping ([MessageModel]?) -> Void
-    ) {
-        guard err == nil else {
-            debugPrint("Error while get ")
-            return
-        }
-        
-        if let snapshot = snapshot {
-            completion(snapshot.documents.map { MessageModel.fromSnapshot($0)! })
         }
     }
     
@@ -226,7 +277,9 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
     func animateChanges(_ oldData: Any) {
         animateRowChanges(
             oldData: oldData as! [ElementT],
-            newData: self.flattenData
+            newData: self.flattenData,
+            deletionAnimation: .fade,
+            insertionAnimation: .fade
         )
     }
     
@@ -254,6 +307,8 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
                     self.unlockPagination(scrollView)
                 }
             }
+            
+            paginatedDelegate?.didUpdateElements()
         }
     }
     
@@ -279,7 +334,7 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
             ))
     }
     
-    func unlockPagination(_ scrollView: UIScrollView? = nil) {
+    private func unlockPagination(_ scrollView: UIScrollView? = nil) {
         paginationLock = false
         
         if let scrollView = scrollView {
@@ -290,7 +345,7 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
     // MARK: - UITableView DataSource
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return flattenData.isEmpty ? 0 : 1
+        return 1
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -303,7 +358,12 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
     
     // MARK: - Helpers
     
-    func scrollToBottom(animated: Bool) {
+    /**
+      Scroll to last element of UITableView.
+
+      - Parameter animated: Use animation for scroll.
+    */
+    func scrollToBottom(completion: ((Bool) -> Void)? = nil) {
         guard !flattenData.isEmpty else {
             return
         }
@@ -315,11 +375,55 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
                 section: 0
             ),
             at: .none,
-            animated: animated
+            completion: completion
         )
     }
     
+    func scrollToRow(
+        at indexPath: IndexPath,
+        at scrollPosition: UITableView.ScrollPosition,
+        completion: ((Bool) -> Void)?
+    ) {
+        UIView.animate(withDuration: 0.3, animations: {
+            super.scrollToRow(at: indexPath, at: scrollPosition, animated: false)
+        }, completion: completion)
+    }
+    
     public func elementAt(_ indexPath: IndexPath) -> ElementT {
-        return flattenData[indexPath.row]
+        return elementAt(indexPath.row)
+    }
+    
+    public func elementAt(_ index: Int) -> ElementT {
+        return flattenData[index]
+    }
+    
+    // MARK: - PaginatedDelegate
+        
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        paginatedDelegate?.scrollViewWillBeginDragging?(scrollView)
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        paginatedDelegate?.tableView?(tableView, didSelectRowAt: indexPath)
+    }
+    
+    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        paginatedDelegate?.tableView?(tableView, didDeselectRowAt: indexPath)
+    }
+    
+    func tableView(_ tableView: UITableView, shouldBeginMultipleSelectionInteractionAt indexPath: IndexPath) -> Bool {
+        paginatedDelegate?.tableView?(tableView, shouldBeginMultipleSelectionInteractionAt: indexPath) ?? false
+    }
+    
+    func tableView(_ tableView: UITableView, didBeginMultipleSelectionInteractionAt indexPath: IndexPath) {
+        paginatedDelegate?.tableView?(tableView, didBeginMultipleSelectionInteractionAt: indexPath)
+    }
+    
+    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        paginatedDelegate?.tableView?(tableView, contextMenuConfigurationForRowAt: indexPath, point: point)
+    }
+    
+    func tableView(_ tableView: UITableView, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating) {
+        paginatedDelegate?.tableView?(tableView, willPerformPreviewActionForMenuWith: configuration, animator: animator)
     }
 }

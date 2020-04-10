@@ -9,7 +9,7 @@ import Foundation
 import Firebase
 import CodableFirebase
 
-struct UserModel: AutoCodable {
+public struct UserModel: AutoCodable, AutoEquatable {
     
     var documentId: String?
     let name: String
@@ -34,6 +34,10 @@ struct UserModel: AutoCodable {
             return nil
         }
     }
+    
+    static func avatarRef(byId userId: String) -> StorageReference {
+        Storage.storage().reference(withPath: "chats/\(userId)/avatar.jpg")
+    }
 }
 
 extension UserModel: UserProtocol {
@@ -46,6 +50,10 @@ extension UserModel: UserProtocol {
         return online
             ? "Online"
             : "Offline"
+    }
+    
+    var avatarRef: StorageReference {
+        UserModel.avatarRef(byId: documentId!)
     }
     
 }

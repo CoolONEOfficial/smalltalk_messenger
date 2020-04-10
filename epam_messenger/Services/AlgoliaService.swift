@@ -34,6 +34,10 @@ class AlgoliaService: AlgoliaServiceProtocol {
         return searchClient.index(withName: "messages")
     }()
     
+    lazy var usersIndex: Index! = {
+        return searchClient.index(withName: "users")
+    }()
+    
     // MARK: - Functions
     
     func searchChats(_ searchString: String, completion: @escaping SearchChatsCompletion) {
@@ -42,6 +46,16 @@ class AlgoliaService: AlgoliaServiceProtocol {
         query.filters = "users:\(Auth.auth().currentUser!.uid)"
         query.query = searchString
         chatsIndex.search(query) { (content, error) in
+            completion(self.parseContent(content: content, error: error))
+        }
+    }
+    
+    typealias SearchUsersCompletion = ([UserModel]?) -> Void
+    func searchUsers(_ searchString: String, completion: @escaping SearchUsersCompletion) {
+        let query = Query()
+        query.hitsPerPage = 20
+        query.query = searchString
+        usersIndex.search(query) { (content, error) in
             completion(self.parseContent(content: content, error: error))
         }
     }

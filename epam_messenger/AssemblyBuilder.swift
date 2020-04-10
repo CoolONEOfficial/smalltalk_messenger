@@ -8,17 +8,9 @@
 import UIKit
 
 protocol AssemblyBuilderProtocol {
-    func createBottomBarModule(
-        router: RouterProtocol
-    ) -> UIViewController
-    func createChatListModule(
-        router: RouterProtocol,
-        forwardDelegate: ForwardDelegateProtocol?
-    ) -> UIViewController
-    func createChatModule(
-        router: RouterProtocol,
-        chat: ChatProtocol
-    ) -> UIViewController
+    func createBottomBarModule(router: RouterProtocol) -> UIViewController
+    func createChatListModule(router: RouterProtocol, forwardDelegate: ForwardDelegateProtocol?) -> UIViewController
+    func createContactsListModule(router: RouterProtocol) -> UIViewController
 }
 
 class AssemblyBuilder: AssemblyBuilderProtocol {
@@ -26,15 +18,9 @@ class AssemblyBuilder: AssemblyBuilderProtocol {
         router: RouterProtocol
     ) -> UIViewController {
         let view = BottomBarViewController()
-        view.chatList = createChatListModule(
-            router: router
-        )
-        view.contacts = createChatListModule(
-            router: router
-        ) // TODO: contacts
-        view.settings = createChatListModule(
-            router: router
-        ) // TODO: settings
+        view.chatList = createChatListModule(router: router)
+        view.contacts = createContactsListModule(router: router) // TODO: contacts done
+        view.settings = createChatListModule(router: router) // TODO: settings
         return view
     }
     
@@ -52,16 +38,9 @@ class AssemblyBuilder: AssemblyBuilderProtocol {
         return view
     }
     
-    func createChatModule(
-        router: RouterProtocol,
-        chat: ChatProtocol
-    ) -> UIViewController {
-        let view = ChatViewController()
-        let viewModel = ChatViewModel(
-            router: router,
-            viewController: view,
-            chat: chat
-        )
+    func createContactsListModule(router: RouterProtocol) -> UIViewController {
+        let view = ContactsListViewController()
+        let viewModel = ContactsListViewModel(router: router, viewController: view)
         view.viewModel = viewModel
         return view
     }

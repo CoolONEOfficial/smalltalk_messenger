@@ -222,11 +222,11 @@ class ChatViewModelProtocolMock: ChatViewModelProtocol {
     var goToChatCalled: Bool {
         return goToChatCallsCount > 0
     }
-    var goToChatReceivedChatModel: ChatModel?
-    var goToChatReceivedInvocations: [ChatModel] = []
-    var goToChatClosure: ((ChatModel) -> Void)?
+    var goToChatReceivedChatModel: ChatProtocol?
+    var goToChatReceivedInvocations: [ChatProtocol] = []
+    var goToChatClosure: ((ChatProtocol) -> Void)?
 
-    func goToChat(        _ chatModel: ChatModel    ) {
+    func goToChat(        _ chatModel: ChatProtocol    ) {
         goToChatCallsCount += 1
         goToChatReceivedChatModel = chatModel
         goToChatReceivedInvocations.append(chatModel)
@@ -291,6 +291,19 @@ class ChatViewModelProtocolMock: ChatViewModelProtocol {
     func endTypingCurrentUser() {
         endTypingCurrentUserCallsCount += 1
         endTypingCurrentUserClosure?()
+    }
+
+    //MARK: - goToDetails
+
+    var goToDetailsCallsCount = 0
+    var goToDetailsCalled: Bool {
+        return goToDetailsCallsCount > 0
+    }
+    var goToDetailsClosure: (() -> Void)?
+
+    func goToDetails() {
+        goToDetailsCallsCount += 1
+        goToDetailsClosure?()
     }
 
     //MARK: - didTapContent
@@ -712,23 +725,6 @@ class RouterProtocolMock: RouterProtocol {
         showChatListClosure?()
     }
 
-    //MARK: - showChat
-
-    var showChatCallsCount = 0
-    var showChatCalled: Bool {
-        return showChatCallsCount > 0
-    }
-    var showChatReceivedChat: ChatProtocol?
-    var showChatReceivedInvocations: [ChatProtocol] = []
-    var showChatClosure: ((ChatProtocol) -> Void)?
-
-    func showChat(_ chat: ChatProtocol) {
-        showChatCallsCount += 1
-        showChatReceivedChat = chat
-        showChatReceivedInvocations.append(chat)
-        showChatClosure?(chat)
-    }
-
     //MARK: - popToRoot
 
     var popToRootCallsCount = 0
@@ -740,6 +736,19 @@ class RouterProtocolMock: RouterProtocol {
     func popToRoot() {
         popToRootCallsCount += 1
         popToRootClosure?()
+    }
+
+    //MARK: - showContactsList
+
+    var showContactsListCallsCount = 0
+    var showContactsListCalled: Bool {
+        return showContactsListCallsCount > 0
+    }
+    var showContactsListClosure: (() -> Void)?
+
+    func showContactsList() {
+        showContactsListCallsCount += 1
+        showContactsListClosure?()
     }
 
 }

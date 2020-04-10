@@ -11,6 +11,7 @@ import FirebaseFirestore
 import CodableFirebase
 
 typealias FireQuery = Query
+typealias FireTimestamp = Timestamp
 
 protocol FirestoreServiceProtocol: AutoMockable {
     func chatBaseQuery(_ chatDocumentId: String) -> FireQuery
@@ -103,7 +104,10 @@ class FirestoreService: FirestoreServiceProtocol {
     }()
     
     lazy var contactListQuery: Query = {
-        return db.collection("users").order(by: "name")
+        return db.collection("users")
+            .document(Auth.auth().currentUser!.uid)
+            .collection("contacts")
+            .order(by: "localName")
     }()
     
     func chatBaseQuery(_ chatDocumentId: String) -> FireQuery {

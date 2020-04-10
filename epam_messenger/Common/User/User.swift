@@ -6,10 +6,12 @@
 //
 
 import Foundation
+import FirebaseStorage
 
 protocol UserProtocol {
     var fullName: String { get }
     var onlineText: String { get }
+    var avatarRef: StorageReference { get }
     
     var documentId: String? { get }
     var name: String { get }

@@ -9,7 +9,7 @@ import Foundation
 import Firebase
 import CodableFirebase
 
-typealias ImageSize = CGSize
+public typealias ImageSize = CGSize
 
 public struct MessageModel: AutoCodable {
     
@@ -31,7 +31,7 @@ public struct MessageModel: AutoCodable {
         case enumCaseKey
     }
     
-    enum MessageKind: AutoCodable {
+    public enum MessageKind: AutoCodable, AutoEquatable {
         case text(_: String)
         case image(path: String, size: ImageSize)
         case audio(path: String)
@@ -39,10 +39,6 @@ public struct MessageModel: AutoCodable {
     }
     
     static let defaultKind: [MessageKind] = []
-    
-    static func empty() -> MessageModel {
-        return MessageModel(kind: [], userId: Auth.auth().currentUser!.uid, timestamp: Timestamp.init())
-    }
     
     static func fromSnapshot(_ snapshot: DocumentSnapshot) -> MessageModel? {
         var data = snapshot.data() ?? [:]
@@ -61,14 +57,7 @@ public struct MessageModel: AutoCodable {
     }
     
     static func decodeTimestamp(from container: KeyedDecodingContainer<CodingKeys>) -> Timestamp {
-        if let dict = try? container.decode([String: Int64].self, forKey: .timestamp) {
-            return Timestamp.init(
-                seconds: dict["_seconds"]!,
-                nanoseconds: Int32(exactly: dict["_nanoseconds"]!)!
-            )
-        }
-        
-        return try! container.decode(Timestamp.self, forKey: .timestamp)
+        Timestamp.decodeTimestamp(from: container, forKey: CodingKeys.timestamp)
     }
     
     static func checkMerge(
@@ -82,7 +71,8 @@ public struct MessageModel: AutoCodable {
 
 extension MessageModel: Equatable {
     public static func == (lhs: MessageModel, rhs: MessageModel) -> Bool {
-            return lhs.documentId == rhs.documentId
+        lhs.documentId == rhs.documentId
+            && lhs.kind == rhs.kind
     }
 }
 

@@ -11,6 +11,8 @@ import CodableFirebase
 import InputBarAccessoryView
 import NYTPhotoViewer
 import Differ
+import Hero
+import FaceAware
 
 protocol ChatViewControllerProtocol: AutoMockable {
     func presentPhotoViewer(_ storageRefs: [StorageReference], initialIndex: Int)
@@ -38,6 +40,8 @@ class ChatViewController: UIViewController {
     let titleStack = UIStackView()
     let titleLabel = UILabel()
     let subtitleLabel = UILabel()
+    
+    let avatarImage = UIImageView()
     
     var deleteButton = UIButton()
     var forwardButton = UIButton()
@@ -73,7 +77,7 @@ class ChatViewController: UIViewController {
             self.updateTableViewInset()
             
             if self.floatingBottomButton.isHidden {
-                self.tableView.scrollToBottom(animated: true)
+                self.tableView.scrollToBottom()
             }
         }.on(event: .didHide) { [weak self] _ in
             guard let self = self else { return }
@@ -101,48 +105,13 @@ class ChatViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        switch viewModel.chat.type {
-        case .personalCorr:
-            viewModel.userData(viewModel.chat.friendId!) { user in
-                if let user = user {
-                    self.defaultTitle = user.fullName
-                    self.transitionSubtitleLabel {
-                        if user.typing == self.viewModel.chat.documentId! {
-                            self.subtitleLabel.text = "\(user.name) typing..."
-                        } else {
-                            self.subtitleLabel.text = user.onlineText
-                        }
-                    }
-                    
-                    if !self.tableView.isEditing {
-                        self.titleLabel.text = self.defaultTitle
-                    }
-                }
-            }
-        case .chat(let title, _):
-            defaultTitle = title
-            subtitleLabel.text = "\(viewModel.chat.users.count) users"
-            
-            viewModel.userListData(viewModel.chat.users) { userList in
-                if let userList = userList {
-                    let typingUsers = userList.filter({
-                        $0.typing == self.viewModel.chat.documentId
-                            && $0.documentId != Auth.auth().currentUser!.uid
-                    })
-                    self.transitionSubtitleLabel {
-                        if typingUsers.isEmpty {
-                            let onlineUsers = userList.filter({ $0.online })
-                            var subtitleStr = "\(self.viewModel.chat.users.count) users"
-                            if onlineUsers.count > 1 {
-                                subtitleStr += ", \(onlineUsers.count) online"
-                            }
-                            self.subtitleLabel.text = subtitleStr
-                        } else {
-                            self.subtitleLabel.text = typingUsers
-                                .map({ $0.name })
-                                .joined(separator: ", ") + " typing..."
-                        }
-                    }
+        viewModel.chat.loadInfo { title, subtitle in
+            self.transitionSubtitleLabel {
+                self.defaultTitle = title
+                self.subtitleLabel.text = subtitle
+                
+                if !self.tableView.isEditing {
+                    self.titleLabel.text = self.defaultTitle
                 }
             }
         }
@@ -151,6 +120,7 @@ class ChatViewController: UIViewController {
         view.tintColor = .accent
         
         setupTitle()
+        setupAvatar()
         setupTableView()
         setupInputBar()
         setupEditModeButtons()
@@ -171,7 +141,7 @@ class ChatViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         updateTableViewInset()
-        tableView.scrollToBottom(animated: true)
+        tableView.scrollToBottom()
     }
     
     // MARK: - Methods
@@ -189,6 +159,23 @@ class ChatViewController: UIViewController {
         stackView.axis = .vertical
         
         navigationItem.titleView = stackView
+    }
+    
+    private func setupAvatar() {
+        avatarImage.sd_setSmallImage(with: viewModel.chat.avatarRef, placeholderImage: #imageLiteral(resourceName: "logo"))
+        avatarImage.size(.init(width: 40, height: 40))
+        avatarImage.contentMode = .scaleAspectFill
+        avatarImage.layer.cornerRadius = 20
+        avatarImage.clipsToBounds = true
+        avatarImage.focusOnFaces = true
+        avatarImage.addGestureRecognizer(UITapGestureRecognizer.init(target: self, action: #selector(didAvatarTap)))
+        avatarImage.hero.id = "avatar"
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: avatarImage)
+    }
+    
+    @objc func didAvatarTap() {
+        viewModel.goToDetails()
     }
     
     private func setupFloatingBottomButton() {
@@ -304,11 +291,11 @@ class ChatViewController: UIViewController {
     
     @IBAction func didFloatingBottomButtonClick(_ sender: UIButton) {
         if tableView.dataAtEnd {
-            tableView.scrollToBottom(animated: true)
+            tableView.scrollToBottom()
         } else {
             tableView.loadAtEnd { messages in
                 self.tableView.updateElements(messages, animate: false)
-                self.tableView.scrollToBottom(animated: true)
+                self.tableView.scrollToBottom()
             }
         }
     }
