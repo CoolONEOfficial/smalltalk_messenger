@@ -77,4 +77,47 @@ extension ChatModel: ChatProtocol {
         return Storage.storage().reference(withPath: path!)
     }
     
+    func loadInfo(completion: @escaping (String, String) -> Void) {
+        let firestoreService = FirestoreService()
+        
+        switch type {
+        case .personalCorr:
+            firestoreService.userData(friendId!) { user in
+                if let user = user {
+                    let title = user.fullName
+                    completion(title, user.typing == self.documentId!
+                        ? "\(user.name) typing..."
+                        : user.onlineText
+                    )
+                }
+            }
+        case .chat(let title, _):
+            completion(title, "\(users.count) users")
+            
+            firestoreService.userListData(users) { userList in
+                if let userList = userList {
+                    let typingUsers = userList.filter({
+                        $0.typing == self.documentId
+                            && $0.documentId != Auth.auth().currentUser!.uid
+                    })
+                    if typingUsers.isEmpty {
+                        let onlineUsers = userList.filter({ $0.online })
+                        var subtitleStr = "\(self.users.count) users"
+                        if onlineUsers.count > 1 {
+                            subtitleStr += ", \(onlineUsers.count) online"
+                        }
+                        
+                        completion(title, subtitleStr)
+                    } else {
+                        
+                        completion(title, typingUsers
+                            .map({ $0.name })
+                            .joined(separator: ", ") + " typing..."
+                        )
+                    }
+                }
+            }
+        }
+    }
+    
 }

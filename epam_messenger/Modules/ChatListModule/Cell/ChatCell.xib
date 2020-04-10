@@ -65,6 +65,9 @@
                             <constraint firstAttribute="width" constant="56" id="VUi-r5-w7Y"/>
                             <constraint firstAttribute="height" constant="56" id="z2n-Y6-wH5"/>
                         </constraints>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="boolean" keyPath="focusOnFaces" value="YES"/>
+                        </userDefinedRuntimeAttributes>
                     </imageView>
                 </subviews>
                 <constraints>
