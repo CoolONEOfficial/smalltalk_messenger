@@ -31,6 +31,7 @@
 		852C011E2431604500BCC056 /* MessageForwardContent.xib in Resources */ = {isa = PBXBuildFile; fileRef = 852C011C2431604500BCC056 /* MessageForwardContent.xib */; };
 		852C0121243161F900BCC056 /* MessageForward.swift in Sources */ = {isa = PBXBuildFile; fileRef = 852C0120243161F900BCC056 /* MessageForward.swift */; };
 		853FD19E24165EDE005A7985 /* FirestoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 853FD19D24165EDE005A7985 /* FirestoreService.swift */; };
+		854E829224409AAC00E0F2DE /* UIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 854E829124409AAC00E0F2DE /* UIApplication.swift */; };
 		8563524D243F3C5E00374E15 /* ChatRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8563524C243F3C5E00374E15 /* ChatRouter.swift */; };
 		8563524F243F3C6D00374E15 /* ChatAssemblyBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8563524E243F3C6D00374E15 /* ChatAssemblyBuilder.swift */; };
 		85635254243F3DBF00374E15 /* ChatDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85635252243F3DBF00374E15 /* ChatDetailsViewController.swift */; };
@@ -73,6 +74,8 @@
 		85BE9A7524118CF200E6643B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 85BE9A7324118CF200E6643B /* LaunchScreen.storyboard */; };
 		85E67A01243FE14C0001F7E1 /* UserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85E679FF243FE14C0001F7E1 /* UserCell.swift */; };
 		85E67A02243FE14C0001F7E1 /* UserCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 85E67A00243FE14C0001F7E1 /* UserCell.xib */; };
+		85E67A0424407BA30001F7E1 /* ChatDetailsPagerTabStrip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85E67A0324407BA30001F7E1 /* ChatDetailsPagerTabStrip.swift */; };
+		85E67A07244081820001F7E1 /* ChatDetailsUsersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85E67A06244081820001F7E1 /* ChatDetailsUsersViewController.swift */; };
 		85FD29F92417FC130035AC13 /* ChatListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FD29F72417FC130035AC13 /* ChatListViewController.swift */; };
 		85FD29FA2417FC130035AC13 /* ChatListViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 85FD29F82417FC130035AC13 /* ChatListViewController.xib */; };
 		85FD29FE241818B70035AC13 /* AutoCodable.swifttemplate in Resources */ = {isa = PBXBuildFile; fileRef = 85FD29FD241818B70035AC13 /* AutoCodable.swifttemplate */; };
@@ -173,6 +176,7 @@
 		852C0120243161F900BCC056 /* MessageForward.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageForward.swift; sourceTree = "<group>"; };
 		853FD19D24165EDE005A7985 /* FirestoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreService.swift; sourceTree = "<group>"; };
 		853FD1AE2416A55A005A7985 /* InvertedCollectionViewFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvertedCollectionViewFlowLayout.swift; sourceTree = "<group>"; };
+		854E829124409AAC00E0F2DE /* UIApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplication.swift; sourceTree = "<group>"; };
 		8555CED72433A68000579BAC /* MediaModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaModel.swift; sourceTree = "<group>"; };
 		8563524C243F3C5E00374E15 /* ChatRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatRouter.swift; sourceTree = "<group>"; };
 		8563524E243F3C6D00374E15 /* ChatAssemblyBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAssemblyBuilder.swift; sourceTree = "<group>"; };
@@ -208,6 +212,8 @@
 		85BE9A7624118CF200E6643B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		85E679FF243FE14C0001F7E1 /* UserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCell.swift; sourceTree = "<group>"; };
 		85E67A00243FE14C0001F7E1 /* UserCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = UserCell.xib; sourceTree = "<group>"; };
+		85E67A0324407BA30001F7E1 /* ChatDetailsPagerTabStrip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatDetailsPagerTabStrip.swift; sourceTree = "<group>"; };
+		85E67A06244081820001F7E1 /* ChatDetailsUsersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatDetailsUsersViewController.swift; sourceTree = "<group>"; };
 		85FD29F72417FC130035AC13 /* ChatListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListViewController.swift; sourceTree = "<group>"; };
 		85FD29F82417FC130035AC13 /* ChatListViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ChatListViewController.xib; sourceTree = "<group>"; };
 		85FD29FD241818B70035AC13 /* AutoCodable.swifttemplate */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AutoCodable.swifttemplate; sourceTree = "<group>"; };
@@ -486,6 +492,7 @@
 		8563524B243F3C3D00374E15 /* ChatDetails */ = {
 			isa = PBXGroup;
 			children = (
+				85E67A05244081540001F7E1 /* TabStrip */,
 				85635256243F3DCB00374E15 /* ChatDetailsViewModel.swift */,
 				85635252243F3DBF00374E15 /* ChatDetailsViewController.swift */,
 				85635253243F3DBF00374E15 /* ChatDetailsViewController.xib */,
@@ -519,6 +526,7 @@
 				850C7FEF242765DC008BAF24 /* UIImage.swift */,
 				850C80012428BD7D008BAF24 /* UIStackView.swift */,
 				85812DB42436596D00EA2626 /* UIImageView.swift */,
+				854E829124409AAC00E0F2DE /* UIApplication.swift */,
 			);
 			path = UIKit;
 			sourceTree = "<group>";
@@ -647,6 +655,15 @@
 				85E67A00243FE14C0001F7E1 /* UserCell.xib */,
 			);
 			path = Cell;
+			sourceTree = "<group>";
+		};
+		85E67A05244081540001F7E1 /* TabStrip */ = {
+			isa = PBXGroup;
+			children = (
+				85E67A0324407BA30001F7E1 /* ChatDetailsPagerTabStrip.swift */,
+				85E67A06244081820001F7E1 /* ChatDetailsUsersViewController.swift */,
+			);
+			path = TabStrip;
 			sourceTree = "<group>";
 		};
 		85FD29FB241816210035AC13 /* Templates */ = {
@@ -1131,6 +1148,7 @@
 				85B3F1D624338882001F92D9 /* MessageImageContent.swift in Sources */,
 				85FF25622414623200A25D7A /* ChatModel.swift in Sources */,
 				E6846BA1242A95E9006818DE /* AuthEnterCodeViewModel.swift in Sources */,
+				854E829224409AAC00E0F2DE /* UIApplication.swift in Sources */,
 				949BF7552436155B006C2AEC /* ContactsListViewModel.swift in Sources */,
 				E6846BA7242A95E9006818DE /* AuthEnterNameViewController.swift in Sources */,
 				857D7CC32418F0C300932457 /* FirestoreCodableInterfaces.swift in Sources */,
@@ -1139,6 +1157,7 @@
 				85812D942433B6E000EA2626 /* MessageCell.swift in Sources */,
 				85B3F1CF24338832001F92D9 /* StorageService.swift in Sources */,
 				E6B74993241449C600F00B29 /* ChatViewController.swift in Sources */,
+				85E67A07244081820001F7E1 /* ChatDetailsUsersViewController.swift in Sources */,
 				85635254243F3DBF00374E15 /* ChatDetailsViewController.swift in Sources */,
 				85B3F1D22433885F001F92D9 /* ChatInputBarAttachMenu.swift in Sources */,
 				85812DA52433B7DA00EA2626 /* AlgoliaService.swift in Sources */,
@@ -1176,6 +1195,7 @@
 				850C8015242A7F34008BAF24 /* ChatPhotoViewerDataSource.swift in Sources */,
 				852C00EF242CF8FA00BCC056 /* MessageText.swift in Sources */,
 				85FD2A0A24182DED0035AC13 /* SourceryInterfaces.swift in Sources */,
+				85E67A0424407BA30001F7E1 /* ChatDetailsPagerTabStrip.swift in Sources */,
 				8563524F243F3C6D00374E15 /* ChatAssemblyBuilder.swift in Sources */,
 				85812DA02433B78F00EA2626 /* UIColor.swift in Sources */,
 				850BCE7E243CD24E00643881 /* PaginatedSectionedTableView.swift in Sources */,

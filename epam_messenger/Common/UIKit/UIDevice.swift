@@ -11,10 +11,7 @@ extension UIDevice {
 
     /// Returns 'true' if the device has a notch
     var hasNotch: Bool {
-        guard #available(iOS 11.0, *),
-            let window = (UIApplication.shared.windows.first { $0.isKeyWindow }) else {
-                return false
-        }
+        let window = (UIApplication.shared.windows.first { $0.isKeyWindow })!
         
         if window.windowScene?.interfaceOrientation.isPortrait ?? false {
             return window.safeAreaInsets.top >= 44

@@ -193,7 +193,7 @@ extension ChatViewController: PaginatedTableViewDelegate {
     }
     
     func didScroll(_ scrollView: UIScrollView, afterUnlock: Bool = false) {
-        if !bottomScrollAnimationsLock {
+        if !tableView.paginationLock && !bottomScrollAnimationsLock {
             let hidden = scrollView.contentSize.height
                 - scrollView.contentOffset.y
                 - scrollView.bounds.height

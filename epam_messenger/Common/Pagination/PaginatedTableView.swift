@@ -49,7 +49,7 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
     
     private let sideGroup = DispatchGroup()
     
-    private var paginationLock = false
+    var paginationLock = false
     private var lastContentOffset: CGFloat = 0
     
     var listener: ListenerRegistration! {
@@ -156,8 +156,6 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
                 lastContentOffset >= scrollView.contentOffset.y,
                 let lastVisiblePath = visiblePathList.last {
                 paginationLock = true
-
-                debugPrint("pa top scroll")
                 
                 let flattened = flattenData
 
@@ -182,8 +180,6 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
                             
                             self.sideGroup.notify(queue: .main) {
                                 if elements.suffix(limit / 2).contains(self.startElement) {
-                                    debugPrint("pa top start scroll")
-
                                     self.loadAtStart()
                                 } else {
                                     self.updateElements(
@@ -203,8 +199,6 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
                 lastContentOffset <= scrollView.contentOffset.y,
                 let firstVisiblePath = visiblePathList.first {
                 paginationLock = true
-
-                debugPrint("pa bottom scroll")
 
                 if let visibleIndex = flattenData.firstIndex(where: { $0 == elementAt(firstVisiblePath) }) {
                     let startMessageIndex: Int
@@ -227,8 +221,6 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
                             
                             self.sideGroup.notify(queue: .main) {
                                 if elements.prefix(limit / 2).contains(self.endElement) {
-                                    debugPrint("pa bottom end scroll")
-
                                     self.loadAtEnd()
                                 } else {
                                     self.updateElements(

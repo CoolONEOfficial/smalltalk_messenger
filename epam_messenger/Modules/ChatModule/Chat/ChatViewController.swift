@@ -104,18 +104,6 @@ class ChatViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        viewModel.chat.loadInfo { title, subtitle in
-            self.transitionSubtitleLabel {
-                self.defaultTitle = title
-                self.subtitleLabel.text = subtitle
-                
-                if !self.tableView.isEditing {
-                    self.titleLabel.text = self.defaultTitle
-                }
-            }
-        }
-        
         titleLabel.text = defaultTitle
         view.tintColor = .accent
         
@@ -125,6 +113,17 @@ class ChatViewController: UIViewController {
         setupInputBar()
         setupEditModeButtons()
         setupFloatingBottomButton()
+        
+        viewModel.chat.loadInfo { title, subtitle in
+            self.transitionSubtitleLabel {
+                self.defaultTitle = title
+                self.subtitleLabel.text = subtitle
+                
+                if !(self.tableView?.isEditing ?? false) {
+                    self.titleLabel.text = self.defaultTitle
+                }
+            }
+        }
     }
     
     private func transitionSubtitleLabel(
@@ -149,11 +148,13 @@ class ChatViewController: UIViewController {
     private func setupTitle() {
         titleLabel.font = .systemFont(ofSize: 18, weight: .semibold)
         titleLabel.textAlignment = .center
+        titleLabel.hero.id = "title"
         
         subtitleLabel.font = .systemFont(ofSize: 12)
         subtitleLabel.textAlignment = .center
         subtitleLabel.textColor = .secondaryLabel
         subtitleLabel.numberOfLines = 1
+        subtitleLabel.hero.id = "subtitle"
         
         let stackView = UIStackView(arrangedSubviews: [titleLabel, subtitleLabel])
         stackView.axis = .vertical

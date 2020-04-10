@@ -33,9 +33,6 @@ class ChatInputBarAttachMenu: UIAlertController {
     lazy var cameraView: UIView = {
         let cameraView: UIView = .init()
         cameraView.width(stackItemWidth)
-        addCameraPreviewLayer(cameraView) {
-            self.addCameraIconLayer(cameraView)
-        }
         return cameraView
     }()
     
@@ -67,17 +64,27 @@ class ChatInputBarAttachMenu: UIAlertController {
         
         setupView()
         
-        cameraView.addGestureRecognizer(cameraRecognizer)
-        stack.addArrangedSubview(cameraView)
+        self.cameraView.addGestureRecognizer(cameraRecognizer)
+        self.stack.addArrangedSubview(self.cameraView)
         
-        getPhotos { image in
-            let imageView = UIImageView(image: image)
+        let photosCount = 4
+        
+        for _ in 0 ..< photosCount {
+            let imageView = UIImageView()
             imageView.contentMode = .scaleAspectFill
             imageView.clipsToBounds = true
             imageView.width(self.stackItemWidth)
             imageView.isUserInteractionEnabled = true
             imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(self.didImageTap)))
             self.stack.addArrangedSubview(imageView)
+        }
+        
+        self.addCameraPreviewLayer(self.cameraView) {
+            self.addCameraIconLayer(self.cameraView)
+            
+            self.getPhotos(photosCount) { image, index in
+                (self.stack.arrangedSubviews[index + 1] as! UIImageView).image = image
+            }
         }
         
         let photoAction = UIAlertAction(title: "Photo", style: .default) { _ in
@@ -168,36 +175,37 @@ class ChatInputBarAttachMenu: UIAlertController {
     
     // MARK: Get last 4 photos from gallery
     
-    private func getPhotos(completion: @escaping (UIImage) -> Void) {
-        let manager = PHImageManager.default()
-        let requestOptions = PHImageRequestOptions()
-        requestOptions.isSynchronous = false
-        requestOptions.deliveryMode = .highQualityFormat
-        requestOptions.resizeMode = .none
-        let fetchOptions = PHFetchOptions()
-        fetchOptions.fetchLimit = 4
-        fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
-        
-        let results: PHFetchResult = PHAsset.fetchAssets(with: .image, options: fetchOptions)
-        if results.count > 0 {
-            for i in 0..<results.count {
-                let asset = results.object(at: i)
-                manager.requestImage(
-                    for: asset,
-                    targetSize: .init(),
-                    contentMode: .aspectFill,
-                    options: requestOptions
-                ) { (image, _) in
-                    if let image = image {
-                        completion(image)
-                    } else {
-                        print("error asset to image")
+    private func getPhotos(_ count: Int, completion: @escaping (UIImage, Int) -> Void) {
+        PHPhotoLibrary.requestAuthorization { _ in 
+            let manager = PHImageManager.default()
+            let requestOptions = PHImageRequestOptions()
+            requestOptions.isSynchronous = false
+            requestOptions.deliveryMode = .highQualityFormat
+            requestOptions.resizeMode = .none
+            let fetchOptions = PHFetchOptions()
+            fetchOptions.fetchLimit = count
+            fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
+            
+            let results: PHFetchResult = PHAsset.fetchAssets(with: .image, options: fetchOptions)
+            if results.count > 0 {
+                for i in 0..<results.count {
+                    let asset = results.object(at: i)
+                    manager.requestImage(
+                        for: asset,
+                        targetSize: .init(),
+                        contentMode: .aspectFill,
+                        options: requestOptions
+                    ) { (image, _) in
+                        if let image = image {
+                            completion(image, i)
+                        } else {
+                            print("error asset to image")
+                        }
                     }
                 }
+            } else {
+                print("no photos to display")
             }
-        } else {
-            print("no photos to display")
         }
-        
     }
 }
