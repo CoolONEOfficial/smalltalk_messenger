@@ -142,7 +142,7 @@ class ChatViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         updateTableViewInset()
-        tableView.scrollToBottom()
+        tableView.scrollToBottom() // scroll to new inset
     }
     
     // MARK: - Methods

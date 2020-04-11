@@ -35,7 +35,6 @@ extension ChatViewController: PaginatedTableViewDelegate {
     
     func didUpdateElements() {
         if tableView.dataAtEnd {
-            tableView.scrollToBottom()
             let flattenData = tableView.flattenData
             if flattenData.count >= 2, MessageModel.checkMerge(
                 flattenData[flattenData.count - 1],
@@ -45,10 +44,8 @@ extension ChatViewController: PaginatedTableViewDelegate {
                 let section = data.count - 1
                 let lastRow = data[section].elements.count - 1
                 tableView.reloadRows(
-                    at: [
-                        .init(row: lastRow - 1, section: section)
-                    ],
-                    with: .automatic
+                    at: [.init(row: lastRow - 1, section: section)],
+                    with: .fade
                 )
             }
 
@@ -192,13 +189,9 @@ extension ChatViewController: PaginatedTableViewDelegate {
         return makeTargetedPreview(for: configuration)
     }
     
-    func didScroll(_ scrollView: UIScrollView, afterUnlock: Bool = false) {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if !tableView.paginationLock && !bottomScrollAnimationsLock {
-            let hidden = scrollView.contentSize.height
-                - scrollView.contentOffset.y
-                - scrollView.bounds.height
-                + scrollView.contentInset.bottom
-                + tableView.safeAreaInsets.bottom < 100
+            let hidden = tableView.dataAtEnd && tableView.bottomOffset < 100
             if self.floatingBottomButton.isHidden != hidden {
                 bottomScrollAnimationsLock = true
                 
@@ -229,10 +222,6 @@ extension ChatViewController: PaginatedTableViewDelegate {
                 }
             }
         }
-    }
-    
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        didScroll(scrollView)
     }
     
     // MARK: - Edit mode
@@ -332,7 +321,6 @@ extension ChatViewController: PaginatedTableViewDelegate {
         }
         return true
     }
-    
 }
 
 extension ChatViewController: ForwardDelegate {

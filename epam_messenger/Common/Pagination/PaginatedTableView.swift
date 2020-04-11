@@ -19,7 +19,9 @@ extension PaginatedTableViewDelegate {
 private let queryCount = 40
 private let paginationQueryCount = 30
 private let paginationTriggerAreaHeight: CGFloat = 250
-private let paginationCellsOffset = 5
+private let slowPaginationCellsOffset = 5
+private let fastPaginationCellsOffset = 1
+private let fastScroll: CGFloat = 2000
 
 /// Custom UITableView with realtime updates and pagination support.
 ///
@@ -51,7 +53,8 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
     private var deleteSideGroup: DispatchGroup? = .init()
     
     var paginationLock = false
-    private var lastContentOffset: CGFloat = 0
+    private var previousContentOffset: CGFloat = 0
+    private var previousScrollMoment: Date = Date()
     
     var listener: ListenerRegistration! {
         didSet {
@@ -68,17 +71,17 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
     // MARK: - Init
     
     /**
-    Initializes a new PaginatedTableView.
-
-    - Parameters:
-       - baseQuery: Firebase query with collection which will be displayed
-       - initialPosition: UITableView scroll position at start
-       - cellForRowAt: Closure returns UITableViewCell from given indexPath
-       - querySideTransform: Closure returns start and/or end of `baseQuery` that will be diplayed
-       - fromSnapshot: Closure returns parsed model from given snapshot
-
-    - Returns: New PaginatedTableView.
-    */
+     Initializes a new PaginatedTableView.
+     
+     - Parameters:
+     - baseQuery: Firebase query with collection which will be displayed
+     - initialPosition: UITableView scroll position at start
+     - cellForRowAt: Closure returns UITableViewCell from given indexPath
+     - querySideTransform: Closure returns start and/or end of `baseQuery` that will be diplayed
+     - fromSnapshot: Closure returns parsed model from given snapshot
+     
+     - Returns: New PaginatedTableView.
+     */
     init(
         baseQuery: FireQuery,
         initialPosition: InitialPosition,
@@ -97,16 +100,16 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
         baseQuery.limit(to: 1).addSnapshotListener(snapshotListener { [weak self] elements in
             guard let self = self,
                 let elements = elements else { return }
-
+            
             self.startElement = elements.first
             self.sideGroup?.leave()
         })
-
+        
         sideGroup?.enter()
         baseQuery.limit(toLast: 1).addSnapshotListener(snapshotListener { [weak self] elements in
             guard let self = self,
                 let elements = elements else { return }
-
+            
             self.endElement = elements.last
             self.sideGroup?.leave()
         })
@@ -150,28 +153,34 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         paginatedDelegate?.scrollViewDidScroll?(scrollView)
         
-        didScroll(scrollView)
+        didScroll()
     }
     
-    private func didScroll(
-        _ scrollView: UIScrollView,
-        afterUnlock: Bool = false
-    ) {
+    private func didScroll() {
         if let visiblePathList = indexPathsForVisibleRows,
             !paginationLock {
-            if !dataAtStart,
-                scrollView.contentOffset.y + safeAreaInsets.top < paginationTriggerAreaHeight,
-                lastContentOffset >= scrollView.contentOffset.y,
+            let oldMoment = Date()
+            let elapsed = oldMoment.timeIntervalSince(previousScrollMoment)
+            let distance = (contentOffset.y - previousContentOffset)
+            let velocity = (elapsed == 0) ? 0 : abs(distance / CGFloat(elapsed))
+            
+            let cellsOffset = velocity > fastScroll
+                ? fastPaginationCellsOffset
+                : slowPaginationCellsOffset
+            
+            if !dataAtStart, topOffset < paginationTriggerAreaHeight,
+                previousContentOffset >= contentOffset.y,
                 let lastVisiblePath = visiblePathList.last {
                 paginationLock = true
                 
                 let flattened = flattenData
-
+                
                 if let visibleIndex = flattened.firstIndex(where: { $0 == elementAt(lastVisiblePath) }) {
                     let endMessageIndex: Int
                     let visibleCellCount: Int = visiblePathList.count
-                    if !dataAtEnd, visibleIndex + paginationCellsOffset < flattened.count {
-                        endMessageIndex = visibleIndex + paginationCellsOffset
+                    
+                    if !dataAtEnd, visibleIndex + cellsOffset < flattened.count {
+                        endMessageIndex = visibleIndex + cellsOffset
                     } else {
                         endMessageIndex = flattened.count - 1
                     }
@@ -184,7 +193,11 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
                         .end(at: [querySideTransform(flattened[endMessageIndex])])
                         .limit(toLast: limit)
                         .addSnapshotListener(snapshotListener { elements in
-                            guard let elements = elements else { return }
+                            guard self.topOffset < paginationTriggerAreaHeight,
+                                let elements = elements else {
+                                    self.unlockPagination()
+                                    return
+                            }
                             
                             self.deleteSideGroup?.enter()
                             if let sideGroup = self.sideGroup {
@@ -192,36 +205,28 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
                                     self.deleteSideGroup?.leave()
                                     self.didScrollTop(
                                         elements: elements,
-                                        limit: limit,
-                                        afterUnlock: afterUnlock,
-                                        scrollView: scrollView
+                                        limit: limit
                                     )
                                 }
                             } else {
                                 self.didScrollTop(
                                     elements: elements,
-                                    limit: limit,
-                                    afterUnlock: afterUnlock,
-                                    scrollView: scrollView
+                                    limit: limit
                                 )
                             }
                         })
                 }
-            } else if !dataAtEnd,
-                scrollView.contentSize.height
-                    - scrollView.contentOffset.y
-                    - scrollView.bounds.height
-                    + scrollView.contentInset.bottom
-                    + safeAreaInsets.bottom < paginationTriggerAreaHeight,
-                lastContentOffset <= scrollView.contentOffset.y,
+            } else if !dataAtEnd && bottomOffset < paginationTriggerAreaHeight,
+                previousContentOffset <= contentOffset.y,
                 let firstVisiblePath = visiblePathList.first {
                 paginationLock = true
-
+                
                 if let visibleIndex = flattenData.firstIndex(where: { $0 == elementAt(firstVisiblePath) }) {
                     let startMessageIndex: Int
                     let visibleCellCount: Int = visiblePathList.count
-                    if !dataAtStart, visibleIndex - paginationCellsOffset >= 0 {
-                        startMessageIndex = visibleIndex - paginationCellsOffset
+                    
+                    if !dataAtStart, visibleIndex - cellsOffset >= 0 {
+                        startMessageIndex = visibleIndex - cellsOffset
                     } else {
                         startMessageIndex = 0
                     }
@@ -234,7 +239,11 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
                         .start(at: [querySideTransform(flattenData[startMessageIndex])])
                         .limit(to: limit)
                         .addSnapshotListener(snapshotListener { elements in
-                            guard let elements = elements else { return }
+                            guard self.bottomOffset < paginationTriggerAreaHeight,
+                                let elements = elements else {
+                                    self.unlockPagination()
+                                    return
+                            }
                             
                             self.deleteSideGroup?.enter()
                             if let sideGroup = self.sideGroup {
@@ -242,55 +251,46 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
                                     self.deleteSideGroup?.leave()
                                     self.didScrollBottom(
                                         elements: elements,
-                                        limit: limit,
-                                        afterUnlock: afterUnlock,
-                                        scrollView: scrollView
+                                        limit: limit
                                     )
                                 }
                             } else {
                                 self.didScrollBottom(
                                     elements: elements,
-                                    limit: limit,
-                                    afterUnlock: afterUnlock,
-                                    scrollView: scrollView
+                                    limit: limit
                                 )
                             }
                         })
                 }
             }
             
-            lastContentOffset = scrollView.contentOffset.y
+            previousScrollMoment = oldMoment
+            previousContentOffset = contentOffset.y
         }
     }
     
     private func didScrollTop(
         elements: [ElementT],
-        limit: Int,
-        afterUnlock: Bool,
-        scrollView: UIScrollView
+        limit: Int
     ) {
-        if elements.suffix(limit / 2).contains(self.startElement) {
+        if elements.contains(self.startElement) {
             self.loadAtStart()
         } else {
             self.updateElements(
-                elements,
-                scrollView: afterUnlock ? nil : scrollView
+                elements
             )
         }
     }
     
     private func didScrollBottom(
         elements: [ElementT],
-        limit: Int,
-        afterUnlock: Bool,
-        scrollView: UIScrollView
+        limit: Int
     ) {
-        if elements.prefix(limit / 2).contains(self.endElement) {
+        if elements.contains(self.endElement) {
             self.loadAtEnd()
         } else {
             self.updateElements(
-                elements,
-                scrollView: afterUnlock ? nil : scrollView
+                elements
             )
         }
     }
@@ -340,12 +340,12 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
     ) {
         if let elements = elements {
             let oldData = updateData(elements)
-
+            
             if animate {
                 CATransaction.begin()
                 CATransaction.setCompletionBlock {
                     if unlockPagination {
-                        self.unlockPagination(scrollView)
+                        self.unlockPagination()
                     }
                 }
                 animateChanges(oldData)
@@ -353,7 +353,7 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
             } else {
                 reloadData()
                 if unlockPagination {
-                    self.unlockPagination(scrollView)
+                    self.unlockPagination()
                 }
             }
             
@@ -383,12 +383,8 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
             ))
     }
     
-    private func unlockPagination(_ scrollView: UIScrollView? = nil) {
+    private func unlockPagination() {
         paginationLock = false
-        
-        if let scrollView = scrollView {
-            didScroll(scrollView, afterUnlock: true)
-        }
     }
     
     // MARK: - UITableView DataSource
@@ -408,10 +404,10 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
     // MARK: - Helpers
     
     /**
-      Scroll to last element of UITableView.
-
-      - Parameter animated: Use animation for scroll.
-    */
+     Scroll to last element of UITableView.
+     
+     - Parameter animated: Use animation for scroll.
+     */
     func scrollToBottom(completion: ((Bool) -> Void)? = nil) {
         guard !flattenData.isEmpty else {
             return
@@ -447,7 +443,7 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
     }
     
     // MARK: - PaginatedDelegate
-        
+    
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         paginatedDelegate?.scrollViewWillBeginDragging?(scrollView)
     }
@@ -474,5 +470,19 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
     
     func tableView(_ tableView: UITableView, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating) {
         paginatedDelegate?.tableView?(tableView, willPerformPreviewActionForMenuWith: configuration, animator: animator)
+    }
+    
+    // MARK: - Helpers
+    
+    var topOffset: CGFloat {
+        contentOffset.y + safeAreaInsets.top
+    }
+    
+    var bottomOffset: CGFloat {
+        contentSize.height
+            - contentOffset.y
+            - bounds.height
+            + contentInset.bottom
+            + safeAreaInsets.bottom
     }
 }

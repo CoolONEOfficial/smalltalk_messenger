@@ -17,7 +17,9 @@ extension UIImageView {
     ) {
         sd_setImage(
             with: storageReference.small,
+            maxImageSize: UInt64(1e+7), // 10mb
             placeholderImage: placeholderImage,
+            options: [.progressiveLoad],
             completion: completion
         )
     }

@@ -61,12 +61,10 @@ class StorageService: StorageServiceProtocol {
                 .child("\(timestamp.iso8601withFractionalSeconds)_\(index).jpg")
                 .putData(data, metadata: metadata) { metadata, _ in
                     if let path = metadata?.path {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) { // wait firebase functions
-                            completion(.image(
-                                path: path,
-                                size: image.size
-                            ))
-                        }
+                        completion(.image(
+                            path: path,
+                            size: image.size
+                        ))
                     } else {
                         completion(nil)
                     }

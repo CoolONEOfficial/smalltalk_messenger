@@ -10,6 +10,7 @@ import FirebaseStorage
 import FirebaseUI
 import TinyConstraints
 import NYTPhotoViewer
+import AVFoundation
 
 class MessageImageContent: UIView, MessageCellContentProtocol {
     
@@ -23,6 +24,7 @@ class MessageImageContent: UIView, MessageCellContentProtocol {
     
     // MARK: - Vars
     
+    lazy var loading = UIActivityIndicatorView(style: .large)
     var backgroundImageView: UIImageView!
     
     var shouldSetupConstraints = true
@@ -61,16 +63,55 @@ class MessageImageContent: UIView, MessageCellContentProtocol {
     private func setupImage() {
         let kindImage = imageMessage.kindImage(at: kindIndex)!
         let imageRef = Storage.storage().reference().child(kindImage.path)
-        let placeholderImage = imageWithSize(size: kindImage.size)
+        let size = AVMakeRect(
+            aspectRatio: kindImage.size,
+            insideRect: .init(x: 0, y: 0, width: 300, height: 300)
+        ).size
+        imageView.size(
+            .init(
+                width: max(size.width, 150),
+                height: max(size.height, 150)
+            )
+        )
+        didStartLoading()
+        loadImage(with: imageRef)
+    }
+    
+    private func didStartLoading() {
+        imageView.addSubview(loading)
+        loading.centerInSuperview()
+        loading.startAnimating()
+        imageView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+    }
+    
+    private func didEndLoading() {
+        imageView.backgroundColor = .clear
+        loading.removeFromSuperview()
+    }
+    
+    private func loadImage(
+        with imageRef: StorageReference,
+        restartOnErrorCount: Int = 0
+    ) {
         imageView.sd_setSmallImage(
-            with: imageRef,
-            placeholderImage: placeholderImage
-        ) { image, err, _, _ in
+            with: imageRef
+        ) { [weak self] image, err, _, _ in
+            guard let self = self else { return }
             guard err == nil else {
+                debugPrint("error while get message small image: \(err!)")
+                //if restartOnErrorCount < 5 {
+                    debugPrint("retrying \(restartOnErrorCount) image load... \(imageRef.fullPath)")
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                        self.loadImage(
+                            with: imageRef,
+                            restartOnErrorCount: restartOnErrorCount + 1
+                        )
+                    }
+                //}
                 return
             }
             
-            self.backgroundImageView?.removeFromSuperview()
+            self.didEndLoading()
             
             self.backgroundImageView = UIImageView(frame: self.imageView.bounds)
             self.backgroundImageView.contentMode = .scaleAspectFill
@@ -128,25 +169,6 @@ class MessageImageContent: UIView, MessageCellContentProtocol {
             shouldSetupConstraints = false
         }
         super.updateConstraints()
-    }
-    
-    // MARK: - Helpers
-    
-    func imageWithSize(
-        size: CGSize,
-        filledWithColor color: UIColor = .clear,
-        scale: CGFloat = 0.0,
-        opaque: Bool = false
-    ) -> UIImage {
-        let rect = CGRect(x: 0, y: 0, width: size.width, height: size.height)
-        
-        UIGraphicsBeginImageContextWithOptions(size, opaque, scale)
-        color.set()
-        UIRectFill(rect)
-        let image = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        
-        return image!
     }
     
 }

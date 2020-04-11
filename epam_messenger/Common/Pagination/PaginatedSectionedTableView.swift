@@ -77,9 +77,15 @@ class PaginatedSectionedTableView<KeyT: Hashable, ElementT: Equatable>: Paginate
     }
     
     override func animateChanges(_ oldData: Any) {
+        if !dataAtStart && contentOffset.y < 1 {
+            contentOffset.y = 1
+        }
+        
         animateRowAndSectionChanges(
             oldData: oldData as! [SectionArray<KeyT, ElementT>],
-            newData: self.data
+            newData: self.data,
+            rowDeletionAnimation: .top,
+            rowInsertionAnimation: .bottom
         )
     }
     
