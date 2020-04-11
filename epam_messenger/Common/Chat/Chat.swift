@@ -19,7 +19,7 @@ protocol ChatProtocol {
     var type: ChatType { get }
 }
 
-enum ChatType: AutoCodable {
+public enum ChatType: AutoCodable, AutoEquatable {
     case personalCorr
     case chat(title: String, adminId: String)
 }

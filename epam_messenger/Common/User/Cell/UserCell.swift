@@ -43,14 +43,16 @@ class UserCell: UITableViewCell, NibReusable {
     func loadUser(_ user: UserProtocol, valueText: String? = nil) {
         self.user = user
         self.valueLabel.text = valueText
-        avatarImage.sd_setSmallImage(with: user.avatarRef)
+        self.valueLabel.isHidden = valueText != nil
+        avatarImage.sd_setSmallImage(with: user.avatarRef, placeholderImage: #imageLiteral(resourceName: "logo"))
     }
     
-    func loadUser(byId userId: String) {
+    func loadUser(byId userId: String, completion: ((UserModel?) -> Void)? = nil) {
         FirestoreService().userData(userId) { user in
             self.user = user
+            completion?(user)
         }
-        avatarImage.sd_setSmallImage(with: UserModel.avatarRef(byId: userId))
+        avatarImage.sd_setSmallImage(with: UserModel.avatarRef(byId: userId), placeholderImage: #imageLiteral(resourceName: "logo"))
     }
     
 }

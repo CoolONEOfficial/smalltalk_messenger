@@ -15,10 +15,8 @@ extension UIImageView {
         placeholderImage: UIImage? = nil,
         completion: ((UIImage?, Error?, SDImageCacheType, StorageReference) -> Void)? = nil
     ) {
-        var path = storageReference.fullPath
-        path.insert(contentsOf: "_200x200", at: path.index(path.endIndex, offsetBy: -4))
         sd_setImage(
-            with: Storage.storage().reference(withPath: path),
+            with: storageReference.small,
             placeholderImage: placeholderImage,
             completion: completion
         )

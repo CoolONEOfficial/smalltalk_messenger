@@ -47,7 +47,8 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
     var startElement: ElementT!
     var endElement: ElementT!
     
-    private let sideGroup = DispatchGroup()
+    private var sideGroup: DispatchGroup? = .init()
+    private var deleteSideGroup: DispatchGroup? = .init()
     
     var paginationLock = false
     private var lastContentOffset: CGFloat = 0
@@ -92,21 +93,28 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
         self.querySideTransform = querySideTransform
         self.fromSnapshot = fromSnapshot
         
-        sideGroup.enter()
-        baseQuery.limit(to: 1).addSnapshotListener(snapshotListener { elements in
-            guard let elements = elements else { return }
+        sideGroup?.enter()
+        baseQuery.limit(to: 1).addSnapshotListener(snapshotListener { [weak self] elements in
+            guard let self = self,
+                let elements = elements else { return }
 
             self.startElement = elements.first
-            self.sideGroup.leave()
+            self.sideGroup?.leave()
         })
 
-        sideGroup.enter()
-        baseQuery.limit(toLast: 1).addSnapshotListener(snapshotListener { elements in
-            guard let elements = elements else { return }
+        sideGroup?.enter()
+        baseQuery.limit(toLast: 1).addSnapshotListener(snapshotListener { [weak self] elements in
+            guard let self = self,
+                let elements = elements else { return }
 
             self.endElement = elements.last
-            self.sideGroup.leave()
+            self.sideGroup?.leave()
         })
+        
+        deleteSideGroup?.notify(queue: .main) {
+            self.sideGroup = nil
+            self.deleteSideGroup = nil
+        }
         
         commonInit()
         
@@ -178,15 +186,24 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
                         .addSnapshotListener(snapshotListener { elements in
                             guard let elements = elements else { return }
                             
-                            self.sideGroup.notify(queue: .main) {
-                                if elements.suffix(limit / 2).contains(self.startElement) {
-                                    self.loadAtStart()
-                                } else {
-                                    self.updateElements(
-                                        elements,
-                                        scrollView: afterUnlock ? nil : scrollView
+                            self.deleteSideGroup?.enter()
+                            if let sideGroup = self.sideGroup {
+                                sideGroup.notify(queue: .main) {
+                                    self.deleteSideGroup?.leave()
+                                    self.didScrollTop(
+                                        elements: elements,
+                                        limit: limit,
+                                        afterUnlock: afterUnlock,
+                                        scrollView: scrollView
                                     )
                                 }
+                            } else {
+                                self.didScrollTop(
+                                    elements: elements,
+                                    limit: limit,
+                                    afterUnlock: afterUnlock,
+                                    scrollView: scrollView
+                                )
                             }
                         })
                 }
@@ -219,22 +236,62 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
                         .addSnapshotListener(snapshotListener { elements in
                             guard let elements = elements else { return }
                             
-                            self.sideGroup.notify(queue: .main) {
-                                if elements.prefix(limit / 2).contains(self.endElement) {
-                                    self.loadAtEnd()
-                                } else {
-                                    self.updateElements(
-                                        elements,
-                                        scrollView: afterUnlock ? nil : scrollView
+                            self.deleteSideGroup?.enter()
+                            if let sideGroup = self.sideGroup {
+                                sideGroup.notify(queue: .main) {
+                                    self.deleteSideGroup?.leave()
+                                    self.didScrollBottom(
+                                        elements: elements,
+                                        limit: limit,
+                                        afterUnlock: afterUnlock,
+                                        scrollView: scrollView
                                     )
                                 }
+                            } else {
+                                self.didScrollBottom(
+                                    elements: elements,
+                                    limit: limit,
+                                    afterUnlock: afterUnlock,
+                                    scrollView: scrollView
+                                )
                             }
-                            
                         })
                 }
             }
             
             lastContentOffset = scrollView.contentOffset.y
+        }
+    }
+    
+    private func didScrollTop(
+        elements: [ElementT],
+        limit: Int,
+        afterUnlock: Bool,
+        scrollView: UIScrollView
+    ) {
+        if elements.suffix(limit / 2).contains(self.startElement) {
+            self.loadAtStart()
+        } else {
+            self.updateElements(
+                elements,
+                scrollView: afterUnlock ? nil : scrollView
+            )
+        }
+    }
+    
+    private func didScrollBottom(
+        elements: [ElementT],
+        limit: Int,
+        afterUnlock: Bool,
+        scrollView: UIScrollView
+    ) {
+        if elements.prefix(limit / 2).contains(self.endElement) {
+            self.loadAtEnd()
+        } else {
+            self.updateElements(
+                elements,
+                scrollView: afterUnlock ? nil : scrollView
+            )
         }
     }
     

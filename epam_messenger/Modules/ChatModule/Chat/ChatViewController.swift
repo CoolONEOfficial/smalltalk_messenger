@@ -15,8 +15,10 @@ import Hero
 import FaceAware
 
 protocol ChatViewControllerProtocol: AutoMockable {
-    func presentPhotoViewer(_ storageRefs: [StorageReference], initialIndex: Int)
+    func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)?)
     func presentErrorAlert(_ text: String)
+    
+    var photosViewerDataSource: ChatPhotoViewerDataSource! { get set }
 }
 
 class ChatViewController: UIViewController {
@@ -35,7 +37,7 @@ class ChatViewController: UIViewController {
     
     let inputBar = ChatInputBar()
     var viewModel: ChatViewModelProtocol!
-    var photosViewerCoordinator: ChatPhotoViewerDataSource!
+    var photosViewerDataSource: ChatPhotoViewerDataSource!
     
     let titleStack = UIStackView()
     let titleLabel = UILabel()
@@ -158,6 +160,7 @@ class ChatViewController: UIViewController {
         
         let stackView = UIStackView(arrangedSubviews: [titleLabel, subtitleLabel])
         stackView.axis = .vertical
+        stackView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didAvatarTap)))
         
         navigationItem.titleView = stackView
     }
@@ -304,57 +307,6 @@ class ChatViewController: UIViewController {
 }
 
 extension ChatViewController: ChatViewControllerProtocol {
-    
-    func presentPhotoViewer(_ storageRefs: [StorageReference], initialIndex: Int) {
-        var photosViewController: NYTPhotosViewController!
-        
-        if photosViewerCoordinator == nil || photosViewerCoordinator.data.count != storageRefs.count {
-            photosViewerCoordinator = ChatPhotoViewerDataSource(
-                data: storageRefs.enumerated().map { (index, ref) -> PhotoBox in
-                    let photoBox = PhotoBox(ref.fullPath)
-                    let cacheKey = "gs://\(ref.bucket)/\(ref.fullPath)"
-                    
-                    photoBox.image = SDImageCache.shared.imageFromDiskCache(forKey: cacheKey)
-                    
-                    if photoBox.image == nil {
-                        ref.getData(maxSize: Int64.max) { data, err in
-                            guard err == nil else {
-                                debugPrint("Error while get image: \(err!.localizedDescription)")
-                                return
-                            }
-                            
-                            let image = UIImage(data: data!)
-                            SDImageCache.shared.storeImage(toMemory: image, forKey: cacheKey)
-                            photoBox.image = image
-                            
-                            photosViewController.updatePhoto(at: index)
-                        }
-                    }
-                    
-                    return photoBox
-                }
-            )
-        }
-        
-        photosViewController = .init(
-            dataSource: photosViewerCoordinator,
-            initialPhotoIndex: initialIndex,
-            delegate: self
-        )
-        
-        present(photosViewController, animated: true)
-    }
-    
-    func presentErrorAlert(_ text: String) {
-        let alert = UIAlertController(title: "Error",
-                                      message: text,
-                                      preferredStyle: .alert
-        )
-        alert.addAction(UIAlertAction(title: "Dismiss", style: .default))
-        
-        self.present(alert, animated: true, completion: nil)
-    }
-    
 }
 
 extension ChatViewController: NYTPhotosViewControllerDelegate {

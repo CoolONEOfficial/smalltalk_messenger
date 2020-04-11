@@ -335,7 +335,7 @@ extension ChatViewController: PaginatedTableViewDelegate {
     
 }
 
-extension ChatViewController: ForwardDelegateProtocol {
+extension ChatViewController: ForwardDelegate {
     
     func didSelectChat(_ chatModel: ChatModel) {
         if forwardMessages != nil {

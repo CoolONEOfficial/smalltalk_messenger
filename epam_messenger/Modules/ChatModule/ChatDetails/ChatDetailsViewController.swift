@@ -9,9 +9,9 @@ import UIKit
 import Hero
 import XLPagerTabStrip
 import SDWebImage
+import NYTPhotoViewer
 
 protocol ChatDetailsViewControllerProtocol {
-    
 }
 
 class ChatDetailsViewController: UIViewController {
@@ -31,7 +31,8 @@ class ChatDetailsViewController: UIViewController {
     var staticContentHeight: CGFloat!
     
     var viewModel: ChatDetailsViewModelProtocol!
-    
+    var chatViewController: ChatViewControllerProtocol!
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -75,13 +76,26 @@ class ChatDetailsViewController: UIViewController {
     private func setupTabStrip() {
         tabStrip = .init()
         
-        let first = ChatDetailsUsersViewController()
-        (first.tableView as UIScrollView).delegate = self
-        let second = ChatDetailsUsersViewController()
-        (second.tableView as UIScrollView).delegate = self
-        let third = ChatDetailsUsersViewController()
-        (third.tableView as UIScrollView).delegate = self
-        tabStrip.initialViewControllers = [ first, second, third ]
+        let users = ChatDetailsUsersViewController()
+        users.updateData(viewModel.chat)
+        let media = ChatDetailsMediaViewController(
+            viewModel: viewModel,
+            chatViewController: chatViewController
+        )
+        media.updateData(viewModel.chat)
+        
+        if case .chat = viewModel.chat.type {
+            tabStrip.scrollViews.append(users.tableView)
+            tabStrip.initialViewControllers.append(users)
+        }
+        tabStrip.scrollViews.append(media.collectionView)
+        tabStrip.initialViewControllers.append(media)
+        
+        for scrollView in tabStrip.scrollViews {
+            scrollView.delegate = self
+            scrollView.verticalScrollIndicatorInsets.bottom = UIApplication.safeAreaInsets.bottom
+            scrollView.isScrollEnabled = false
+        }
 
         stack.addArrangedSubview(tabStrip.view)
         
@@ -110,13 +124,12 @@ class ChatDetailsViewController: UIViewController {
         avatarImage.top(to: view, priority: .defaultHigh)
         
         let ref = viewModel.chat.avatarRef
-        var path = ref.fullPath
-        path.insert(contentsOf: "_200x200", at: path.index(path.endIndex, offsetBy: -4))
-        let cacheKey = "gs://\(ref.bucket)/\(path)"
-        
+
         avatarImage.sd_setImage(
             with: viewModel.chat.avatarRef,
-            placeholderImage: SDImageCache.shared.imageFromDiskCache(forKey: cacheKey) ?? #imageLiteral(resourceName: "logo")
+            placeholderImage: SDImageCache.shared.imageFromDiskCache(
+                forKey: ref.small.storageLocation
+            ) ?? #imageLiteral(resourceName: "logo")
         )
     }
 
@@ -126,16 +139,17 @@ class ChatDetailsViewController: UIViewController {
 }
 
 extension ChatDetailsViewController: UIScrollViewDelegate {
+    
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let yOffset = scrollView.contentOffset.y
-        let tabStripViewController = tabStrip.initialViewControllers[tabStrip.currentIndex].tableView!
+        let tabStripViewController = tabStrip.scrollViews[tabStrip.currentIndex]
         
         switch scrollView {
         case scroll:
             if yOffset >= staticContentHeight {
                 scroll.isScrollEnabled = false
-                for viewController in tabStrip.initialViewControllers {
-                    viewController.tableView.isScrollEnabled = true
+                for viewController in tabStrip.scrollViews {
+                    viewController.isScrollEnabled = true
                 }
             }
             
@@ -160,13 +174,55 @@ extension ChatDetailsViewController: UIScrollViewDelegate {
         case tabStripViewController:
             if yOffset <= 0 {
                 scroll.isScrollEnabled = true
-                for viewController in tabStrip.initialViewControllers {
-                    viewController.tableView.isScrollEnabled = false
+                for viewController in tabStrip.scrollViews {
+                    viewController.isScrollEnabled = false
                 }
             }
         default: break
         }
     }
+    
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        switch scrollView {
+        case scroll:
+            completeScrollAnimation(
+                scrollView: scrollView,
+                bottomBound: 0,
+                topBound: staticContentHeight
+            )
+        default: break
+        }
+    }
+    
+    func scrollViewWillBeginDecelerating(_ scrollView: UIScrollView) {
+        switch scrollView {
+        case scroll:
+            completeScrollAnimation(
+                scrollView: scrollView,
+                bottomBound: 0,
+                topBound: staticContentHeight
+            )
+        default: break
+        }
+    }
+    
+    private func completeScrollAnimation(
+        scrollView: UIScrollView,
+        bottomBound: CGFloat,
+        topBound: CGFloat
+    ) {
+        let yOffset = scrollView.contentOffset.y
+        if offsetInBounds(yOffset, min: bottomBound, max: bottomBound + topBound / 2) {
+            scrollView.setContentOffset(.init(x: 0, y: bottomBound), animated: true)
+        } else if offsetInBounds(yOffset, min: bottomBound + topBound / 2, max: topBound) {
+            scrollView.setContentOffset(.init(x: 0, y: topBound), animated: true)
+        }
+    }
+    
+    private func offsetInBounds(_ offset: CGFloat, min: CGFloat, max: CGFloat) -> Bool {
+        return offset > min && offset < max
+    }
+    
 }
 
 extension ChatDetailsViewController: ChatDetailsViewControllerProtocol {

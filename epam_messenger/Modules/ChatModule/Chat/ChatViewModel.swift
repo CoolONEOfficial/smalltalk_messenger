@@ -8,6 +8,7 @@
 import Foundation
 import Firebase
 import InputBarAccessoryView
+import NYTPhotoViewer
 
 protocol ChatViewModelProtocol: ViewModelProtocol, AutoMockable, MessageCellDelegate {
     func sendMessage(
@@ -32,7 +33,7 @@ protocol ChatViewModelProtocol: ViewModelProtocol, AutoMockable, MessageCellDele
         completion: @escaping (UIImage) -> Void
     )
     func createForwardViewController(
-        forwardDelegate: ForwardDelegateProtocol
+        forwardDelegate: ForwardDelegate
     ) -> UIViewController
     func goToChat(
         _ chatModel: ChatProtocol
@@ -82,7 +83,7 @@ class ChatViewModel: ChatViewModelProtocol {
     // MARK: - Vars
     
     let router: RouterProtocol
-    let viewController: ChatViewControllerProtocol
+    var viewController: ChatViewControllerProtocol
     
     let firestoreService: FirestoreServiceProtocol
     let storageService: StorageServiceProtocol
@@ -229,7 +230,7 @@ class ChatViewModel: ChatViewModelProtocol {
     func goToDetails() {
         guard let router = router as? ChatRouter else { return }
         
-        router.showChatDetails(chat)
+        router.showChatDetails(chat, from: viewController)
     }
     
     func pickImages(
@@ -239,7 +240,7 @@ class ChatViewModel: ChatViewModelProtocol {
         imagePickerService.pickImages(viewController: viewController, completion: completion)
     }
     
-    func createForwardViewController(forwardDelegate: ForwardDelegateProtocol) -> UIViewController {
+    func createForwardViewController(forwardDelegate: ForwardDelegate) -> UIViewController {
         return AssemblyBuilder().createChatListModule(
             router: router,
             forwardDelegate: forwardDelegate
@@ -253,21 +254,30 @@ extension ChatViewModel: MessageCellDelegate {
         lastTapCellContent = content
         switch content {
         case let messageContent as MessageImageContent:
-            firestoreService.listChatMedia(chatDocumentId: chat.documentId) { mediaItems in
-                let refs = mediaItems!.map { Storage.storage().reference(withPath: $0.path) }
+            
+            ChatPhotoViewerDataSource.loadByChatId(
+                chatId: chat.documentId,
+                cachedDatasource: viewController.photosViewerDataSource,
+                initialIndexCompletion: { refs in
+                    refs.firstIndex { ref in
+                        ref.fullPath == messageContent.imageMessage.kindImage(at: messageContent.kindIndex)!.path
+                    }
+                },
+                delegate: viewController as! NYTPhotosViewControllerDelegate
+            ) { [weak self] photos, errorText in
+                guard let self = self else { return }
+                guard let photos = photos else {
+                    self.viewController.presentErrorAlert(errorText ?? "Unknown error")
+                    return
+                }
+
+                let photosController = photos.0
+                let photosDataSource = photos.1
+                self.viewController.photosViewerDataSource = photosDataSource
                 
-                let initialIndex = refs.firstIndex { ref in
-                    return ref.fullPath == messageContent.imageMessage.kindImage(at: messageContent.kindIndex)!.path
-                }
-                if let initialIndex = initialIndex {
-                    self.viewController.presentPhotoViewer(
-                        refs,
-                        initialIndex: initialIndex
-                    )
-                } else {
-                    self.viewController.presentErrorAlert("Photo has been deleted by the owner.")
-                }
+                self.viewController.present(photosController, animated: true, completion: nil)
             }
+
         default: break
         }
     }

@@ -28,7 +28,7 @@ class PaginatedSectionedTableView<KeyT: Hashable, ElementT: Equatable>: Paginate
     // MARK: - Init
     
     /**
-    Initializes a new PaginatedTableView.
+    Initializes a new PaginatedSectionedTableView.
 
     - Parameters:
        - baseQuery: Firebase query with collection which will be displayed
@@ -39,7 +39,7 @@ class PaginatedSectionedTableView<KeyT: Hashable, ElementT: Equatable>: Paginate
        - sortedBy: Closure that will be used for sort sections
        - fromSnapshot: Closure returns parsed model from given snapshot
 
-    - Returns: New PaginatedTableView.
+    - Returns: New PaginatedSectionedTableView.
     */
     init(
         baseQuery: FireQuery,

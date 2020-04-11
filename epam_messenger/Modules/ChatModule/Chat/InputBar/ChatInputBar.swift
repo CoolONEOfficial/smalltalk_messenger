@@ -13,7 +13,7 @@ class ChatInputBar: InputBarAccessoryView {
     
     // MARK: - Vars
     
-    var chatDelegate: ChatInputBarDelegate?
+    weak var chatDelegate: ChatInputBarDelegate?
     
     let attachButton = InputBarButtonItem()
     let voiceCancelButton = InputBarButtonItem()

@@ -9,7 +9,7 @@ import UIKit
 
 protocol ChatAssemblyBuilder {
     func createChat(router: RouterProtocol, chat: ChatProtocol) -> UIViewController
-    func createChatDetails(router: RouterProtocol, chat: ChatProtocol) -> UIViewController
+    func createChatDetails(router: RouterProtocol, chat: ChatProtocol, from chatViewController: ChatViewControllerProtocol?) -> UIViewController
 }
 
 extension AssemblyBuilder: ChatAssemblyBuilder {
@@ -30,7 +30,8 @@ extension AssemblyBuilder: ChatAssemblyBuilder {
     
     func createChatDetails(
         router: RouterProtocol,
-        chat: ChatProtocol
+        chat: ChatProtocol,
+        from chatViewController: ChatViewControllerProtocol?
     ) -> UIViewController {
         let view = ChatDetailsViewController()
         let viewModel = ChatDetailsViewModel(
@@ -39,6 +40,7 @@ extension AssemblyBuilder: ChatAssemblyBuilder {
             chat: chat
         )
         view.viewModel = viewModel
+        view.chatViewController =  chatViewController
         view.hero.isEnabled = true
         let navigationController = UINavigationController(rootViewController: view)
         navigationController.modalPresentationStyle = .fullScreen

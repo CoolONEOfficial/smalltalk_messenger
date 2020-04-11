@@ -64,22 +64,23 @@ class AlgoliaServiceProtocolMock: AlgoliaServiceProtocol {
 
 }
 class ChatViewControllerProtocolMock: ChatViewControllerProtocol {
+    var photosViewerDataSource: ChatPhotoViewerDataSource!
 
-    //MARK: - presentPhotoViewer
+    //MARK: - present
 
-    var presentPhotoViewerInitialIndexCallsCount = 0
-    var presentPhotoViewerInitialIndexCalled: Bool {
-        return presentPhotoViewerInitialIndexCallsCount > 0
+    var presentAnimatedCompletionCallsCount = 0
+    var presentAnimatedCompletionCalled: Bool {
+        return presentAnimatedCompletionCallsCount > 0
     }
-    var presentPhotoViewerInitialIndexReceivedArguments: (storageRefs: [StorageReference], initialIndex: Int)?
-    var presentPhotoViewerInitialIndexReceivedInvocations: [(storageRefs: [StorageReference], initialIndex: Int)] = []
-    var presentPhotoViewerInitialIndexClosure: (([StorageReference], Int) -> Void)?
+    var presentAnimatedCompletionReceivedArguments: (viewControllerToPresent: UIViewController, flag: Bool, completion: (() -> Void)?)?
+    var presentAnimatedCompletionReceivedInvocations: [(viewControllerToPresent: UIViewController, flag: Bool, completion: (() -> Void)?)] = []
+    var presentAnimatedCompletionClosure: ((UIViewController, Bool, (() -> Void)?) -> Void)?
 
-    func presentPhotoViewer(_ storageRefs: [StorageReference], initialIndex: Int) {
-        presentPhotoViewerInitialIndexCallsCount += 1
-        presentPhotoViewerInitialIndexReceivedArguments = (storageRefs: storageRefs, initialIndex: initialIndex)
-        presentPhotoViewerInitialIndexReceivedInvocations.append((storageRefs: storageRefs, initialIndex: initialIndex))
-        presentPhotoViewerInitialIndexClosure?(storageRefs, initialIndex)
+    func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)?) {
+        presentAnimatedCompletionCallsCount += 1
+        presentAnimatedCompletionReceivedArguments = (viewControllerToPresent: viewControllerToPresent, flag: flag, completion: completion)
+        presentAnimatedCompletionReceivedInvocations.append((viewControllerToPresent: viewControllerToPresent, flag: flag, completion: completion))
+        presentAnimatedCompletionClosure?(viewControllerToPresent, flag, completion)
     }
 
     //MARK: - presentErrorAlert
@@ -204,12 +205,12 @@ class ChatViewModelProtocolMock: ChatViewModelProtocol {
     var createForwardViewControllerForwardDelegateCalled: Bool {
         return createForwardViewControllerForwardDelegateCallsCount > 0
     }
-    var createForwardViewControllerForwardDelegateReceivedForwardDelegate: ForwardDelegateProtocol?
-    var createForwardViewControllerForwardDelegateReceivedInvocations: [ForwardDelegateProtocol] = []
+    var createForwardViewControllerForwardDelegateReceivedForwardDelegate: ForwardDelegate?
+    var createForwardViewControllerForwardDelegateReceivedInvocations: [ForwardDelegate] = []
     var createForwardViewControllerForwardDelegateReturnValue: UIViewController!
-    var createForwardViewControllerForwardDelegateClosure: ((ForwardDelegateProtocol) -> UIViewController)?
+    var createForwardViewControllerForwardDelegateClosure: ((ForwardDelegate) -> UIViewController)?
 
-    func createForwardViewController(        forwardDelegate: ForwardDelegateProtocol    ) -> UIViewController {
+    func createForwardViewController(        forwardDelegate: ForwardDelegate    ) -> UIViewController {
         createForwardViewControllerForwardDelegateCallsCount += 1
         createForwardViewControllerForwardDelegateReceivedForwardDelegate = forwardDelegate
         createForwardViewControllerForwardDelegateReceivedInvocations.append(forwardDelegate)

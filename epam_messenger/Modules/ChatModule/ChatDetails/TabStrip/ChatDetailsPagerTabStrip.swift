@@ -10,7 +10,8 @@ import XLPagerTabStrip
 
 class ChatDetailsPagerTabStrip: ButtonBarPagerTabStripViewController {
     
-    var initialViewControllers: [UITableViewController] = []
+    var initialViewControllers: [UIViewController] = []
+    var scrollViews: [UIScrollView] = []
     
     override func viewDidLoad() {
         pagerBehaviour = .progressive(skipIntermediateViewControllers: true, elasticIndicatorLimit: true)

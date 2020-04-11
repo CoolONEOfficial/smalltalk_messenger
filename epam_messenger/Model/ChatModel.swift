@@ -9,7 +9,7 @@ import Foundation
 import Firebase
 import CodableFirebase
 
-struct ChatModel: AutoCodable {
+public struct ChatModel: AutoCodable, AutoEquatable {
     
     var documentId: String!
     let users: [String]
@@ -40,13 +40,6 @@ struct ChatModel: AutoCodable {
             debugPrint("error while parse chat model: \(err)")
             return nil
         }
-    }
-}
-
-extension ChatModel: Equatable {
-    public static func == (lhs: ChatModel, rhs: ChatModel) -> Bool {
-        lhs.documentId == rhs.documentId
-            && lhs.lastMessage == rhs.lastMessage
     }
 }
 

@@ -9,33 +9,43 @@ import UIKit
 import XLPagerTabStrip
 
 class ChatDetailsUsersViewController: UITableViewController {
-    var users: [String] = [] {
+    
+    // MARK: - Vars
+    
+    var chat: ChatProtocol? {
         didSet {
-            tableView.animateRowChanges(oldData: oldValue, newData: users)
+            tableView.animateRowChanges(oldData: oldValue?.users ?? [], newData: chat?.users ?? [])
         }
     }
     
+    // MARK: - Init
+    
     override func viewDidLoad() {
         tableView.register(cellType: UserCell.self)
-        tableView.isScrollEnabled = false
     }
     
-    func updateData(_ users: [String]) {
-        self.users = users
+    func updateData(_ chat: ChatProtocol) {
+        self.chat = chat
     }
     
     // MARK: - UITableViewDataSource
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        100 //users.count
+        chat?.users.count ?? 0
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//        let cell = tableView.dequeueReusableCell(for: indexPath, cellType: UserCell.self)
-//        cell.loadUser(byId: users[indexPath.row])
-        let d = UITableViewCell.init(style: .default, reuseIdentifier: nil)
-        d.textLabel?.text = "\(indexPath.row)"
-        return d //cell
+        let cell = tableView.dequeueReusableCell(for: indexPath, cellType: UserCell.self)
+        let completion: ((UserModel?) -> Void)?
+        if case .chat(_, let adminId) = chat!.type {
+            completion = { user in
+                cell.valueLabel.text = user?.documentId == adminId ? "admin" : nil
+            }
+        } else {
+            completion = nil
+        }
+        cell.loadUser(byId: chat!.users[indexPath.row], completion: completion)
+        return cell
     }
 }
 

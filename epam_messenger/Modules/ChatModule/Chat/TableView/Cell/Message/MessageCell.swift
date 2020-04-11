@@ -49,7 +49,7 @@ extension MessageCellContentProtocol {
     func didDelegateSet(_ delegate: MessageCellDelegate?) {}
 }
 
-protocol MessageCellDelegate {
+protocol MessageCellDelegate: AnyObject {
     func didTapContent(_ content: MessageCellContentProtocol)
     func didError(_ text: String)
     func cellUserData(_ userId: String, completion: @escaping (UserModel?) -> Void)
@@ -77,7 +77,7 @@ class MessageCell: UITableViewCell, NibReusable, MessageCellProtocol {
     var mergeNext: Bool!
     var mergePrev: Bool!
     
-    var delegate: MessageCellDelegate? {
+    weak var delegate: MessageCellDelegate? {
         didSet {
             loadUser()
             if case .personalCorr = delegate!.chat.type {
@@ -255,7 +255,11 @@ class MessageCell: UITableViewCell, NibReusable, MessageCellProtocol {
     override func prepareForReuse() {
         super.prepareForReuse()
         
-        contentStack.removeFromSuperview()
+        do {
+            contentStack.removeFromSuperview()
+        } catch {
+            debugPrint("error while remove contentstack from \(bubbleImage)")
+        }
         _contentStack = nil
         
         mergeNext = false

@@ -11,11 +11,11 @@ import FirebaseUI
 import CodableFirebase
 import Reusable
 
-protocol ForwardDelegateProtocol {
+protocol ForwardDelegate {
     func didSelectChat(_ chatModel: ChatModel)
 }
 
-protocol ChatListCellDelegateProtocol {
+protocol ChatListCellDelegate: AnyObject {
     func userListData(
         _ userList: [String],
         completion: @escaping ([UserModel]?) -> Void
@@ -47,7 +47,7 @@ class ChatListViewController: UIViewController {
     internal var searchChatItems = [ChatModel]()
     internal var searchMessageItems = [MessageModel]()
     
-    var forwardDelegate: ForwardDelegateProtocol?
+    var forwardDelegate: ForwardDelegate?
     
     var searchDataSource: FUIFirestoreTableViewDataSource!
     
@@ -327,7 +327,7 @@ extension ChatListViewController: PaginatedTableViewDelegate {
 
 // MARK: - Cell delegate
 
-extension ChatListViewController: ChatListCellDelegateProtocol {
+extension ChatListViewController: ChatListCellDelegate {
     
     func userData(_ userId: String, completion: @escaping (UserModel?) -> Void) {
         viewModel.userData(userId, completion: completion)

@@ -9,7 +9,7 @@ import Foundation
 import Firebase
 import CodableFirebase
 
-struct MediaModel: AutoDecodable {
+public struct MediaModel: AutoDecodable, AutoEquatable {
     let path: String
     let size: ImageSize
     let timestamp: Timestamp
@@ -28,4 +28,12 @@ struct MediaModel: AutoDecodable {
             return nil
         }
     }
+}
+
+extension MediaModel: MediaProtocol {
+    
+    var ref: StorageReference {
+        Storage.storage().reference(withPath: path)
+    }
+    
 }
