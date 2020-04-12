@@ -65,7 +65,7 @@ class StorageService: StorageServiceProtocol {
                             completion(.image(
                                 path: path,
                                 size: image.size
-                            ))
+                                ))
                         }
                     } else {
                         completion(nil)

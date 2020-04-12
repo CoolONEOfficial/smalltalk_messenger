@@ -274,12 +274,7 @@ class FirestoreService: FirestoreServiceProtocol {
             ])
     }
     
-    // MARK: - hard codded users list
-    
     lazy var usersListQuery: Query = {
         return db.collection("users").order(by: "name")
     }()
-    
-    
-    //yjdfz dthcbz
 }

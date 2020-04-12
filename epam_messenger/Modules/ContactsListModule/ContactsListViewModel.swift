@@ -45,5 +45,4 @@ class ContactsListViewModel: ContactsListViewModelProtocol {
     func searchUsers(_ searchString: String, completion: @escaping AlgoliaService.SearchUsersCompletion) {
         return algoliaService.searchUsers(searchString, completion: completion)
     }
-    
 }

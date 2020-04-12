@@ -7,4 +7,15 @@
 
 import UIKit
 
-//extension ContactsListViewController: UITableViewDataSource {}
+extension ContactsListViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return searchItems.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = UITableViewCell()
+        let item = searchItems[indexPath.row]
+        cell.textLabel?.text = "\(item.name) \(item.surname)"
+        return cell
+    }
+}

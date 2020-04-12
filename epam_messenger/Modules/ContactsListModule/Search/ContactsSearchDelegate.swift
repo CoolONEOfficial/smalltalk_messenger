@@ -7,23 +7,42 @@
 
 import UIKit
 
-class ContactsSearchDelegate: UIViewController {
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+extension ContactsListViewController: UISearchResultsUpdating, UISearchControllerDelegate {
+    
+    func updateSearchResults(for searchController: UISearchController) {
+        NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(reload), object: nil)
+        if searchController.searchBar.text?.isEmpty ?? true {
+            if !tableView.dataSource!.isEqual(tableView) {
+                tableView.dataSource = tableView
+                tableView.delegate = tableView
+                self.tableView.separatorInset.left = 75
+                tableView.reloadData()
+            }
+        } else {
+            self.perform(#selector(reload), with: nil, afterDelay: 0.5)
+        }
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    @objc func reload() {
+        if tableView.isEqual(tableView.dataSource) {
+            tableView.listener.remove()
+        }
+        tableView.dataSource = nil
+        searchController.searchBar.isLoading = true
+        
+        viewModel.searchUsers(searchController.searchBar.text!) { users in
+            if let users = users {
+                self.searchItems = users
+            }
+            
+        }
+        
+        if !(self.tableView.dataSource?.isEqual(self) ?? false) {
+            self.tableView.dataSource = self
+            self.tableView.delegate = self
+        }
+        self.searchController.searchBar.isLoading = false
+        self.tableView.separatorInset.left = 10
+        self.tableView.reloadData()
     }
-    */
-
 }
