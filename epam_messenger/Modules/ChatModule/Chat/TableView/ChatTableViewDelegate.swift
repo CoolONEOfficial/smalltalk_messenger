@@ -8,6 +8,7 @@
 import UIKit
 import FirebaseAuth
 import FirebaseFirestore
+import PocketSVG
 
 extension ChatViewController: PaginatedTableViewDelegate {
     
@@ -35,7 +36,6 @@ extension ChatViewController: PaginatedTableViewDelegate {
     
     func didUpdateElements() {
         if tableView.dataAtEnd {
-            tableView.scrollToBottom()
             let flattenData = tableView.flattenData
             if flattenData.count >= 2, MessageModel.checkMerge(
                 flattenData[flattenData.count - 1],
@@ -45,13 +45,10 @@ extension ChatViewController: PaginatedTableViewDelegate {
                 let section = data.count - 1
                 let lastRow = data[section].elements.count - 1
                 tableView.reloadRows(
-                    at: [
-                        .init(row: lastRow - 1, section: section)
-                    ],
-                    with: .automatic
+                    at: [.init(row: lastRow - 1, section: section)],
+                    with: .fade
                 )
             }
-
         }
     }
     
@@ -165,23 +162,8 @@ extension ChatViewController: PaginatedTableViewDelegate {
         let messageCell: MessageCell = tableView.cellForRow(at: indexPath) as! MessageCell
         
         let parameters = UIPreviewParameters()
-        parameters.backgroundColor = messageCell.message.backgroundColor
-        
-        let bounds = messageCell.contentStack.bounds.inset(
-            by: .init(
-                top: -(messageCell.contentStack.subviews.first as! MessageCellContentProtocol).topMargin,
-                left: 0,
-                bottom: -(messageCell.contentStack.subviews.last as! MessageCellContentProtocol).bottomMargin,
-                right: 0
-            )
-        )
-        
-        parameters.visiblePath = UIBezierPath(
-            roundedRect: bounds,
-            cornerRadius: MessageCell.cornerRadius
-        )
-        
-        return UITargetedPreview(view: messageCell.contentStack, parameters: parameters)
+        parameters.visiblePath = messageCell.makeBubbleMaskPath()
+        return UITargetedPreview(view: messageCell.bubbleView, parameters: parameters)
     }
     
     func tableView(_ tableView: UITableView, previewForHighlightingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
@@ -192,13 +174,9 @@ extension ChatViewController: PaginatedTableViewDelegate {
         return makeTargetedPreview(for: configuration)
     }
     
-    func didScroll(_ scrollView: UIScrollView, afterUnlock: Bool = false) {
-        if !bottomScrollAnimationsLock {
-            let hidden = scrollView.contentSize.height
-                - scrollView.contentOffset.y
-                - scrollView.bounds.height
-                + scrollView.contentInset.bottom
-                + tableView.safeAreaInsets.bottom < 100
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if !tableView.paginationLock && !bottomScrollAnimationsLock {
+            let hidden = tableView.dataAtEnd && tableView.bottomOffset < 100
             if self.floatingBottomButton.isHidden != hidden {
                 bottomScrollAnimationsLock = true
                 
@@ -229,10 +207,6 @@ extension ChatViewController: PaginatedTableViewDelegate {
                 }
             }
         }
-    }
-    
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        didScroll(scrollView)
     }
     
     // MARK: - Edit mode
@@ -279,7 +253,7 @@ extension ChatViewController: PaginatedTableViewDelegate {
     }
     
     @objc internal func deleteChat() {
-        viewModel.deleteChat() { _ in
+        viewModel.deleteChat { _ in
             self.navigationController?.popViewController(animated: true)
         }
     }
@@ -332,10 +306,9 @@ extension ChatViewController: PaginatedTableViewDelegate {
         }
         return true
     }
-    
 }
 
-extension ChatViewController: ForwardDelegateProtocol {
+extension ChatViewController: ForwardDelegate {
     
     func didSelectChat(_ chatModel: ChatModel) {
         if forwardMessages != nil {

@@ -55,13 +55,13 @@ class StorageService: StorageServiceProtocol {
         metadata.contentType = "image/jpeg"
         
         if let data = image.jpegData(compressionQuality: 0.9) {
-            storage.child("chats")
+            let imageRef = storage.child("chats")
                 .child(chatDocumentId)
                 .child("media")
                 .child("\(timestamp.iso8601withFractionalSeconds)_\(index).jpg")
-                .putData(data, metadata: metadata) { metadata, _ in
+            imageRef.putData(data, metadata: metadata) { metadata, _ in
                     if let path = metadata?.path {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) { // wait firebase functions
+                        self.waitSmallImageCreation(imageRef) {
                             completion(.image(
                                 path: path,
                                 size: image.size
@@ -73,6 +73,22 @@ class StorageService: StorageServiceProtocol {
             }
         } else {
             completion(nil)
+        }
+    }
+    
+    private func waitSmallImageCreation(
+        _ ref: StorageReference,
+        completion: @escaping () -> Void
+    ) {
+        ref.small.getMetadata { _, error in
+
+            if error != nil {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    self.waitSmallImageCreation(ref, completion: completion)
+                }
+            } else {
+                completion()
+            }
         }
     }
     

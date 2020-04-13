@@ -36,7 +36,7 @@ public struct UserModel: AutoCodable, AutoEquatable {
     }
     
     static func avatarRef(byId userId: String) -> StorageReference {
-        Storage.storage().reference(withPath: "chats/\(userId)/avatar.jpg")
+        Storage.storage().reference(withPath: "users/\(userId)/avatar.jpg")
     }
 }
 

@@ -13,7 +13,7 @@ class ChatInputBar: InputBarAccessoryView {
     
     // MARK: - Vars
     
-    var chatDelegate: ChatInputBarDelegate?
+    weak var chatDelegate: ChatInputBarDelegate?
     
     let attachButton = InputBarButtonItem()
     let voiceCancelButton = InputBarButtonItem()
@@ -56,6 +56,7 @@ class ChatInputBar: InputBarAccessoryView {
         setupInputTextView()
         setupLeftStack()
         setupRightStack()
+        separatorLine.isHidden = true
         separatorLine.backgroundColor = .plainBackground
         backgroundView.backgroundColor = .systemBackground
     }
@@ -367,7 +368,7 @@ extension ChatInputBar: UIImagePickerControllerDelegate, UINavigationControllerD
         _ picker: UIImagePickerController,
         didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
     ) {
-        guard let image = info[.editedImage] as? UIImage else {
+        guard let image = info[.originalImage] as? UIImage else {
             return self.pickerController(picker, didSelect: nil)
         }
         self.pickerController(picker, didSelect: image)

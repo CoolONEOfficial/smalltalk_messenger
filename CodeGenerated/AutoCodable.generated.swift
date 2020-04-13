@@ -4,7 +4,7 @@
 
 extension ChatModel {
 
-    internal init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         documentId = (try? container.decodeIfPresent(String.self, forKey: .documentId)) ?? ChatModel.defaultDocumentId
@@ -13,7 +13,7 @@ extension ChatModel {
         type = try container.decode(ChatType.self, forKey: .type)
     }
 
-    internal func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
         try container.encodeIfPresent(documentId, forKey: .documentId)
@@ -33,7 +33,7 @@ extension ChatType {
         case adminId
     }
 
-    internal init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         if container.allKeys.contains(.personalCorr), try container.decodeNil(forKey: .personalCorr) == false {
@@ -50,7 +50,7 @@ extension ChatType {
         throw DecodingError.dataCorrupted(.init(codingPath: decoder.codingPath, debugDescription: "Unknown enum case"))
     }
 
-    internal func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
         switch self {

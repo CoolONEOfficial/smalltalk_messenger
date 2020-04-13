@@ -75,12 +75,12 @@ class MessageForwardContent: UIView, MessageCellContentProtocol {
         super.updateConstraints()
         if shouldSetupConstraints {
             if let bubbleView = superview?.superview {
-                if messageForward.isIncoming {
-                    leftToSuperview(offset: 10)
-                    right(to: bubbleView, offset: -10)
+                 if messageForward.isIncoming {
+                    leftToSuperview(offset: messageInset)
+                    right(to: bubbleView, offset: -messageInset)
                 } else {
-                    leftToSuperview(offset: 10)
-                    right(to: bubbleView, offset: -16)
+                    leftToSuperview(offset: messageInset)
+                    right(to: bubbleView, offset: -(messageInset + messageAdditionalInset))
                 }
             }
             

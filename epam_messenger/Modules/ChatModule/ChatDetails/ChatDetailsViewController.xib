@@ -10,10 +10,10 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ChatDetailsViewController" customModule="epam_messenger" customModuleProvider="target">
             <connections>
                 <outlet property="avatarImage" destination="MOO-7r-scm" id="dnX-Iv-UCo"/>
+                <outlet property="scroll" destination="Ab5-pv-7ia" id="OAU-ch-SsN"/>
                 <outlet property="stack" destination="u70-Tk-pB4" id="JhY-6E-zy6"/>
                 <outlet property="subtitleLabel" destination="fmr-Qg-Rhj" id="GdQ-Fj-xMW"/>
                 <outlet property="titleLabel" destination="QSC-MR-ReS" id="dHT-Al-aJj"/>
-                <outlet property="usersTableView" destination="wa1-F8-zob" id="7Uo-y3-JKf"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -22,11 +22,11 @@
             <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" contentInsetAdjustmentBehavior="never" translatesAutoresizingMaskIntoConstraints="NO" id="Ab5-pv-7ia">
+                <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" contentInsetAdjustmentBehavior="never" translatesAutoresizingMaskIntoConstraints="NO" id="Ab5-pv-7ia">
                     <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                     <subviews>
-                        <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="u70-Tk-pB4">
-                            <rect key="frame" x="0.0" y="0.0" width="414" height="580"/>
+                        <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="u70-Tk-pB4">
+                            <rect key="frame" x="0.0" y="0.0" width="414" height="452"/>
                             <subviews>
                                 <view contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7X3-DB-AMg" userLabel="Avatar Container">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="400"/>
@@ -35,7 +35,6 @@
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="400"/>
                                             <userDefinedRuntimeAttributes>
                                                 <userDefinedRuntimeAttribute type="string" keyPath="heroID" value="avatar"/>
-                                                <userDefinedRuntimeAttribute type="boolean" keyPath="isHeroEnabled" value="YES"/>
                                                 <userDefinedRuntimeAttribute type="boolean" keyPath="focusOnFaces" value="YES"/>
                                             </userDefinedRuntimeAttributes>
                                         </imageView>
@@ -53,16 +52,19 @@
                                     <rect key="frame" x="0.0" y="400" width="414" height="52"/>
                                     <subviews>
                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="top" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="0nV-eV-utm">
-                                            <rect key="frame" x="5" y="5" width="358" height="42"/>
+                                            <rect key="frame" x="10" y="5" width="394" height="42"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="..." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QSC-MR-ReS" userLabel="Title">
-                                                    <rect key="frame" x="0.0" y="0.0" width="14" height="20"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="16" height="20"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="20" id="Bui-wg-3n3"/>
                                                     </constraints>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
+                                                    <userDefinedRuntimeAttributes>
+                                                        <userDefinedRuntimeAttribute type="string" keyPath="heroID" value="title"/>
+                                                    </userDefinedRuntimeAttributes>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="..." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fmr-Qg-Rhj" userLabel="Subtitle">
                                                     <rect key="frame" x="0.0" y="25" width="12.5" height="17"/>
@@ -72,23 +74,18 @@
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <nil key="highlightedColor"/>
+                                                    <userDefinedRuntimeAttributes>
+                                                        <userDefinedRuntimeAttribute type="string" keyPath="heroID" value="subtitle"/>
+                                                    </userDefinedRuntimeAttributes>
                                                 </label>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="42" id="qZu-8K-8T3"/>
                                             </constraints>
                                         </stackView>
-                                        <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="252" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PGZ-CI-mx9">
-                                            <rect key="frame" x="363" y="5" width="46" height="42"/>
-                                            <state key="normal" title="Button"/>
-                                        </button>
                                     </subviews>
-                                    <edgeInsets key="layoutMargins" top="5" left="5" bottom="5" right="5"/>
+                                    <edgeInsets key="layoutMargins" top="5" left="10" bottom="5" right="10"/>
                                 </stackView>
-                                <tableView clipsSubviews="YES" contentMode="scaleToFill" ambiguous="YES" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="wa1-F8-zob">
-                                    <rect key="frame" x="0.0" y="452" width="414" height="128"/>
-                                    <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                                </tableView>
                             </subviews>
                         </stackView>
                     </subviews>

@@ -10,6 +10,7 @@ import FirebaseStorage
 import FirebaseUI
 import TinyConstraints
 import NYTPhotoViewer
+import AVFoundation
 
 class MessageImageContent: UIView, MessageCellContentProtocol {
     
@@ -23,8 +24,8 @@ class MessageImageContent: UIView, MessageCellContentProtocol {
     
     // MARK: - Vars
     
-    var backgroundImageView: UIImageView!
-    
+    lazy var loading = UIActivityIndicatorView(style: .large)
+
     var shouldSetupConstraints = true
     var superInsets: TinyEdgeInsets!
     
@@ -36,14 +37,6 @@ class MessageImageContent: UIView, MessageCellContentProtocol {
         didSet {
             setupImage()
             setupStack()
-            
-            layer.cornerRadius = MessageCell.cornerRadius
-            layer.masksToBounds = true
-            if mergeContentPrev || mergeContentNext {
-                layer.maskedCorners = !mergeContentNext
-                    ? [.layerMinXMaxYCorner, .layerMaxXMaxYCorner] : !mergeContentPrev
-                    ? [.layerMinXMinYCorner, .layerMaxXMinYCorner] : []
-            }
         }
     }
     var message: MessageProtocol! {
@@ -61,21 +54,51 @@ class MessageImageContent: UIView, MessageCellContentProtocol {
     private func setupImage() {
         let kindImage = imageMessage.kindImage(at: kindIndex)!
         let imageRef = Storage.storage().reference().child(kindImage.path)
-        let placeholderImage = imageWithSize(size: kindImage.size)
+        let size = AVMakeRect(
+            aspectRatio: kindImage.size,
+            insideRect: .init(x: 0, y: 0, width: 300, height: 300)
+        ).size
+        imageView.size(
+            .init(
+                width: max(size.width, 150),
+                height: max(size.height, 150)
+            )
+        )
+        didStartLoading()
+        loadImage(with: imageRef)
+    }
+    
+    private func didStartLoading() {
+        imageView.addSubview(loading)
+        loading.centerInSuperview()
+        loading.startAnimating()
+        imageView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+    }
+    
+    private func didEndLoading() {
+        imageView.backgroundColor = .clear
+        loading.removeFromSuperview()
+    }
+    
+    private func loadImage(
+        with imageRef: StorageReference,
+        restartOnErrorCount: Int = 0
+    ) {
         imageView.sd_setSmallImage(
-            with: imageRef,
-            placeholderImage: placeholderImage
-        ) { image, err, _, _ in
+            with: imageRef
+        ) { [weak self] image, err, _, _ in
+            guard let self = self else { return }
             guard err == nil else {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                    self.loadImage(
+                        with: imageRef,
+                        restartOnErrorCount: restartOnErrorCount + 1
+                    )
+                }
                 return
             }
             
-            self.backgroundImageView?.removeFromSuperview()
-            
-            self.backgroundImageView = UIImageView(frame: self.imageView.bounds)
-            self.backgroundImageView.contentMode = .scaleAspectFill
-            self.backgroundImageView.image = image?.darkened()
-            self.contentView.insertSubview(self.backgroundImageView, at: 0)
+            self.didEndLoading()
         }
     }
     
@@ -122,31 +145,18 @@ class MessageImageContent: UIView, MessageCellContentProtocol {
     
     override func updateConstraints() {
         if shouldSetupConstraints {
-            
-            horizontalToSuperview()
+            if let bubbleView = superview?.superview {
+                if !cell.mergeNext {
+                    left(to: bubbleView, offset: -messageTailsInset * 2)
+                    right(to: bubbleView, offset: messageTailsInset)
+                }
+                
+                infoStack.right(to: bubbleView, offset: -(messageTailsInset + 6))
+            }
             
             shouldSetupConstraints = false
         }
         super.updateConstraints()
-    }
-    
-    // MARK: - Helpers
-    
-    func imageWithSize(
-        size: CGSize,
-        filledWithColor color: UIColor = .clear,
-        scale: CGFloat = 0.0,
-        opaque: Bool = false
-    ) -> UIImage {
-        let rect = CGRect(x: 0, y: 0, width: size.width, height: size.height)
-        
-        UIGraphicsBeginImageContextWithOptions(size, opaque, scale)
-        color.set()
-        UIRectFill(rect)
-        let image = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        
-        return image!
     }
     
 }

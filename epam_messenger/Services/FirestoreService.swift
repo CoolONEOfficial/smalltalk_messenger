@@ -137,14 +137,6 @@ class FirestoreService: FirestoreServiceProtocol {
                 .addDocument(data: messageData)
                 .addSnapshotListener { snapshot, _ in
                     completion(true)
-                    
-                    messageData["documentId"] = snapshot?.documentID
-                    
-                    self.db.collection("chats")
-                        .document(chatDocumentId).updateData([
-                            "lastMessage": messageData
-                        ])
-                    
             }
         } catch let error {
             debugPrint("error! \(error.localizedDescription)")

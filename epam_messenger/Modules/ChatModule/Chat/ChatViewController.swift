@@ -15,8 +15,10 @@ import Hero
 import FaceAware
 
 protocol ChatViewControllerProtocol: AutoMockable {
-    func presentPhotoViewer(_ storageRefs: [StorageReference], initialIndex: Int)
+    func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)?)
     func presentErrorAlert(_ text: String)
+    
+    var photosViewerDataSource: ChatPhotoViewerDataSource! { get set }
 }
 
 class ChatViewController: UIViewController {
@@ -35,7 +37,7 @@ class ChatViewController: UIViewController {
     
     let inputBar = ChatInputBar()
     var viewModel: ChatViewModelProtocol!
-    var photosViewerCoordinator: ChatPhotoViewerDataSource!
+    var photosViewerDataSource: ChatPhotoViewerDataSource!
     
     let titleStack = UIStackView()
     let titleLabel = UILabel()
@@ -104,18 +106,6 @@ class ChatViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        viewModel.chat.loadInfo { title, subtitle in
-            self.transitionSubtitleLabel {
-                self.defaultTitle = title
-                self.subtitleLabel.text = subtitle
-                
-                if !self.tableView.isEditing {
-                    self.titleLabel.text = self.defaultTitle
-                }
-            }
-        }
-        
         titleLabel.text = defaultTitle
         view.tintColor = .accent
         
@@ -125,6 +115,17 @@ class ChatViewController: UIViewController {
         setupInputBar()
         setupEditModeButtons()
         setupFloatingBottomButton()
+        
+        viewModel.chat.loadInfo { title, subtitle in
+            self.transitionSubtitleLabel {
+                self.defaultTitle = title
+                self.subtitleLabel.text = subtitle
+                
+                if !(self.tableView?.isEditing ?? false) {
+                    self.titleLabel.text = self.defaultTitle
+                }
+            }
+        }
     }
     
     private func transitionSubtitleLabel(
@@ -141,7 +142,7 @@ class ChatViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         updateTableViewInset()
-        tableView.scrollToBottom()
+        tableView.scrollToBottom() // scroll to new inset
     }
     
     // MARK: - Methods
@@ -149,14 +150,17 @@ class ChatViewController: UIViewController {
     private func setupTitle() {
         titleLabel.font = .systemFont(ofSize: 18, weight: .semibold)
         titleLabel.textAlignment = .center
+        titleLabel.hero.id = "title"
         
         subtitleLabel.font = .systemFont(ofSize: 12)
         subtitleLabel.textAlignment = .center
         subtitleLabel.textColor = .secondaryLabel
         subtitleLabel.numberOfLines = 1
+        subtitleLabel.hero.id = "subtitle"
         
         let stackView = UIStackView(arrangedSubviews: [titleLabel, subtitleLabel])
         stackView.axis = .vertical
+        stackView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didNavigationItemsTap)))
         
         navigationItem.titleView = stackView
     }
@@ -168,13 +172,13 @@ class ChatViewController: UIViewController {
         avatarImage.layer.cornerRadius = 20
         avatarImage.clipsToBounds = true
         avatarImage.focusOnFaces = true
-        avatarImage.addGestureRecognizer(UITapGestureRecognizer.init(target: self, action: #selector(didAvatarTap)))
+        avatarImage.addGestureRecognizer(UITapGestureRecognizer.init(target: self, action: #selector(didNavigationItemsTap)))
         avatarImage.hero.id = "avatar"
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: avatarImage)
     }
     
-    @objc func didAvatarTap() {
+    @objc func didNavigationItemsTap() {
         viewModel.goToDetails()
     }
     
@@ -303,57 +307,6 @@ class ChatViewController: UIViewController {
 }
 
 extension ChatViewController: ChatViewControllerProtocol {
-    
-    func presentPhotoViewer(_ storageRefs: [StorageReference], initialIndex: Int) {
-        var photosViewController: NYTPhotosViewController!
-        
-        if photosViewerCoordinator == nil || photosViewerCoordinator.data.count != storageRefs.count {
-            photosViewerCoordinator = ChatPhotoViewerDataSource(
-                data: storageRefs.enumerated().map { (index, ref) -> PhotoBox in
-                    let photoBox = PhotoBox(ref.fullPath)
-                    let cacheKey = "gs://\(ref.bucket)/\(ref.fullPath)"
-                    
-                    photoBox.image = SDImageCache.shared.imageFromDiskCache(forKey: cacheKey)
-                    
-                    if photoBox.image == nil {
-                        ref.getData(maxSize: Int64.max) { data, err in
-                            guard err == nil else {
-                                debugPrint("Error while get image: \(err!.localizedDescription)")
-                                return
-                            }
-                            
-                            let image = UIImage(data: data!)
-                            SDImageCache.shared.storeImage(toMemory: image, forKey: cacheKey)
-                            photoBox.image = image
-                            
-                            photosViewController.updatePhoto(at: index)
-                        }
-                    }
-                    
-                    return photoBox
-                }
-            )
-        }
-        
-        photosViewController = .init(
-            dataSource: photosViewerCoordinator,
-            initialPhotoIndex: initialIndex,
-            delegate: self
-        )
-        
-        present(photosViewController, animated: true)
-    }
-    
-    func presentErrorAlert(_ text: String) {
-        let alert = UIAlertController(title: "Error",
-                                      message: text,
-                                      preferredStyle: .alert
-        )
-        alert.addAction(UIAlertAction(title: "Dismiss", style: .default))
-        
-        self.present(alert, animated: true, completion: nil)
-    }
-    
 }
 
 extension ChatViewController: NYTPhotosViewControllerDelegate {
@@ -369,7 +322,16 @@ extension ChatViewController: NYTPhotosViewControllerDelegate {
                         if box.path == path {
                             if let cell = tableView.cellForRow(at: .init(row: rowIndex, section: sectionIndex)) as? MessageCell {
                                 let imageContent = cell.contentStack.subviews[contentIndex] as! MessageImageContent
-                                return imageContent.imageView
+                                let maskLayer = cell.makeBubbleMaskLayer(
+                                    top: !imageContent.mergeContentPrev,
+                                    bottom: !imageContent.mergeContentNext,
+                                    height: imageContent.frame.height
+                                )
+                                if !cell.mergeNext {
+                                    maskLayer.transform = CATransform3DMakeTranslation(messageTailsInset * 2, 0, 0)
+                                }
+                                imageContent.layer.mask = maskLayer
+                                return imageContent
                             } else {
                                 presentErrorAlert("Image not found")
                             }

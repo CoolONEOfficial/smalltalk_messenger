@@ -17,7 +17,7 @@ class SearchChatCell: UITableViewCell, NibReusable {
     
     // MARK: - Vars
     
-    var delegate: ChatListCellDelegateProtocol? {
+    weak var delegate: ChatListCellDelegate? {
         didSet {
             setupUi()
         }

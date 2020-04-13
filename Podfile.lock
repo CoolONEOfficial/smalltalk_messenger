@@ -331,6 +331,7 @@ PODS:
   - Sourcery (0.17.0)
   - SwiftLint (0.39.1)
   - TinyConstraints (4.0.1)
+  - XLPagerTabStrip (9.0.0)
 
 DEPENDENCIES:
   - BSImagePicker (~> 3.1.1)
@@ -353,6 +354,7 @@ DEPENDENCIES:
   - Sourcery
   - SwiftLint
   - TinyConstraints
+  - XLPagerTabStrip (~> 9.0)
 
 SPEC REPOS:
   trunk:
@@ -396,6 +398,7 @@ SPEC REPOS:
     - Sourcery
     - SwiftLint
     - TinyConstraints
+    - XLPagerTabStrip
 
 SPEC CHECKSUMS:
   abseil: 18063d773f5366ff8736a050fe035a28f635fd27
@@ -438,7 +441,8 @@ SPEC CHECKSUMS:
   Sourcery: 3ed61be7c8a1218fce349266139379dba477efe0
   SwiftLint: 55e96a4a4d537d4a3156859fc1c54bd24851a046
   TinyConstraints: 8dd91295e56797648c7bc335dd20e1d91ec4c192
+  XLPagerTabStrip: 61c57fd61f611ee5f01ff1495ad6fbee8bf496c5
 
-PODFILE CHECKSUM: ed9fece79a14f4201a45091285b51ac9151ffd8f
+PODFILE CHECKSUM: 860701f123e056abb0c5adc504ce90c85138d6ee
 
 COCOAPODS: 1.9.0

@@ -8,7 +8,7 @@
 import Foundation
 import InputBarAccessoryView
 
-protocol ChatInputBarDelegate {
+protocol ChatInputBarDelegate: AnyObject {
     func didActionImageTap()
     func didVoiceMessageRecord(data: Data)
 }
