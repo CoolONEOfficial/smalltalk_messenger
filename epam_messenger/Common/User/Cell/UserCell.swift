@@ -9,7 +9,7 @@ import UIKit
 import Reusable
 
 class UserCell: UITableViewCell, NibReusable {
-
+    
     // MARK: - Outlets
     
     @IBOutlet var avatarImage: UIImageView!
@@ -23,8 +23,13 @@ class UserCell: UITableViewCell, NibReusable {
         didSet {
             self.titleLabel.text = user?.fullName
             self.subtitleLabel.text = user?.onlineText
+            self.subtitleLabel.textColor = user?.online ?? false
+                ? .plainText
+                : .secondaryLabel
         }
     }
+    
+    static let separatorLeftInset: CGFloat = 60
     
     // MARK: - Init
     

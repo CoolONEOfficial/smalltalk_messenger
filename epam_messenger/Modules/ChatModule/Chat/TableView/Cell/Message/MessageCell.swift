@@ -103,6 +103,7 @@ class MessageCell: UITableViewCell, NibReusable, MessageCellProtocol {
             newStack.spacing = 4
             newStack.distribution = .fillProportionally
             newStack.isUserInteractionEnabled = true
+            newStack.width(max: 200)
             
             bubbleView.addSubview(newStack)
             newStack.horizontalToSuperview(

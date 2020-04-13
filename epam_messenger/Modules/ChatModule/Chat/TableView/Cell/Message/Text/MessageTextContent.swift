@@ -197,8 +197,10 @@ fileprivate extension UILabel {
         if !lines.isEmpty {
             let lastLine: String = (lines.last as? String)!
             let fontAttributes = [NSAttributedString.Key.font.rawValue: font]
-            let lastLineWidth = (lastLine as NSString).size(withAttributes: [NSAttributedString.Key(rawValue: NSAttributedString.Key.font.rawValue): font]).width
-            return lines.count > 1 ? lastLineWidth < 140 : lastLineWidth < 60
+            var lastLineWidth = (lastLine as NSString).size(withAttributes: [NSAttributedString.Key(rawValue: NSAttributedString.Key.font.rawValue): font]).width
+            return lines.count > 1
+                ? lastLineWidth < 140
+                : lastLineWidth < 55
         }
         
         return false

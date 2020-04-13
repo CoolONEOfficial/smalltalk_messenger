@@ -11,7 +11,7 @@ import FirebaseUI
 import CodableFirebase
 import Reusable
 
-protocol ForwardDelegate {
+protocol ForwardDelegate: AnyObject {
     func didSelectChat(_ chatModel: ChatModel)
 }
 
@@ -47,7 +47,7 @@ class ChatListViewController: UIViewController {
     internal var searchChatItems = [ChatModel]()
     internal var searchMessageItems = [MessageModel]()
     
-    var forwardDelegate: ForwardDelegate?
+    weak var forwardDelegate: ForwardDelegate?
     
     var searchDataSource: FUIFirestoreTableViewDataSource!
     
@@ -76,8 +76,11 @@ class ChatListViewController: UIViewController {
         }
         
         setupTableView()
-        setupNavigationItem()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
         setupSearchController()
+        setupNavigationItem()
         setupToolbarItems()
         didSelectionChange()
     }
@@ -244,13 +247,14 @@ extension ChatListViewController: PaginatedTableViewDelegate {
         }
     }
     
-    private func didSelect(_ chatModel: ChatModel?) {
+    private func didSelect(_ chatModel: ChatModel?, _ indexPath: IndexPath) {
         if let chatModel = chatModel {
             if isForward {
                 navigationController?.dismiss(animated: true) {
                     self.forwardDelegate?.didSelectChat(chatModel)
                 }
             } else {
+                tableView.deselectRow(at: indexPath, animated: true)
                 viewModel.goToChat(chatModel)
             }
         } else {
@@ -264,10 +268,10 @@ extension ChatListViewController: PaginatedTableViewDelegate {
         } else {
             if isSearch {
                 chatModel(at: indexPath) { chatModel in
-                    self.didSelect(chatModel)
+                    self.didSelect(chatModel, indexPath)
                 }
             } else {
-                didSelect(self.tableView.elementAt(indexPath))
+                didSelect(self.tableView.elementAt(indexPath), indexPath)
             }
         }
     }

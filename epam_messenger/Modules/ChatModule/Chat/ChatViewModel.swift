@@ -115,6 +115,22 @@ class ChatViewModel: ChatViewModelProtocol {
         self.imagePickerService = imagePickerService
     }
     
+    init(
+        router: RouterProtocol,
+        viewController: ChatViewControllerProtocol,
+        userId: String,
+        firestoreService: FirestoreServiceProtocol = FirestoreService(),
+        storageService: StorageServiceProtocol = StorageService(),
+        imagePickerService: ImagePickerServiceProtocol = ImagePickerService()
+    ) {
+        self.viewController = viewController
+        self.router = router
+        self.chat = ChatModel.fromUserId(userId)
+        self.firestoreService = firestoreService
+        self.storageService = storageService
+        self.imagePickerService = imagePickerService
+    }
+    
     func sendMessage(
         attachments: [ChatViewController.MessageAttachment],
         messageText: String? = nil,

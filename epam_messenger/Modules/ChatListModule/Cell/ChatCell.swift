@@ -30,6 +30,8 @@ class ChatCell: UITableViewCell, NibReusable {
     
     internal var chat: ChatModel!
     
+    // MARK: - Init
+    
     private func setupUi() {
         switch chat.type {
         case .personalCorr:

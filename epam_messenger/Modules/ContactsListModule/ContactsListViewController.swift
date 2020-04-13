@@ -33,16 +33,22 @@ class ContactsListViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         setupTableView()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
+        setupSearchController()
+        tabBarController?.title = "Contacts"
+    }
+    
+    private func setupSearchController() {
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = "Search contacts"
         tabBarController?.navigationItem.searchController = searchController
-        tabBarController?.title = "Contacts" 
     }
     
     private func setupTableView() {
@@ -51,23 +57,21 @@ class ContactsListViewController: UIViewController {
             initialPosition: .top,
             cellForRowAt: { indexPath in
                 let cell = self.tableView.dequeueReusableCell(for: indexPath, cellType: UserCell.self)
-                
-                let section = self.tableView.data[indexPath.section].elements
-                let contact = section[indexPath.row]
+                let contact = self.tableView.elementAt(indexPath)
                 
                 cell.loadUser(byId: contact.userId)
                 
                 return cell
-        },
+            },
             querySideTransform: { contact in
                 contact.localName
-        },
+            },
             groupingBy: { contact in
                 String(contact.localName.prefix(1))
-        },
+            },
             sortedBy: { l, r in
                 l > r
-        },
+            },
             fromSnapshot: ContactModel.fromSnapshot
         )
         
@@ -75,7 +79,7 @@ class ContactsListViewController: UIViewController {
         tableView.paginatedDelegate = self
         tableView.allowsMultipleSelection = false
         tableView.allowsMultipleSelectionDuringEditing = true
-        tableView.separatorStyle = .none
+        tableView.separatorInset.left = UserCell.separatorLeftInset
         
         view.addSubview(tableView)
         tableView.edgesToSuperview()
@@ -98,5 +102,10 @@ extension ContactsListViewController: PaginatedTableViewDelegate {
 //            configuration.performsFirstActionWithFullSwipe = false
 //            return configuration
 //        }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
 }
 extension ContactsListViewController: ContactsListViewControllerProtocol {}

@@ -30,8 +30,6 @@
                                 <rect key="frame" x="0.0" y="4" width="198" height="174"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" relation="lessThanOrEqual" constant="200" id="Qrs-0i-Ob0"/>
-                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="20" id="Uys-qJ-9fS"/>
                                     <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="35" id="moG-o2-FKN"/>
                                 </constraints>
                             </view>

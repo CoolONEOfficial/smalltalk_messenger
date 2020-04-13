@@ -35,14 +35,14 @@ extension ContactsListViewController: UISearchResultsUpdating, UISearchControlle
                 self.searchItems = users
             }
             
+            if !(self.tableView.dataSource?.isEqual(self) ?? false) {
+                self.tableView.dataSource = self
+                self.tableView.delegate = self
+            }
+            
+            self.searchController.searchBar.isLoading = false
+            self.tableView.separatorInset.left = 10
+            self.tableView.reloadData()
         }
-        
-        if !(self.tableView.dataSource?.isEqual(self) ?? false) {
-            self.tableView.dataSource = self
-            self.tableView.delegate = self
-        }
-        self.searchController.searchBar.isLoading = false
-        self.tableView.separatorInset.left = 10
-        self.tableView.reloadData()
     }
 }

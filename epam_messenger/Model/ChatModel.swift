@@ -24,6 +24,25 @@ public struct ChatModel: AutoCodable, AutoEquatable {
         case enumCaseKey
     }
     
+    static func fromUserId(_ userId: String) -> ChatModel {
+        .init(
+            documentId: nil,
+            users: [
+                Auth.auth().currentUser!.uid,
+                userId
+            ],
+            lastMessage: .init(
+                documentId: nil,
+                kind: [],
+                userId: userId,
+                timestamp: .init(),
+                chatId: nil,
+                chatUsers: nil
+            ),
+            type: .personalCorr
+        )
+    }
+    
     static let defaultDocumentId: String! = nil
     
     static func fromSnapshot(_ snapshot: DocumentSnapshot) -> ChatModel? {

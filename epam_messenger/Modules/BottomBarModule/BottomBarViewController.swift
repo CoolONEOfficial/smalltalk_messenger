@@ -23,8 +23,7 @@ class BottomBarViewController: UITabBarController {
     }
     var contacts: UIViewController! {
         didSet {
-            contacts.tabBarItem = .init(title: "Contacts", image: #imageLiteral(resourceName: "TabBar_Contacts"), selectedImage: #imageLiteral(resourceName: "TabBar_Contacts"))
-            contacts.tabBarItem.tag = 0
+            contacts.tabBarItem = .init(tabBarSystemItem: .contacts, tag: 0)
         }
     }
     
@@ -37,5 +36,12 @@ class BottomBarViewController: UITabBarController {
         
         viewControllers = controllers
         selectedIndex = 1
+    }
+    
+    override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
+        navigationItem.setRightBarButton(nil, animated: true)
+        navigationItem.setLeftBarButton(nil, animated: true)
+        
+        navigationController?.navigationItem.title = nil
     }
 }

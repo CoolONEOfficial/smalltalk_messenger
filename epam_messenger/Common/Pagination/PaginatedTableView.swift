@@ -10,10 +10,15 @@ import FirebaseFirestore
 
 protocol PaginatedTableViewDelegate: UITableViewDelegate {
     func didUpdateElements()
+    
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String?
+    func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int)
 }
 
 extension PaginatedTableViewDelegate {
     func didUpdateElements() {}
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? { nil }
+    func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {}
 }
 
 private let queryCount = 40
@@ -120,17 +125,14 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
         }
         
         commonInit()
+        paginationLock = true
         
         switch initialPosition {
         case .top:
             loadAtStart()
         case .bottom:
-            paginationLock = true
             loadAtEnd {
-                self.updateElements(
-                    $0,
-                    unlockPagination: false
-                )
+                self.updateElements($0, unlockPagination: false)
                 self.scrollToBottom { _ in
                     self.unlockPagination()
                 }
@@ -157,7 +159,8 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
     }
     
     private func didScroll() {
-        if let visiblePathList = indexPathsForVisibleRows,
+        if contentSize.height > bounds.height,
+            let visiblePathList = indexPathsForVisibleRows,
             !paginationLock {
             let oldMoment = Date()
             let elapsed = oldMoment.timeIntervalSince(previousScrollMoment)
@@ -323,6 +326,12 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
         return oldData
     }
     
+    func willAnimateChanges() {
+        if !dataAtStart && contentOffset.y < 1 {
+            contentOffset.y = 1
+        }
+    }
+    
     func animateChanges(_ oldData: Any) {
         animateRowChanges(
             oldData: oldData as! [ElementT],
@@ -350,6 +359,7 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
                     }
                     self.paginatedDelegate?.didUpdateElements()
                 }
+                willAnimateChanges()
                 animateChanges(oldData)
                 CATransaction.commit()
             } else {
@@ -488,6 +498,14 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
     
     func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         paginatedDelegate?.tableView?(tableView, didEndDisplaying: cell, forRowAt: indexPath)
+    }
+    
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        paginatedDelegate?.tableView(tableView, titleForHeaderInSection: section)
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        paginatedDelegate?.tableView(tableView, willDisplayHeaderView: view, forSection: section)
     }
     
     // MARK: - Helpers
