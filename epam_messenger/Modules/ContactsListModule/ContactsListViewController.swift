@@ -42,7 +42,7 @@ class ContactsListViewController: UIViewController {
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = "Search contacts"
         tabBarController?.navigationItem.searchController = searchController
-        tabBarController?.title = "Contacts"
+        tabBarController?.title = "Contacts" 
     }
     
     private func setupTableView() {

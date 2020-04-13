@@ -137,7 +137,7 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
         dataSource = self
     }
     
-    // MARK: - UITableViewDelegate
+    // MARK: - UITableViewDelegate 
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         paginatedDelegate?.scrollViewDidScroll?(scrollView)
