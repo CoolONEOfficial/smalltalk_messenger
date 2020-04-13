@@ -94,6 +94,8 @@
 		85FF256D2414DCDF00A25D7A /* ChatCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 85FF256B2414DCDF00A25D7A /* ChatCell.xib */; };
 		85FF25752415976600A25D7A /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FF25742415976600A25D7A /* ViewModel.swift */; };
 		927429D84AFBD6822D379C95 /* Pods_epam_messengerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FF442A0E4758E98A5ADEE32D /* Pods_epam_messengerTests.framework */; };
+		94389AA3243F756600587218 /* ContactsSearchDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94389AA2243F756600587218 /* ContactsSearchDelegate.swift */; };
+		94389AA5243F757C00587218 /* ContactsSearchDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94389AA4243F757C00587218 /* ContactsSearchDataSource.swift */; };
 		949BF7492436126D006C2AEC /* ContactModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 949BF7482436126D006C2AEC /* ContactModel.swift */; };
 		949BF74E2436130A006C2AEC /* ContactCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 949BF74C2436130A006C2AEC /* ContactCell.swift */; };
 		949BF74F2436130A006C2AEC /* ContactCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 949BF74D2436130A006C2AEC /* ContactCell.xib */; };
@@ -237,6 +239,8 @@
 		85FF256A2414DCDF00A25D7A /* ChatCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatCell.swift; sourceTree = "<group>"; };
 		85FF256B2414DCDF00A25D7A /* ChatCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ChatCell.xib; sourceTree = "<group>"; };
 		85FF25742415976600A25D7A /* ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
+		94389AA2243F756600587218 /* ContactsSearchDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsSearchDelegate.swift; sourceTree = "<group>"; };
+		94389AA4243F757C00587218 /* ContactsSearchDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsSearchDataSource.swift; sourceTree = "<group>"; };
 		949BF7482436126D006C2AEC /* ContactModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactModel.swift; sourceTree = "<group>"; };
 		949BF74C2436130A006C2AEC /* ContactCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactCell.swift; sourceTree = "<group>"; };
 		949BF74D2436130A006C2AEC /* ContactCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ContactCell.xib; sourceTree = "<group>"; };
@@ -768,9 +772,19 @@
 			path = MVVM;
 			sourceTree = "<group>";
 		};
+		94389A9C243F748D00587218 /* Search */ = {
+			isa = PBXGroup;
+			children = (
+				94389AA2243F756600587218 /* ContactsSearchDelegate.swift */,
+				94389AA4243F757C00587218 /* ContactsSearchDataSource.swift */,
+			);
+			path = Search;
+			sourceTree = "<group>";
+		};
 		949BF74A243612CC006C2AEC /* ContactsListModule */ = {
 			isa = PBXGroup;
 			children = (
+				94389A9C243F748D00587218 /* Search */,
 				949BF74B243612E1006C2AEC /* Cell */,
 				949BF7542436155B006C2AEC /* ContactsListViewModel.swift */,
 				949BF75024361534006C2AEC /* ContactsListViewController.swift */,
@@ -1222,6 +1236,8 @@
 				850BCE80243D484D00643881 /* PaginatedTableView.swift in Sources */,
 				852C00F2242E188400BCC056 /* ImagePickerService.swift in Sources */,
 				85812DA62433B7F100EA2626 /* DateHeader.swift in Sources */,
+				94389AA5243F757C00587218 /* ContactsSearchDataSource.swift in Sources */,
+				94389AA3243F756600587218 /* ContactsSearchDelegate.swift in Sources */,
 				850BCE7424375A2500643881 /* SearchMessageCell.swift in Sources */,
 				E6B7499824144C5700F00B29 /* SceneDelegate.swift in Sources */,
 				85B3F1D8243388AF001F92D9 /* UIStackView.swift in Sources */,

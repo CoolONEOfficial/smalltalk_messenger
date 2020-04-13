@@ -265,4 +265,8 @@ class FirestoreService: FirestoreServiceProtocol {
                 "typing": typing
             ])
     }
+    
+    lazy var usersListQuery: Query = {
+        return db.collection("users").order(by: "name")
+    }()
 }
