@@ -160,7 +160,7 @@ class ChatViewController: UIViewController {
         
         let stackView = UIStackView(arrangedSubviews: [titleLabel, subtitleLabel])
         stackView.axis = .vertical
-        stackView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didAvatarTap)))
+        stackView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didNavigationItemsTap)))
         
         navigationItem.titleView = stackView
     }
@@ -172,13 +172,13 @@ class ChatViewController: UIViewController {
         avatarImage.layer.cornerRadius = 20
         avatarImage.clipsToBounds = true
         avatarImage.focusOnFaces = true
-        avatarImage.addGestureRecognizer(UITapGestureRecognizer.init(target: self, action: #selector(didAvatarTap)))
+        avatarImage.addGestureRecognizer(UITapGestureRecognizer.init(target: self, action: #selector(didNavigationItemsTap)))
         avatarImage.hero.id = "avatar"
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: avatarImage)
     }
     
-    @objc func didAvatarTap() {
+    @objc func didNavigationItemsTap() {
         viewModel.goToDetails()
     }
     
@@ -322,7 +322,16 @@ extension ChatViewController: NYTPhotosViewControllerDelegate {
                         if box.path == path {
                             if let cell = tableView.cellForRow(at: .init(row: rowIndex, section: sectionIndex)) as? MessageCell {
                                 let imageContent = cell.contentStack.subviews[contentIndex] as! MessageImageContent
-                                return imageContent.imageView
+                                let maskLayer = cell.makeBubbleMaskLayer(
+                                    top: !imageContent.mergeContentPrev,
+                                    bottom: !imageContent.mergeContentNext,
+                                    height: imageContent.frame.height
+                                )
+                                if !cell.mergeNext {
+                                    maskLayer.transform = CATransform3DMakeTranslation(messageTailsInset * 2, 0, 0)
+                                }
+                                imageContent.layer.mask = maskLayer
+                                return imageContent
                             } else {
                                 presentErrorAlert("Image not found")
                             }

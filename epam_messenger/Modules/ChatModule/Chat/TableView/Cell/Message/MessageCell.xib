@@ -17,31 +17,33 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <stackView opaque="NO" contentMode="scaleToFill" alignment="bottom" spacing="1" translatesAutoresizingMaskIntoConstraints="NO" id="eA7-GV-i23">
-                        <rect key="frame" x="12" y="2" width="198" height="174"/>
+                        <rect key="frame" x="12" y="0.0" width="198" height="178"/>
                         <subviews>
                             <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="63S-fg-Slr" userLabel="Avatar View">
-                                <rect key="frame" x="-40" y="134" width="40" height="40"/>
+                                <rect key="frame" x="-41" y="137" width="41" height="41"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="40" id="Nqz-1Q-2Jg"/>
-                                    <constraint firstAttribute="height" constant="40" id="wDl-Nw-xif"/>
+                                    <constraint firstAttribute="width" constant="41" id="Nqz-1Q-2Jg"/>
+                                    <constraint firstAttribute="height" constant="41" id="wDl-Nw-xif"/>
                                 </constraints>
                             </imageView>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Qu0-Ad-KeD" userLabel="Bubble View">
-                                <rect key="frame" x="0.0" y="0.0" width="198" height="174"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VFY-Pl-IGP" userLabel="Bubble View">
+                                <rect key="frame" x="0.0" y="4" width="198" height="174"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" relation="lessThanOrEqual" constant="200" id="xoN-sA-See"/>
+                                    <constraint firstAttribute="width" relation="lessThanOrEqual" constant="200" id="Qrs-0i-Ob0"/>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="20" id="Uys-qJ-9fS"/>
+                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="35" id="moG-o2-FKN"/>
                                 </constraints>
-                            </imageView>
+                            </view>
                         </subviews>
                         <constraints>
-                            <constraint firstAttribute="bottom" secondItem="Qu0-Ad-KeD" secondAttribute="bottom" id="OGj-qO-And"/>
-                            <constraint firstItem="Qu0-Ad-KeD" firstAttribute="top" secondItem="eA7-GV-i23" secondAttribute="top" id="euL-Tx-ACl"/>
+                            <constraint firstItem="VFY-Pl-IGP" firstAttribute="top" secondItem="eA7-GV-i23" secondAttribute="top" constant="4" id="DCl-Xn-odE"/>
                         </constraints>
                     </stackView>
                 </subviews>
                 <constraints>
-                    <constraint firstAttribute="bottom" secondItem="eA7-GV-i23" secondAttribute="bottom" constant="2" id="Ru8-xI-TLv"/>
-                    <constraint firstItem="eA7-GV-i23" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="2" id="gUW-hB-COQ"/>
+                    <constraint firstAttribute="bottom" secondItem="eA7-GV-i23" secondAttribute="bottom" id="Ru8-xI-TLv"/>
+                    <constraint firstItem="eA7-GV-i23" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" id="gUW-hB-COQ"/>
                     <constraint firstAttribute="trailing" secondItem="eA7-GV-i23" secondAttribute="trailing" constant="6" id="jdy-Hl-zxt"/>
                     <constraint firstItem="eA7-GV-i23" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="12" id="szI-jV-zFi"/>
                 </constraints>
@@ -49,10 +51,9 @@
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
             <connections>
                 <outlet property="avatarImage" destination="63S-fg-Slr" id="7Sg-Yw-p6H"/>
-                <outlet property="bubbleImage" destination="Qu0-Ad-KeD" id="2UD-x6-YeO"/>
-                <outlet property="stackBottomAnchor" destination="Ru8-xI-TLv" id="ib7-2X-rqQ"/>
+                <outlet property="bubbleView" destination="VFY-Pl-IGP" id="BN6-oV-udI"/>
                 <outlet property="stackLeadingAnchor" destination="szI-jV-zFi" id="zFX-1d-Ypk"/>
-                <outlet property="stackTopAnchor" destination="gUW-hB-COQ" id="gbd-fQ-SW9"/>
+                <outlet property="stackTopAnchor" destination="DCl-Xn-odE" id="2aF-1X-jyb"/>
                 <outlet property="stackTrailingAnchor" destination="jdy-Hl-zxt" id="otp-Eu-aFo"/>
                 <outlet property="stackView" destination="eA7-GV-i23" id="84u-Gf-cWC"/>
             </connections>

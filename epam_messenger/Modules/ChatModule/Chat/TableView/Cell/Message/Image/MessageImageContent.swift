@@ -25,8 +25,7 @@ class MessageImageContent: UIView, MessageCellContentProtocol {
     // MARK: - Vars
     
     lazy var loading = UIActivityIndicatorView(style: .large)
-    var backgroundImageView: UIImageView!
-    
+
     var shouldSetupConstraints = true
     var superInsets: TinyEdgeInsets!
     
@@ -38,14 +37,6 @@ class MessageImageContent: UIView, MessageCellContentProtocol {
         didSet {
             setupImage()
             setupStack()
-            
-            layer.cornerRadius = MessageCell.cornerRadius
-            layer.masksToBounds = true
-            if mergeContentPrev || mergeContentNext {
-                layer.maskedCorners = !mergeContentNext
-                    ? [.layerMinXMaxYCorner, .layerMaxXMaxYCorner] : !mergeContentPrev
-                    ? [.layerMinXMinYCorner, .layerMaxXMinYCorner] : []
-            }
         }
     }
     var message: MessageProtocol! {
@@ -98,25 +89,16 @@ class MessageImageContent: UIView, MessageCellContentProtocol {
         ) { [weak self] image, err, _, _ in
             guard let self = self else { return }
             guard err == nil else {
-                debugPrint("error while get message small image: \(err!)")
-                //if restartOnErrorCount < 5 {
-                    debugPrint("retrying \(restartOnErrorCount) image load... \(imageRef.fullPath)")
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-                        self.loadImage(
-                            with: imageRef,
-                            restartOnErrorCount: restartOnErrorCount + 1
-                        )
-                    }
-                //}
+                DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                    self.loadImage(
+                        with: imageRef,
+                        restartOnErrorCount: restartOnErrorCount + 1
+                    )
+                }
                 return
             }
             
             self.didEndLoading()
-            
-            self.backgroundImageView = UIImageView(frame: self.imageView.bounds)
-            self.backgroundImageView.contentMode = .scaleAspectFill
-            self.backgroundImageView.image = image?.darkened()
-            self.contentView.insertSubview(self.backgroundImageView, at: 0)
         }
     }
     
@@ -163,8 +145,14 @@ class MessageImageContent: UIView, MessageCellContentProtocol {
     
     override func updateConstraints() {
         if shouldSetupConstraints {
-            
-            horizontalToSuperview()
+            if let bubbleView = superview?.superview {
+                if !cell.mergeNext {
+                    left(to: bubbleView, offset: -messageTailsInset * 2)
+                    right(to: bubbleView, offset: messageTailsInset)
+                }
+                
+                infoStack.right(to: bubbleView, offset: -(messageTailsInset + 6))
+            }
             
             shouldSetupConstraints = false
         }

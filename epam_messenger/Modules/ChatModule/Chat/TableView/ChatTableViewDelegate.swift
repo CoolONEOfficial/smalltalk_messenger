@@ -8,6 +8,7 @@
 import UIKit
 import FirebaseAuth
 import FirebaseFirestore
+import PocketSVG
 
 extension ChatViewController: PaginatedTableViewDelegate {
     
@@ -48,7 +49,6 @@ extension ChatViewController: PaginatedTableViewDelegate {
                     with: .fade
                 )
             }
-
         }
     }
     
@@ -162,23 +162,8 @@ extension ChatViewController: PaginatedTableViewDelegate {
         let messageCell: MessageCell = tableView.cellForRow(at: indexPath) as! MessageCell
         
         let parameters = UIPreviewParameters()
-        parameters.backgroundColor = messageCell.message.backgroundColor
-        
-        let bounds = messageCell.contentStack.bounds.inset(
-            by: .init(
-                top: -(messageCell.contentStack.subviews.first as! MessageCellContentProtocol).topMargin,
-                left: 0,
-                bottom: -(messageCell.contentStack.subviews.last as! MessageCellContentProtocol).bottomMargin,
-                right: 0
-            )
-        )
-        
-        parameters.visiblePath = UIBezierPath(
-            roundedRect: bounds,
-            cornerRadius: MessageCell.cornerRadius
-        )
-        
-        return UITargetedPreview(view: messageCell.contentStack, parameters: parameters)
+        parameters.visiblePath = messageCell.makeBubbleMaskPath()
+        return UITargetedPreview(view: messageCell.bubbleView, parameters: parameters)
     }
     
     func tableView(_ tableView: UITableView, previewForHighlightingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
@@ -268,7 +253,7 @@ extension ChatViewController: PaginatedTableViewDelegate {
     }
     
     @objc internal func deleteChat() {
-        viewModel.deleteChat() { _ in
+        viewModel.deleteChat { _ in
             self.navigationController?.popViewController(animated: true)
         }
     }

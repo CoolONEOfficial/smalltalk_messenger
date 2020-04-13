@@ -18,9 +18,8 @@ class ChatInputBarAttachMenu: UIAlertController {
         let stack = UIStackView()
         view.addSubview(stack)
         stack.translatesAutoresizingMaskIntoConstraints = false
-        stack.topToSuperview(offset: 0)
-        stack.leftToSuperview(offset: 0)
-        stack.rightToSuperview(offset: 0)
+        stack.topToSuperview()
+        stack.horizontalToSuperview()
         stack.height(80)
         stack.distribution = .fillEqually
         stack.alignment = .fill

@@ -343,10 +343,12 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
             
             if animate {
                 CATransaction.begin()
-                CATransaction.setCompletionBlock {
+                CATransaction.setCompletionBlock { [weak self] in
+                    guard let self = self else { return }
                     if unlockPagination {
                         self.unlockPagination()
                     }
+                    self.paginatedDelegate?.didUpdateElements()
                 }
                 animateChanges(oldData)
                 CATransaction.commit()
@@ -355,9 +357,8 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
                 if unlockPagination {
                     self.unlockPagination()
                 }
+                paginatedDelegate?.didUpdateElements()
             }
-            
-            paginatedDelegate?.didUpdateElements()
         }
     }
     
@@ -470,6 +471,23 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
     
     func tableView(_ tableView: UITableView, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating) {
         paginatedDelegate?.tableView?(tableView, willPerformPreviewActionForMenuWith: configuration, animator: animator)
+    }
+    
+    func tableView(_ tableView: UITableView, previewForHighlightingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+        paginatedDelegate?.tableView?(tableView, previewForHighlightingContextMenuWithConfiguration: configuration)
+    }
+    
+    func tableView(_ tableView: UITableView, previewForDismissingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+        paginatedDelegate?.tableView?(tableView, previewForDismissingContextMenuWithConfiguration: configuration)
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        paginatedDelegate?.tableView?(tableView, willDisplay: cell, forRowAt: indexPath)
+        
+    }
+    
+    func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        paginatedDelegate?.tableView?(tableView, didEndDisplaying: cell, forRowAt: indexPath)
     }
     
     // MARK: - Helpers

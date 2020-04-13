@@ -112,11 +112,11 @@ class MessageTextContent: UIView, MessageCellContentProtocol {
         if shouldSetupConstraints {
             if let bubbleView = superview?.superview {
                 if messageText.isIncoming {
-                    leftToSuperview(offset: 10)
-                    right(to: bubbleView, offset: -10)
+                    leftToSuperview(offset: messageInset)
+                    right(to: bubbleView, offset: -messageInset)
                 } else {
-                    leftToSuperview(offset: 10)
-                    right(to: bubbleView, offset: -16)
+                    leftToSuperview(offset: messageInset)
+                    right(to: bubbleView, offset: -(messageInset + messageAdditionalInset))
                 }
             }
             

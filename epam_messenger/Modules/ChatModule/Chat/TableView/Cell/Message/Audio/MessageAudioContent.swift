@@ -11,7 +11,7 @@ import FirebaseStorage
 import AVFoundation
 
 class MessageAudioContent: UIView, MessageCellContentProtocol {
-
+    
     // MARK: - Outlets
     
     @IBOutlet var contentView: UIView!
@@ -153,14 +153,7 @@ class MessageAudioContent: UIView, MessageCellContentProtocol {
     
     // MARK: - Actions
     
-    func didTap(_ recognizer: UITapGestureRecognizer) {
-        let tapLocation = recognizer.location(in: playButton)
-        if playButton.frame.contains(tapLocation) {
-            didPlayButtonTap()
-        }
-    }
-    
-    func didPlayButtonTap() {
+    @IBAction func didPlayButtonTap(_ sender: UIButton) {
         if player != nil {
             if player.isPlaying {
                 player.pause()
