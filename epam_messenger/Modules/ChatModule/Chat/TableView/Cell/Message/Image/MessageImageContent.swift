@@ -146,7 +146,10 @@ class MessageImageContent: UIView, MessageCellContentProtocol {
     override func updateConstraints() {
         if shouldSetupConstraints {
             if let bubbleView = superview?.superview {
-                if !cell.mergeNext {
+                if message.isIncoming {
+                    left(to: bubbleView, offset: -messageTailsInset)
+                    right(to: bubbleView, offset: messageTailsInset * 2)
+                } else {
                     left(to: bubbleView, offset: -messageTailsInset * 2)
                     right(to: bubbleView, offset: messageTailsInset)
                 }

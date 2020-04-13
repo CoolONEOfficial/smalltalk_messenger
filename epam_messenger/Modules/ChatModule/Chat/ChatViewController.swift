@@ -327,9 +327,13 @@ extension ChatViewController: NYTPhotosViewControllerDelegate {
                                     bottom: !imageContent.mergeContentNext,
                                     height: imageContent.frame.height
                                 )
-                                if !cell.mergeNext {
-                                    maskLayer.transform = CATransform3DMakeTranslation(messageTailsInset * 2, 0, 0)
-                                }
+                                maskLayer.transform = CATransform3DMakeTranslation(
+                                    message.isIncoming
+                                        ? messageTailsInset
+                                        : messageTailsInset * 2,
+                                    0,
+                                    0
+                                )
                                 imageContent.layer.mask = maskLayer
                                 return imageContent
                             } else {

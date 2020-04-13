@@ -8,9 +8,10 @@
 import UIKit
 import FirebaseAuth
 import FirebaseFirestore
-import PocketSVG
 
 extension ChatViewController: PaginatedTableViewDelegate {
+    
+    // MARK: - Sections header
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let date = self.tableView.keyAt(section)
