@@ -26,6 +26,7 @@ target 'epam_messenger' do
   pod 'Hero'
   pod 'FaceAware'
   pod 'XLPagerTabStrip', '~> 9.0'
+  pod 'ChromaColorPicker'
 
   target 'epam_messengerTests' do
       inherit! :search_paths

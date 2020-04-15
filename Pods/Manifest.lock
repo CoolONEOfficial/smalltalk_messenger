@@ -165,6 +165,7 @@ PODS:
     - BoringSSL-GRPC/Interface (= 0.0.3)
   - BoringSSL-GRPC/Interface (0.0.3)
   - BSImagePicker (3.1.1)
+  - ChromaColorPicker (2.0.2)
   - CodableFirebase (0.2.1)
   - Differ (1.4.5)
   - FaceAware (2.1.0)
@@ -335,6 +336,7 @@ PODS:
 
 DEPENDENCIES:
   - BSImagePicker (~> 3.1.1)
+  - ChromaColorPicker
   - CodableFirebase
   - Differ
   - FaceAware
@@ -361,6 +363,7 @@ SPEC REPOS:
     - abseil
     - BoringSSL-GRPC
     - BSImagePicker
+    - ChromaColorPicker
     - CodableFirebase
     - Differ
     - FaceAware
@@ -404,6 +407,7 @@ SPEC CHECKSUMS:
   abseil: 18063d773f5366ff8736a050fe035a28f635fd27
   BoringSSL-GRPC: db8764df3204ccea016e1c8dd15d9a9ad63ff318
   BSImagePicker: 86f28e0f63b78d35fec7c6f0174b7af9e6f1431e
+  ChromaColorPicker: 307585f2dc23d4d72f24cad320c1e08825cb5c09
   CodableFirebase: 0bf201991eeec35eb9fcd987d271ea463cf34a80
   Differ: 3b6bd78e2b20cc795d9a86f7641d087524e4273e
   FaceAware: f1266b8719a1a90da3d763b8cb428554edf0fa61
@@ -443,6 +447,6 @@ SPEC CHECKSUMS:
   TinyConstraints: 8dd91295e56797648c7bc335dd20e1d91ec4c192
   XLPagerTabStrip: 61c57fd61f611ee5f01ff1495ad6fbee8bf496c5
 
-PODFILE CHECKSUM: 860701f123e056abb0c5adc504ce90c85138d6ee
+PODFILE CHECKSUM: 7951af7a849bc4a5d70fd8ef058f62fd69b3655e
 
 COCOAPODS: 1.9.0
