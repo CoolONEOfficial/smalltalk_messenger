@@ -309,7 +309,11 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
             
             let completion = completion ?? self.updateElements
             if let snapshot = snapshot {
-                completion(snapshot.documents.map { self.fromSnapshot($0)! })
+                completion(snapshot.documents.map { doc in
+                    let data = doc.data()
+                    return self.fromSnapshot(doc)!
+                    
+                })
             } else {
                 completion(nil)
             }

@@ -14,7 +14,7 @@ class ChatCell: UITableViewCell, NibReusable {
 
     // MARK: - Outlets
     
-    @IBOutlet private var avatarImage: UIImageView!
+    @IBOutlet private var avatar: AvatarView!
     @IBOutlet private var titleLabel: UILabel!
     @IBOutlet private var senderLabel: UILabel!
     @IBOutlet private var messageLabel: UILabel!
@@ -36,20 +36,28 @@ class ChatCell: UITableViewCell, NibReusable {
         switch chat.type {
         case .personalCorr:
             setupPersonalCorr()
-        case .chat(let title, _):
-            setupChat(title)
+        case .chat(let title, let adminId, let hexColor):
+            setupChat(title, adminId, hexColor)
         }
+        
         messageLabel.text = chat.lastMessage.previewText
-        setupAvatar()
         timestampLabel.text = chat.lastMessage.timestampText
     }
     
     private func setupChat(
-        _ title: String
+        _ title: String,
+        _ adminId: String,
+        _ hexColor: String?
     ) {
         titleLabel.text = title
         senderLabel.isHidden = false
         messageLabel.numberOfLines = 1
+        
+        avatar.setup(
+            withRef: chat.avatarRef,
+            text: String(title.first ?? " "),
+            color: UIColor(hexString: hexColor) ?? .accent
+        )
         
         senderLabel.text = "..."
         delegate?.userData(
@@ -71,14 +79,12 @@ class ChatCell: UITableViewCell, NibReusable {
         ) { friendModel in
             if let friendModel = friendModel {
                 self.titleLabel.text = friendModel.fullName
+                self.avatar.setup(withUser: friendModel)
             } else {
                 self.titleLabel.text = "Deleted user"
+                self.avatar.setup(withPlaceholder: "✖╭╮✖", color: .gray)
             }
+            
         }
-    }
-    
-    private func setupAvatar() {
-        avatarImage.sd_setSmallImage(with: chat.avatarRef, placeholderImage: #imageLiteral(resourceName: "logo"))
-        avatarImage.layer.cornerRadius = avatarImage.bounds.width / 2
     }
 }

@@ -11,7 +11,12 @@ import FirebaseStorage
 protocol ChatProtocol {
     var friendId: String? { get }
     var avatarRef: StorageReference { get }
-    func loadInfo(completion: @escaping (String, String) -> Void)
+    func loadInfo(completion: @escaping (
+        _ title: String,
+        _ subtitle: String,
+        _ placeholderText: String,
+        _ placeholderColor: UIColor?
+    ) -> Void)
     
     var documentId: String! { get }
     var users: [String] { get }
@@ -21,5 +26,5 @@ protocol ChatProtocol {
 
 public enum ChatType: AutoCodable, AutoEquatable {
     case personalCorr
-    case chat(title: String, adminId: String)
+    case chat(title: String, adminId: String, hexColor: String?)
 }

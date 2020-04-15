@@ -28,10 +28,6 @@ protocol ChatViewModelProtocol: ViewModelProtocol, AutoMockable, MessageCellDele
     func deleteChat(
         completion: @escaping (Bool) -> Void
     )
-    func pickImages(
-        viewController: UIViewController,
-        completion: @escaping (UIImage) -> Void
-    )
     func createForwardViewController(
         forwardDelegate: ForwardDelegate
     ) -> UIViewController
@@ -87,7 +83,6 @@ class ChatViewModel: ChatViewModelProtocol {
     
     let firestoreService: FirestoreServiceProtocol
     let storageService: StorageServiceProtocol
-    let imagePickerService: ImagePickerServiceProtocol
     
     let chat: ChatProtocol
     
@@ -104,15 +99,13 @@ class ChatViewModel: ChatViewModelProtocol {
         viewController: ChatViewControllerProtocol,
         chat: ChatProtocol,
         firestoreService: FirestoreServiceProtocol = FirestoreService(),
-        storageService: StorageServiceProtocol = StorageService(),
-        imagePickerService: ImagePickerServiceProtocol = ImagePickerService()
+        storageService: StorageServiceProtocol = StorageService()
     ) {
         self.viewController = viewController
         self.router = router
         self.chat = chat
         self.firestoreService = firestoreService
         self.storageService = storageService
-        self.imagePickerService = imagePickerService
     }
     
     init(
@@ -120,15 +113,13 @@ class ChatViewModel: ChatViewModelProtocol {
         viewController: ChatViewControllerProtocol,
         userId: String,
         firestoreService: FirestoreServiceProtocol = FirestoreService(),
-        storageService: StorageServiceProtocol = StorageService(),
-        imagePickerService: ImagePickerServiceProtocol = ImagePickerService()
+        storageService: StorageServiceProtocol = StorageService()
     ) {
         self.viewController = viewController
         self.router = router
         self.chat = ChatModel.fromUserId(userId)
         self.firestoreService = firestoreService
         self.storageService = storageService
-        self.imagePickerService = imagePickerService
     }
     
     func sendMessage(
@@ -148,7 +139,7 @@ class ChatViewModel: ChatViewModelProtocol {
             case .image(let image):
                 uploadGroup.enter()
                 storageService.uploadImage(
-                    chatDocumentId: chat.documentId,
+                    chatId: chat.documentId,
                     image: image,
                     timestamp: uploadStartTimestamp,
                     index: attachments.count - index
@@ -161,7 +152,7 @@ class ChatViewModel: ChatViewModelProtocol {
             case .data(let data):
                 uploadGroup.enter()
                 storageService.uploadAudio(
-                    chatDocumentId: chat.documentId,
+                    chatId: chat.documentId,
                     data: data
                 ) { kind in
                     if let kind = kind {
@@ -176,7 +167,7 @@ class ChatViewModel: ChatViewModelProtocol {
         
         uploadGroup.notify(queue: .main) {
             self.firestoreService.sendMessage(
-                chatDocumentId: self.chat.documentId,
+                chatId: self.chat.documentId,
                 messageKind: uploadKinds,
                 completion: completion
             )
@@ -189,8 +180,8 @@ class ChatViewModel: ChatViewModelProtocol {
         completion: @escaping (Bool) -> Void
     ) {
         self.firestoreService.sendMessage(
-            chatDocumentId: chatModel.documentId,
-            messageKind: messageModel.forwardedKind(Auth.auth().currentUser!.uid),
+            chatId: chatModel.documentId,
+            messageKind: messageModel.forwardedKind(),
             completion: completion
         )
     }
@@ -200,7 +191,7 @@ class ChatViewModel: ChatViewModelProtocol {
         completion: @escaping (Bool) -> Void = {_ in}
     ) {
         firestoreService.deleteMessage(
-            chatDocumentId: chat.documentId,
+            chatId: chat.documentId,
             messageDocumentId: messageModel.documentId!,
             completion: completion
         )
@@ -210,7 +201,7 @@ class ChatViewModel: ChatViewModelProtocol {
         completion: @escaping (Bool) -> Void = {_ in}
     ) {
         firestoreService.deleteChat(
-            chatDocumentId: chat.documentId,
+            chatId: chat.documentId,
             completion: completion
         )
     }
@@ -247,13 +238,6 @@ class ChatViewModel: ChatViewModelProtocol {
         guard let router = router as? ChatRouter else { return }
         
         router.showChatDetails(chat, from: viewController)
-    }
-    
-    func pickImages(
-        viewController: UIViewController,
-        completion: @escaping (UIImage) -> Void
-    ) {
-        imagePickerService.pickImages(viewController: viewController, completion: completion)
     }
     
     func createForwardViewController(forwardDelegate: ForwardDelegate) -> UIViewController {

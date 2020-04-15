@@ -12,12 +12,17 @@ import CodableFirebase
 public struct UserModel: AutoCodable, AutoEquatable {
     
     var documentId: String?
-    let name: String
-    let surname: String
+    var name: String
+    var surname: String
+    var hexColor: String?
     let online: Bool
     let typing: String?
     
     static let defaultOnline: Bool = false
+    
+    static func empty() -> UserModel {
+        .init(documentId: nil, name: "", surname: "", online: true, typing: nil)
+    }
     
     static func fromSnapshot(_ snapshot: DocumentSnapshot) -> UserModel? {
         var data = snapshot.data() ?? [:]
@@ -42,8 +47,21 @@ public struct UserModel: AutoCodable, AutoEquatable {
 
 extension UserModel: UserProtocol {
     
+    var color: UIColor? {
+        get {
+            UIColor(hexString: hexColor)
+        }
+        set {
+            hexColor = newValue?.hexString
+        }
+    }
+    
     var fullName: String {
         return "\(name) \(surname)"
+    }
+    
+    var placeholderName: String {
+        return "\(name.first ?? " ")\(surname.first ?? " ")"
     }
     
     var onlineText: String {

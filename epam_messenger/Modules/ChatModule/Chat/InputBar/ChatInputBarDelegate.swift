@@ -16,7 +16,7 @@ protocol ChatInputBarDelegate: AnyObject {
 extension ChatViewController: ChatInputBarDelegate {
     
     func didActionImageTap() {
-        viewModel.pickImages(viewController: self) { image in
+        imagePickerService.pickImages { image in
             self.attachmentManager.handleInput(of: image)
         }
     }

@@ -14,25 +14,29 @@ typealias FireQuery = Query
 typealias FireTimestamp = Timestamp
 
 protocol FirestoreServiceProtocol: AutoMockable {
-    func chatBaseQuery(_ chatDocumentId: String) -> FireQuery
+    func chatBaseQuery(_ chatId: String) -> FireQuery
     func sendMessage(
-        chatDocumentId: String,
+        chatId: String,
         messageKind: [MessageModel.MessageKind],
         completion: @escaping (Bool) -> Void
     )
     func deleteMessage(
-        chatDocumentId: String,
+        chatId: String,
         messageDocumentId: String,
         completion: @escaping (Bool) -> Void
     )
     func deleteChat(
-        chatDocumentId: String,
+        chatId: String,
         completion: @escaping (Bool) -> Void
     )
     func listChatMedia(
-        chatDocumentId: String,
+        chatId: String,
         completion: @escaping ([MediaModel]?) -> Void
     )
+    func createUser(
+        _ userModel: UserModel,
+        completion: @escaping (Bool) -> Void
+    ) -> String
     func currentUserData(
         completion: @escaping (UserModel?) -> Void
     )
@@ -59,35 +63,35 @@ protocol FirestoreServiceProtocol: AutoMockable {
 
 extension FirestoreServiceProtocol {
     func sendMessage(
-        chatDocumentId: String,
+        chatId: String,
         messageKind: [MessageModel.MessageKind],
         completion: @escaping (Bool) -> Void = {_ in}
     ) {
         return sendMessage(
-            chatDocumentId: chatDocumentId,
+            chatId: chatId,
             messageKind: messageKind,
             completion: completion
         )
     }
     
     func deleteMessage(
-        chatDocumentId: String,
+        chatId: String,
         messageDocumentId: String,
         completion: @escaping (Bool) -> Void = {_ in}
     ) {
         deleteMessage(
-            chatDocumentId: chatDocumentId,
+            chatId: chatId,
             messageDocumentId: messageDocumentId,
             completion: completion
         )
     }
     
     func deleteChat(
-        chatDocumentId: String,
+        chatId: String,
         completion: @escaping (Bool) -> Void = {_ in}
     ) {
         deleteChat(
-            chatDocumentId: chatDocumentId,
+            chatId: chatId,
             completion: completion
         )
     }
@@ -110,15 +114,15 @@ class FirestoreService: FirestoreServiceProtocol {
             .order(by: "localName")
     }()
     
-    func chatBaseQuery(_ chatDocumentId: String) -> FireQuery {
+    func chatBaseQuery(_ chatId: String) -> FireQuery {
         db.collection("chats")
-            .document(chatDocumentId)
+            .document(chatId)
             .collection("messages")
             .order(by: "timestamp", descending: false)
     }
     
     func sendMessage(
-        chatDocumentId: String,
+        chatId: String,
         messageKind: [MessageModel.MessageKind],
         completion: @escaping (Bool) -> Void = {_ in}
     ) {
@@ -132,11 +136,10 @@ class FirestoreService: FirestoreServiceProtocol {
             var messageData = try FirestoreEncoder().encode(messageModel)
             
             db.collection("chats")
-                .document(chatDocumentId)
+                .document(chatId)
                 .collection("messages")
-                .addDocument(data: messageData)
-                .addSnapshotListener { snapshot, _ in
-                    completion(true)
+                .addDocument(data: messageData) { err in
+                    completion(err == nil)
             }
         } catch let error {
             debugPrint("error! \(error.localizedDescription)")
@@ -145,34 +148,36 @@ class FirestoreService: FirestoreServiceProtocol {
     }
     
     func deleteMessage(
-        chatDocumentId: String,
+        chatId: String,
         messageDocumentId: String,
         completion: @escaping (Bool) -> Void = {_ in}
     ) {
         db.collection("chats")
-            .document(chatDocumentId).collection("messages")
+            .document(chatId).collection("messages")
             .document(messageDocumentId).delete { err in
                 completion(err == nil)
         }
     }
     
     func deleteChat(
-        chatDocumentId: String,
+        chatId: String,
         completion: @escaping (Bool) -> Void = {_ in}
     ) {
         db.collection("chats")
-            .document(chatDocumentId).delete { err in
+            .document(chatId).delete { err in
                 completion(err == nil)
         }
     }
     
     func listChatMedia(
-        chatDocumentId: String,
+        chatId: String,
         completion: @escaping ([MediaModel]?) -> Void
     ) {
         db.collection("chats")
-            .document(chatDocumentId).collection("media")
-            .order(by: "timestamp").getDocuments { snapshot, err in
+            .document(chatId)
+            .collection("media")
+            .order(by: "timestamp")
+            .getDocuments { snapshot, err in
                 guard err == nil else {
                     debugPrint("Error while get chat media: \(err!.localizedDescription)")
                     completion(nil)
@@ -181,6 +186,24 @@ class FirestoreService: FirestoreServiceProtocol {
                 
                 completion(snapshot?.documents.map { MediaModel.fromSnapshot($0)! })
         }
+    }
+    
+    func createUser(
+        _ userModel: UserModel,
+        completion: @escaping (Bool) -> Void
+    ) -> String {
+        let newDoc = db.collection("users").document()
+        do {
+            let userData = try FirestoreEncoder().encode(userModel)
+            
+            newDoc.setData(userData) { err in
+                    completion(err == nil)
+            }
+        } catch {
+            debugPrint("Error: \(error)")
+            completion(false)
+        }
+        return newDoc.documentID
     }
     
     func currentUserData(

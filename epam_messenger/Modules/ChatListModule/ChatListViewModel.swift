@@ -97,7 +97,7 @@ class ChatListViewModel: ChatListViewModelProtocol {
     
     func deleteChat(_ chat: ChatProtocol, completion: @escaping (Bool) -> Void = {_ in}) {
         firestoreService.deleteChat(
-            chatDocumentId: chat.documentId,
+            chatId: chat.documentId,
             completion: completion
         )
     }

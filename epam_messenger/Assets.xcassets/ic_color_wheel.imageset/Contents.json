@@ -6,16 +6,16 @@
     },
     {
       "idiom" : "universal",
-      "filename" : "icons8-camera.png",
       "scale" : "2x"
     },
     {
+      "filename" : "FAVPNG_color-wheel-complementary-colors-color-scheme_iRswuaed.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
   ],
   "info" : {
-    "version" : 1,
-    "author" : "xcode"
+    "author" : "xcode",
+    "version" : 1
   }
 }

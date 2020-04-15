@@ -60,3 +60,44 @@ extension UIColor {
         }
     }
 }
+
+extension UIColor {
+    convenience init(hex: Int) {
+        self.init(hex: hex, a: 1.0)
+    }
+
+    convenience init(hex: Int, a: CGFloat) {
+        self.init(r: (hex >> 16) & 0xff, g: (hex >> 8) & 0xff, b: hex & 0xff, a: a)
+    }
+
+    convenience init(r: Int, g: Int, b: Int) {
+        self.init(r: r, g: g, b: b, a: 1.0)
+    }
+
+    convenience init(r: Int, g: Int, b: Int, a: CGFloat) {
+        self.init(red: CGFloat(r) / 255.0, green: CGFloat(g) / 255.0, blue: CGFloat(b) / 255.0, alpha: a)
+    }
+
+    convenience init?(hexString: String?) {
+        guard let hex = hexString?.hex else {
+            return nil
+        }
+        self.init(hex: hex)
+    }
+    
+    var hexString: String {
+        let components = cgColor.components
+        let r: CGFloat = components?[0] ?? 0.0
+        let g: CGFloat = components?[1] ?? 0.0
+        let b: CGFloat = components?[2] ?? 0.0
+
+        let hexString = String.init(format: "#%02lX%02lX%02lX", lroundf(Float(r * 255)), lroundf(Float(g * 255)), lroundf(Float(b * 255)))
+        return hexString
+    }
+}
+
+fileprivate extension String {
+    var hex: Int? {
+        return Int(self.suffix(6), radix: 16)
+    }
+}

@@ -37,7 +37,7 @@ class ChatDetailsUsersViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(for: indexPath, cellType: UserCell.self)
         let completion: ((UserModel?) -> Void)?
-        if case .chat(_, let adminId) = chat!.type {
+        if case .chat(_, let adminId, _) = chat!.type {
             completion = { user in
                 cell.valueLabel.text = user?.documentId == adminId ? "admin" : nil
             }

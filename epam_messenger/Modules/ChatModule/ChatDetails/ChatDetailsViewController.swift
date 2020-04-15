@@ -20,7 +20,7 @@ class ChatDetailsViewController: UIViewController {
     
     @IBOutlet var scroll: UIScrollView!
     @IBOutlet var stack: UIStackView!
-    @IBOutlet var avatarImage: UIImageView!
+    @IBOutlet var avatarImage: AvatarView!
     @IBOutlet var titleLabel: UILabel!
     @IBOutlet var subtitleLabel: UILabel!
     
@@ -52,11 +52,20 @@ class ChatDetailsViewController: UIViewController {
     }
     
     private func setupInfo() {
-        viewModel.chat.loadInfo { title, subtitle in
+        viewModel.chat.loadInfo { [weak self] title, subtitle, placeholderText, placeholderColor in
+            guard let self = self else { return }
+            
             self.transitionSubtitleLabel {
                 self.titleLabel.text = title
                 self.subtitleLabel.text = subtitle
             }
+            
+            self.avatarImage.setup(
+                withRef: self.viewModel.chat.avatarRef,
+                text: placeholderText,
+                color: placeholderColor ?? .accent,
+                roundCorners: false
+            )
         }
         subtitleLabel.text = "\(viewModel.chat.users.count) users"
     }
@@ -122,15 +131,6 @@ class ChatDetailsViewController: UIViewController {
     
     private func setupAvatar() {
         avatarImage.top(to: view, priority: .defaultHigh)
-        
-        let ref = viewModel.chat.avatarRef
-
-        avatarImage.sd_setImage(
-            with: viewModel.chat.avatarRef,
-            placeholderImage: SDImageCache.shared.imageFromDiskCache(
-                forKey: ref.small.storageLocation
-            ) ?? #imageLiteral(resourceName: "logo")
-        )
     }
 
     @objc func didCancelTap() {

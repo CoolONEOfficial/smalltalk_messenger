@@ -22,5 +22,5 @@ protocol MessageProtocol {
     var chatId: String? { get }
     var chatUsers: [String]? { get }
     
-    func forwardedKind(_ userId: String) -> [MessageModel.MessageKind]
+    func forwardedKind() -> [MessageModel.MessageKind]
 }

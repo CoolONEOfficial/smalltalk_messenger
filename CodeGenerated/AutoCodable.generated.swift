@@ -31,6 +31,7 @@ extension ChatType {
         case chat
         case title
         case adminId
+        case hexColor
     }
 
     public init(from decoder: Decoder) throws {
@@ -44,7 +45,8 @@ extension ChatType {
             let associatedValues = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: .chat)
             let title = try associatedValues.decode(String.self, forKey: .title)
             let adminId = try associatedValues.decode(String.self, forKey: .adminId)
-            self = .chat(title: title, adminId: adminId)
+            let hexColor = try associatedValues.decode(String?.self, forKey: .hexColor)
+            self = .chat(title: title, adminId: adminId, hexColor: hexColor)
             return
         }
         throw DecodingError.dataCorrupted(.init(codingPath: decoder.codingPath, debugDescription: "Unknown enum case"))
@@ -56,10 +58,11 @@ extension ChatType {
         switch self {
         case .personalCorr:
             _ = container.nestedContainer(keyedBy: CodingKeys.self, forKey: .personalCorr)
-        case let .chat(title, adminId):
+        case let .chat(title, adminId, hexColor):
             var associatedValues = container.nestedContainer(keyedBy: CodingKeys.self, forKey: .chat)
             try associatedValues.encode(title, forKey: .title)
             try associatedValues.encode(adminId, forKey: .adminId)
+            try associatedValues.encode(hexColor, forKey: .hexColor)
         }
     }
 
@@ -163,6 +166,7 @@ extension UserModel {
         case documentId
         case name
         case surname
+        case hexColor
         case online
         case typing
     }
@@ -173,6 +177,7 @@ extension UserModel {
         documentId = try container.decodeIfPresent(String.self, forKey: .documentId)
         name = try container.decode(String.self, forKey: .name)
         surname = try container.decode(String.self, forKey: .surname)
+        hexColor = try container.decodeIfPresent(String.self, forKey: .hexColor)
         online = (try? container.decode(Bool.self, forKey: .online)) ?? UserModel.defaultOnline
         typing = try container.decodeIfPresent(String.self, forKey: .typing)
     }

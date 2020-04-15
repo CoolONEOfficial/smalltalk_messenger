@@ -59,7 +59,7 @@
                             <constraint firstAttribute="height" relation="lessThanOrEqual" constant="56" id="8yb-Bu-MaX"/>
                         </constraints>
                     </stackView>
-                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="HFB-Ps-PR0">
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="HFB-Ps-PR0" customClass="AvatarView" customModule="epam_messenger" customModuleProvider="target">
                         <rect key="frame" x="10" y="5" width="56" height="56"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="56" id="VUi-r5-w7Y"/>
@@ -81,7 +81,7 @@
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
             <connections>
-                <outlet property="avatarImage" destination="HFB-Ps-PR0" id="Xp8-DO-snQ"/>
+                <outlet property="avatar" destination="HFB-Ps-PR0" id="Xp8-DO-snQ"/>
                 <outlet property="messageLabel" destination="5kB-sn-dI7" id="WxG-TT-T2v"/>
                 <outlet property="senderLabel" destination="q87-XS-0l0" id="1Ay-G4-bj3"/>
                 <outlet property="timestampLabel" destination="PkW-7h-5ZS" id="8c2-4A-pHy"/>

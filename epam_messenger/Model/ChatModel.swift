@@ -65,7 +65,7 @@ public struct ChatModel: AutoCodable, AutoEquatable {
 extension ChatModel: ChatProtocol {
     
     var friendId: String? {
-        return users.first(where: { Auth.auth().currentUser!.uid != $0 })
+        users.first(where: { Auth.auth().currentUser!.uid != $0 })
     }
     
     var avatarRef: StorageReference {
@@ -89,7 +89,9 @@ extension ChatModel: ChatProtocol {
         return Storage.storage().reference(withPath: path!)
     }
     
-    func loadInfo(completion: @escaping (String, String) -> Void) {
+    func loadInfo(completion: @escaping (
+        _ title: String, _ subtitle: String, _ placeholderText: String, _ placeholderColor: UIColor?
+    ) -> Void) {
         let firestoreService = FirestoreService()
         
         switch type {
@@ -97,36 +99,42 @@ extension ChatModel: ChatProtocol {
             firestoreService.userData(friendId!) { user in
                 if let user = user {
                     let title = user.fullName
-                    completion(title, user.typing == self.documentId!
-                        ? "\(user.name) typing..."
-                        : user.onlineText
+                    completion(
+                        title,
+                        user.typing == self.documentId!
+                            ? "\(user.name) typing..."
+                            : user.onlineText,
+                        user.placeholderName,
+                        user.color
                     )
                 }
             }
-        case .chat(let title, _):
-            completion(title, "\(users.count) users")
-            
+        case .chat(let title, _, let color):
             firestoreService.userListData(users) { userList in
                 if let userList = userList {
                     let typingUsers = userList.filter({
                         $0.typing == self.documentId
                             && $0.documentId != Auth.auth().currentUser!.uid
                     })
+                    let subtitleStr: String
                     if typingUsers.isEmpty {
                         let onlineUsers = userList.filter({ $0.online })
-                        var subtitleStr = "\(self.users.count) users"
-                        if onlineUsers.count > 1 {
-                            subtitleStr += ", \(onlineUsers.count) online"
-                        }
-                        
-                        completion(title, subtitleStr)
+                        subtitleStr = "\(self.users.count) users"
+                            + (onlineUsers.count > 1
+                                ? ", \(onlineUsers.count) online"
+                                : "")
                     } else {
-                        
-                        completion(title, typingUsers
+                        subtitleStr = typingUsers
                             .map({ $0.name })
                             .joined(separator: ", ") + " typing..."
-                        )
                     }
+                    
+                    completion(
+                        title,
+                        subtitleStr,
+                        String(title.first ?? " "),
+                        UIColor(hexString: color)
+                    )
                 }
             }
         }

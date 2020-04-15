@@ -29,6 +29,11 @@ class ChatViewController: UIViewController {
     
     // MARK: - Vars
     
+    var viewModel: ChatViewModelProtocol!
+    lazy var imagePickerService: ImagePickerServiceProtocol = {
+        return ImagePickerService(viewController: self)
+    }()
+    
     var defaultTitle = "..."
     
     var tableView: PaginatedSectionedTableView<Date, MessageModel>!
@@ -36,14 +41,13 @@ class ChatViewController: UIViewController {
     var bottomScrollAnimationsLock = false
     
     let inputBar = ChatInputBar()
-    var viewModel: ChatViewModelProtocol!
     var photosViewerDataSource: ChatPhotoViewerDataSource!
     
     let titleStack = UIStackView()
     let titleLabel = UILabel()
     let subtitleLabel = UILabel()
     
-    let avatarImage = UIImageView()
+    let avatarImage = AvatarView()
     
     var deleteButton = UIButton()
     var forwardButton = UIButton()
@@ -116,7 +120,9 @@ class ChatViewController: UIViewController {
         setupEditModeButtons()
         setupFloatingBottomButton()
         
-        viewModel.chat.loadInfo { title, subtitle in
+        viewModel.chat.loadInfo { [weak self] title, subtitle, placeholderText, placeholderColor in
+            guard let self = self else { return }
+            
             self.transitionSubtitleLabel {
                 self.defaultTitle = title
                 self.subtitleLabel.text = subtitle
@@ -125,6 +131,12 @@ class ChatViewController: UIViewController {
                     self.titleLabel.text = self.defaultTitle
                 }
             }
+            
+            self.avatarImage.setup(
+                withRef: self.viewModel.chat.avatarRef,
+                text: placeholderText,
+                color: placeholderColor ?? .accent
+            )
         }
     }
     
@@ -166,14 +178,11 @@ class ChatViewController: UIViewController {
     }
     
     private func setupAvatar() {
-        avatarImage.sd_setSmallImage(with: viewModel.chat.avatarRef, placeholderImage: #imageLiteral(resourceName: "logo"))
         avatarImage.size(.init(width: 40, height: 40))
-        avatarImage.contentMode = .scaleAspectFill
-        avatarImage.layer.cornerRadius = 20
-        avatarImage.clipsToBounds = true
-        avatarImage.focusOnFaces = true
         avatarImage.addGestureRecognizer(UITapGestureRecognizer.init(target: self, action: #selector(didNavigationItemsTap)))
         avatarImage.hero.id = "avatar"
+        
+        
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: avatarImage)
     }

@@ -12,7 +12,7 @@ class UserCell: UITableViewCell, NibReusable {
     
     // MARK: - Outlets
     
-    @IBOutlet var avatarImage: UIImageView!
+    @IBOutlet var avatar: AvatarView!
     @IBOutlet var titleLabel: UILabel!
     @IBOutlet var subtitleLabel: UILabel!
     @IBOutlet var valueLabel: UILabel!
@@ -40,7 +40,7 @@ class UserCell: UITableViewCell, NibReusable {
     }
     
     private func setupAvatar() {
-        avatarImage.layer.cornerRadius = avatarImage.frame.width / 2
+        avatar.layer.cornerRadius = avatar.frame.width / 2
     }
 
     // MARK: - Methods
@@ -49,15 +49,18 @@ class UserCell: UITableViewCell, NibReusable {
         self.user = user
         self.valueLabel.text = valueText
         self.valueLabel.isHidden = valueText != nil
-        avatarImage.sd_setSmallImage(with: user.avatarRef, placeholderImage: #imageLiteral(resourceName: "logo"))
+        avatar.setup(withUser: user)
     }
     
     func loadUser(byId userId: String, completion: ((UserModel?) -> Void)? = nil) {
-        FirestoreService().userData(userId) { user in
-            self.user = user
+        FirestoreService().userData(userId) { [weak self] user in
+            guard let self = self else { return }
+            if let user = user {
+                self.user = user
+                self.avatar.setup(withUser: user)
+            }
             completion?(user)
         }
-        avatarImage.sd_setSmallImage(with: UserModel.avatarRef(byId: userId), placeholderImage: #imageLiteral(resourceName: "logo"))
     }
     
 }

@@ -19,7 +19,7 @@
                     <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="Bei-Em-hgu">
                         <rect key="frame" x="0.0" y="0.0" width="348" height="73"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Xxy-JO-xHV" userLabel="Avatar">
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Xxy-JO-xHV" userLabel="Avatar" customClass="AvatarView" customModule="epam_messenger" customModuleProvider="target">
                                 <rect key="frame" x="5" y="11.5" width="50" height="50"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="50" id="YFx-pJ-W70"/>
@@ -69,7 +69,7 @@
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
             <connections>
-                <outlet property="avatarImage" destination="Xxy-JO-xHV" id="3NM-AG-Dsv"/>
+                <outlet property="avatar" destination="Xxy-JO-xHV" id="3NM-AG-Dsv"/>
                 <outlet property="subtitleLabel" destination="uT1-ho-uhP" id="Lmx-RZ-pGc"/>
                 <outlet property="titleLabel" destination="Keu-Du-dsq" id="54S-5q-IZp"/>
                 <outlet property="valueLabel" destination="Pqy-xz-KDP" id="7hH-73-v6i"/>

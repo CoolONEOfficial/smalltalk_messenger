@@ -9,16 +9,51 @@ import UIKit
 import BSImagePicker
 import Photos
 
+typealias ImageCompletion = (UIImage) -> Void
+
 protocol ImagePickerServiceProtocol: AutoMockable {
-    func pickImages(
-        viewController: UIViewController,
-        completion: @escaping (UIImage) -> Void
-    )
+    func pickImages(completion: @escaping ImageCompletion)
+    func pickSingleImage(completion: @escaping ImageCompletion)
+    func pickCamera(completion: @escaping ImageCompletion)
 }
 
-class ImagePickerService: ImagePickerServiceProtocol {
+class ImagePickerService: NSObject, ImagePickerServiceProtocol {
     
-    func pickImages(viewController: UIViewController, completion: @escaping (UIImage) -> Void) {
+    // MARK: - Vars
+    
+    let viewController: UIViewController
+    
+    lazy var imagePicker: UIImagePickerController = {
+        let picker = UIImagePickerController()
+        picker.delegate = self
+        picker.mediaTypes = ["public.image"]
+        return picker
+    }()
+    
+    private var completion: ImageCompletion?
+    
+    // MARK: - Init
+    
+    init(viewController: UIViewController) {
+        self.viewController = viewController
+    }
+    
+    // MARK: - Methods
+    
+    func pickCamera(completion: @escaping ImageCompletion) {
+        imagePicker.sourceType = .camera
+        imagePicker.cameraDevice = .front
+        self.completion = completion
+        viewController.present(imagePicker, animated: true, completion: nil)
+    }
+    
+    func pickSingleImage(completion: @escaping ImageCompletion) {
+        imagePicker.sourceType = .photoLibrary
+        self.completion = completion
+        viewController.present(imagePicker, animated: true, completion: nil)
+    }
+    
+    func pickImages(completion: @escaping ImageCompletion) {
         let imagePicker = ImagePickerController()
         let theme = imagePicker.settings.theme
         
@@ -55,4 +90,33 @@ class ImagePickerService: ImagePickerServiceProtocol {
             }
         })
     }
+}
+
+extension ImagePickerService: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    
+    public func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        self.pickerController(picker, didSelect: nil)
+    }
+    
+    public func imagePickerController(
+        _ picker: UIImagePickerController,
+        didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
+    ) {
+        guard let image = info[.originalImage] as? UIImage else {
+            return self.pickerController(picker, didSelect: nil)
+        }
+        self.pickerController(picker, didSelect: image)
+    }
+    
+    private func pickerController(_ controller: UIImagePickerController, didSelect image: UIImage?) {
+        controller.dismiss(animated: true) { [weak self] in
+            guard let self = self else { return }
+            if let image = image {
+                self.completion?(image)
+            } else {
+                debugPrint("error while unwrapping selected image")
+            }
+        }
+    }
+    
 }

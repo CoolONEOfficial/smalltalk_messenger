@@ -97,7 +97,7 @@ extension MessageModel: MessageProtocol {
             : .accent
     }
     
-    func forwardedKind(_ userId: String) -> [MessageModel.MessageKind] {
+    func forwardedKind() -> [MessageModel.MessageKind] {
         var forwardedKind = kind
         if case .forward = forwardedKind.first {
             forwardedKind.remove(at: 0)

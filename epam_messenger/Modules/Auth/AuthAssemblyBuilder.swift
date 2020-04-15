@@ -37,8 +37,8 @@ extension AssemblyBuilder: AuthAssemblyBuilder {
     }
     
     func createAuthEnterName(router: RouterProtocol) -> UIViewController {
-        let view = AuthEnterNameViewController()
-        let viewModel = AuthEnterNameViewModel(router: router, viewController: view)
+        let view = AuthEnterInitialsViewController()
+        let viewModel = AuthEnterInitialsViewModel(router: router, viewController: view)
         view.viewModel = viewModel
         return view
     }
