@@ -165,21 +165,21 @@ class ChatViewModelProtocolMock: ChatViewModelProtocol {
         deleteMessageCompletionClosure?(messageModel, completion)
     }
 
-    //MARK: - deleteChat
+    //MARK: - leaveChat
 
-    var deleteChatCompletionCallsCount = 0
-    var deleteChatCompletionCalled: Bool {
-        return deleteChatCompletionCallsCount > 0
+    var leaveChatCompletionCallsCount = 0
+    var leaveChatCompletionCalled: Bool {
+        return leaveChatCompletionCallsCount > 0
     }
-    var deleteChatCompletionReceivedCompletion: ((Bool) -> Void)?
-    var deleteChatCompletionReceivedInvocations: [((Bool) -> Void)] = []
-    var deleteChatCompletionClosure: ((@escaping (Bool) -> Void) -> Void)?
+    var leaveChatCompletionReceivedCompletion: ((Bool) -> Void)?
+    var leaveChatCompletionReceivedInvocations: [((Bool) -> Void)] = []
+    var leaveChatCompletionClosure: ((@escaping (Bool) -> Void) -> Void)?
 
-    func deleteChat(        completion: @escaping (Bool) -> Void    ) {
-        deleteChatCompletionCallsCount += 1
-        deleteChatCompletionReceivedCompletion = completion
-        deleteChatCompletionReceivedInvocations.append(completion)
-        deleteChatCompletionClosure?(completion)
+    func leaveChat(        completion: @escaping (Bool) -> Void    ) {
+        leaveChatCompletionCallsCount += 1
+        leaveChatCompletionReceivedCompletion = completion
+        leaveChatCompletionReceivedInvocations.append(completion)
+        leaveChatCompletionClosure?(completion)
     }
 
     //MARK: - createForwardViewController
@@ -487,21 +487,21 @@ class FirestoreServiceProtocolMock: FirestoreServiceProtocol {
         deleteMessageChatIdMessageDocumentIdCompletionClosure?(chatId, messageDocumentId, completion)
     }
 
-    //MARK: - deleteChat
+    //MARK: - leaveChat
 
-    var deleteChatChatIdCompletionCallsCount = 0
-    var deleteChatChatIdCompletionCalled: Bool {
-        return deleteChatChatIdCompletionCallsCount > 0
+    var leaveChatChatIdCompletionCallsCount = 0
+    var leaveChatChatIdCompletionCalled: Bool {
+        return leaveChatChatIdCompletionCallsCount > 0
     }
-    var deleteChatChatIdCompletionReceivedArguments: (chatId: String, completion: (Bool) -> Void)?
-    var deleteChatChatIdCompletionReceivedInvocations: [(chatId: String, completion: (Bool) -> Void)] = []
-    var deleteChatChatIdCompletionClosure: ((String, @escaping (Bool) -> Void) -> Void)?
+    var leaveChatChatIdCompletionReceivedArguments: (chatId: String, completion: (Bool) -> Void)?
+    var leaveChatChatIdCompletionReceivedInvocations: [(chatId: String, completion: (Bool) -> Void)] = []
+    var leaveChatChatIdCompletionClosure: ((String, @escaping (Bool) -> Void) -> Void)?
 
-    func deleteChat(        chatId: String,        completion: @escaping (Bool) -> Void    ) {
-        deleteChatChatIdCompletionCallsCount += 1
-        deleteChatChatIdCompletionReceivedArguments = (chatId: chatId, completion: completion)
-        deleteChatChatIdCompletionReceivedInvocations.append((chatId: chatId, completion: completion))
-        deleteChatChatIdCompletionClosure?(chatId, completion)
+    func leaveChat(        chatId: String,        completion: @escaping (Bool) -> Void    ) {
+        leaveChatChatIdCompletionCallsCount += 1
+        leaveChatChatIdCompletionReceivedArguments = (chatId: chatId, completion: completion)
+        leaveChatChatIdCompletionReceivedInvocations.append((chatId: chatId, completion: completion))
+        leaveChatChatIdCompletionClosure?(chatId, completion)
     }
 
     //MARK: - listChatMedia

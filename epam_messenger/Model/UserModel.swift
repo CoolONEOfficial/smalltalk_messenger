@@ -24,6 +24,11 @@ public struct UserModel: AutoCodable, AutoEquatable {
         .init(documentId: nil, name: "", surname: "", online: true, typing: nil)
     }
     
+    static func deleted() -> UserModel {
+        .init(documentId: nil, name: "DELETED", surname: "",
+              hexColor: "#7d7d7d", online: false, typing: nil)
+    }
+    
     static func fromSnapshot(_ snapshot: DocumentSnapshot) -> UserModel? {
         var data = snapshot.data() ?? [:]
         data["documentId"] = snapshot.documentID

@@ -25,7 +25,7 @@ protocol ChatViewModelProtocol: ViewModelProtocol, AutoMockable, MessageCellDele
         _ messageModel: MessageProtocol,
         completion: @escaping (Bool) -> Void
     )
-    func deleteChat(
+    func leaveChat(
         completion: @escaping (Bool) -> Void
     )
     func createForwardViewController(
@@ -67,10 +67,10 @@ extension ChatViewModelProtocol {
         return sendMessage(attachments: attachments, messageText: messageText, completion: completion)
     }
     
-    func deleteChat(
+    func leaveChat(
         completion: @escaping (Bool) -> Void = {_ in}
     ) {
-        return deleteChat(completion: completion)
+        return leaveChat(completion: completion)
     }
 }
 
@@ -197,10 +197,10 @@ class ChatViewModel: ChatViewModelProtocol {
         )
     }
     
-    func deleteChat(
+    func leaveChat(
         completion: @escaping (Bool) -> Void = {_ in}
     ) {
-        firestoreService.deleteChat(
+        firestoreService.leaveChat(
             chatId: chat.documentId,
             completion: completion
         )

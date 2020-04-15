@@ -62,10 +62,9 @@ class ChatCell: UITableViewCell, NibReusable {
         senderLabel.text = "..."
         delegate?.userData(
             chat.lastMessage.userId
-        ) { userModel in
-            if let userModel = userModel {
-                self.senderLabel.text = userModel.name
-            }
+        ) { user in
+            let user = user ?? .deleted()
+            self.senderLabel.text = user.name
         }
     }
     
@@ -77,14 +76,10 @@ class ChatCell: UITableViewCell, NibReusable {
         delegate?.userData(
             chat.users.filter({ $0 != Auth.auth().currentUser!.uid }).first!
         ) { friendModel in
-            if let friendModel = friendModel {
-                self.titleLabel.text = friendModel.fullName
-                self.avatar.setup(withUser: friendModel)
-            } else {
-                self.titleLabel.text = "Deleted user"
-                self.avatar.setup(withPlaceholder: "✖╭╮✖", color: .gray)
-            }
+            self.avatar.setup(withUser: friendModel)
             
+            let friendModel = friendModel ?? .deleted()
+            self.titleLabel.text = friendModel.fullName
         }
     }
 }

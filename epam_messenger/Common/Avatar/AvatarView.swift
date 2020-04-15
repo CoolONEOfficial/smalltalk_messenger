@@ -32,6 +32,7 @@ class AvatarView: UIImageView {
         placeholderLabel.textColor = UIColor.lightText.withAlphaComponent(1)
         placeholderLabel.numberOfLines = 1
         placeholderLabel.textAlignment = .center
+        placeholderLabel.lineBreakMode = .byClipping
         placeholderLabel.text = text?.uppercased()
         backgroundColor = color
         
@@ -45,12 +46,16 @@ class AvatarView: UIImageView {
         loading.startAnimating()
     }
     
-    func setup(withUser user: UserProtocol) {
-        setup(
-            withRef: user.avatarRef,
-            text: user.placeholderName,
-            color: user.color ?? .accent
-        )
+    func setup(withUser user: UserProtocol?) {
+        if let user = user {
+            setup(
+                withRef: user.avatarRef,
+                text: user.placeholderName,
+                color: user.color ?? .accent
+            )
+        } else {
+            setup(withImage: #imageLiteral(resourceName: "ic_unknown_user"))
+        }
     }
     
     func setup(withRef ref: StorageReference, text: String, color: UIColor, roundCorners: Bool = true) {

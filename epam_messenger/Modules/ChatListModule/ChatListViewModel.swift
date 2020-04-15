@@ -22,7 +22,7 @@ protocol ChatListViewModelProtocol: ViewModelProtocol {
         completion: @escaping SearchMessagesCompletion
     )
     func createChatPreview(_ chat: ChatProtocol) -> UIViewController
-    func deleteChat(
+    func leaveChat(
         _ chat: ChatProtocol,
         completion: @escaping (Bool) -> Void
     )
@@ -41,11 +41,11 @@ protocol ChatListViewModelProtocol: ViewModelProtocol {
 }
 
 extension ChatListViewModelProtocol {
-    func deleteChat(
+    func leaveChat(
         _ chat: ChatProtocol,
         completion: @escaping (Bool) -> Void = {_ in}
     ) {
-        deleteChat(chat, completion: completion)
+        leaveChat(chat, completion: completion)
     }
 }
 
@@ -95,8 +95,8 @@ class ChatListViewModel: ChatListViewModelProtocol {
         return AssemblyBuilder().createChat(router: router, chat: chat)
     }
     
-    func deleteChat(_ chat: ChatProtocol, completion: @escaping (Bool) -> Void = {_ in}) {
-        firestoreService.deleteChat(
+    func leaveChat(_ chat: ChatProtocol, completion: @escaping (Bool) -> Void = {_ in}) {
+        firestoreService.leaveChat(
             chatId: chat.documentId,
             completion: completion
         )

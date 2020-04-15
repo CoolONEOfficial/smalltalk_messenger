@@ -25,7 +25,7 @@ protocol FirestoreServiceProtocol: AutoMockable {
         messageDocumentId: String,
         completion: @escaping (Bool) -> Void
     )
-    func deleteChat(
+    func leaveChat(
         chatId: String,
         completion: @escaping (Bool) -> Void
     )
@@ -86,11 +86,11 @@ extension FirestoreServiceProtocol {
         )
     }
     
-    func deleteChat(
+    func leaveChat(
         chatId: String,
         completion: @escaping (Bool) -> Void = {_ in}
     ) {
-        deleteChat(
+        leaveChat(
             chatId: chatId,
             completion: completion
         )
@@ -159,12 +159,14 @@ class FirestoreService: FirestoreServiceProtocol {
         }
     }
     
-    func deleteChat(
+    func leaveChat(
         chatId: String,
         completion: @escaping (Bool) -> Void = {_ in}
     ) {
         db.collection("chats")
-            .document(chatId).delete { err in
+            .document(chatId).updateData([
+                "users": FieldValue.arrayRemove([ Auth.auth().currentUser!.uid ])
+            ]) { err in
                 completion(err == nil)
         }
     }

@@ -19,7 +19,7 @@
                     <stackView opaque="NO" contentMode="scaleToFill" alignment="bottom" spacing="1" translatesAutoresizingMaskIntoConstraints="NO" id="eA7-GV-i23">
                         <rect key="frame" x="12" y="0.0" width="198" height="178"/>
                         <subviews>
-                            <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="63S-fg-Slr" userLabel="Avatar View">
+                            <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="63S-fg-Slr" userLabel="Avatar View" customClass="AvatarView" customModule="epam_messenger" customModuleProvider="target">
                                 <rect key="frame" x="-41" y="137" width="41" height="41"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="41" id="Nqz-1Q-2Jg"/>
@@ -48,7 +48,7 @@
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
             <connections>
-                <outlet property="avatarImage" destination="63S-fg-Slr" id="7Sg-Yw-p6H"/>
+                <outlet property="avatar" destination="63S-fg-Slr" id="7Sg-Yw-p6H"/>
                 <outlet property="bubbleView" destination="VFY-Pl-IGP" id="BN6-oV-udI"/>
                 <outlet property="stackLeadingAnchor" destination="szI-jV-zFi" id="zFX-1d-Ypk"/>
                 <outlet property="stackTopAnchor" destination="DCl-Xn-odE" id="2aF-1X-jyb"/>
