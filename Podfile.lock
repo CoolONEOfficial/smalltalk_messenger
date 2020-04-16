@@ -305,6 +305,12 @@ PODS:
     - NYTPhotoViewer/Core
     - PINRemoteImage (~> 3.0.0)
   - NYTPhotoViewer/Core (4.0.0)
+  - PhoneNumberKit (3.2.0):
+    - PhoneNumberKit/PhoneNumberKitCore (= 3.2.0)
+    - PhoneNumberKit/UIKit (= 3.2.0)
+  - PhoneNumberKit/PhoneNumberKitCore (3.2.0)
+  - PhoneNumberKit/UIKit (3.2.0):
+    - PhoneNumberKit/PhoneNumberKitCore
   - PINCache (3.0.1-beta.8):
     - PINCache/Arc-exception-safe (= 3.0.1-beta.8)
     - PINCache/Core (= 3.0.1-beta.8)
@@ -352,6 +358,7 @@ DEPENDENCIES:
   - InputBarAccessoryView
   - InstantSearchClient (~> 7.0)
   - NYTPhotoViewer
+  - PhoneNumberKit (~> 3.1)
   - Reusable
   - Sourcery
   - SwiftLint
@@ -392,6 +399,7 @@ SPEC REPOS:
     - leveldb-library
     - nanopb
     - NYTPhotoViewer
+    - PhoneNumberKit
     - PINCache
     - PINOperation
     - PINRemoteImage
@@ -436,6 +444,7 @@ SPEC CHECKSUMS:
   leveldb-library: 55d93ee664b4007aac644a782d11da33fba316f7
   nanopb: 18003b5e52dab79db540fe93fe9579f399bd1ccd
   NYTPhotoViewer: ff7daab9e450db6d1d0644048ef35b58b9dd65fe
+  PhoneNumberKit: df411d46177d1492da84e10b6c093846dd861452
   PINCache: 534fd41d358d828dfdf227a0d327f3673a65e20b
   PINOperation: 24b774353ca248fcf87d67b2d61eef42087c125a
   PINRemoteImage: e2b89e19fb6e77ffc099f9d9f3b3fe1745e3f9f9
@@ -447,6 +456,6 @@ SPEC CHECKSUMS:
   TinyConstraints: 8dd91295e56797648c7bc335dd20e1d91ec4c192
   XLPagerTabStrip: 61c57fd61f611ee5f01ff1495ad6fbee8bf496c5
 
-PODFILE CHECKSUM: 7951af7a849bc4a5d70fd8ef058f62fd69b3655e
+PODFILE CHECKSUM: 3307e72d81acc0fedc944f92572b1634465acf41
 
 COCOAPODS: 1.9.0
