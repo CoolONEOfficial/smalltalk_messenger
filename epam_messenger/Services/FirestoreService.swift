@@ -35,15 +35,15 @@ protocol FirestoreServiceProtocol: AutoMockable {
     )
     func createUser(
         _ userModel: UserModel,
-        completion: @escaping (Bool) -> Void
+        completion: @escaping (Error?) -> Void
     ) -> String
     func createChat(
         _ chatModel: ChatModel,
-        completion: @escaping (Bool) -> Void
+        completion: @escaping (Error?) -> Void
     )
     func createContact(
         _ contactModel: ContactModel,
-        completion: @escaping (Bool) -> Void
+        completion: @escaping (Error?) -> Void
     )
     func currentUserData(
         completion: @escaping (UserModel?) -> Void
@@ -204,41 +204,41 @@ class FirestoreService: FirestoreServiceProtocol {
     
     func createUser(
         _ userModel: UserModel,
-        completion: @escaping (Bool) -> Void
+        completion: @escaping (Error?) -> Void
     ) -> String {
         let newDoc = db.collection("users").document(Auth.auth().currentUser!.uid)
         do {
             let userData = try FirestoreEncoder().encode(userModel)
             
             newDoc.setData(userData) { err in
-                    completion(err == nil)
+                    completion(err)
             }
         } catch {
             debugPrint("Error: \(error)")
-            completion(false)
+            completion(error)
         }
         return newDoc.documentID
     }
     
     func createChat(
         _ chatModel: ChatModel,
-        completion: @escaping (Bool) -> Void
+        completion: @escaping (Error?) -> Void
     ) {
         do {
             let chatData = try FirestoreEncoder().encode(chatModel)
             
             db.collection("chats").addDocument(data: chatData) { err in
-                completion(err == nil)
+                completion(err)
             }
         } catch {
             debugPrint("Error: \(error)")
-            completion(false)
+            completion(error)
         }
     }
     
     func createContact(
         _ contactModel: ContactModel,
-        completion: @escaping (Bool) -> Void
+        completion: @escaping (Error?) -> Void
     ) {
         do {
             let contactData = try FirestoreEncoder().encode(contactModel)
@@ -247,11 +247,11 @@ class FirestoreService: FirestoreServiceProtocol {
                 .document(Auth.auth().currentUser!.uid)
                 .collection("contacts")
                 .addDocument(data: contactData) { err in
-                completion(err == nil)
+                completion(err)
             }
         } catch {
             debugPrint("Error: \(error)")
-            completion(false)
+            completion(error)
         }
     }
     

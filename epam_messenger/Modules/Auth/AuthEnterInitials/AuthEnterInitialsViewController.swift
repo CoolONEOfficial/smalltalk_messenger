@@ -137,7 +137,8 @@ class AuthEnterInitialsViewController: UIViewController {
             progressView.progress = 0
             progressView.tintColor = self.view.tintColor
             alertView.view.addSubview(progressView)
-            progressView.bottomToSuperview(offset: -10)
+            alertView.view.layer.cornerRadius = 20
+            progressView.bottomToSuperview()
             progressView.horizontalToSuperview()
             progressView.clipsToBounds = true
             
@@ -145,9 +146,14 @@ class AuthEnterInitialsViewController: UIViewController {
                 userModel: self.user,
                 avatar: self.avatarImage.image,
                 progressAddiction: { addiction in
-                progressView.progress += addiction
-            }) { _ in
-                self.dismiss(animated: true, completion: nil)
+                    progressView.setProgress(progressView.progress + addiction, animated: true)
+            }) { err in
+                self.dismiss(animated: true) { [weak self] in
+                    guard let self = self else { return }
+                    if let err = err {
+                        self.presentErrorAlert(err.localizedDescription)
+                    }
+                }
             }
         })
     }
@@ -190,7 +196,6 @@ class AuthEnterInitialsViewController: UIViewController {
     
     @objc func cancelOrColorWheelDidTap() {
         if userImage == nil { // color wheel
-            debugPrint("user.color: \(user.color)")
             let vc = ColorPickerViewController(
                 initialColor: user.color ?? UIColor.accent
             )

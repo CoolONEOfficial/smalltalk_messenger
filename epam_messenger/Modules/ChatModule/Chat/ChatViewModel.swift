@@ -143,7 +143,11 @@ class ChatViewModel: ChatViewModelProtocol {
                     image: image,
                     timestamp: uploadStartTimestamp,
                     index: attachments.count - index
-                ) { kind in
+                ) { kind, err in
+                    if let err = err {
+                        self.viewController.presentErrorAlert(err.localizedDescription)
+                    }
+                    
                     if let kind = kind {
                         uploadKinds.insert(kind, at: 0)
                     }
@@ -154,7 +158,11 @@ class ChatViewModel: ChatViewModelProtocol {
                 storageService.uploadAudio(
                     chatId: chat.documentId,
                     data: data
-                ) { kind in
+                ) { kind, err in
+                    if let err = err {
+                        self.viewController.presentErrorAlert(err.localizedDescription)
+                    }
+                    
                     if let kind = kind {
                         uploadKinds.append(kind)
                     }

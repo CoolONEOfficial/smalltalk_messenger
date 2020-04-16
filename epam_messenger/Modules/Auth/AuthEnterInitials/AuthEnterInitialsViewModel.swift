@@ -16,7 +16,7 @@ protocol AuthEnterInitialsViewModelProtocol {
         userModel: UserModel,
         avatar: UIImage?,
         progressAddiction: @escaping (Float) -> Void,
-        completion: @escaping (Bool) -> Void
+        completion: @escaping (Error?) -> Void
     )
 }
 
@@ -50,29 +50,30 @@ class AuthEnterInitialsViewModel: AuthEnterInitialsViewModelProtocol {
         userModel: UserModel,
         avatar: UIImage?,
         progressAddiction: @escaping (Float) -> Void,
-        completion: @escaping (Bool) -> Void
+        completion: @escaping (Error?) -> Void
     ) {
         let createGroup = DispatchGroup()
         
-        var err = false
+        var err: Error? = nil
         var steps: Float = 0
         
         steps += 1
         createGroup.enter()
-        let userId = firestoreService.createUser(userModel) { result in
-            if !result {
-                err = true
+        let userId = firestoreService.createUser(userModel) { error in
+            if error != nil {
+                err = error
             }
             progressAddiction(1 / steps)
             createGroup.leave()
+            debugPrint("user leave")
         }
         
         if let avatar = avatar {
             steps += 1
             createGroup.enter()
-            storageService.uploadUserAvatar(userId: userId, avatar: avatar) { result in
-                if !result {
-                    err = true
+            storageService.uploadUserAvatar(userId: userId, avatar: avatar) { error in
+                if error != nil {
+                    err = error
                 }
                 progressAddiction(1 / steps)
                 createGroup.leave()
@@ -102,11 +103,10 @@ class AuthEnterInitialsViewModel: AuthEnterInitialsViewModelProtocol {
                             ],
                             lastMessage: .empty(),
                             type: .personalCorr
-                    )) { chatErr in
-                        if chatErr {
-                            err = true
+                    )) { error in
+                        if error != nil {
+                            err = error
                         }
-                        progressAddiction(1 / steps / (Float(allContacts.count) / 10) / 2)
                         chatsGroup.leave()
                     }
                     
@@ -114,17 +114,17 @@ class AuthEnterInitialsViewModel: AuthEnterInitialsViewModelProtocol {
                     self.firestoreService.createContact(.init(
                         localName: contact.fullName,
                         userId: contact.documentId!)
-                    ) { contactErr in
-                        if contactErr {
-                            err = true
+                    ) { error in
+                        if error != nil {
+                            err = error
                         }
-                        progressAddiction(1 / steps / (Float(allContacts.count) / 10) / 2)
                         chatsGroup.leave()
                     }
                 }
                 
                 chatsGroup.notify(queue: .main) {
                     if last {
+                        progressAddiction(1 / steps)
                         createGroup.leave()
                     }
                 }
@@ -142,8 +142,8 @@ class AuthEnterInitialsViewModel: AuthEnterInitialsViewModelProtocol {
                 lastMessage: .empty(),
                 type: .personalCorr
         )) { chatErr in
-            if chatErr {
-                err = true
+            if chatErr != nil {
+                err = chatErr
             }
             progressAddiction(1 / steps)
             createGroup.leave()
@@ -151,12 +151,8 @@ class AuthEnterInitialsViewModel: AuthEnterInitialsViewModelProtocol {
         
         createGroup.notify(queue: .main) { [weak self] in
             guard let self = self else { return }
-            if err {
-                self.viewController.presentErrorAlert("Something went wrong")
-            } else {
-                completion(err)
-                self.router.showBottomBar()
-            }
+            completion(err)
+            self.router.showBottomBar()
         }
     }
     

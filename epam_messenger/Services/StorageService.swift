@@ -11,19 +11,19 @@ protocol StorageServiceProtocol: AutoMockable {
     func uploadUserAvatar(
         userId: String,
         avatar: UIImage,
-        completion: @escaping (Bool) -> Void
+        completion: @escaping (Error?) -> Void
     )
     func uploadImage(
         chatId: String,
         image: UIImage,
         timestamp: Date,
         index: Int,
-        completion: @escaping (MessageModel.MessageKind?) -> Void
+        completion: @escaping (MessageModel.MessageKind?, Error?) -> Void
     )
     func uploadAudio(
         chatId: String,
         data: Data,
-        completion: @escaping (MessageModel.MessageKind?) -> Void
+        completion: @escaping (MessageModel.MessageKind?, Error?) -> Void
     )
 }
 
@@ -33,14 +33,14 @@ extension StorageServiceProtocol {
         image: UIImage,
         timestamp: Date,
         index: Int,
-        completion: @escaping (MessageModel.MessageKind?) -> Void = {_ in}
+        completion: @escaping (MessageModel.MessageKind?, Error?) -> Void = {_, _ in}
     ) {
         uploadImage(chatId: chatId, image: image, timestamp: timestamp, index: index, completion: completion)
     }
     func uploadAudio(
         chatId: String,
         data: Data,
-        completion: @escaping (MessageModel.MessageKind?) -> Void = {_ in}
+        completion: @escaping (MessageModel.MessageKind?, Error?) -> Void = {_, _ in}
     ) {
         uploadAudio(chatId: chatId, data: data, completion: completion)
     }
@@ -54,7 +54,7 @@ class StorageService: StorageServiceProtocol {
         image: UIImage,
         timestamp: Date,
         index: Int,
-        completion: @escaping (MessageModel.MessageKind?) -> Void
+        completion: @escaping (MessageModel.MessageKind?, Error?) -> Void
     ) {
         uploadImage(
             image,
@@ -69,7 +69,7 @@ class StorageService: StorageServiceProtocol {
     func uploadAudio(
         chatId: String,
         data: Data,
-        completion: @escaping (MessageModel.MessageKind?) -> Void
+        completion: @escaping (MessageModel.MessageKind?, Error?) -> Void
     ) {
         let metadata = StorageMetadata()
         metadata.contentType = "audio/x-m4a"
@@ -78,29 +78,31 @@ class StorageService: StorageServiceProtocol {
             .child(chatId)
             .child("audio")
             .child("\(Date().iso8601withFractionalSeconds).m4a")
-            .putData(data, metadata: metadata) { metadata, _ in
-                if let path = metadata?.path {
-                    completion(.audio(
-                        path: path
-                        ))
-                } else {
-                    completion(nil)
+            .putData(data, metadata: metadata) { metadata, err in
+                guard err == nil else {
+                    completion(nil, err)
+                    return
                 }
+                
+                let path = metadata!.path!
+                completion(.audio(
+                    path: path
+                ), err)
         }
     }
     
     func uploadUserAvatar(
         userId: String,
         avatar: UIImage,
-        completion: @escaping (Bool) -> Void
+        completion: @escaping (Error?) -> Void
     ) {
         uploadImage(
             avatar,
             to: storage.child("users")
                 .child(userId)
                 .child("avatar.jpg")
-        ) { kind in
-                completion(kind != nil)
+        ) { kind, err in
+            completion(err)
         }
     }
     
@@ -109,26 +111,24 @@ class StorageService: StorageServiceProtocol {
     private func uploadImage(
         _ image: UIImage,
         to imageRef: StorageReference,
-        completion: @escaping (MessageModel.MessageKind?) -> Void
+        completion: @escaping (MessageModel.MessageKind?, Error?) -> Void
     ) {
         let metadata = StorageMetadata()
         metadata.contentType = "image/jpeg"
         
-        if let data = image.jpegData(compressionQuality: 0.9) {
-            imageRef.putData(data, metadata: metadata) { metadata, _ in
-                    if let path = metadata?.path {
-                        self.waitSmallImageCreation(imageRef) {
-                            completion(.image(
-                                path: path,
-                                size: image.size
-                            ))
-                        }
-                    } else {
-                        completion(nil)
-                    }
+        let data = image.jpegData(compressionQuality: 0.9)!
+        imageRef.putData(data, metadata: metadata) { metadata, err in
+            guard err == nil else {
+                completion(nil, err)
+                return
             }
-        } else {
-            completion(nil)
+        
+            self.waitSmallImageCreation(imageRef) {
+                completion(.image(
+                    path: metadata!.path!,
+                    size: image.size
+                ), nil)
+            }
         }
     }
     

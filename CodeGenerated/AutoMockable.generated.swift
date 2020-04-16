@@ -527,12 +527,12 @@ class FirestoreServiceProtocolMock: FirestoreServiceProtocol {
     var createUserCompletionCalled: Bool {
         return createUserCompletionCallsCount > 0
     }
-    var createUserCompletionReceivedArguments: (userModel: UserModel, completion: (Bool) -> Void)?
-    var createUserCompletionReceivedInvocations: [(userModel: UserModel, completion: (Bool) -> Void)] = []
+    var createUserCompletionReceivedArguments: (userModel: UserModel, completion: (Error?) -> Void)?
+    var createUserCompletionReceivedInvocations: [(userModel: UserModel, completion: (Error?) -> Void)] = []
     var createUserCompletionReturnValue: String!
-    var createUserCompletionClosure: ((UserModel, @escaping (Bool) -> Void) -> String)?
+    var createUserCompletionClosure: ((UserModel, @escaping (Error?) -> Void) -> String)?
 
-    func createUser(        _ userModel: UserModel,        completion: @escaping (Bool) -> Void    ) -> String {
+    func createUser(        _ userModel: UserModel,        completion: @escaping (Error?) -> Void    ) -> String {
         createUserCompletionCallsCount += 1
         createUserCompletionReceivedArguments = (userModel: userModel, completion: completion)
         createUserCompletionReceivedInvocations.append((userModel: userModel, completion: completion))
@@ -545,11 +545,11 @@ class FirestoreServiceProtocolMock: FirestoreServiceProtocol {
     var createChatCompletionCalled: Bool {
         return createChatCompletionCallsCount > 0
     }
-    var createChatCompletionReceivedArguments: (chatModel: ChatModel, completion: (Bool) -> Void)?
-    var createChatCompletionReceivedInvocations: [(chatModel: ChatModel, completion: (Bool) -> Void)] = []
-    var createChatCompletionClosure: ((ChatModel, @escaping (Bool) -> Void) -> Void)?
+    var createChatCompletionReceivedArguments: (chatModel: ChatModel, completion: (Error?) -> Void)?
+    var createChatCompletionReceivedInvocations: [(chatModel: ChatModel, completion: (Error?) -> Void)] = []
+    var createChatCompletionClosure: ((ChatModel, @escaping (Error?) -> Void) -> Void)?
 
-    func createChat(        _ chatModel: ChatModel,        completion: @escaping (Bool) -> Void    ) {
+    func createChat(        _ chatModel: ChatModel,        completion: @escaping (Error?) -> Void    ) {
         createChatCompletionCallsCount += 1
         createChatCompletionReceivedArguments = (chatModel: chatModel, completion: completion)
         createChatCompletionReceivedInvocations.append((chatModel: chatModel, completion: completion))
@@ -562,11 +562,11 @@ class FirestoreServiceProtocolMock: FirestoreServiceProtocol {
     var createContactCompletionCalled: Bool {
         return createContactCompletionCallsCount > 0
     }
-    var createContactCompletionReceivedArguments: (contactModel: ContactModel, completion: (Bool) -> Void)?
-    var createContactCompletionReceivedInvocations: [(contactModel: ContactModel, completion: (Bool) -> Void)] = []
-    var createContactCompletionClosure: ((ContactModel, @escaping (Bool) -> Void) -> Void)?
+    var createContactCompletionReceivedArguments: (contactModel: ContactModel, completion: (Error?) -> Void)?
+    var createContactCompletionReceivedInvocations: [(contactModel: ContactModel, completion: (Error?) -> Void)] = []
+    var createContactCompletionClosure: ((ContactModel, @escaping (Error?) -> Void) -> Void)?
 
-    func createContact(        _ contactModel: ContactModel,        completion: @escaping (Bool) -> Void    ) {
+    func createContact(        _ contactModel: ContactModel,        completion: @escaping (Error?) -> Void    ) {
         createContactCompletionCallsCount += 1
         createContactCompletionReceivedArguments = (contactModel: contactModel, completion: completion)
         createContactCompletionReceivedInvocations.append((contactModel: contactModel, completion: completion))
@@ -847,11 +847,11 @@ class StorageServiceProtocolMock: StorageServiceProtocol {
     var uploadUserAvatarUserIdAvatarCompletionCalled: Bool {
         return uploadUserAvatarUserIdAvatarCompletionCallsCount > 0
     }
-    var uploadUserAvatarUserIdAvatarCompletionReceivedArguments: (userId: String, avatar: UIImage, completion: (Bool) -> Void)?
-    var uploadUserAvatarUserIdAvatarCompletionReceivedInvocations: [(userId: String, avatar: UIImage, completion: (Bool) -> Void)] = []
-    var uploadUserAvatarUserIdAvatarCompletionClosure: ((String, UIImage, @escaping (Bool) -> Void) -> Void)?
+    var uploadUserAvatarUserIdAvatarCompletionReceivedArguments: (userId: String, avatar: UIImage, completion: (Error?) -> Void)?
+    var uploadUserAvatarUserIdAvatarCompletionReceivedInvocations: [(userId: String, avatar: UIImage, completion: (Error?) -> Void)] = []
+    var uploadUserAvatarUserIdAvatarCompletionClosure: ((String, UIImage, @escaping (Error?) -> Void) -> Void)?
 
-    func uploadUserAvatar(        userId: String,        avatar: UIImage,        completion: @escaping (Bool) -> Void    ) {
+    func uploadUserAvatar(        userId: String,        avatar: UIImage,        completion: @escaping (Error?) -> Void    ) {
         uploadUserAvatarUserIdAvatarCompletionCallsCount += 1
         uploadUserAvatarUserIdAvatarCompletionReceivedArguments = (userId: userId, avatar: avatar, completion: completion)
         uploadUserAvatarUserIdAvatarCompletionReceivedInvocations.append((userId: userId, avatar: avatar, completion: completion))
@@ -864,11 +864,11 @@ class StorageServiceProtocolMock: StorageServiceProtocol {
     var uploadImageChatIdImageTimestampIndexCompletionCalled: Bool {
         return uploadImageChatIdImageTimestampIndexCompletionCallsCount > 0
     }
-    var uploadImageChatIdImageTimestampIndexCompletionReceivedArguments: (chatId: String, image: UIImage, timestamp: Date, index: Int, completion: (MessageModel.MessageKind?) -> Void)?
-    var uploadImageChatIdImageTimestampIndexCompletionReceivedInvocations: [(chatId: String, image: UIImage, timestamp: Date, index: Int, completion: (MessageModel.MessageKind?) -> Void)] = []
-    var uploadImageChatIdImageTimestampIndexCompletionClosure: ((String, UIImage, Date, Int, @escaping (MessageModel.MessageKind?) -> Void) -> Void)?
+    var uploadImageChatIdImageTimestampIndexCompletionReceivedArguments: (chatId: String, image: UIImage, timestamp: Date, index: Int, completion: (MessageModel.MessageKind?, Error?) -> Void)?
+    var uploadImageChatIdImageTimestampIndexCompletionReceivedInvocations: [(chatId: String, image: UIImage, timestamp: Date, index: Int, completion: (MessageModel.MessageKind?, Error?) -> Void)] = []
+    var uploadImageChatIdImageTimestampIndexCompletionClosure: ((String, UIImage, Date, Int, @escaping (MessageModel.MessageKind?, Error?) -> Void) -> Void)?
 
-    func uploadImage(        chatId: String,        image: UIImage,        timestamp: Date,        index: Int,        completion: @escaping (MessageModel.MessageKind?) -> Void    ) {
+    func uploadImage(        chatId: String,        image: UIImage,        timestamp: Date,        index: Int,        completion: @escaping (MessageModel.MessageKind?, Error?) -> Void    ) {
         uploadImageChatIdImageTimestampIndexCompletionCallsCount += 1
         uploadImageChatIdImageTimestampIndexCompletionReceivedArguments = (chatId: chatId, image: image, timestamp: timestamp, index: index, completion: completion)
         uploadImageChatIdImageTimestampIndexCompletionReceivedInvocations.append((chatId: chatId, image: image, timestamp: timestamp, index: index, completion: completion))
@@ -881,11 +881,11 @@ class StorageServiceProtocolMock: StorageServiceProtocol {
     var uploadAudioChatIdDataCompletionCalled: Bool {
         return uploadAudioChatIdDataCompletionCallsCount > 0
     }
-    var uploadAudioChatIdDataCompletionReceivedArguments: (chatId: String, data: Data, completion: (MessageModel.MessageKind?) -> Void)?
-    var uploadAudioChatIdDataCompletionReceivedInvocations: [(chatId: String, data: Data, completion: (MessageModel.MessageKind?) -> Void)] = []
-    var uploadAudioChatIdDataCompletionClosure: ((String, Data, @escaping (MessageModel.MessageKind?) -> Void) -> Void)?
+    var uploadAudioChatIdDataCompletionReceivedArguments: (chatId: String, data: Data, completion: (MessageModel.MessageKind?, Error?) -> Void)?
+    var uploadAudioChatIdDataCompletionReceivedInvocations: [(chatId: String, data: Data, completion: (MessageModel.MessageKind?, Error?) -> Void)] = []
+    var uploadAudioChatIdDataCompletionClosure: ((String, Data, @escaping (MessageModel.MessageKind?, Error?) -> Void) -> Void)?
 
-    func uploadAudio(        chatId: String,        data: Data,        completion: @escaping (MessageModel.MessageKind?) -> Void    ) {
+    func uploadAudio(        chatId: String,        data: Data,        completion: @escaping (MessageModel.MessageKind?, Error?) -> Void    ) {
         uploadAudioChatIdDataCompletionCallsCount += 1
         uploadAudioChatIdDataCompletionReceivedArguments = (chatId: chatId, data: data, completion: completion)
         uploadAudioChatIdDataCompletionReceivedInvocations.append((chatId: chatId, data: data, completion: completion))
