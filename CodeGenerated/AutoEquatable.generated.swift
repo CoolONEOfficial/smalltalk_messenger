@@ -54,6 +54,7 @@ public func == (lhs: UserModel, rhs: UserModel) -> Bool {
     guard compareOptionals(lhs: lhs.documentId, rhs: rhs.documentId, compare: ==) else { return false }
     guard lhs.name == rhs.name else { return false }
     guard lhs.surname == rhs.surname else { return false }
+    guard lhs.phoneNumber == rhs.phoneNumber else { return false }
     guard compareOptionals(lhs: lhs.hexColor, rhs: rhs.hexColor, compare: ==) else { return false }
     guard lhs.online == rhs.online else { return false }
     guard compareOptionals(lhs: lhs.typing, rhs: rhs.typing, compare: ==) else { return false }

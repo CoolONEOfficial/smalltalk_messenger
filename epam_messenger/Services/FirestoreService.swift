@@ -37,6 +37,14 @@ protocol FirestoreServiceProtocol: AutoMockable {
         _ userModel: UserModel,
         completion: @escaping (Bool) -> Void
     ) -> String
+    func createChat(
+        _ chatModel: ChatModel,
+        completion: @escaping (Bool) -> Void
+    )
+    func createContact(
+        _ contactModel: ContactModel,
+        completion: @escaping (Bool) -> Void
+    )
     func currentUserData(
         completion: @escaping (UserModel?) -> Void
     )
@@ -51,6 +59,10 @@ protocol FirestoreServiceProtocol: AutoMockable {
     func chatData(
         _ chatId: String,
         completion: @escaping (ChatModel?) -> Void
+    )
+    func searchUsers(
+        by phoneNumbers: [String],
+        completion: @escaping ([UserModel]?, Bool) -> Void
     )
     func onlineCurrentUser()
     func offlineCurrentUser()
@@ -98,7 +110,7 @@ extension FirestoreServiceProtocol {
 }
 
 class FirestoreService: FirestoreServiceProtocol {
-    
+
     lazy var db: Firestore = Firestore.firestore()
     
     lazy var chatListQuery: Query = {
@@ -133,7 +145,7 @@ class FirestoreService: FirestoreServiceProtocol {
                 timestamp: Timestamp()
             )
             
-            var messageData = try FirestoreEncoder().encode(messageModel)
+            let messageData = try FirestoreEncoder().encode(messageModel)
             
             db.collection("chats")
                 .document(chatId)
@@ -194,7 +206,7 @@ class FirestoreService: FirestoreServiceProtocol {
         _ userModel: UserModel,
         completion: @escaping (Bool) -> Void
     ) -> String {
-        let newDoc = db.collection("users").document()
+        let newDoc = db.collection("users").document(Auth.auth().currentUser!.uid)
         do {
             let userData = try FirestoreEncoder().encode(userModel)
             
@@ -206,6 +218,41 @@ class FirestoreService: FirestoreServiceProtocol {
             completion(false)
         }
         return newDoc.documentID
+    }
+    
+    func createChat(
+        _ chatModel: ChatModel,
+        completion: @escaping (Bool) -> Void
+    ) {
+        do {
+            let chatData = try FirestoreEncoder().encode(chatModel)
+            
+            db.collection("chats").addDocument(data: chatData) { err in
+                completion(err == nil)
+            }
+        } catch {
+            debugPrint("Error: \(error)")
+            completion(false)
+        }
+    }
+    
+    func createContact(
+        _ contactModel: ContactModel,
+        completion: @escaping (Bool) -> Void
+    ) {
+        do {
+            let contactData = try FirestoreEncoder().encode(contactModel)
+            
+            db.collection("users")
+                .document(Auth.auth().currentUser!.uid)
+                .collection("contacts")
+                .addDocument(data: contactData) { err in
+                completion(err == nil)
+            }
+        } catch {
+            debugPrint("Error: \(error)")
+            completion(false)
+        }
     }
     
     func currentUserData(
@@ -259,6 +306,35 @@ class FirestoreService: FirestoreServiceProtocol {
         }
     }
     
+    @Atomic var loadedCount = 0
+    
+    func searchUsers(
+        by phoneNumbers: [String],
+        completion: @escaping ([UserModel]?, Bool) -> Void
+    ) {
+        let chunked = phoneNumbers.chunked(into: 10)
+        loadedCount = 0
+        
+        for chunk in chunked {
+            db.collection("users")
+                .whereField("phoneNumber", in: chunk)
+                .getDocuments { snapshot, err in
+                    self.loadedCount += 1
+                    let last = self.loadedCount == chunked.count - 1
+                    guard err == nil else {
+                        debugPrint("Error while get contacts data: \(err!.localizedDescription)")
+                        completion(nil, last)
+                        return
+                    }
+                    
+                    completion(
+                        snapshot?.documents.map { UserModel.fromSnapshot($0)! },
+                        last
+                    )
+            }
+        }
+    }
+    
     func onlineCurrentUser() {
         updateOnlineStatus(true)
     }
@@ -294,4 +370,14 @@ class FirestoreService: FirestoreServiceProtocol {
     lazy var usersListQuery: Query = {
         return db.collection("users").order(by: "name")
     }()
+}
+
+// MARK: Contacts creation helper
+
+extension Array {
+    func chunked(into size: Int) -> [[Element]] {
+        return stride(from: 0, to: count, by: size).map {
+            Array(self[$0 ..< Swift.min($0 + size, count)])
+        }
+    }
 }

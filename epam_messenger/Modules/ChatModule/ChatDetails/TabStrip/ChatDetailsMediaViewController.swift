@@ -51,6 +51,9 @@ class ChatDetailsMediaViewController: UICollectionViewController {
     override func viewDidLoad() {
         collectionView.register(cellType: MediaCell.self)
         collectionView.alwaysBounceVertical = true
+        collectionView.backgroundView = .init()
+        view.backgroundColor = .clear
+        collectionView.backgroundColor = .clear
     }
     
     func updateData(_ chat: ChatProtocol) {

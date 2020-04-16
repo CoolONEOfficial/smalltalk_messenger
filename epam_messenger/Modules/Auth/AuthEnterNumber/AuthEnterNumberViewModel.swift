@@ -18,12 +18,12 @@ struct AuthEnterNumberViewModel: AuthEnterNumberViewModelProtocol {
     
     func verifyNumber(number: String) {
         PhoneAuthProvider.provider().verifyPhoneNumber(number, uiDelegate: nil) { (verificationId, error) in
-            guard let verificationId = verificationId else { return }
-            
             if let error = error {
                 self.viewController.showErrorAlert(error.localizedDescription)
                 return
             }
+            
+            guard let verificationId = verificationId else { return }
             
             guard let router = self.router as? AuthRouter else { return }
             router.showAuthEnterCode(verificationId: verificationId, number: number)

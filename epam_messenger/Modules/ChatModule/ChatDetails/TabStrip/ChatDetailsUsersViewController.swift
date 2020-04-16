@@ -22,6 +22,9 @@ class ChatDetailsUsersViewController: UITableViewController {
     
     override func viewDidLoad() {
         tableView.register(cellType: UserCell.self)
+        tableView.backgroundView = .init()
+        tableView.backgroundColor = .clear
+        view.backgroundColor = .clear
     }
     
     func updateData(_ chat: ChatProtocol) {

@@ -114,6 +114,17 @@ class ChatDetailsViewController: UIViewController {
         tabStrip.view.widthToSuperview()
     }
     
+    private func getImageFrom(gradientLayer:CAGradientLayer) -> UIImage? {
+        var gradientImage: UIImage?
+        UIGraphicsBeginImageContext(gradientLayer.frame.size)
+        if let context = UIGraphicsGetCurrentContext() {
+            gradientLayer.render(in: context)
+            gradientImage = UIGraphicsGetImageFromCurrentImageContext()?.resizableImage(withCapInsets: UIEdgeInsets.zero, resizingMode: .stretch)
+        }
+        UIGraphicsEndImageContext()
+        return gradientImage
+    }
+    
     private func setupNavigationBar() {
         let navBar = navigationController?.navigationBar
         navBar?.setBackgroundImage(UIImage(), for: .default)
@@ -127,10 +138,19 @@ class ChatDetailsViewController: UIViewController {
             target: self,
             action: #selector(didCancelTap)
         )
+        navigationItem.leftBarButtonItem?.tintColor = UIColor.lightText.withAlphaComponent(1)
     }
     
     private func setupAvatar() {
         avatarImage.top(to: view, priority: .defaultHigh)
+        let gradient = CAGradientLayer()
+        var bounds = avatarImage!.bounds
+        bounds.size.height = 100
+        gradient.frame = bounds
+        gradient.colors = [UIColor.clear.cgColor, UIColor.black.withAlphaComponent(0.5).cgColor]
+        gradient.startPoint = CGPoint(x: 0, y: 1)
+        gradient.endPoint = CGPoint(x: 0, y: 0)
+        avatarImage.layer.addSublayer(gradient)
     }
 
     @objc func didCancelTap() {
@@ -170,6 +190,10 @@ extension ChatDetailsViewController: UIScrollViewDelegate {
                 y: 0
             )
             avatarImage.layer.opacity = Float(1 - yOffsetScale)
+            navigationItem.leftBarButtonItem?.tintColor = UIColor.blend(
+                color1: UIColor.lightText.withAlphaComponent(1), intensity1: 1 - yOffsetScale,
+                color2: .accent, intensity2: yOffsetScale
+            )
             
         case tabStripViewController:
             if yOffset <= 0 {

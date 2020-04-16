@@ -129,7 +129,27 @@ class AuthEnterInitialsViewController: UIViewController {
     // MARK: - Actions
 
     @objc func touchNext() {
-        viewModel.createUser(userModel: user, avatar: avatarImage.image)
+        let alertView = UIAlertController(title: "Please wait", message: "Creating user", preferredStyle: .alert)
+
+        present(alertView, animated: true, completion: { [weak self] in
+            guard let self = self else { return }
+            let progressView = UIProgressView()
+            progressView.progress = 0
+            progressView.tintColor = self.view.tintColor
+            alertView.view.addSubview(progressView)
+            progressView.bottomToSuperview(offset: -10)
+            progressView.horizontalToSuperview()
+            progressView.clipsToBounds = true
+            
+            self.viewModel.createUser(
+                userModel: self.user,
+                avatar: self.avatarImage.image,
+                progressAddiction: { addiction in
+                progressView.progress += addiction
+            }) { _ in
+                self.dismiss(animated: true, completion: nil)
+            }
+        })
     }
     
     @IBAction func didNameChanged(_ sender: Any) {

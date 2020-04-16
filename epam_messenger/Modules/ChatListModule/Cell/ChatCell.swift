@@ -74,12 +74,11 @@ class ChatCell: UITableViewCell, NibReusable {
         messageLabel.numberOfLines = 2
         
         delegate?.userData(
-            chat.users.filter({ $0 != Auth.auth().currentUser!.uid }).first!
+            (chat.users.filter({ $0 != Auth.auth().currentUser!.uid }).first ?? chat.users.first)!
         ) { friendModel in
             self.avatar.setup(withUser: friendModel)
             
-            let friendModel = friendModel ?? .deleted()
-            self.titleLabel.text = friendModel.fullName
+            self.titleLabel.text = UserModel.convertUser(friendModel).fullName
         }
     }
 }

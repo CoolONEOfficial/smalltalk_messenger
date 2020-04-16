@@ -7,6 +7,7 @@
 
 import UIKit
 import FirebaseStorage
+import FirebaseAuth
 
 class AvatarView: UIImageView {
     
@@ -14,17 +15,13 @@ class AvatarView: UIImageView {
     
     let loading = UIActivityIndicatorView()
     var placeholderLabel = UILabel()
-    var baseSetupCompleted = false
     
     // MARK: - Init
     
     private func baseSetup(roundCorners: Bool = true) {
-        if !baseSetupCompleted {
-            layer.cornerRadius = roundCorners ? bounds.width / 2 : 0
-            layer.masksToBounds = true
-            contentMode = .scaleAspectFill
-            baseSetupCompleted = true
-        }
+        contentMode = .scaleAspectFill
+        layer.cornerRadius = roundCorners ? bounds.width / 2 : 0
+        layer.masksToBounds = true
     }
     
     private func setupPlaceholder(_ text: String?, _ color: UIColor) {
@@ -48,11 +45,15 @@ class AvatarView: UIImageView {
     
     func setup(withUser user: UserProtocol?) {
         if let user = user {
-            setup(
-                withRef: user.avatarRef,
-                text: user.placeholderName,
-                color: user.color ?? .accent
-            )
+            if user.documentId == Auth.auth().currentUser!.uid {
+                setupBookmark()
+            } else {
+                setup(
+                    withRef: user.avatarRef,
+                    text: user.placeholderName,
+                    color: user.color ?? .accent
+                )
+            }
         } else {
             setup(withImage: #imageLiteral(resourceName: "ic_unknown_user"))
         }
@@ -85,6 +86,17 @@ class AvatarView: UIImageView {
         loading.removeFromSuperview()
         placeholderLabel.removeFromSuperview()
         set(image: image, focusOnFaces: true)
+    }
+    
+    func setupBookmark() {
+        baseSetup()
+        contentMode = .center
+        
+        backgroundColor = .accent
+        loading.removeFromSuperview()
+        placeholderLabel.removeFromSuperview()
+        image = UIImage(systemName: "bookmark.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 25))
+        tintColor = .white
     }
     
 }

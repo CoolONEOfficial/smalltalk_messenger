@@ -6,11 +6,17 @@
 //
 
 import UIKit
+import Foundation
+import ContactsUI
+import FirebaseAuth
+import PhoneNumberKit
 
 protocol AuthEnterInitialsViewModelProtocol {
     func createUser(
         userModel: UserModel,
-        avatar: UIImage?
+        avatar: UIImage?,
+        progressAddiction: @escaping (Float) -> Void,
+        completion: @escaping (Bool) -> Void
     )
 }
 
@@ -42,28 +48,105 @@ class AuthEnterInitialsViewModel: AuthEnterInitialsViewModelProtocol {
     
     func createUser(
         userModel: UserModel,
-        avatar: UIImage?
+        avatar: UIImage?,
+        progressAddiction: @escaping (Float) -> Void,
+        completion: @escaping (Bool) -> Void
     ) {
         let createGroup = DispatchGroup()
         
         var err = false
+        var steps: Float = 0
         
+        steps += 1
         createGroup.enter()
         let userId = firestoreService.createUser(userModel) { result in
             if !result {
                 err = true
             }
+            progressAddiction(1 / steps)
             createGroup.leave()
         }
         
         if let avatar = avatar {
+            steps += 1
             createGroup.enter()
             storageService.uploadUserAvatar(userId: userId, avatar: avatar) { result in
                 if !result {
                     err = true
                 }
+                progressAddiction(1 / steps)
                 createGroup.leave()
             }
+        }
+        
+        steps += 1
+        createGroup.enter()
+        let allContacts = getContacts()
+        firestoreService.searchUsers(
+            by: allContacts
+        ) { [weak self] contactList, last in
+            guard let self = self else { return }
+            
+            if let contactList = contactList {
+                
+                let chatsGroup = DispatchGroup()
+               
+                for contact in contactList {
+                    chatsGroup.enter()
+                    self.firestoreService.createChat(
+                        .init(
+                            documentId: nil,
+                            users: [
+                                Auth.auth().currentUser!.uid,
+                                contact.documentId!
+                            ],
+                            lastMessage: .empty(),
+                            type: .personalCorr
+                    )) { chatErr in
+                        if chatErr {
+                            err = true
+                        }
+                        progressAddiction(1 / steps / (Float(allContacts.count) / 10) / 2)
+                        chatsGroup.leave()
+                    }
+                    
+                    chatsGroup.enter()
+                    self.firestoreService.createContact(.init(
+                        localName: contact.fullName,
+                        userId: contact.documentId!)
+                    ) { contactErr in
+                        if contactErr {
+                            err = true
+                        }
+                        progressAddiction(1 / steps / (Float(allContacts.count) / 10) / 2)
+                        chatsGroup.leave()
+                    }
+                }
+                
+                chatsGroup.notify(queue: .main) {
+                    if last {
+                        createGroup.leave()
+                    }
+                }
+            }
+        }
+        
+        steps += 1
+        createGroup.enter()
+        self.firestoreService.createChat(
+            .init(
+                documentId: nil,
+                users: [
+                    Auth.auth().currentUser!.uid
+                ],
+                lastMessage: .empty(),
+                type: .personalCorr
+        )) { chatErr in
+            if chatErr {
+                err = true
+            }
+            progressAddiction(1 / steps)
+            createGroup.leave()
         }
         
         createGroup.notify(queue: .main) { [weak self] in
@@ -71,8 +154,47 @@ class AuthEnterInitialsViewModel: AuthEnterInitialsViewModelProtocol {
             if err {
                 self.viewController.presentErrorAlert("Something went wrong")
             } else {
+                completion(err)
                 self.router.showBottomBar()
             }
         }
+    }
+    
+    private func getContacts() -> [String] {
+        let contactStore = CNContactStore()
+        var contacts = [String]()
+        let keys = [
+                CNContactFormatter.descriptorForRequiredKeys(for: .fullName),
+                        CNContactPhoneNumbersKey
+                ] as [Any]
+        let request = CNContactFetchRequest(keysToFetch: keys as! [CNKeyDescriptor])
+        do {
+            try contactStore.enumerateContacts(with: request) { (contact, _) in
+                let validTypes = [
+                    CNLabelPhoneNumberiPhone,
+                    CNLabelPhoneNumberMobile,
+                    CNLabelPhoneNumberMain
+                ]
+
+                let numbers = contact.phoneNumbers.compactMap { phoneNumber -> String? in
+                    guard let label = phoneNumber.label, validTypes.contains(label) else { return nil }
+                    return phoneNumber.value.stringValue
+                }
+                
+                contacts.append(contentsOf: numbers)
+            }
+        } catch {
+            print("unable to fetch contacts")
+        }
+        
+        let phoneNumberKit = PhoneNumberKit()
+        let currentPhoneNumber = Auth.auth().currentUser!.phoneNumber
+        let parsed = phoneNumberKit.parse(contacts, shouldReturnFailedEmptyNumbers: true)
+            .filter({ !$0.notParsed() })
+            .map({ phoneNumberKit.format($0, toType: .e164) })
+            .filter({ $0 != currentPhoneNumber })
+            .unique()
+        
+        return parsed
     }
 }

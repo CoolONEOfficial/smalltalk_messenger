@@ -73,11 +73,9 @@ extension ChatModel: ChatProtocol {
         
         switch type {
         case .personalCorr:
-            if let friendId = friendId {
-                path = "users/\(friendId)/avatar.jpg"
-            } else {
-                path = nil
-            }
+            let friendId = self.friendId ?? Auth.auth().currentUser?.uid
+            
+            path = "users/\(friendId)/avatar.jpg"
         case .chat:
             if let docId = documentId {
                 path = "chats/\(docId)/avatar.jpg"
@@ -96,18 +94,22 @@ extension ChatModel: ChatProtocol {
         
         switch type {
         case .personalCorr:
-            firestoreService.userData(friendId!) { user in
-                if let user = user {
-                    let title = user.fullName
-                    completion(
-                        title,
-                        user.typing == self.documentId!
-                            ? "\(user.name) typing..."
-                            : user.onlineText,
-                        user.placeholderName,
-                        user.color
-                    )
+            if let friendId = friendId {
+                firestoreService.userData(friendId) { user in
+                    if let user = user {
+                        let title = user.fullName
+                        completion(
+                            title,
+                            user.typing == self.documentId!
+                                ? "\(user.name) typing..."
+                                : user.onlineText,
+                            user.placeholderName,
+                            user.color
+                        )
+                    }
                 }
+            } else {
+                completion("Saved messages", "", "", nil)
             }
         case .chat(let title, _, let color):
             firestoreService.userListData(users) { userList in

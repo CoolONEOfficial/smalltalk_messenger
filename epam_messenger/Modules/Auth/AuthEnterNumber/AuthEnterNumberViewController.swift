@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import PhoneNumberKit
 
 protocol AuthEnterNumberViewControllerProtocol {
     func showErrorAlert(_ text: String)
@@ -14,7 +15,7 @@ protocol AuthEnterNumberViewControllerProtocol {
 class AuthEnterNumberViewController: UIViewController {
     var viewModel: AuthEnterNumberViewModelProtocol!
     
-    @IBOutlet weak var numberTextField: UITextField!
+    @IBOutlet weak var numberTextField: PhoneNumberTextField!
     
     @objc func touchNext() {
         guard let number = numberTextField.text else { return }
@@ -39,47 +40,25 @@ class AuthEnterNumberViewController: UIViewController {
         navigationItem.hidesBackButton = true
         navigationItem.rightBarButtonItem = next
         
+        numberTextField.withFlag = true
+        numberTextField.withPrefix = true
+        
         numberTextField.becomeFirstResponder()
-        numberTextField.delegate = self
     }
     
     override func viewDidLayoutSubviews() {
+        let padding = numberTextField.frame.minX
+        
         let borderTop = CALayer()
-        borderTop.frame = CGRect(x: -16, y: 0, width: numberTextField.frame.width + 32, height: 0.75)
+        borderTop.frame = CGRect(x: -padding, y: 0, width: numberTextField.frame.width + padding * 2, height: 0.75)
         borderTop.backgroundColor = UIColor.systemGray2.cgColor
 
         let borderBottom = CALayer()
-        borderBottom.frame = CGRect(x: -16, y: numberTextField.frame.height - 0.75, width: numberTextField.frame.width + 32, height: 0.75)
+        borderBottom.frame = CGRect(x: -padding, y: numberTextField.frame.height - 0.75, width: numberTextField.frame.width + padding * 2, height: 0.75)
         borderBottom.backgroundColor = UIColor.systemGray2.cgColor
         
         numberTextField.layer.addSublayer(borderTop)
         numberTextField.layer.addSublayer(borderBottom)
-    }
-    
-    func formattedNumber(number: String) -> String {
-        let cleanPhoneNumber = number.components(separatedBy: CharacterSet.decimalDigits.inverted).joined()
-        let mask = "+X (XXX) XXX-XXXX"
-
-        var result = ""
-        var index = cleanPhoneNumber.startIndex
-        for ch in mask where index < cleanPhoneNumber.endIndex {
-            if ch == "X" {
-                result.append(cleanPhoneNumber[index])
-                index = cleanPhoneNumber.index(after: index)
-            } else {
-                result.append(ch)
-            }
-        }
-        return result
-    }
-}
-
-extension AuthEnterNumberViewController: UITextFieldDelegate {
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        guard let text = textField.text else { return false }
-        let newString = (text as NSString).replacingCharacters(in: range, with: string)
-        textField.text = formattedNumber(number: newString)
-        return false
     }
 }
 

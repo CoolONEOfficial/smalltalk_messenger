@@ -539,6 +539,40 @@ class FirestoreServiceProtocolMock: FirestoreServiceProtocol {
         return createUserCompletionClosure.map({ $0(userModel, completion) }) ?? createUserCompletionReturnValue
     }
 
+    //MARK: - createChat
+
+    var createChatCompletionCallsCount = 0
+    var createChatCompletionCalled: Bool {
+        return createChatCompletionCallsCount > 0
+    }
+    var createChatCompletionReceivedArguments: (chatModel: ChatModel, completion: (Bool) -> Void)?
+    var createChatCompletionReceivedInvocations: [(chatModel: ChatModel, completion: (Bool) -> Void)] = []
+    var createChatCompletionClosure: ((ChatModel, @escaping (Bool) -> Void) -> Void)?
+
+    func createChat(        _ chatModel: ChatModel,        completion: @escaping (Bool) -> Void    ) {
+        createChatCompletionCallsCount += 1
+        createChatCompletionReceivedArguments = (chatModel: chatModel, completion: completion)
+        createChatCompletionReceivedInvocations.append((chatModel: chatModel, completion: completion))
+        createChatCompletionClosure?(chatModel, completion)
+    }
+
+    //MARK: - createContact
+
+    var createContactCompletionCallsCount = 0
+    var createContactCompletionCalled: Bool {
+        return createContactCompletionCallsCount > 0
+    }
+    var createContactCompletionReceivedArguments: (contactModel: ContactModel, completion: (Bool) -> Void)?
+    var createContactCompletionReceivedInvocations: [(contactModel: ContactModel, completion: (Bool) -> Void)] = []
+    var createContactCompletionClosure: ((ContactModel, @escaping (Bool) -> Void) -> Void)?
+
+    func createContact(        _ contactModel: ContactModel,        completion: @escaping (Bool) -> Void    ) {
+        createContactCompletionCallsCount += 1
+        createContactCompletionReceivedArguments = (contactModel: contactModel, completion: completion)
+        createContactCompletionReceivedInvocations.append((contactModel: contactModel, completion: completion))
+        createContactCompletionClosure?(contactModel, completion)
+    }
+
     //MARK: - currentUserData
 
     var currentUserDataCompletionCallsCount = 0
@@ -605,6 +639,23 @@ class FirestoreServiceProtocolMock: FirestoreServiceProtocol {
         chatDataCompletionReceivedArguments = (chatId: chatId, completion: completion)
         chatDataCompletionReceivedInvocations.append((chatId: chatId, completion: completion))
         chatDataCompletionClosure?(chatId, completion)
+    }
+
+    //MARK: - searchUsers
+
+    var searchUsersByCompletionCallsCount = 0
+    var searchUsersByCompletionCalled: Bool {
+        return searchUsersByCompletionCallsCount > 0
+    }
+    var searchUsersByCompletionReceivedArguments: (phoneNumbers: [String], completion: ([UserModel]?, Bool) -> Void)?
+    var searchUsersByCompletionReceivedInvocations: [(phoneNumbers: [String], completion: ([UserModel]?, Bool) -> Void)] = []
+    var searchUsersByCompletionClosure: (([String], @escaping ([UserModel]?, Bool) -> Void) -> Void)?
+
+    func searchUsers(        by phoneNumbers: [String],        completion: @escaping ([UserModel]?, Bool) -> Void    ) {
+        searchUsersByCompletionCallsCount += 1
+        searchUsersByCompletionReceivedArguments = (phoneNumbers: phoneNumbers, completion: completion)
+        searchUsersByCompletionReceivedInvocations.append((phoneNumbers: phoneNumbers, completion: completion))
+        searchUsersByCompletionClosure?(phoneNumbers, completion)
     }
 
     //MARK: - onlineCurrentUser

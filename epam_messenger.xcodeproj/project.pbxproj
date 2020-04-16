@@ -75,6 +75,8 @@
 		85B3F1D8243388AF001F92D9 /* UIStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 850C80012428BD7D008BAF24 /* UIStackView.swift */; };
 		85BE9A6924118CF200E6643B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85BE9A6824118CF200E6643B /* AppDelegate.swift */; };
 		85BE9A7524118CF200E6643B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 85BE9A7324118CF200E6643B /* LaunchScreen.storyboard */; };
+		85C3A4CA2447C68500A387EF /* Atomic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85C3A4C92447C68500A387EF /* Atomic.swift */; };
+		85C3A4CC24486B4F00A387EF /* Sequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85C3A4CB24486B4F00A387EF /* Sequence.swift */; };
 		85C4DB3C244109DC0081029F /* ChatDetailsMediaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85C4DB3B244109DC0081029F /* ChatDetailsMediaViewController.swift */; };
 		85C4DB4024410B4A0081029F /* MediaCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85C4DB3E24410B4A0081029F /* MediaCell.swift */; };
 		85C4DB4124410B4A0081029F /* MediaCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 85C4DB3F24410B4A0081029F /* MediaCell.xib */; };
@@ -224,6 +226,8 @@
 		85BE9A7124118CF200E6643B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		85BE9A7424118CF200E6643B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		85BE9A7624118CF200E6643B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		85C3A4C92447C68500A387EF /* Atomic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Atomic.swift; sourceTree = "<group>"; };
+		85C3A4CB24486B4F00A387EF /* Sequence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sequence.swift; sourceTree = "<group>"; };
 		85C4DB3B244109DC0081029F /* ChatDetailsMediaViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatDetailsMediaViewController.swift; sourceTree = "<group>"; };
 		85C4DB3E24410B4A0081029F /* MediaCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaCell.swift; sourceTree = "<group>"; };
 		85C4DB3F24410B4A0081029F /* MediaCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MediaCell.xib; sourceTree = "<group>"; };
@@ -438,6 +442,7 @@
 			isa = PBXGroup;
 			children = (
 				851F581D241D7E2900D04F92 /* Date.swift */,
+				85C3A4CB24486B4F00A387EF /* Sequence.swift */,
 			);
 			path = Foundation;
 			sourceTree = "<group>";
@@ -694,6 +699,14 @@
 			path = epam_messenger;
 			sourceTree = "<group>";
 		};
+		85C3A4C82447C67700A387EF /* Wrappers */ = {
+			isa = PBXGroup;
+			children = (
+				85C3A4C92447C68500A387EF /* Atomic.swift */,
+			);
+			path = Wrappers;
+			sourceTree = "<group>";
+		};
 		85C4DB3D24410AFB0081029F /* MediaCell */ = {
 			isa = PBXGroup;
 			children = (
@@ -751,6 +764,7 @@
 		85FD2A0824182DCD0035AC13 /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				85C3A4C82447C67700A387EF /* Wrappers */,
 				850808C92445CAA400DC9A26 /* Avatar */,
 				85C4DB4524411E7B0081029F /* FirebaseStorage */,
 				850BCE7C243CD0CD00643881 /* Pagination */,
@@ -1247,6 +1261,7 @@
 				857D7CC32418F0C300932457 /* FirestoreCodableInterfaces.swift in Sources */,
 				949BF75224361534006C2AEC /* ContactsListViewController.swift in Sources */,
 				E6846BA8242A95E9006818DE /* AuthRouter.swift in Sources */,
+				85C3A4CC24486B4F00A387EF /* Sequence.swift in Sources */,
 				85812D942433B6E000EA2626 /* MessageCell.swift in Sources */,
 				85B3F1CF24338832001F92D9 /* StorageService.swift in Sources */,
 				E6B74993241449C600F00B29 /* ChatViewController.swift in Sources */,
@@ -1301,6 +1316,7 @@
 				85C4DB4024410B4A0081029F /* MediaCell.swift in Sources */,
 				851F581E241D7E2900D04F92 /* Date.swift in Sources */,
 				85B3F1D32433886F001F92D9 /* MessageForwardContent.swift in Sources */,
+				85C3A4CA2447C68500A387EF /* Atomic.swift in Sources */,
 				85FF256C2414DCDF00A25D7A /* ChatCell.swift in Sources */,
 				850BCE6624369B8700643881 /* SearchDataSource.swift in Sources */,
 				85FD2A0724182CE80035AC13 /* AutoCodable.generated.swift in Sources */,

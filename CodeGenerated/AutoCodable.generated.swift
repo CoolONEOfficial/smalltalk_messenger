@@ -69,6 +69,7 @@ extension ChatType {
 }
 
 
+
 extension MessageModel {
 
     public init(from decoder: Decoder) throws {
@@ -166,6 +167,7 @@ extension UserModel {
         case documentId
         case name
         case surname
+        case phoneNumber
         case hexColor
         case online
         case typing
@@ -177,6 +179,7 @@ extension UserModel {
         documentId = try container.decodeIfPresent(String.self, forKey: .documentId)
         name = try container.decode(String.self, forKey: .name)
         surname = try container.decode(String.self, forKey: .surname)
+        phoneNumber = try container.decode(String.self, forKey: .phoneNumber)
         hexColor = try container.decodeIfPresent(String.self, forKey: .hexColor)
         online = (try? container.decode(Bool.self, forKey: .online)) ?? UserModel.defaultOnline
         typing = try container.decodeIfPresent(String.self, forKey: .typing)

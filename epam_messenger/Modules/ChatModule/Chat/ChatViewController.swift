@@ -178,13 +178,14 @@ class ChatViewController: UIViewController {
     }
     
     private func setupAvatar() {
-        avatarImage.size(.init(width: 40, height: 40))
-        avatarImage.addGestureRecognizer(UITapGestureRecognizer.init(target: self, action: #selector(didNavigationItemsTap)))
-        avatarImage.hero.id = "avatar"
-        
-        
-        
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: avatarImage)
+        if !(viewModel.chat.type == .personalCorr && viewModel.chat.friendId == nil) {
+            avatarImage.size(.init(width: 40, height: 40))
+            avatarImage.addGestureRecognizer(UITapGestureRecognizer.init(target: self, action: #selector(didNavigationItemsTap)
+            ))
+            avatarImage.hero.id = "avatar"
+            
+            navigationItem.rightBarButtonItem = UIBarButtonItem(customView: avatarImage)
+        }
     }
     
     @objc func didNavigationItemsTap() {

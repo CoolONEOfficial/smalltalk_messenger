@@ -14,6 +14,7 @@ public struct UserModel: AutoCodable, AutoEquatable {
     var documentId: String?
     var name: String
     var surname: String
+    var phoneNumber: String
     var hexColor: String?
     let online: Bool
     let typing: String?
@@ -21,12 +22,19 @@ public struct UserModel: AutoCodable, AutoEquatable {
     static let defaultOnline: Bool = false
     
     static func empty() -> UserModel {
-        .init(documentId: nil, name: "", surname: "", online: true, typing: nil)
+        .init(documentId: nil, name: "", surname: "",
+              phoneNumber: Auth.auth().currentUser!.phoneNumber!,
+              online: true, typing: nil)
     }
     
     static func deleted() -> UserModel {
-        .init(documentId: nil, name: "DELETED", surname: "",
+        .init(documentId: nil, name: "DELETED", surname: "", phoneNumber: "",
               hexColor: "#7d7d7d", online: false, typing: nil)
+    }
+    
+    static func saved() -> UserModel {
+        .init(documentId: Auth.auth().currentUser!.uid, name: "Saved messages", surname: "", phoneNumber: Auth.auth().currentUser!.phoneNumber!,
+              hexColor: nil, online: true, typing: nil)
     }
     
     static func fromSnapshot(_ snapshot: DocumentSnapshot) -> UserModel? {
@@ -42,6 +50,18 @@ public struct UserModel: AutoCodable, AutoEquatable {
         } catch let err {
             debugPrint("error while parse test model: \(err)")
             return nil
+        }
+    }
+    
+    static func convertUser(_ user: UserModel?) -> UserModel {
+        if let user = user {
+            if user.documentId == Auth.auth().currentUser!.uid {
+                return .saved()
+            } else {
+                return user
+            }
+        } else {
+            return .deleted()
         }
     }
     

@@ -9,7 +9,7 @@ import Foundation
 import Firebase
 import CodableFirebase
 
-public struct ContactModel: Decodable, AutoEquatable {
+public struct ContactModel: AutoCodable, AutoEquatable {
     let localName: String
     let userId: String
     
