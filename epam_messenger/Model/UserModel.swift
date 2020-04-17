@@ -53,18 +53,6 @@ public struct UserModel: AutoCodable, AutoEquatable {
         }
     }
     
-    static func convertUser(_ user: UserModel?) -> UserModel {
-        if let user = user {
-            if user.documentId == Auth.auth().currentUser!.uid {
-                return .saved()
-            } else {
-                return user
-            }
-        } else {
-            return .deleted()
-        }
-    }
-    
     static func avatarRef(byId userId: String) -> StorageReference {
         Storage.storage().reference(withPath: "users/\(userId)/avatar.jpg")
     }

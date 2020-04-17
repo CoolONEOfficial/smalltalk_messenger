@@ -14,7 +14,7 @@ protocol ChatProtocol {
     func loadInfo(completion: @escaping (
         _ title: String,
         _ subtitle: String,
-        _ placeholderText: String,
+        _ placeholderText: String?,
         _ placeholderColor: UIColor?
     ) -> Void)
     
@@ -25,6 +25,7 @@ protocol ChatProtocol {
 }
 
 public enum ChatType: AutoCodable, AutoEquatable {
-    case personalCorr
+    case personalCorr(between: [String])
+    case savedMessages
     case chat(title: String, adminId: String, hexColor: String?)
 }

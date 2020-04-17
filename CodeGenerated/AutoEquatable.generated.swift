@@ -67,7 +67,9 @@ public func == (lhs: UserModel, rhs: UserModel) -> Bool {
 extension ChatType: Equatable {}
 public func == (lhs: ChatType, rhs: ChatType) -> Bool {
     switch (lhs, rhs) {
-    case (.personalCorr, .personalCorr):
+    case (.personalCorr(let lhs), .personalCorr(let rhs)):
+        return lhs == rhs
+    case (.savedMessages, .savedMessages):
         return true
     case (.chat(let lhs), .chat(let rhs)):
         if lhs.title != rhs.title { return false }

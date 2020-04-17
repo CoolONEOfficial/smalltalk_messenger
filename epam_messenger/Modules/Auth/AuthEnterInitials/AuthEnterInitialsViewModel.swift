@@ -95,15 +95,8 @@ class AuthEnterInitialsViewModel: AuthEnterInitialsViewModelProtocol {
                 for contact in contactList {
                     chatsGroup.enter()
                     self.firestoreService.createChat(
-                        .init(
-                            documentId: nil,
-                            users: [
-                                Auth.auth().currentUser!.uid,
-                                contact.documentId!
-                            ],
-                            lastMessage: .empty(),
-                            type: .personalCorr
-                    )) { error in
+                        .fromUserId(contact.documentId!)
+                    ) { error in
                         if error != nil {
                             err = error
                         }
@@ -141,7 +134,7 @@ class AuthEnterInitialsViewModel: AuthEnterInitialsViewModelProtocol {
                     Auth.auth().currentUser!.uid
                 ],
                 lastMessage: .empty(),
-                type: .personalCorr
+                type: .savedMessages
         )) { chatErr in
             if chatErr != nil {
                 err = chatErr

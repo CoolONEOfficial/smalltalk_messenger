@@ -9,6 +9,7 @@ import Foundation
 import Firebase
 import FirebaseFirestore
 import CodableFirebase
+import FirebaseFunctions
 
 typealias FireQuery = Query
 typealias FireTimestamp = Timestamp
@@ -28,6 +29,10 @@ protocol FirestoreServiceProtocol: AutoMockable {
     func leaveChat(
         chatId: String,
         completion: @escaping (Bool) -> Void
+    )
+    func clearSavedMessages(
+        chatId: String,
+        completion: @escaping (Error?) -> Void
     )
     func listChatMedia(
         chatId: String,
@@ -112,6 +117,16 @@ extension FirestoreServiceProtocol {
             completion: completion
         )
     }
+    
+    func clearSavedMessages(
+        chatId: String,
+        completion: @escaping (Error?) -> Void = {_ in}
+    ) {
+        clearSavedMessages(
+            chatId: chatId,
+            completion: completion
+        )
+    }
 }
 
 class FirestoreService: FirestoreServiceProtocol {
@@ -186,6 +201,16 @@ class FirestoreService: FirestoreServiceProtocol {
             ]) { err in
                 completion(err == nil)
         }
+    }
+    
+    func clearSavedMessages(
+        chatId: String,
+        completion: @escaping (Error?) -> Void = {_ in}
+    ) {
+        Functions.functions().httpsCallable("clearSavedMessages")
+            .call([ "chatId": chatId ]) { result, error in
+                completion(error)
+            }
     }
     
     func listChatMedia(

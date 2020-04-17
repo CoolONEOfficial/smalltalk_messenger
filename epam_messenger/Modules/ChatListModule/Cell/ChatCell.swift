@@ -34,8 +34,8 @@ class ChatCell: UITableViewCell, NibReusable {
     
     private func setupUi() {
         switch chat.type {
-        case .personalCorr:
-            setupPersonalCorr()
+        case .personalCorr, .savedMessages:
+            setupSavedOrPersonalCorr()
         case .chat(let title, let adminId, let hexColor):
             setupChat(title, adminId, hexColor)
         }
@@ -68,17 +68,24 @@ class ChatCell: UITableViewCell, NibReusable {
         }
     }
     
-    private func setupPersonalCorr() {
+    private func setupSavedOrPersonalCorr() {
         titleLabel.text = "..."
         senderLabel.isHidden = true
         messageLabel.numberOfLines = 2
         
-        delegate?.userData(
-            (chat.users.filter({ $0 != Auth.auth().currentUser!.uid }).first ?? chat.users.first)!
-        ) { friendModel in
-            self.avatar.setup(withUser: friendModel)
-            
-            self.titleLabel.text = UserModel.convertUser(friendModel).fullName
+        if let friendId = chat.friendId {
+            delegate?.userData(friendId) { friendModel in
+                self.avatar.setup(withUser: friendModel)
+                
+                self.titleLabel.text = (
+                    friendModel != nil
+                        ? friendModel!
+                        : .deleted()
+                    ).fullName
+            }
+        } else {
+            avatar.setupBookmark()
+            titleLabel.text = "Saved"
         }
     }
 }

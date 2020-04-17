@@ -140,11 +140,13 @@ class ChatViewController: UIViewController {
                 }
             }
             
-            self.avatarImage.setup(
-                withRef: self.viewModel.chat.avatarRef,
-                text: placeholderText,
-                color: placeholderColor ?? .accent
-            )
+            if let placeholderText = placeholderText {
+                self.avatarImage.setup(
+                    withRef: self.viewModel.chat.avatarRef,
+                    text: placeholderText,
+                    color: placeholderColor ?? .accent
+                )
+            }
         }
     }
     
@@ -188,13 +190,13 @@ class ChatViewController: UIViewController {
     }
     
     private func setupAvatar() {
-        if !(viewModel.chat.type == .personalCorr && viewModel.chat.friendId == nil) {
+        if viewModel.chat.type != .savedMessages {
             avatarImage.size(.init(width: 40, height: 40))
             avatarImage.addGestureRecognizer(UITapGestureRecognizer.init(target: self, action: #selector(didNavigationItemsTap)
             ))
             avatarImage.hero.id = "avatar"
             
-            navigationItem.rightBarButtonItem = UIBarButtonItem(customView: avatarImage)
+            navigationItem.setRightBarButton(UIBarButtonItem(customView: avatarImage), animated: true)
         }
     }
     

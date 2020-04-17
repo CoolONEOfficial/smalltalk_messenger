@@ -45,7 +45,7 @@ class SearchMessageCell: UITableViewCell, NibReusable {
     
     private func didLoadChat(_ chatModel: ChatModel) {
         switch chatModel.type {
-        case .personalCorr:
+        case .savedMessages, .personalCorr:
             self.titleLabel.text = "..."
             delegate?.userData(
                 message.chatUsers!.first(where: { Auth.auth().currentUser!.uid != $0 })!

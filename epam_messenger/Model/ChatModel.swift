@@ -31,15 +31,13 @@ public struct ChatModel: AutoCodable, AutoEquatable {
                 Auth.auth().currentUser!.uid,
                 userId
             ],
-            lastMessage: .init(
-                documentId: nil,
-                kind: [],
-                userId: userId,
-                timestamp: .init(),
-                chatId: nil,
-                chatUsers: nil
-            ),
-            type: .personalCorr
+            lastMessage: .empty(),
+            type: .personalCorr(
+                between: [
+                    Auth.auth().currentUser!.uid,
+                    userId
+                ]
+            )
         )
     }
     
@@ -65,17 +63,22 @@ public struct ChatModel: AutoCodable, AutoEquatable {
 extension ChatModel: ChatProtocol {
     
     var friendId: String? {
-        users.first(where: { Auth.auth().currentUser!.uid != $0 })
+        if case .personalCorr(let between) = type {
+            return between.first(where: { Auth.auth().currentUser!.uid != $0 })
+        }
+        return nil
     }
     
     var avatarRef: StorageReference {
         let path: String?
         
         switch type {
-        case .personalCorr:
-            let friendId = self.friendId ?? Auth.auth().currentUser?.uid
-            
-            path = "users/\(friendId)/avatar.jpg"
+        case .personalCorr, .savedMessages:
+            if let friendId = self.friendId ?? Auth.auth().currentUser?.uid {
+                path = "users/\(friendId)/avatar.jpg"
+            } else {
+                path = nil
+            }
         case .chat:
             if let docId = documentId {
                 path = "chats/\(docId)/avatar.jpg"
@@ -88,25 +91,24 @@ extension ChatModel: ChatProtocol {
     }
     
     func loadInfo(completion: @escaping (
-        _ title: String, _ subtitle: String, _ placeholderText: String, _ placeholderColor: UIColor?
+        _ title: String, _ subtitle: String, _ placeholderText: String?, _ placeholderColor: UIColor?
     ) -> Void) {
         let firestoreService = FirestoreService()
         
         switch type {
-        case .personalCorr:
+        case .personalCorr, .savedMessages:
             if let friendId = friendId {
                 firestoreService.userData(friendId) { user in
-                    if let user = user {
-                        let title = user.fullName
-                        completion(
-                            title,
-                            self.documentId != nil && user.typing == self.documentId
-                                ? "\(user.name) typing..."
-                                : user.onlineText,
-                            user.placeholderName,
-                            user.color
-                        )
-                    }
+                    let maybeDeletedUser = user ?? .deleted()
+                    let title = maybeDeletedUser.fullName
+                    completion(
+                        title,
+                        self.documentId != nil && maybeDeletedUser.typing == self.documentId
+                            ? "\(maybeDeletedUser.name) typing..."
+                            : maybeDeletedUser.onlineText,
+                        user?.placeholderName,
+                        user?.color
+                    )
                 }
             } else {
                 completion("Saved messages", "", "", nil)

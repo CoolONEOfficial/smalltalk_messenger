@@ -513,6 +513,23 @@ class FirestoreServiceProtocolMock: FirestoreServiceProtocol {
         leaveChatChatIdCompletionClosure?(chatId, completion)
     }
 
+    //MARK: - clearSavedMessages
+
+    var clearSavedMessagesChatIdCompletionCallsCount = 0
+    var clearSavedMessagesChatIdCompletionCalled: Bool {
+        return clearSavedMessagesChatIdCompletionCallsCount > 0
+    }
+    var clearSavedMessagesChatIdCompletionReceivedArguments: (chatId: String, completion: (Error?) -> Void)?
+    var clearSavedMessagesChatIdCompletionReceivedInvocations: [(chatId: String, completion: (Error?) -> Void)] = []
+    var clearSavedMessagesChatIdCompletionClosure: ((String, @escaping (Error?) -> Void) -> Void)?
+
+    func clearSavedMessages(        chatId: String,        completion: @escaping (Error?) -> Void    ) {
+        clearSavedMessagesChatIdCompletionCallsCount += 1
+        clearSavedMessagesChatIdCompletionReceivedArguments = (chatId: chatId, completion: completion)
+        clearSavedMessagesChatIdCompletionReceivedInvocations.append((chatId: chatId, completion: completion))
+        clearSavedMessagesChatIdCompletionClosure?(chatId, completion)
+    }
+
     //MARK: - listChatMedia
 
     var listChatMediaChatIdCompletionCallsCount = 0

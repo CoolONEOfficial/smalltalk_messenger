@@ -60,12 +60,14 @@ class ChatDetailsViewController: UIViewController {
                 self.subtitleLabel.text = subtitle
             }
             
-            self.avatarImage.setup(
-                withRef: self.viewModel.chat.avatarRef,
-                text: placeholderText,
-                color: placeholderColor ?? .accent,
-                roundCorners: false
-            )
+            if let placeholderText = placeholderText {
+                self.avatarImage.setup(
+                    withRef: self.viewModel.chat.avatarRef,
+                    text: placeholderText,
+                    color: placeholderColor ?? .accent,
+                    roundCorners: false
+                )
+            }
         }
         subtitleLabel.text = "\(viewModel.chat.users.count) users"
     }

@@ -171,11 +171,9 @@ class ChatListViewController: UIViewController {
     }
     
     @objc private func deleteSelectedChats() {
-        for indexPath in tableView.indexPathsForSelectedRows! {
-            let chatModel = self.tableView.elementAt(indexPath)
-            
-            viewModel.leaveChat(chatModel)
-        }
+        viewModel.deleteSelectedChats(
+            tableView.indexPathsForSelectedRows!.map { tableView.elementAt($0) }
+        )
     }
     
     private func didSelectionChange() {
@@ -303,7 +301,7 @@ extension ChatListViewController: PaginatedTableViewDelegate {
                     image: UIImage(systemName: "trash.fill"),
                     attributes: .destructive
                 ) { _ in
-                    self.viewModel.leaveChat(chatModel)
+                    self.viewModel.deleteSelectedChats([ chatModel ])
                 }
                 
                 return UIMenu(title: "", children: [delete])
