@@ -185,6 +185,9 @@ PODS:
   - Firebase/Firestore (6.22.0):
     - Firebase/CoreOnly
     - FirebaseFirestore (~> 1.12.0)
+  - Firebase/Functions (6.22.0):
+    - Firebase/CoreOnly
+    - FirebaseFunctions (~> 2.5.1)
   - Firebase/Storage (6.22.0):
     - Firebase/CoreOnly
     - FirebaseStorage (~> 3.6.0)
@@ -229,6 +232,10 @@ PODS:
     - "gRPC-C++ (= 0.0.9)"
     - leveldb-library (~> 1.22)
     - nanopb (~> 0.3.901)
+  - FirebaseFunctions (2.5.1):
+    - FirebaseAuthInterop (~> 1.0)
+    - FirebaseCore (~> 6.0)
+    - GTMSessionFetcher/Core (~> 1.1)
   - FirebaseInstallations (1.1.1):
     - FirebaseCore (~> 6.6)
     - GoogleUtilities/UserDefaults (~> 6.5)
@@ -351,6 +358,7 @@ DEPENDENCIES:
   - Firebase/Analytics
   - Firebase/Auth
   - Firebase/Firestore
+  - Firebase/Functions
   - Firebase/Storage
   - FirebaseUI/Firestore (~> 8.4.2)
   - FirebaseUI/Storage (~> 8.4.2)
@@ -383,6 +391,7 @@ SPEC REPOS:
     - FirebaseCoreDiagnostics
     - FirebaseCoreDiagnosticsInterop
     - FirebaseFirestore
+    - FirebaseFunctions
     - FirebaseInstallations
     - FirebaseStorage
     - FirebaseUI
@@ -428,6 +437,7 @@ SPEC CHECKSUMS:
   FirebaseCoreDiagnostics: 13a6564cd6d5375066bbc8940cc1753af24497f3
   FirebaseCoreDiagnosticsInterop: 296e2c5f5314500a850ad0b83e9e7c10b011a850
   FirebaseFirestore: a750487e2019ac35464c78311dcf2fde9d817c52
+  FirebaseFunctions: 5af7c35d1c5e41608fecbb667eb6c4e672e318d0
   FirebaseInstallations: acb3216eb9784d3b1d2d2d635ff74fa892cc0c44
   FirebaseStorage: b43ee271294227e1a3225544b073f3b49b427f46
   FirebaseUI: e57e9b9c4340631151fbe67a14206d23d0974f37
@@ -456,6 +466,6 @@ SPEC CHECKSUMS:
   TinyConstraints: 8dd91295e56797648c7bc335dd20e1d91ec4c192
   XLPagerTabStrip: 61c57fd61f611ee5f01ff1495ad6fbee8bf496c5
 
-PODFILE CHECKSUM: 3307e72d81acc0fedc944f92572b1634465acf41
+PODFILE CHECKSUM: 05c309aa199fbe848448196ee997857baaf8a043
 
 COCOAPODS: 1.9.0
