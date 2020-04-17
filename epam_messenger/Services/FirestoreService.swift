@@ -37,10 +37,11 @@ protocol FirestoreServiceProtocol: AutoMockable {
         _ userModel: UserModel,
         completion: @escaping (Error?) -> Void
     ) -> String
+    @discardableResult
     func createChat(
         _ chatModel: ChatModel,
         completion: @escaping (Error?) -> Void
-    )
+    ) -> String
     func createContact(
         _ contactModel: ContactModel,
         completion: @escaping (Error?) -> Void
@@ -58,6 +59,10 @@ protocol FirestoreServiceProtocol: AutoMockable {
     )
     func chatData(
         _ chatId: String,
+        completion: @escaping (ChatModel?) -> Void
+    )
+    func chatData(
+        userId: String,
         completion: @escaping (ChatModel?) -> Void
     )
     func searchUsers(
@@ -220,20 +225,23 @@ class FirestoreService: FirestoreServiceProtocol {
         return newDoc.documentID
     }
     
+    @discardableResult
     func createChat(
         _ chatModel: ChatModel,
         completion: @escaping (Error?) -> Void
-    ) {
+    ) -> String {
+        let newDoc = db.collection("chats").document()
         do {
             let chatData = try FirestoreEncoder().encode(chatModel)
             
-            db.collection("chats").addDocument(data: chatData) { err in
+            newDoc.setData(chatData) { err in
                 completion(err)
             }
         } catch {
             debugPrint("Error: \(error)")
             completion(error)
         }
+        return newDoc.documentID
     }
     
     func createContact(
@@ -303,6 +311,26 @@ class FirestoreService: FirestoreServiceProtocol {
                 }
                 
                 completion(ChatModel.fromSnapshot(snapshot!))
+        }
+    }
+    
+    func chatData(userId: String, completion: @escaping (ChatModel?) -> Void) {
+        let currentId = Auth.auth().currentUser!.uid
+        db.collection("chats")
+            .order(by: "type.personalCorr") // is exists
+            .whereField("users", in: [[currentId, userId], [userId, currentId]])
+            .limit(to: 1)
+            .getDocuments { snapshot, err in
+                guard err == nil else {
+                    debugPrint("Error while get chat data: \(err!.localizedDescription)")
+                    completion(nil)
+                    return
+                }
+                
+                completion(!(snapshot?.documents.isEmpty ?? true)
+                    ? ChatModel.fromSnapshot(snapshot!.documents.first!)
+                    : nil
+                )
         }
     }
     

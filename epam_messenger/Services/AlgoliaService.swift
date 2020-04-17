@@ -85,8 +85,7 @@ class AlgoliaService: AlgoliaServiceProtocol {
         return chats.map { record in
             var model = record
             model["documentId"] = record["objectID"]
-            let d = try! JSONDecoder().decode(T.self, from: JSONSerialization.data(withJSONObject: model))
-            return d
-        }
+            return try? JSONDecoder().decode(T.self, from: JSONSerialization.data(withJSONObject: model))
+        }.compactMap {$0}
     }
 }

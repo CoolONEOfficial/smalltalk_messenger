@@ -31,13 +31,6 @@ class BottomBarViewController: UITabBarController {
         return [contacts, chatList, settings]
     }()
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        viewControllers = controllers
-        selectedIndex = 1
-    }
-    
     override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
         navigationItem.setRightBarButton(nil, animated: true)
         navigationItem.setLeftBarButton(nil, animated: true)

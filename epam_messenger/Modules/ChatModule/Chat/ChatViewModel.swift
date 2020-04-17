@@ -28,15 +28,14 @@ protocol ChatViewModelProtocol: ViewModelProtocol, AutoMockable, MessageCellDele
     func leaveChat(
         completion: @escaping (Bool) -> Void
     )
+    func createChat(
+        completion: @escaping (Error?) -> Void
+    )
     func createForwardViewController(
         forwardDelegate: ForwardDelegate
     ) -> UIViewController
     func goToChat(
         _ chatModel: ChatProtocol
-    )
-    func userData(
-        _ userId: String,
-        completion: @escaping (UserModel?) -> Void
     )
     func userListData(
         _ userList: [String],
@@ -47,7 +46,7 @@ protocol ChatViewModelProtocol: ViewModelProtocol, AutoMockable, MessageCellDele
     func goToDetails()
     
     var chat: ChatProtocol { get }
-    var baseQuery: FireQuery { get }
+    var baseQuery: FireQuery? { get }
     var lastTapCellContent: MessageCellContentProtocol! { get }
 }
 
@@ -84,42 +83,69 @@ class ChatViewModel: ChatViewModelProtocol {
     let firestoreService: FirestoreServiceProtocol
     let storageService: StorageServiceProtocol
     
-    let chat: ChatProtocol
+    var chat: ChatProtocol
     
     var lastTapCellContent: MessageCellContentProtocol!
     
-    var baseQuery: FireQuery {
-        firestoreService.chatBaseQuery(chat.documentId)
+    var baseQuery: FireQuery? {
+        chat.documentId != nil ? firestoreService.chatBaseQuery(chat.documentId) : nil
     }
     
     // MARK: - Init
     
+    let chatGroup = DispatchGroup()
+    
     init(
+        _ router: RouterProtocol,
+        _ viewController: ChatViewControllerProtocol,
+        _ chat: ChatProtocol,
+        _ firestoreService: FirestoreServiceProtocol = FirestoreService(),
+        _ storageService: StorageServiceProtocol = StorageService()
+    ) {
+        self.viewController = viewController
+        self.router = router
+        self.firestoreService = firestoreService
+        self.storageService = storageService
+        self.chat = chat
+    }
+    
+    convenience init(
         router: RouterProtocol,
         viewController: ChatViewControllerProtocol,
         chat: ChatProtocol,
         firestoreService: FirestoreServiceProtocol = FirestoreService(),
         storageService: StorageServiceProtocol = StorageService()
     ) {
-        self.viewController = viewController
-        self.router = router
-        self.chat = chat
-        self.firestoreService = firestoreService
-        self.storageService = storageService
+        self.init(router, viewController, chat, firestoreService, storageService)
     }
     
-    init(
+    func viewDidLoad() {
+        chatGroup.notify(queue: .main) { [weak self] in
+            guard let self = self else { return }
+            self.viewController.didChatLoad()
+        }
+    }
+    
+    convenience init(
         router: RouterProtocol,
         viewController: ChatViewControllerProtocol,
         userId: String,
         firestoreService: FirestoreServiceProtocol = FirestoreService(),
         storageService: StorageServiceProtocol = StorageService()
     ) {
-        self.viewController = viewController
-        self.router = router
-        self.chat = ChatModel.fromUserId(userId)
-        self.firestoreService = firestoreService
-        self.storageService = storageService
+        self.init(router, viewController,
+                  ChatModel.fromUserId(userId),
+                  firestoreService, storageService)
+        
+        chatGroup.enter()
+        firestoreService.chatData(userId: userId, completion: didChatLoad(_:))
+    }
+    
+    private func didChatLoad(_ chat: ChatModel?) {
+        if let chat = chat {
+            self.chat = chat
+        }
+        self.chatGroup.leave()
     }
     
     func sendMessage(
@@ -214,13 +240,6 @@ class ChatViewModel: ChatViewModelProtocol {
         )
     }
     
-    func userData(
-        _ userId: String,
-        completion: @escaping (UserModel?) -> Void
-    ) {
-        firestoreService.userData(userId, completion: completion)
-    }
-    
     func userListData(
         _ userList: [String],
         completion: @escaping ([UserModel]?) -> Void
@@ -229,11 +248,21 @@ class ChatViewModel: ChatViewModelProtocol {
     }
     
     func startTypingCurrentUser() {
+        guard chat.documentId != nil else { return }
+        
         firestoreService.startTypingCurrentUser(chat.documentId)
     }
     
     func endTypingCurrentUser() {
+        guard chat.documentId != nil else { return }
+        
         firestoreService.endTypingCurrentUser()
+    }
+    
+    func createChat(
+        completion: @escaping (Error?) -> Void
+    ) {
+        chat.documentId = firestoreService.createChat(chat as! ChatModel, completion: completion)
     }
     
     func goToChat(_ chatModel: ChatProtocol) {

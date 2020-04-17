@@ -39,6 +39,21 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
     func inputBar(_ inputBar: InputBarAccessoryView, didPressSendButtonWith text: String) {
         didStartSendMessage()
 
+        if viewModel.chat.documentId == nil {
+            viewModel.createChat { [weak self] err in
+                guard let self = self else { return }
+                guard err == nil else {
+                    return
+                }
+                self.didChatLoad()
+                self.sendMessage(text)
+            }
+        } else {
+            sendMessage(text)
+        }
+    }
+    
+    private func sendMessage(_ text: String) {
         viewModel.sendMessage(
             attachments: attachmentManager.attachments,
             messageText: text

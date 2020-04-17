@@ -22,6 +22,9 @@ class AvatarView: UIImageView {
         contentMode = .scaleAspectFill
         layer.cornerRadius = roundCorners ? bounds.width / 2 : 0
         layer.masksToBounds = true
+        placeholderLabel.removeFromSuperview()
+        set(image: nil, focusOnFaces: true)
+        backgroundColor = .clear
     }
     
     private func setupPlaceholder(_ text: String?, _ color: UIColor) {
@@ -76,7 +79,6 @@ class AvatarView: UIImageView {
         baseSetup()
         
         loading.removeFromSuperview()
-        image = nil
         setupPlaceholder(text, color)
     }
     
@@ -84,7 +86,6 @@ class AvatarView: UIImageView {
         baseSetup()
         
         loading.removeFromSuperview()
-        placeholderLabel.removeFromSuperview()
         set(image: image, focusOnFaces: true)
     }
     
@@ -94,7 +95,6 @@ class AvatarView: UIImageView {
         
         backgroundColor = .accent
         loading.removeFromSuperview()
-        placeholderLabel.removeFromSuperview()
         image = UIImage(systemName: "bookmark.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 25))
         tintColor = .white
     }

@@ -25,7 +25,7 @@ extension ChatViewController: AttachmentManagerDelegate {
             topStackView.layoutIfNeeded()
             updateTableViewInset(attachmentManager.attachmentView.bounds.height)
             
-            if floatingBottomButton.isHidden {
+            if tableView != nil && floatingBottomButton.isHidden {
                 tableView.scrollToBottom()
             }
             
@@ -36,7 +36,7 @@ extension ChatViewController: AttachmentManagerDelegate {
             topStackView.layoutIfNeeded()
             inputBar.inputTextViewDidChange()
             
-            if floatingBottomButton.isHidden {
+            if tableView != nil && floatingBottomButton.isHidden {
                 tableView.scrollToBottom()
             }
         }

@@ -18,7 +18,7 @@ protocol ChatProtocol {
         _ placeholderColor: UIColor?
     ) -> Void)
     
-    var documentId: String! { get }
+    var documentId: String! { get set }
     var users: [String] { get }
     var lastMessage: MessageModel { get }
     var type: ChatType { get }

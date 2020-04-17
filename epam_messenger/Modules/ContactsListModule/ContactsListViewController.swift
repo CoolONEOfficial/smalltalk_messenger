@@ -104,6 +104,12 @@ extension ContactsListViewController: PaginatedTableViewDelegate {
 //        }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if searchController.searchBar.text?.isEmpty ?? true {
+            viewModel.didContactSelect(self.tableView.elementAt(indexPath))
+        } else {
+            viewModel.didUserSelect(searchItems[indexPath.row])
+        }
+        
         tableView.deselectRow(at: indexPath, animated: true)
     }
     

@@ -17,6 +17,7 @@ import FaceAware
 protocol ChatViewControllerProtocol: AutoMockable {
     func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)?)
     func presentErrorAlert(_ text: String)
+    func didChatLoad()
     
     var photosViewerDataSource: ChatPhotoViewerDataSource! { get set }
 }
@@ -75,14 +76,16 @@ class ChatViewController: UIViewController {
         let manager = KeyboardManager()
         
         manager.bind(inputAccessoryView: inputBar)
-        manager.bind(to: tableView)
+        if tableView != nil {
+            manager.bind(to: tableView)
+        }
         manager.on(event: .didShow) { [weak self] (notification) in
             guard let self = self else { return }
             
             self.keyboardHeight = notification.endFrame.height
             self.updateTableViewInset()
             
-            if self.floatingBottomButton.isHidden {
+            if self.tableView != nil, self.floatingBottomButton.isHidden {
                 self.tableView.scrollToBottom()
             }
         }.on(event: .didHide) { [weak self] _ in
@@ -108,6 +111,12 @@ class ChatViewController: UIViewController {
     
     // MARK: - Events
     
+    func didChatLoad() {
+        setupTableView()
+        setupInputBar()
+        viewDidAppear(true)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         titleLabel.text = defaultTitle
@@ -115,10 +124,9 @@ class ChatViewController: UIViewController {
         
         setupTitle()
         setupAvatar()
-        setupTableView()
-        setupInputBar()
         setupEditModeButtons()
         setupFloatingBottomButton()
+        viewModel.viewDidLoad()
         
         viewModel.chat.loadInfo { [weak self] title, subtitle, placeholderText, placeholderColor in
             guard let self = self else { return }
@@ -153,8 +161,10 @@ class ChatViewController: UIViewController {
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        updateTableViewInset()
-        tableView.scrollToBottom() // scroll to new inset
+        if tableView != nil {
+            updateTableViewInset()
+            tableView.scrollToBottom() // scroll to new inset
+        }
     }
     
     // MARK: - Methods
@@ -228,12 +238,15 @@ class ChatViewController: UIViewController {
         inputBar.delegate = self
         inputBar.chatDelegate = self
         _ = keyboardManager
+        
         inputBar.inputPlugins = [autocompleteManager, attachmentManager]
     }
     
     private func setupTableView() {
+        guard let baseQuery = viewModel.baseQuery else { return }
+        
         tableView = .init(
-            baseQuery: viewModel.baseQuery,
+            baseQuery: baseQuery,
             initialPosition: .bottom,
             cellForRowAt: { indexPath -> UITableViewCell in
                 let cell = self.tableView.dequeueReusableCell(for: indexPath, cellType: MessageCell.self)
@@ -278,6 +291,8 @@ class ChatViewController: UIViewController {
     // MARK: - Helpers
     
     internal func updateTableViewInset(_ additional: CGFloat = 0) {
+        guard tableView != nil else { return }
+        
         let bottomSafeArea = view.safeAreaInsets.bottom
         let barHeight = inputBar.bounds.height
         let bottomInset =  barHeight + additional - bottomSafeArea + keyboardHeight

@@ -11,6 +11,8 @@ import CodableFirebase
 
 protocol ContactsListViewModelProtocol: ViewModelProtocol {
     func didContactsListLoad(snapshot: DocumentSnapshot, cell: ContactCell)
+    func didContactSelect(_ contact: ContactModel)
+    func didUserSelect(_ user: UserModel)
     func searchUsers(_ searchString: String, completion: @escaping AlgoliaService.SearchUsersCompletion)
     var baseQuery: FireQuery { get }
 }
@@ -40,6 +42,16 @@ class ContactsListViewModel: ContactsListViewModelProtocol {
         if let contact = ContactModel.fromSnapshot(snapshot) {
             cell.loadContact(contact)
         }
+    }
+    
+    func didContactSelect(_ contact: ContactModel) {
+        guard let router = self.router as? ChatRouter else { return }
+        router.showChat(contact.userId)
+    }
+    
+    func didUserSelect(_ user: UserModel) {
+        guard let router = self.router as? ChatRouter else { return }
+        router.showChat(user.documentId!)
     }
     
     func searchUsers(_ searchString: String, completion: @escaping AlgoliaService.SearchUsersCompletion) {

@@ -10,11 +10,13 @@ import Firebase
 import CodableFirebase
 
 public struct ContactModel: AutoCodable, AutoEquatable {
+    var documentId: String?
     let localName: String
     let userId: String
     
     static func fromSnapshot(_ snapshot: DocumentSnapshot) -> ContactModel? {
-        let data = snapshot.data() ?? [:]
+        var data = snapshot.data() ?? [:]
+        data["documentId"] = snapshot.documentID
         
         do {
             return try FirestoreDecoder()

@@ -100,7 +100,7 @@ extension ChatModel: ChatProtocol {
                         let title = user.fullName
                         completion(
                             title,
-                            user.typing == self.documentId!
+                            self.documentId != nil && user.typing == self.documentId
                                 ? "\(user.name) typing..."
                                 : user.onlineText,
                             user.placeholderName,
