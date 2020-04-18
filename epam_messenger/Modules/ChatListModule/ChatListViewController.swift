@@ -132,10 +132,11 @@ class ChatListViewController: UIViewController {
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = "Search by chats"
         searchController.navigationItem.rightBarButtonItem?.tintColor = .red
-        if isForward {
+        if let navigationItem = isForward
+            ? self.navigationItem
+            : tabBarController?.navigationItem {
             navigationItem.searchController = searchController
-        } else {
-            tabBarController?.navigationItem.searchController = searchController
+            navigationItem.hidesSearchBarWhenScrolling = false
         }
     }
     

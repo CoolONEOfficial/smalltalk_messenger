@@ -163,7 +163,7 @@ class ChatViewController: UIViewController {
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        if tableView != nil {
+        if tableView != nil && floatingBottomButton.isHidden {
             updateTableViewInset()
             tableView.scrollToBottom() // scroll to new inset
         }
@@ -341,33 +341,29 @@ extension ChatViewController: NYTPhotosViewControllerDelegate {
     func photosViewController(_ photosViewController: NYTPhotosViewController, referenceViewFor photo: NYTPhoto) -> UIView? {
         guard let box = photo as? PhotoBox else { return nil }
         
-        for (sectionIndex, day) in tableView.data.enumerated() {
-            for (rowIndex, message) in day.elements.enumerated() {
-                for (contentIndex, content) in message.kind.enumerated() {
-                    switch content {
-                    case .image(let path, _):
-                        if box.path == path {
-                            if let cell = tableView.cellForRow(at: .init(row: rowIndex, section: sectionIndex)) as? MessageCell {
-                                let imageContent = cell.contentStack.subviews[contentIndex] as! MessageImageContent
-                                let maskLayer = cell.makeBubbleMaskLayer(
-                                    top: !imageContent.mergeContentPrev,
-                                    bottom: !imageContent.mergeContentNext,
-                                    height: imageContent.frame.height
-                                )
-                                maskLayer.transform = CATransform3DMakeTranslation(
-                                    message.isIncoming
-                                        ? messageTailsInset
-                                        : messageTailsInset * 2,
-                                    0,
-                                    0
-                                )
-                                imageContent.layer.mask = maskLayer
-                                return imageContent
-                            } else {
-                                presentErrorAlert("Image not found")
-                            }
+        for visibleCell in tableView.visibleCells {
+            if let cell = visibleCell as? MessageCell {
+                for (index, content) in cell.contentStack.subviews.enumerated() {
+                    debugPrint("index: \(index)")
+                    if let imageContent = content as? MessageImageContent {
+                        let image = imageContent.imageMessage.kindImage(at: imageContent.kindIndex)
+
+                        if image?.path == box.path {
+                            let maskLayer = cell.makeBubbleMaskLayer(
+                                top: !imageContent.mergeContentPrev,
+                                bottom: !imageContent.mergeContentNext,
+                                height: imageContent.frame.height
+                            )
+                            maskLayer.transform = CATransform3DMakeTranslation(
+                                imageContent.message.isIncoming
+                                    ? messageTailsInset
+                                    : messageTailsInset * 2,
+                                0,
+                                0
+                            )
+                            imageContent.layer.mask = maskLayer
+                            return content
                         }
-                    default: break
                     }
                 }
             }

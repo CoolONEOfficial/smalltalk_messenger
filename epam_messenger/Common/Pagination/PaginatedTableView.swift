@@ -432,7 +432,7 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
                 row: lastIndex,
                 section: 0
             ),
-            at: .none,
+            at: .bottom,
             completion: completion
         )
     }

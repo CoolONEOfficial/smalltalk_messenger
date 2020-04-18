@@ -137,8 +137,7 @@ class AuthEnterInitialsViewController: UIViewController {
             progressView.progress = 0
             progressView.tintColor = self.view.tintColor
             alertView.view.addSubview(progressView)
-            alertView.view.layer.cornerRadius = 20
-            progressView.bottomToSuperview()
+            progressView.bottomToSuperview(offset: -10)
             progressView.horizontalToSuperview()
             progressView.clipsToBounds = true
             

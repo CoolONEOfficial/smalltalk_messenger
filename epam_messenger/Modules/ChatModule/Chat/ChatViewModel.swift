@@ -154,10 +154,7 @@ class ChatViewModel: ChatViewModelProtocol {
         completion: @escaping (Bool) -> Void = {_ in}
     ) {
         let uploadGroup = DispatchGroup()
-        var uploadKinds: [MessageModel.MessageKind] = messageText?
-            .trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true
-            ? []
-            : [ .text(messageText!) ]
+        var uploadKinds: [MessageModel.MessageKind?] = .init(repeating: nil, count: attachments.count)
         
         let uploadStartTimestamp = Date()
         for (index, attachment) in attachments.enumerated() {
@@ -168,14 +165,14 @@ class ChatViewModel: ChatViewModelProtocol {
                     chatId: chat.documentId,
                     image: image,
                     timestamp: uploadStartTimestamp,
-                    index: attachments.count - index
+                    index: index
                 ) { kind, err in
                     if let err = err {
                         self.viewController.presentErrorAlert(err.localizedDescription)
                     }
                     
                     if let kind = kind {
-                        uploadKinds.insert(kind, at: 0)
+                        uploadKinds[index] = kind
                     }
                     uploadGroup.leave()
                 }
@@ -190,7 +187,7 @@ class ChatViewModel: ChatViewModelProtocol {
                     }
                     
                     if let kind = kind {
-                        uploadKinds.append(kind)
+                        uploadKinds[index] = kind
                     }
                     uploadGroup.leave()
                 }
@@ -200,9 +197,13 @@ class ChatViewModel: ChatViewModelProtocol {
         }
         
         uploadGroup.notify(queue: .main) {
+            if !(messageText?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true) {
+                uploadKinds.append(.text(messageText!))
+            }
+            
             self.firestoreService.sendMessage(
                 chatId: self.chat.documentId,
-                messageKind: uploadKinds,
+                messageKind: uploadKinds.compactMap { $0 },
                 completion: completion
             )
         }

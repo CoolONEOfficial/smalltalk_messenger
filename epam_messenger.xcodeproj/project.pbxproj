@@ -363,8 +363,8 @@
 		850C7FFA2427FD57008BAF24 /* Image */ = {
 			isa = PBXGroup;
 			children = (
-				850C7FFB2427FD7C008BAF24 /* MessageImageContent.swift */,
 				850C7FFD2427FD89008BAF24 /* MessageImageContent.xib */,
+				850C7FFB2427FD7C008BAF24 /* MessageImageContent.swift */,
 			);
 			path = Image;
 			sourceTree = "<group>";

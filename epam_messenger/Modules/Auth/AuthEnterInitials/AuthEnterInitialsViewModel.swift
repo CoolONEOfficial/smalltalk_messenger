@@ -65,7 +65,6 @@ class AuthEnterInitialsViewModel: AuthEnterInitialsViewModelProtocol {
             }
             progressAddiction(1 / steps)
             createGroup.leave()
-            debugPrint("user leave")
         }
         
         if let avatar = avatar {

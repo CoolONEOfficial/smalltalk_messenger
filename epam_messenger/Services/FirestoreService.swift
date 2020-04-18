@@ -342,8 +342,7 @@ class FirestoreService: FirestoreServiceProtocol {
     func chatData(userId: String, completion: @escaping (ChatModel?) -> Void) {
         let currentId = Auth.auth().currentUser!.uid
         db.collection("chats")
-            .order(by: "type.personalCorr") // is exists
-            .whereField("users", in: [[currentId, userId], [userId, currentId]])
+            .whereField("type.personalCorr.between", in: [[currentId, userId], [userId, currentId]])
             .limit(to: 1)
             .getDocuments { snapshot, err in
                 guard err == nil else {

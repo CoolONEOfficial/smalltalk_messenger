@@ -270,7 +270,7 @@ class MessageCell: UITableViewCell, NibReusable, MessageCellProtocol {
                     height: bubbleView.bounds.height
                 )
             )
-            let radius: CGFloat = 19
+            let radius: CGFloat = 17
             bezierPath = top && bottom
                 ? .init(
                     roundedRect: rect,

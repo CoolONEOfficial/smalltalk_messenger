@@ -85,7 +85,7 @@ class ChatCell: UITableViewCell, NibReusable {
             }
         } else {
             avatar.setupBookmark()
-            titleLabel.text = "Saved"
+            titleLabel.text = "Saved messages"
         }
     }
 }
