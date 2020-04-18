@@ -15,7 +15,6 @@ extension ContactsListViewController: UISearchResultsUpdating, UISearchControlle
             if !tableView.dataSource!.isEqual(tableView) {
                 tableView.dataSource = tableView
                 tableView.delegate = tableView
-                self.tableView.separatorInset.left = 75
                 tableView.reloadData()
             }
         } else {
@@ -41,7 +40,6 @@ extension ContactsListViewController: UISearchResultsUpdating, UISearchControlle
             }
             
             self.searchController.searchBar.isLoading = false
-            self.tableView.separatorInset.left = 10
             self.tableView.reloadData()
         }
     }

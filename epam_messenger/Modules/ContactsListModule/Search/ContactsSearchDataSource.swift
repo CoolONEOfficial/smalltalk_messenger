@@ -7,15 +7,15 @@
 
 import UIKit
 
-extension ContactsListViewController: UITableViewDataSource {
+extension ContactsListViewController: UITableViewDataSource {    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return searchItems.count
+        searchItems.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(for: indexPath, cellType: UserCell.self)
-        let usersModel = searchItems[indexPath.row]
-        cell.user = usersModel
+        let userModel = searchItems[indexPath.row]
+        cell.loadUser(userModel)
         return cell
     }
 }

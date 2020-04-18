@@ -88,6 +88,8 @@ class ContactsListViewController: UIViewController {
 extension ContactsListViewController: PaginatedTableViewDelegate {
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        guard (searchController.searchBar.text?.isEmpty ?? true) else { return nil }
+        
         let deleteAction = UIContextualAction(style: .normal, title: "Delete") { _, _, complete in
             let contact = self.tableView.elementAt(indexPath)
             self.db.collection("users").document(Auth.auth().currentUser!.uid).collection("contacts").document(contact.documentId!).delete()
@@ -116,11 +118,12 @@ extension ContactsListViewController: PaginatedTableViewDelegate {
         let header = view as! UITableViewHeaderFooterView
         header.textLabel?.font = .systemFont(ofSize: 12, weight: .semibold)
         header.contentView.backgroundColor = .secondarySystemBackground
-        header.transform = .init(translationX: -20, y: 0)
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        self.tableView.keyAt(section)
+        (searchController.searchBar.text?.isEmpty ?? true)
+            ? self.tableView.keyAt(section)
+            : nil
     }
     
 }
