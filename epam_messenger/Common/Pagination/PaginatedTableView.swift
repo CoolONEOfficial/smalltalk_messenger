@@ -508,6 +508,10 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
         paginatedDelegate?.tableView(tableView, willDisplayHeaderView: view, forSection: section)
     }
     
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        paginatedDelegate?.tableView?(tableView, trailingSwipeActionsConfigurationForRowAt: indexPath)
+    }
+    
     // MARK: - Helpers
     
     var topOffset: CGFloat {

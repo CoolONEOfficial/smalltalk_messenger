@@ -59,5 +59,4 @@ class UserCell: UITableViewCell, NibReusable {
         }
         avatarImage.sd_setSmallImage(with: UserModel.avatarRef(byId: userId), placeholderImage: #imageLiteral(resourceName: "logo"))
     }
-    
 }

@@ -36,6 +36,7 @@ public func == (lhs: ChatModel, rhs: ChatModel) -> Bool {
 // MARK: - ContactModel AutoEquatable
 extension ContactModel: Equatable {}
 public func == (lhs: ContactModel, rhs: ContactModel) -> Bool {
+    guard compareOptionals(lhs: lhs.documentId, rhs: rhs.documentId, compare: ==) else { return false }
     guard lhs.localName == rhs.localName else { return false }
     guard lhs.userId == rhs.userId else { return false }
     return true

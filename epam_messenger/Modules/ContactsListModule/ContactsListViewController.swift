@@ -62,16 +62,16 @@ class ContactsListViewController: UIViewController {
                 cell.loadUser(byId: contact.userId)
                 
                 return cell
-            },
+        },
             querySideTransform: { contact in
                 contact.localName
-            },
+        },
             groupingBy: { contact in
                 String(contact.localName.prefix(1))
-            },
+        },
             sortedBy: { l, r in
                 l > r
-            },
+        },
             fromSnapshot: ContactModel.fromSnapshot
         )
         
@@ -88,24 +88,23 @@ class ContactsListViewController: UIViewController {
 
 extension ContactsListViewController: PaginatedTableViewDelegate {
     
-//        func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-//            let deleteAction = UIContextualAction(style: .normal, title: "Delete") { _, _, complete in
-//                let cell = self.tableView.cellForRow(at: indexPath) as? UserCell
-//                self.db.collection("users").document(Auth.auth().currentUser!.uid).delete()
-//                tableView.reloadData()
-//                complete(true)
-//            }
-//    
-//            deleteAction.backgroundColor = .red
-//    
-//            let configuration = UISwipeActionsConfiguration(actions: [deleteAction])
-//            configuration.performsFirstActionWithFullSwipe = false
-//            return configuration
-//        }
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let deleteAction = UIContextualAction(style: .normal, title: "Delete") { _, _, complete in
+            let contact = self.tableView.elementAt(indexPath)
+            self.db.collection("users").document(Auth.auth().currentUser!.uid).collection("contacts").document(contact.documentId!).delete()
+            tableView.reloadData()
+            complete(true)
+        }
+        
+        deleteAction.backgroundColor = .red
+        
+        let configuration = UISwipeActionsConfiguration(actions: [deleteAction])
+        configuration.performsFirstActionWithFullSwipe = false
+        return configuration
+    }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
     }
-    
 }
 extension ContactsListViewController: ContactsListViewControllerProtocol {}

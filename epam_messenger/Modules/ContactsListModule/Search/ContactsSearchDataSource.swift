@@ -14,9 +14,8 @@ extension ContactsListViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(for: indexPath, cellType: UserCell.self)
-        let item = searchItems[indexPath.row]
-        cell.titleLabel?.text = "\(item.name)"
-        cell.subtitleLabel?.text = "\(item.surname)"
+        let usersModel = searchItems[indexPath.row]
+        cell.user = usersModel
         return cell
     }
 }
