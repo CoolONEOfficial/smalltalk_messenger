@@ -101,8 +101,6 @@
 		94389AA3243F756600587218 /* ContactsSearchDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94389AA2243F756600587218 /* ContactsSearchDelegate.swift */; };
 		94389AA5243F757C00587218 /* ContactsSearchDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94389AA4243F757C00587218 /* ContactsSearchDataSource.swift */; };
 		949BF7492436126D006C2AEC /* ContactModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 949BF7482436126D006C2AEC /* ContactModel.swift */; };
-		949BF74E2436130A006C2AEC /* ContactCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 949BF74C2436130A006C2AEC /* ContactCell.swift */; };
-		949BF74F2436130A006C2AEC /* ContactCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 949BF74D2436130A006C2AEC /* ContactCell.xib */; };
 		949BF75224361534006C2AEC /* ContactsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 949BF75024361534006C2AEC /* ContactsListViewController.swift */; };
 		949BF75324361534006C2AEC /* ContactsListViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 949BF75124361534006C2AEC /* ContactsListViewController.xib */; };
 		949BF7552436155B006C2AEC /* ContactsListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 949BF7542436155B006C2AEC /* ContactsListViewModel.swift */; };
@@ -254,8 +252,6 @@
 		94389AA2243F756600587218 /* ContactsSearchDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsSearchDelegate.swift; sourceTree = "<group>"; };
 		94389AA4243F757C00587218 /* ContactsSearchDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsSearchDataSource.swift; sourceTree = "<group>"; };
 		949BF7482436126D006C2AEC /* ContactModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactModel.swift; sourceTree = "<group>"; };
-		949BF74C2436130A006C2AEC /* ContactCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactCell.swift; sourceTree = "<group>"; };
-		949BF74D2436130A006C2AEC /* ContactCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ContactCell.xib; sourceTree = "<group>"; };
 		949BF75024361534006C2AEC /* ContactsListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsListViewController.swift; sourceTree = "<group>"; };
 		949BF75124361534006C2AEC /* ContactsListViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ContactsListViewController.xib; sourceTree = "<group>"; };
 		949BF7542436155B006C2AEC /* ContactsListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsListViewModel.swift; sourceTree = "<group>"; };
@@ -814,7 +810,6 @@
 			isa = PBXGroup;
 			children = (
 				94389A9C243F748D00587218 /* Search */,
-				949BF74B243612E1006C2AEC /* Cell */,
 				949BF7542436155B006C2AEC /* ContactsListViewModel.swift */,
 				949BF75024361534006C2AEC /* ContactsListViewController.swift */,
 				949BF75124361534006C2AEC /* ContactsListViewController.xib */,
@@ -1089,7 +1084,6 @@
 				85812D902433B68800EA2626 /* MessageTextContent.xib in Resources */,
 				85FD2A00241825840035AC13 /* AutoEquatable.stencil in Resources */,
 				E6846BAB242A95E9006818DE /* AuthEnterNumberViewController.xib in Resources */,
-				949BF74F2436130A006C2AEC /* ContactCell.xib in Resources */,
 				856A9C1F2411B8D10039E977 /* GoogleService-Info.plist in Resources */,
 				8526F3D32417907B00ED62E8 /* Assets.xcassets in Resources */,
 				85E67A02243FE14C0001F7E1 /* UserCell.xib in Resources */,
@@ -1297,7 +1291,6 @@
 				850BCE7824377B1700643881 /* SearchChatCell.swift in Sources */,
 				85812D9B2433B77600EA2626 /* ChatInputBarDelegate.swift in Sources */,
 				E6846BAA242A95E9006818DE /* AuthEnterNumberViewController.swift in Sources */,
-				949BF74E2436130A006C2AEC /* ContactCell.swift in Sources */,
 				8563524D243F3C5E00374E15 /* ChatRouter.swift in Sources */,
 				85812DA32433B7A900EA2626 /* ChatTableViewDelegate.swift in Sources */,
 				859330032417CD9C00F1F32E /* BottomBarViewController.swift in Sources */,

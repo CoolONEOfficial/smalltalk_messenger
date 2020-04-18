@@ -62,5 +62,4 @@ class UserCell: UITableViewCell, NibReusable {
             completion?(user)
         }
     }
-    
 }
