@@ -47,7 +47,7 @@ class ContactsListViewController: UIViewController {
     private func setupSearchController() {
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
-        searchController.searchBar.placeholder = "Search contacts"
+        searchController.searchBar.placeholder = "Search users"
         tabBarController?.navigationItem.searchController = searchController
     }
     
@@ -62,16 +62,16 @@ class ContactsListViewController: UIViewController {
                 cell.loadUser(byId: contact.userId)
                 
                 return cell
-        },
+            },
             querySideTransform: { contact in
                 contact.localName
-        },
+            },
             groupingBy: { contact in
                 String(contact.localName.prefix(1))
-        },
+            },
             sortedBy: { l, r in
                 l > r
-        },
+            },
             fromSnapshot: ContactModel.fromSnapshot
         )
         
@@ -79,7 +79,6 @@ class ContactsListViewController: UIViewController {
         tableView.paginatedDelegate = self
         tableView.allowsMultipleSelection = false
         tableView.allowsMultipleSelectionDuringEditing = true
-        tableView.separatorInset.left = UserCell.separatorLeftInset
         
         view.addSubview(tableView)
         tableView.edgesToSuperview()
@@ -112,5 +111,17 @@ extension ContactsListViewController: PaginatedTableViewDelegate {
         
         tableView.deselectRow(at: indexPath, animated: true)
     }
+
+    func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        let header = view as! UITableViewHeaderFooterView
+        header.textLabel?.font = .systemFont(ofSize: 12, weight: .semibold)
+        header.contentView.backgroundColor = .secondarySystemBackground
+        header.transform = .init(translationX: -20, y: 0)
+    }
+
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        self.tableView.keyAt(section)
+    }
+    
 }
 extension ContactsListViewController: ContactsListViewControllerProtocol {}

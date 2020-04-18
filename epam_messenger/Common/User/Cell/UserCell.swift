@@ -29,12 +29,12 @@ class UserCell: UITableViewCell, NibReusable {
         }
     }
     
-    static let separatorLeftInset: CGFloat = 60
-    
     // MARK: - Init
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        
+        separatorInset.left = 60
         
         setupAvatar()
     }
