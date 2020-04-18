@@ -51,10 +51,13 @@ class ChatDetailsMediaViewController: UICollectionViewController {
     override func viewDidLoad() {
         collectionView.register(cellType: MediaCell.self)
         collectionView.alwaysBounceVertical = true
+        collectionView.backgroundView = .init()
+        view.backgroundColor = .clear
+        collectionView.backgroundColor = .clear
     }
     
     func updateData(_ chat: ChatProtocol) {
-        FirestoreService().listChatMedia(chatDocumentId: chat.documentId) { media in
+        FirestoreService().listChatMedia(chatId: chat.documentId) { media in
             if let media = media {
                 self.data = media
             }

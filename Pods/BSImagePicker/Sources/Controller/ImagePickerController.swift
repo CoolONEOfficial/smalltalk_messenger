@@ -27,16 +27,21 @@ import Photos
 fileprivate let localizedDone = Bundle(identifier: "com.apple.UIKit")?.localizedString(forKey: "Done", value: "Done", table: "") ?? "Done"
 
 // MARK: ImagePickerController
-public class ImagePickerController: UINavigationController {
+@objcMembers open class ImagePickerController: UINavigationController {
     // MARK: Public properties
     public weak var imagePickerDelegate: ImagePickerControllerDelegate?
     public var settings: Settings = Settings()
     public var doneButton: UIBarButtonItem = UIBarButtonItem(title: localizedDone, style: .done, target: nil, action: nil)
     public var cancelButton: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: nil, action: nil)
     public var albumButton: UIButton = UIButton(type: .custom)
-    public var assetStore: AssetStore = AssetStore(assets: [])
+    public var selectedAssets: [PHAsset] {
+        get {
+            return assetStore.assets
+        }
+    }
 
     // MARK: Internal properties
+    var assetStore: AssetStore
     var onSelection: ((_ asset: PHAsset) -> Void)?
     var onDeselection: ((_ asset: PHAsset) -> Void)?
     var onCancel: ((_ assets: [PHAsset]) -> Void)?
@@ -67,12 +72,13 @@ public class ImagePickerController: UINavigationController {
         }
     }()
 
-    public init() {
+    public init(selectedAssets: [PHAsset] = []) {
+        assetStore = AssetStore(assets: selectedAssets)
         assetsViewController = AssetsViewController(store: assetStore)
         super.init(nibName: nil, bundle: nil)
     }
 
-    required init?(coder aDecoder: NSCoder) {
+    public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 

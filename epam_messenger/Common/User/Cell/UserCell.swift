@@ -9,10 +9,10 @@ import UIKit
 import Reusable
 
 class UserCell: UITableViewCell, NibReusable {
-
+    
     // MARK: - Outlets
     
-    @IBOutlet var avatarImage: UIImageView!
+    @IBOutlet var avatar: AvatarView!
     @IBOutlet var titleLabel: UILabel!
     @IBOutlet var subtitleLabel: UILabel!
     @IBOutlet var valueLabel: UILabel!
@@ -23,6 +23,9 @@ class UserCell: UITableViewCell, NibReusable {
         didSet {
             self.titleLabel.text = user?.fullName
             self.subtitleLabel.text = user?.onlineText
+            self.subtitleLabel.textColor = user?.online ?? false
+                ? .plainText
+                : .secondaryLabel
         }
     }
     
@@ -31,28 +34,32 @@ class UserCell: UITableViewCell, NibReusable {
     override func awakeFromNib() {
         super.awakeFromNib()
         
+        separatorInset.left = 60
+        
         setupAvatar()
     }
     
     private func setupAvatar() {
-        avatarImage.layer.cornerRadius = avatarImage.frame.width / 2
+        avatar.layer.cornerRadius = avatar.frame.width / 2
     }
 
     // MARK: - Methods
     
-    func loadUser(_ user: UserProtocol, valueText: String? = nil) {
+    func loadUser(_ user: UserProtocol?, valueText: String? = nil) {
         self.user = user
         self.valueLabel.text = valueText
         self.valueLabel.isHidden = valueText != nil
-        avatarImage.sd_setSmallImage(with: user.avatarRef, placeholderImage: #imageLiteral(resourceName: "logo"))
+        avatar.setup(withUser: user)
     }
     
     func loadUser(byId userId: String, completion: ((UserModel?) -> Void)? = nil) {
-        FirestoreService().userData(userId) { user in
-            self.user = user
+        FirestoreService().userData(userId) { [weak self] user in
+            guard let self = self else { return }
+            
+            self.avatar.setup(withUser: user)
+            self.user = user ?? .deleted()
+            
             completion?(user)
         }
-        avatarImage.sd_setSmallImage(with: UserModel.avatarRef(byId: userId), placeholderImage: #imageLiteral(resourceName: "logo"))
     }
-    
 }

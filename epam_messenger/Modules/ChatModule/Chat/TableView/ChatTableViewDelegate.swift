@@ -8,9 +8,10 @@
 import UIKit
 import FirebaseAuth
 import FirebaseFirestore
-import PocketSVG
 
 extension ChatViewController: PaginatedTableViewDelegate {
+    
+    // MARK: - Sections header
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let date = self.tableView.keyAt(section)
@@ -231,7 +232,7 @@ extension ChatViewController: PaginatedTableViewDelegate {
             title: "Delete chat",
             style: .plain,
             target: self,
-            action: #selector(deleteChat)
+            action: #selector(leaveChat)
         )
         
         navigationItem.rightBarButtonItem = .init(
@@ -252,8 +253,8 @@ extension ChatViewController: PaginatedTableViewDelegate {
         }
     }
     
-    @objc internal func deleteChat() {
-        viewModel.deleteChat { _ in
+    @objc internal func leaveChat() {
+        viewModel.leaveChat { _ in
             self.navigationController?.popViewController(animated: true)
         }
     }

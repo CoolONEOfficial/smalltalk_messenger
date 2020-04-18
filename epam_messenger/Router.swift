@@ -33,7 +33,7 @@ class Router: RouterProtocol {
         if isAuthorized {
             return assemblyBuilder?.createBottomBarModule(router: self)
         } else {
-            guard let assemblyBuilder = assemblyBuilder as? AuthAssemblyBuilder else { return UIViewController() }
+            guard let assemblyBuilder = assemblyBuilder as? AuthAssemblyBuilder else { return nil }
             return assemblyBuilder.createAuthStart(router: self)
         }
     }

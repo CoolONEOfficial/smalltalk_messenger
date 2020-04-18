@@ -81,23 +81,13 @@ class MessageImageContent: UIView, MessageCellContentProtocol {
     }
     
     private func loadImage(
-        with imageRef: StorageReference,
-        restartOnErrorCount: Int = 0
+        with imageRef: StorageReference
     ) {
         imageView.sd_setSmallImage(
             with: imageRef
         ) { [weak self] image, err, _, _ in
             guard let self = self else { return }
-            guard err == nil else {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
-                    self.loadImage(
-                        with: imageRef,
-                        restartOnErrorCount: restartOnErrorCount + 1
-                    )
-                }
-                return
-            }
-            
+
             self.didEndLoading()
         }
     }
@@ -146,7 +136,10 @@ class MessageImageContent: UIView, MessageCellContentProtocol {
     override func updateConstraints() {
         if shouldSetupConstraints {
             if let bubbleView = superview?.superview {
-                if !cell.mergeNext {
+                if message.isIncoming {
+                    left(to: bubbleView, offset: -messageTailsInset)
+                    right(to: bubbleView, offset: messageTailsInset * 2)
+                } else {
                     left(to: bubbleView, offset: -messageTailsInset * 2)
                     right(to: bubbleView, offset: messageTailsInset)
                 }

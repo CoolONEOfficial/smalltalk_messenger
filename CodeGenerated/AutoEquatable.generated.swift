@@ -36,6 +36,7 @@ public func == (lhs: ChatModel, rhs: ChatModel) -> Bool {
 // MARK: - ContactModel AutoEquatable
 extension ContactModel: Equatable {}
 public func == (lhs: ContactModel, rhs: ContactModel) -> Bool {
+    guard compareOptionals(lhs: lhs.documentId, rhs: rhs.documentId, compare: ==) else { return false }
     guard lhs.localName == rhs.localName else { return false }
     guard lhs.userId == rhs.userId else { return false }
     return true
@@ -54,6 +55,8 @@ public func == (lhs: UserModel, rhs: UserModel) -> Bool {
     guard compareOptionals(lhs: lhs.documentId, rhs: rhs.documentId, compare: ==) else { return false }
     guard lhs.name == rhs.name else { return false }
     guard lhs.surname == rhs.surname else { return false }
+    guard lhs.phoneNumber == rhs.phoneNumber else { return false }
+    guard compareOptionals(lhs: lhs.hexColor, rhs: rhs.hexColor, compare: ==) else { return false }
     guard lhs.online == rhs.online else { return false }
     guard compareOptionals(lhs: lhs.typing, rhs: rhs.typing, compare: ==) else { return false }
     return true
@@ -64,11 +67,14 @@ public func == (lhs: UserModel, rhs: UserModel) -> Bool {
 extension ChatType: Equatable {}
 public func == (lhs: ChatType, rhs: ChatType) -> Bool {
     switch (lhs, rhs) {
-    case (.personalCorr, .personalCorr):
+    case (.personalCorr(let lhs), .personalCorr(let rhs)):
+        return lhs == rhs
+    case (.savedMessages, .savedMessages):
         return true
     case (.chat(let lhs), .chat(let rhs)):
         if lhs.title != rhs.title { return false }
         if lhs.adminId != rhs.adminId { return false }
+        if lhs.hexColor != rhs.hexColor { return false }
         return true
     default: return false
     }

@@ -31,11 +31,10 @@
                                 <view contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7X3-DB-AMg" userLabel="Avatar Container">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="400"/>
                                     <subviews>
-                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MOO-7r-scm" userLabel="Avatar">
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MOO-7r-scm" userLabel="Avatar" customClass="AvatarView" customModule="epam_messenger" customModuleProvider="target">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="400"/>
                                             <userDefinedRuntimeAttributes>
                                                 <userDefinedRuntimeAttribute type="string" keyPath="heroID" value="avatar"/>
-                                                <userDefinedRuntimeAttribute type="boolean" keyPath="focusOnFaces" value="YES"/>
                                             </userDefinedRuntimeAttributes>
                                         </imageView>
                                     </subviews>

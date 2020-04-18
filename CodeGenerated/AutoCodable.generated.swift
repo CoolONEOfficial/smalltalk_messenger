@@ -28,23 +28,33 @@ extension ChatType {
 
     enum CodingKeys: String, CodingKey {
         case personalCorr
+        case savedMessages
         case chat
+        case between
         case title
         case adminId
+        case hexColor
     }
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         if container.allKeys.contains(.personalCorr), try container.decodeNil(forKey: .personalCorr) == false {
-            self = .personalCorr
+            let associatedValues = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: .personalCorr)
+            let between = try associatedValues.decode([String].self, forKey: .between)
+            self = .personalCorr(between: between)
+            return
+        }
+        if container.allKeys.contains(.savedMessages), try container.decodeNil(forKey: .savedMessages) == false {
+            self = .savedMessages
             return
         }
         if container.allKeys.contains(.chat), try container.decodeNil(forKey: .chat) == false {
             let associatedValues = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: .chat)
             let title = try associatedValues.decode(String.self, forKey: .title)
             let adminId = try associatedValues.decode(String.self, forKey: .adminId)
-            self = .chat(title: title, adminId: adminId)
+            let hexColor = try associatedValues.decode(String?.self, forKey: .hexColor)
+            self = .chat(title: title, adminId: adminId, hexColor: hexColor)
             return
         }
         throw DecodingError.dataCorrupted(.init(codingPath: decoder.codingPath, debugDescription: "Unknown enum case"))
@@ -54,16 +64,21 @@ extension ChatType {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
         switch self {
-        case .personalCorr:
-            _ = container.nestedContainer(keyedBy: CodingKeys.self, forKey: .personalCorr)
-        case let .chat(title, adminId):
+        case let .personalCorr(between):
+            var associatedValues = container.nestedContainer(keyedBy: CodingKeys.self, forKey: .personalCorr)
+            try associatedValues.encode(between, forKey: .between)
+        case .savedMessages:
+            _ = container.nestedContainer(keyedBy: CodingKeys.self, forKey: .savedMessages)
+        case let .chat(title, adminId, hexColor):
             var associatedValues = container.nestedContainer(keyedBy: CodingKeys.self, forKey: .chat)
             try associatedValues.encode(title, forKey: .title)
             try associatedValues.encode(adminId, forKey: .adminId)
+            try associatedValues.encode(hexColor, forKey: .hexColor)
         }
     }
 
 }
+
 
 
 extension MessageModel {
@@ -163,6 +178,8 @@ extension UserModel {
         case documentId
         case name
         case surname
+        case phoneNumber
+        case hexColor
         case online
         case typing
     }
@@ -173,6 +190,8 @@ extension UserModel {
         documentId = try container.decodeIfPresent(String.self, forKey: .documentId)
         name = try container.decode(String.self, forKey: .name)
         surname = try container.decode(String.self, forKey: .surname)
+        phoneNumber = try container.decode(String.self, forKey: .phoneNumber)
+        hexColor = try container.decodeIfPresent(String.self, forKey: .hexColor)
         online = (try? container.decode(Bool.self, forKey: .online)) ?? UserModel.defaultOnline
         typing = try container.decodeIfPresent(String.self, forKey: .typing)
     }

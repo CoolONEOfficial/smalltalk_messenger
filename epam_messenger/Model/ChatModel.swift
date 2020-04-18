@@ -24,6 +24,23 @@ public struct ChatModel: AutoCodable, AutoEquatable {
         case enumCaseKey
     }
     
+    static func fromUserId(_ userId: String) -> ChatModel {
+        .init(
+            documentId: nil,
+            users: [
+                Auth.auth().currentUser!.uid,
+                userId
+            ],
+            lastMessage: .empty(),
+            type: .personalCorr(
+                between: [
+                    Auth.auth().currentUser!.uid,
+                    userId
+                ]
+            )
+        )
+    }
+    
     static let defaultDocumentId: String! = nil
     
     static func fromSnapshot(_ snapshot: DocumentSnapshot) -> ChatModel? {
@@ -46,15 +63,18 @@ public struct ChatModel: AutoCodable, AutoEquatable {
 extension ChatModel: ChatProtocol {
     
     var friendId: String? {
-        return users.first(where: { Auth.auth().currentUser!.uid != $0 })
+        if case .personalCorr(let between) = type {
+            return between.first(where: { Auth.auth().currentUser!.uid != $0 })
+        }
+        return nil
     }
     
     var avatarRef: StorageReference {
         let path: String?
         
         switch type {
-        case .personalCorr:
-            if let friendId = friendId {
+        case .personalCorr, .savedMessages:
+            if let friendId = self.friendId ?? Auth.auth().currentUser?.uid {
                 path = "users/\(friendId)/avatar.jpg"
             } else {
                 path = nil
@@ -70,44 +90,55 @@ extension ChatModel: ChatProtocol {
         return Storage.storage().reference(withPath: path!)
     }
     
-    func loadInfo(completion: @escaping (String, String) -> Void) {
+    func loadInfo(completion: @escaping (
+        _ title: String, _ subtitle: String, _ placeholderText: String?, _ placeholderColor: UIColor?
+    ) -> Void) {
         let firestoreService = FirestoreService()
         
         switch type {
-        case .personalCorr:
-            firestoreService.userData(friendId!) { user in
-                if let user = user {
-                    let title = user.fullName
-                    completion(title, user.typing == self.documentId!
-                        ? "\(user.name) typing..."
-                        : user.onlineText
+        case .personalCorr, .savedMessages:
+            if let friendId = friendId {
+                firestoreService.userData(friendId) { user in
+                    let maybeDeletedUser = user ?? .deleted()
+                    let title = maybeDeletedUser.fullName
+                    completion(
+                        title,
+                        self.documentId != nil && maybeDeletedUser.typing == self.documentId
+                            ? "\(maybeDeletedUser.name) typing..."
+                            : maybeDeletedUser.onlineText,
+                        user?.placeholderName,
+                        user?.color
                     )
                 }
+            } else {
+                completion("Saved messages", "", "", nil)
             }
-        case .chat(let title, _):
-            completion(title, "\(users.count) users")
-            
+        case .chat(let title, _, let color):
             firestoreService.userListData(users) { userList in
                 if let userList = userList {
                     let typingUsers = userList.filter({
                         $0.typing == self.documentId
                             && $0.documentId != Auth.auth().currentUser!.uid
                     })
+                    let subtitleStr: String
                     if typingUsers.isEmpty {
                         let onlineUsers = userList.filter({ $0.online })
-                        var subtitleStr = "\(self.users.count) users"
-                        if onlineUsers.count > 1 {
-                            subtitleStr += ", \(onlineUsers.count) online"
-                        }
-                        
-                        completion(title, subtitleStr)
+                        subtitleStr = "\(self.users.count) users"
+                            + (onlineUsers.count > 1
+                                ? ", \(onlineUsers.count) online"
+                                : "")
                     } else {
-                        
-                        completion(title, typingUsers
+                        subtitleStr = typingUsers
                             .map({ $0.name })
                             .joined(separator: ", ") + " typing..."
-                        )
                     }
+                    
+                    completion(
+                        title,
+                        subtitleStr,
+                        String(title.first ?? " "),
+                        UIColor(hexString: color)
+                    )
                 }
             }
         }

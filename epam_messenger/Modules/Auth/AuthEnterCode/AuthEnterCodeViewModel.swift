@@ -26,15 +26,15 @@ struct AuthEnterCodeViewModel: AuthEnterCodeViewModelProtocol {
                 return
             }
             
-//            if let additionalUserInfo = authResult?.additionalUserInfo {
-//                if additionalUserInfo.isNewUser {
-//                    if let router = self.router as? AuthRouter {
-//                        router.showAuthEnterName()
-//                    }
-//                } else {
+            if let additionalUserInfo = authResult?.additionalUserInfo {
+                if additionalUserInfo.isNewUser {
+                    if let router = self.router as? AuthRouter {
+                        router.showAuthEnterName()
+                    }
+                } else {
                     self.router.showBottomBar()
-//                }
-//            }
+                }
+            }
         }
     }
     

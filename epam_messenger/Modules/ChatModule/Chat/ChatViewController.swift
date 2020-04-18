@@ -17,6 +17,7 @@ import FaceAware
 protocol ChatViewControllerProtocol: AutoMockable {
     func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)?)
     func presentErrorAlert(_ text: String)
+    func didChatLoad()
     
     var photosViewerDataSource: ChatPhotoViewerDataSource! { get set }
 }
@@ -29,6 +30,11 @@ class ChatViewController: UIViewController {
     
     // MARK: - Vars
     
+    var viewModel: ChatViewModelProtocol!
+    lazy var imagePickerService: ImagePickerServiceProtocol = {
+        return ImagePickerService(viewController: self)
+    }()
+    
     var defaultTitle = "..."
     
     var tableView: PaginatedSectionedTableView<Date, MessageModel>!
@@ -36,14 +42,13 @@ class ChatViewController: UIViewController {
     var bottomScrollAnimationsLock = false
     
     let inputBar = ChatInputBar()
-    var viewModel: ChatViewModelProtocol!
     var photosViewerDataSource: ChatPhotoViewerDataSource!
     
     let titleStack = UIStackView()
     let titleLabel = UILabel()
     let subtitleLabel = UILabel()
     
-    let avatarImage = UIImageView()
+    let avatarImage = AvatarView()
     
     var deleteButton = UIButton()
     var forwardButton = UIButton()
@@ -71,14 +76,16 @@ class ChatViewController: UIViewController {
         let manager = KeyboardManager()
         
         manager.bind(inputAccessoryView: inputBar)
-        manager.bind(to: tableView)
+        if tableView != nil {
+            manager.bind(to: tableView)
+        }
         manager.on(event: .didShow) { [weak self] (notification) in
             guard let self = self else { return }
             
             self.keyboardHeight = notification.endFrame.height
             self.updateTableViewInset()
             
-            if self.floatingBottomButton.isHidden {
+            if self.tableView != nil, self.floatingBottomButton.isHidden {
                 self.tableView.scrollToBottom()
             }
         }.on(event: .didHide) { [weak self] _ in
@@ -104,6 +111,12 @@ class ChatViewController: UIViewController {
     
     // MARK: - Events
     
+    func didChatLoad() {
+        setupTableView()
+        setupInputBar()
+        viewDidAppear(true)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         titleLabel.text = defaultTitle
@@ -111,12 +124,13 @@ class ChatViewController: UIViewController {
         
         setupTitle()
         setupAvatar()
-        setupTableView()
-        setupInputBar()
         setupEditModeButtons()
         setupFloatingBottomButton()
+        viewModel.viewDidLoad()
         
-        viewModel.chat.loadInfo { title, subtitle in
+        viewModel.chat.loadInfo { [weak self] title, subtitle, placeholderText, placeholderColor in
+            guard let self = self else { return }
+            
             self.transitionSubtitleLabel {
                 self.defaultTitle = title
                 self.subtitleLabel.text = subtitle
@@ -124,6 +138,14 @@ class ChatViewController: UIViewController {
                 if !(self.tableView?.isEditing ?? false) {
                     self.titleLabel.text = self.defaultTitle
                 }
+            }
+            
+            if let placeholderText = placeholderText {
+                self.avatarImage.setup(
+                    withRef: self.viewModel.chat.avatarRef,
+                    text: placeholderText,
+                    color: placeholderColor ?? .accent
+                )
             }
         }
     }
@@ -141,8 +163,10 @@ class ChatViewController: UIViewController {
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        updateTableViewInset()
-        tableView.scrollToBottom() // scroll to new inset
+        if tableView != nil && floatingBottomButton.isHidden {
+            updateTableViewInset()
+            tableView.scrollToBottom() // scroll to new inset
+        }
     }
     
     // MARK: - Methods
@@ -166,16 +190,14 @@ class ChatViewController: UIViewController {
     }
     
     private func setupAvatar() {
-        avatarImage.sd_setSmallImage(with: viewModel.chat.avatarRef, placeholderImage: #imageLiteral(resourceName: "logo"))
-        avatarImage.size(.init(width: 40, height: 40))
-        avatarImage.contentMode = .scaleAspectFill
-        avatarImage.layer.cornerRadius = 20
-        avatarImage.clipsToBounds = true
-        avatarImage.focusOnFaces = true
-        avatarImage.addGestureRecognizer(UITapGestureRecognizer.init(target: self, action: #selector(didNavigationItemsTap)))
-        avatarImage.hero.id = "avatar"
-        
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: avatarImage)
+        if viewModel.chat.type != .savedMessages {
+            avatarImage.size(.init(width: 40, height: 40))
+            avatarImage.addGestureRecognizer(UITapGestureRecognizer.init(target: self, action: #selector(didNavigationItemsTap)
+            ))
+            avatarImage.hero.id = "avatar"
+            
+            navigationItem.setRightBarButton(UIBarButtonItem(customView: avatarImage), animated: true)
+        }
     }
     
     @objc func didNavigationItemsTap() {
@@ -218,12 +240,15 @@ class ChatViewController: UIViewController {
         inputBar.delegate = self
         inputBar.chatDelegate = self
         _ = keyboardManager
+        
         inputBar.inputPlugins = [autocompleteManager, attachmentManager]
     }
     
     private func setupTableView() {
+        guard let baseQuery = viewModel.baseQuery else { return }
+        
         tableView = .init(
-            baseQuery: viewModel.baseQuery,
+            baseQuery: baseQuery,
             initialPosition: .bottom,
             cellForRowAt: { indexPath -> UITableViewCell in
                 let cell = self.tableView.dequeueReusableCell(for: indexPath, cellType: MessageCell.self)
@@ -268,6 +293,8 @@ class ChatViewController: UIViewController {
     // MARK: - Helpers
     
     internal func updateTableViewInset(_ additional: CGFloat = 0) {
+        guard tableView != nil else { return }
+        
         let bottomSafeArea = view.safeAreaInsets.bottom
         let barHeight = inputBar.bounds.height
         let bottomInset =  barHeight + additional - bottomSafeArea + keyboardHeight
@@ -314,29 +341,29 @@ extension ChatViewController: NYTPhotosViewControllerDelegate {
     func photosViewController(_ photosViewController: NYTPhotosViewController, referenceViewFor photo: NYTPhoto) -> UIView? {
         guard let box = photo as? PhotoBox else { return nil }
         
-        for (sectionIndex, day) in tableView.data.enumerated() {
-            for (rowIndex, message) in day.elements.enumerated() {
-                for (contentIndex, content) in message.kind.enumerated() {
-                    switch content {
-                    case .image(let path, _):
-                        if box.path == path {
-                            if let cell = tableView.cellForRow(at: .init(row: rowIndex, section: sectionIndex)) as? MessageCell {
-                                let imageContent = cell.contentStack.subviews[contentIndex] as! MessageImageContent
-                                let maskLayer = cell.makeBubbleMaskLayer(
-                                    top: !imageContent.mergeContentPrev,
-                                    bottom: !imageContent.mergeContentNext,
-                                    height: imageContent.frame.height
-                                )
-                                if !cell.mergeNext {
-                                    maskLayer.transform = CATransform3DMakeTranslation(messageTailsInset * 2, 0, 0)
-                                }
-                                imageContent.layer.mask = maskLayer
-                                return imageContent
-                            } else {
-                                presentErrorAlert("Image not found")
-                            }
+        for visibleCell in tableView.visibleCells {
+            if let cell = visibleCell as? MessageCell {
+                for (index, content) in cell.contentStack.subviews.enumerated() {
+                    debugPrint("index: \(index)")
+                    if let imageContent = content as? MessageImageContent {
+                        let image = imageContent.imageMessage.kindImage(at: imageContent.kindIndex)
+
+                        if image?.path == box.path {
+                            let maskLayer = cell.makeBubbleMaskLayer(
+                                top: !imageContent.mergeContentPrev,
+                                bottom: !imageContent.mergeContentNext,
+                                height: imageContent.frame.height
+                            )
+                            maskLayer.transform = CATransform3DMakeTranslation(
+                                imageContent.message.isIncoming
+                                    ? messageTailsInset
+                                    : messageTailsInset * 2,
+                                0,
+                                0
+                            )
+                            imageContent.layer.mask = maskLayer
+                            return content
                         }
-                    default: break
                     }
                 }
             }

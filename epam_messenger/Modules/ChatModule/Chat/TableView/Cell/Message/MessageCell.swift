@@ -66,7 +66,7 @@ class MessageCell: UITableViewCell, NibReusable, MessageCellProtocol {
     
     // MARK: - Outlets
     
-    @IBOutlet var avatarImage: UIImageView!
+    @IBOutlet var avatar: AvatarView!
     @IBOutlet var bubbleView: UIView!
     @IBOutlet var stackView: UIStackView!
     
@@ -83,7 +83,7 @@ class MessageCell: UITableViewCell, NibReusable, MessageCellProtocol {
         didSet {
             loadUser()
             if case .personalCorr = delegate!.chat.type {
-                avatarImage.isHidden = true
+                avatar.isHidden = true
             }
             for content in contentStack.subviews as! [MessageCellContentProtocol] {
                 content.didDelegateSet(delegate)
@@ -103,6 +103,7 @@ class MessageCell: UITableViewCell, NibReusable, MessageCellProtocol {
             newStack.spacing = 4
             newStack.distribution = .fillProportionally
             newStack.isUserInteractionEnabled = true
+            newStack.width(max: 200)
             
             bubbleView.addSubview(newStack)
             newStack.horizontalToSuperview(
@@ -127,11 +128,15 @@ class MessageCell: UITableViewCell, NibReusable, MessageCellProtocol {
     
     private func loadUser() {
         if message.isIncoming {
-            delegate?.cellUserData(message.userId) { userModel in
-                if let userModel = userModel {
-                    for content in self.contentStack.subviews as? [MessageCellContentProtocol] ?? [] {
-                        content.didLoadUser(userModel)
-                    }
+            delegate?.cellUserData(message.userId) { [weak self] userModel in
+                guard let self = self else { return }
+                
+                self.avatar.setup(withUser: userModel)
+                
+                let userModel = userModel ?? .deleted()
+                
+                for content in self.contentStack.subviews as? [MessageCellContentProtocol] ?? [] {
+                    content.didLoadUser(userModel)
                 }
             }
         }
@@ -139,18 +144,12 @@ class MessageCell: UITableViewCell, NibReusable, MessageCellProtocol {
     
     private func setupAvatarImage() {
         let isHidden = !message.isIncoming
-        avatarImage.isHidden = isHidden
+        avatar.isHidden = isHidden
         
         if !isHidden {
-            if !mergeNext {
-                avatarImage.sd_setSmallImage(with: Storage.storage().reference(
-                    withPath: "users/\(message.userId)/avatar.jpg"
-                ))
-            } else {
-                avatarImage.image = nil
+            if mergeNext {
+                avatar.image = nil
             }
-            
-            avatarImage.layer.cornerRadius = avatarImage.bounds.width / 2
         }
     }
     
@@ -271,7 +270,7 @@ class MessageCell: UITableViewCell, NibReusable, MessageCellProtocol {
                     height: bubbleView.bounds.height
                 )
             )
-            let radius: CGFloat = 19
+            let radius: CGFloat = 17
             bezierPath = top && bottom
                 ? .init(
                     roundedRect: rect,

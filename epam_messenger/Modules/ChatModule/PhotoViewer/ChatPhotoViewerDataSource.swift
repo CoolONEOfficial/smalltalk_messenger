@@ -63,7 +63,7 @@ class ChatPhotoViewerDataSource: NYTPhotoViewerArrayDataSource {
         delegate: NYTPhotosViewControllerDelegate,
         completion: @escaping ((NYTPhotosViewController, ChatPhotoViewerDataSource)?, String?) -> Void
     ) {
-        FirestoreService().listChatMedia(chatDocumentId: chatId) { mediaItems in
+        FirestoreService().listChatMedia(chatId: chatId) { mediaItems in
             guard let mediaItems = mediaItems else { return }
             
             let refs = mediaItems.map { $0.ref }

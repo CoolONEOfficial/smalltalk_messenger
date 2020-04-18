@@ -26,7 +26,7 @@ class SearchChatCell: UITableViewCell, NibReusable {
     internal var chat: ChatProtocol!
     
     private func setupUi() {
-        if case .chat(let title, _) = chat.type {
+        if case .chat(let title, _, _) = chat.type {
             titleLabel.text = title
         }
         setupAvatar()

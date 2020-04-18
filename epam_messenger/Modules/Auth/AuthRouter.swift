@@ -39,7 +39,7 @@ extension Router: AuthRouter {
     func showAuthEnterName() {
         guard let navigationController = navigationController else { return }
         guard let assemblyBuilder = assemblyBuilder as? AuthAssemblyBuilder else { return }
-        let authEnterNameViewController = assemblyBuilder.createAuthEnterName(router: self)
+        let authEnterNameViewController = assemblyBuilder.createAuthEnterInitials(router: self)
         navigationController.pushViewController(authEnterNameViewController, animated: true)
     }
 }

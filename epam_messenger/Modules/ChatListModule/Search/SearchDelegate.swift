@@ -12,7 +12,7 @@ extension ChatListViewController: UISearchResultsUpdating, UISearchControllerDel
     func updateSearchResults(for searchController: UISearchController) {
         NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(reload), object: nil)
         if searchController.searchBar.text?.isEmpty ?? true {
-            if !tableView.dataSource!.isEqual(tableView) {
+            if !(tableView.dataSource?.isEqual(tableView) ?? true) {
                 tableView.dataSource = tableView
                 tableView.delegate = tableView
                 self.tableView.separatorInset.left = 75

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
-    <device id="retina6_1" orientation="portrait" appearance="dark"/>
+    <device id="retina6_5" orientation="portrait" appearance="dark"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16086"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
@@ -29,10 +29,11 @@
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" placeholder="Your phone number" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="2Go-cq-ja3">
-                    <rect key="frame" x="16" y="209" width="382" height="48"/>
+                <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" text="+7" placeholder="Your phone number" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="2Go-cq-ja3" customClass="PhoneNumberTextField" customModule="PhoneNumberKit">
+                    <rect key="frame" x="112" y="209" width="190" height="48"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="48" id="84E-Fm-CrH"/>
+                        <constraint firstAttribute="width" constant="190" id="pUw-Aq-9W0"/>
                     </constraints>
                     <fontDescription key="fontDescription" type="system" pointSize="18"/>
                     <textInputTraits key="textInputTraits" keyboardType="phonePad" returnKeyType="next" textContentType="tel"/>
@@ -41,11 +42,10 @@
             <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
             <constraints>
                 <constraint firstItem="4eO-ib-JQb" firstAttribute="top" secondItem="877-5H-DWC" secondAttribute="bottom" constant="8" id="LW3-6U-HPr"/>
-                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="2Go-cq-ja3" secondAttribute="trailing" constant="16" id="RGC-ZM-zea"/>
+                <constraint firstItem="2Go-cq-ja3" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="MRF-4Q-1Bt"/>
                 <constraint firstItem="2Go-cq-ja3" firstAttribute="top" secondItem="4eO-ib-JQb" secondAttribute="bottom" constant="54" id="V4b-La-Dgk"/>
                 <constraint firstItem="877-5H-DWC" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="bES-sc-rpj"/>
                 <constraint firstItem="4eO-ib-JQb" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="fog-Lf-uAF"/>
-                <constraint firstItem="2Go-cq-ja3" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="16" id="uPf-px-nqH"/>
                 <constraint firstItem="877-5H-DWC" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" constant="54" id="zYb-zk-gpR"/>
             </constraints>
             <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>

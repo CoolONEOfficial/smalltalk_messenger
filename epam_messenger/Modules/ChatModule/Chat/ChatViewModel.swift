@@ -25,22 +25,17 @@ protocol ChatViewModelProtocol: ViewModelProtocol, AutoMockable, MessageCellDele
         _ messageModel: MessageProtocol,
         completion: @escaping (Bool) -> Void
     )
-    func deleteChat(
+    func leaveChat(
         completion: @escaping (Bool) -> Void
     )
-    func pickImages(
-        viewController: UIViewController,
-        completion: @escaping (UIImage) -> Void
+    func createChat(
+        completion: @escaping (Error?) -> Void
     )
     func createForwardViewController(
         forwardDelegate: ForwardDelegate
     ) -> UIViewController
     func goToChat(
         _ chatModel: ChatProtocol
-    )
-    func userData(
-        _ userId: String,
-        completion: @escaping (UserModel?) -> Void
     )
     func userListData(
         _ userList: [String],
@@ -51,7 +46,7 @@ protocol ChatViewModelProtocol: ViewModelProtocol, AutoMockable, MessageCellDele
     func goToDetails()
     
     var chat: ChatProtocol { get }
-    var baseQuery: FireQuery { get }
+    var baseQuery: FireQuery? { get }
     var lastTapCellContent: MessageCellContentProtocol! { get }
 }
 
@@ -71,10 +66,10 @@ extension ChatViewModelProtocol {
         return sendMessage(attachments: attachments, messageText: messageText, completion: completion)
     }
     
-    func deleteChat(
+    func leaveChat(
         completion: @escaping (Bool) -> Void = {_ in}
     ) {
-        return deleteChat(completion: completion)
+        return leaveChat(completion: completion)
     }
 }
 
@@ -87,32 +82,70 @@ class ChatViewModel: ChatViewModelProtocol {
     
     let firestoreService: FirestoreServiceProtocol
     let storageService: StorageServiceProtocol
-    let imagePickerService: ImagePickerServiceProtocol
     
-    let chat: ChatProtocol
+    var chat: ChatProtocol
     
     var lastTapCellContent: MessageCellContentProtocol!
     
-    var baseQuery: FireQuery {
-        firestoreService.chatBaseQuery(chat.documentId)
+    var baseQuery: FireQuery? {
+        chat.documentId != nil ? firestoreService.chatBaseQuery(chat.documentId) : nil
     }
     
     // MARK: - Init
     
+    let chatGroup = DispatchGroup()
+    
     init(
+        _ router: RouterProtocol,
+        _ viewController: ChatViewControllerProtocol,
+        _ chat: ChatProtocol,
+        _ firestoreService: FirestoreServiceProtocol = FirestoreService(),
+        _ storageService: StorageServiceProtocol = StorageService()
+    ) {
+        self.viewController = viewController
+        self.router = router
+        self.firestoreService = firestoreService
+        self.storageService = storageService
+        self.chat = chat
+    }
+    
+    convenience init(
         router: RouterProtocol,
         viewController: ChatViewControllerProtocol,
         chat: ChatProtocol,
         firestoreService: FirestoreServiceProtocol = FirestoreService(),
-        storageService: StorageServiceProtocol = StorageService(),
-        imagePickerService: ImagePickerServiceProtocol = ImagePickerService()
+        storageService: StorageServiceProtocol = StorageService()
     ) {
-        self.viewController = viewController
-        self.router = router
-        self.chat = chat
-        self.firestoreService = firestoreService
-        self.storageService = storageService
-        self.imagePickerService = imagePickerService
+        self.init(router, viewController, chat, firestoreService, storageService)
+    }
+    
+    func viewDidLoad() {
+        chatGroup.notify(queue: .main) { [weak self] in
+            guard let self = self else { return }
+            self.viewController.didChatLoad()
+        }
+    }
+    
+    convenience init(
+        router: RouterProtocol,
+        viewController: ChatViewControllerProtocol,
+        userId: String,
+        firestoreService: FirestoreServiceProtocol = FirestoreService(),
+        storageService: StorageServiceProtocol = StorageService()
+    ) {
+        self.init(router, viewController,
+                  ChatModel.fromUserId(userId),
+                  firestoreService, storageService)
+        
+        chatGroup.enter()
+        firestoreService.chatData(userId: userId, completion: didChatLoad(_:))
+    }
+    
+    private func didChatLoad(_ chat: ChatModel?) {
+        if let chat = chat {
+            self.chat = chat
+        }
+        self.chatGroup.leave()
     }
     
     func sendMessage(
@@ -121,10 +154,7 @@ class ChatViewModel: ChatViewModelProtocol {
         completion: @escaping (Bool) -> Void = {_ in}
     ) {
         let uploadGroup = DispatchGroup()
-        var uploadKinds: [MessageModel.MessageKind] = messageText?
-            .trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true
-            ? []
-            : [ .text(messageText!) ]
+        var uploadKinds: [MessageModel.MessageKind?] = .init(repeating: nil, count: attachments.count)
         
         let uploadStartTimestamp = Date()
         for (index, attachment) in attachments.enumerated() {
@@ -132,24 +162,32 @@ class ChatViewModel: ChatViewModelProtocol {
             case .image(let image):
                 uploadGroup.enter()
                 storageService.uploadImage(
-                    chatDocumentId: chat.documentId,
+                    chatId: chat.documentId,
                     image: image,
                     timestamp: uploadStartTimestamp,
-                    index: attachments.count - index
-                ) { kind in
+                    index: index
+                ) { kind, err in
+                    if let err = err {
+                        self.viewController.presentErrorAlert(err.localizedDescription)
+                    }
+                    
                     if let kind = kind {
-                        uploadKinds.insert(kind, at: 0)
+                        uploadKinds[index] = kind
                     }
                     uploadGroup.leave()
                 }
             case .data(let data):
                 uploadGroup.enter()
                 storageService.uploadAudio(
-                    chatDocumentId: chat.documentId,
+                    chatId: chat.documentId,
                     data: data
-                ) { kind in
+                ) { kind, err in
+                    if let err = err {
+                        self.viewController.presentErrorAlert(err.localizedDescription)
+                    }
+                    
                     if let kind = kind {
-                        uploadKinds.append(kind)
+                        uploadKinds[index] = kind
                     }
                     uploadGroup.leave()
                 }
@@ -159,9 +197,13 @@ class ChatViewModel: ChatViewModelProtocol {
         }
         
         uploadGroup.notify(queue: .main) {
+            if !(messageText?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true) {
+                uploadKinds.append(.text(messageText!))
+            }
+            
             self.firestoreService.sendMessage(
-                chatDocumentId: self.chat.documentId,
-                messageKind: uploadKinds,
+                chatId: self.chat.documentId,
+                messageKind: uploadKinds.compactMap { $0 },
                 completion: completion
             )
         }
@@ -173,8 +215,8 @@ class ChatViewModel: ChatViewModelProtocol {
         completion: @escaping (Bool) -> Void
     ) {
         self.firestoreService.sendMessage(
-            chatDocumentId: chatModel.documentId,
-            messageKind: messageModel.forwardedKind(Auth.auth().currentUser!.uid),
+            chatId: chatModel.documentId,
+            messageKind: messageModel.forwardedKind(),
             completion: completion
         )
     }
@@ -184,26 +226,19 @@ class ChatViewModel: ChatViewModelProtocol {
         completion: @escaping (Bool) -> Void = {_ in}
     ) {
         firestoreService.deleteMessage(
-            chatDocumentId: chat.documentId,
+            chatId: chat.documentId,
             messageDocumentId: messageModel.documentId!,
             completion: completion
         )
     }
     
-    func deleteChat(
+    func leaveChat(
         completion: @escaping (Bool) -> Void = {_ in}
     ) {
-        firestoreService.deleteChat(
-            chatDocumentId: chat.documentId,
+        firestoreService.leaveChat(
+            chatId: chat.documentId,
             completion: completion
         )
-    }
-    
-    func userData(
-        _ userId: String,
-        completion: @escaping (UserModel?) -> Void
-    ) {
-        firestoreService.userData(userId, completion: completion)
     }
     
     func userListData(
@@ -214,11 +249,21 @@ class ChatViewModel: ChatViewModelProtocol {
     }
     
     func startTypingCurrentUser() {
+        guard chat.documentId != nil else { return }
+        
         firestoreService.startTypingCurrentUser(chat.documentId)
     }
     
     func endTypingCurrentUser() {
+        guard chat.documentId != nil else { return }
+        
         firestoreService.endTypingCurrentUser()
+    }
+    
+    func createChat(
+        completion: @escaping (Error?) -> Void
+    ) {
+        chat.documentId = firestoreService.createChat(chat as! ChatModel, completion: completion)
     }
     
     func goToChat(_ chatModel: ChatProtocol) {
@@ -231,13 +276,6 @@ class ChatViewModel: ChatViewModelProtocol {
         guard let router = router as? ChatRouter else { return }
         
         router.showChatDetails(chat, from: viewController)
-    }
-    
-    func pickImages(
-        viewController: UIViewController,
-        completion: @escaping (UIImage) -> Void
-    ) {
-        imagePickerService.pickImages(viewController: viewController, completion: completion)
     }
     
     func createForwardViewController(forwardDelegate: ForwardDelegate) -> UIViewController {

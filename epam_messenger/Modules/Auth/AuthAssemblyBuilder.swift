@@ -11,7 +11,7 @@ protocol AuthAssemblyBuilder {
     func createAuthStart(router: RouterProtocol) -> UIViewController
     func createAuthEnterNumber(router: RouterProtocol) -> UIViewController
     func createAuthEnterCode(router: RouterProtocol, verificationId: String, number: String) -> UIViewController
-    func createAuthEnterName(router: RouterProtocol) -> UIViewController
+    func createAuthEnterInitials(router: RouterProtocol) -> UIViewController
 }
 
 extension AssemblyBuilder: AuthAssemblyBuilder {
@@ -36,9 +36,9 @@ extension AssemblyBuilder: AuthAssemblyBuilder {
         return view
     }
     
-    func createAuthEnterName(router: RouterProtocol) -> UIViewController {
-        let view = AuthEnterNameViewController()
-        let viewModel = AuthEnterNameViewModel(router: router, viewController: view)
+    func createAuthEnterInitials(router: RouterProtocol) -> UIViewController {
+        let view = AuthEnterInitialsViewController()
+        let viewModel = AuthEnterInitialsViewModel(router: router, viewController: view)
         view.viewModel = viewModel
         return view
     }

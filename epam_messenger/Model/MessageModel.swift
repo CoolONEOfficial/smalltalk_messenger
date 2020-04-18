@@ -40,6 +40,11 @@ public struct MessageModel: AutoCodable {
     
     static let defaultKind: [MessageKind] = []
     
+    static func empty() -> MessageModel {
+        .init(documentId: nil, kind: [], userId: Auth.auth().currentUser!.uid,
+              timestamp: .init(), chatId: nil, chatUsers: nil)
+    }
+    
     static func fromSnapshot(_ snapshot: DocumentSnapshot) -> MessageModel? {
         var data = snapshot.data() ?? [:]
         data["documentId"] = snapshot.documentID
@@ -97,7 +102,7 @@ extension MessageModel: MessageProtocol {
             : .accent
     }
     
-    func forwardedKind(_ userId: String) -> [MessageModel.MessageKind] {
+    func forwardedKind() -> [MessageModel.MessageKind] {
         var forwardedKind = kind
         if case .forward = forwardedKind.first {
             forwardedKind.remove(at: 0)
