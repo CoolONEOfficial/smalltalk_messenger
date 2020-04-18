@@ -305,13 +305,13 @@ PODS:
     - nanopb/encode (= 0.3.9011)
   - nanopb/decode (0.3.9011)
   - nanopb/encode (0.3.9011)
-  - NYTPhotoViewer (4.0.1):
-    - NYTPhotoViewer/AnimatedGifSupport (= 4.0.1)
-    - NYTPhotoViewer/Core (= 4.0.1)
-  - NYTPhotoViewer/AnimatedGifSupport (4.0.1):
+  - NYTPhotoViewer (4.0.0):
+    - NYTPhotoViewer/AnimatedGifSupport (= 4.0.0)
+    - NYTPhotoViewer/Core (= 4.0.0)
+  - NYTPhotoViewer/AnimatedGifSupport (4.0.0):
     - NYTPhotoViewer/Core
     - PINRemoteImage (~> 3.0.0)
-  - NYTPhotoViewer/Core (4.0.1)
+  - NYTPhotoViewer/Core (4.0.0)
   - PhoneNumberKit (3.2.0):
     - PhoneNumberKit/PhoneNumberKitCore (= 3.2.0)
     - PhoneNumberKit/UIKit (= 3.2.0)
@@ -365,7 +365,7 @@ DEPENDENCIES:
   - Hero
   - InputBarAccessoryView
   - InstantSearchClient (~> 7.0)
-  - NYTPhotoViewer
+  - NYTPhotoViewer (= 4.0.0)
   - PhoneNumberKit (~> 3.1)
   - Reusable
   - Sourcery
@@ -453,7 +453,7 @@ SPEC CHECKSUMS:
   InstantSearchClient: 289fad11a1bd3bab759bbd80376b3a30a897cbee
   leveldb-library: 55d93ee664b4007aac644a782d11da33fba316f7
   nanopb: 18003b5e52dab79db540fe93fe9579f399bd1ccd
-  NYTPhotoViewer: 2c9990696386eed9dd9e0c1d137c7c9d05d905d7
+  NYTPhotoViewer: ff7daab9e450db6d1d0644048ef35b58b9dd65fe
   PhoneNumberKit: df411d46177d1492da84e10b6c093846dd861452
   PINCache: 534fd41d358d828dfdf227a0d327f3673a65e20b
   PINOperation: 24b774353ca248fcf87d67b2d61eef42087c125a
@@ -466,6 +466,6 @@ SPEC CHECKSUMS:
   TinyConstraints: 8dd91295e56797648c7bc335dd20e1d91ec4c192
   XLPagerTabStrip: 61c57fd61f611ee5f01ff1495ad6fbee8bf496c5
 
-PODFILE CHECKSUM: 05c309aa199fbe848448196ee997857baaf8a043
+PODFILE CHECKSUM: ea95121965d20c1a439fe1f4d7ca1c658f0e814b
 
 COCOAPODS: 1.9.0

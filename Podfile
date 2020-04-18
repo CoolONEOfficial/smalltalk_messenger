@@ -20,7 +20,7 @@ target 'epam_messenger' do
   pod 'InputBarAccessoryView'
   pod 'TinyConstraints'
   pod 'InstantSearchClient', '~> 7.0'
-  pod 'NYTPhotoViewer'
+  pod 'NYTPhotoViewer', '4.0.0'
   pod 'BSImagePicker', '~> 3.1.1'
   pod 'FDWaveformView'
   pod 'Differ'

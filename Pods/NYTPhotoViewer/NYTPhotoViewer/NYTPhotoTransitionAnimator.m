@@ -266,12 +266,8 @@ static const CGFloat NYTPhotoTransitionAnimatorSpringDamping = 0.9;
 
 #pragma mark - UIViewControllerAnimatedTransitioning
 - (void)animationEnded:(BOOL)transitionCompleted {
-    if (self.toViewController.parentViewController) {
-        [self.toViewController endAppearanceTransition];
-    }
-    if (self.fromViewController.parentViewController) {
-        [self.fromViewController endAppearanceTransition];
-    }
+    [self.toViewController endAppearanceTransition];
+    [self.fromViewController endAppearanceTransition];
 }
 
 - (NSTimeInterval)transitionDuration:(id <UIViewControllerContextTransitioning>)transitionContext {

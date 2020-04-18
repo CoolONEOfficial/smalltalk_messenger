@@ -193,7 +193,7 @@ static const UIEdgeInsets NYTPhotosViewControllerCloseButtonImageInsets = {3, 0,
     _singleTapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didSingleTapWithGestureRecognizer:)];
 
     _transitionController = [[NYTPhotoTransitionController alloc] init];
-    self.modalPresentationStyle = UIModalPresentationFullScreen;
+    self.modalPresentationStyle = UIModalPresentationCustom;
     self.transitioningDelegate = _transitionController;
     self.modalPresentationCapturesStatusBarAppearance = YES;
 
