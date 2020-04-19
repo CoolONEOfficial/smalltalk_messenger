@@ -58,6 +58,11 @@ class ChatCell: UITableViewCell, NibReusable {
             text: String(title.first ?? " "),
             color: UIColor(hexString: hexColor) ?? .accent
         )
+        avatar.addGestureRecognizer(
+            UITapGestureRecognizer(
+                target: self,
+                action: #selector(didTapAvatar)
+        ))
         
         senderLabel.text = "..."
         delegate?.userData(
@@ -66,6 +71,10 @@ class ChatCell: UITableViewCell, NibReusable {
             let user = user ?? .deleted()
             self.senderLabel.text = user.name
         }
+    }
+    
+    @objc func didTapAvatar() {
+        delegate?.didAvatarTap()
     }
     
     private func setupSavedOrPersonalCorr() {

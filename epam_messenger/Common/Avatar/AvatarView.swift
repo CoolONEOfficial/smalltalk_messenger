@@ -18,9 +18,13 @@ class AvatarView: UIImageView {
     
     // MARK: - Init
     
-    private func baseSetup(roundCorners: Bool = true) {
+    private func baseSetup(roundCorners: Bool = true, cornerRadius: CGFloat? = nil) {
         contentMode = .scaleAspectFill
-        layer.cornerRadius = roundCorners ? bounds.width / 2 : 0
+        layer.cornerRadius = roundCorners
+            ? cornerRadius != nil
+                ? cornerRadius!
+                : bounds.width / 2
+            : 0
         layer.masksToBounds = true
         placeholderLabel.removeFromSuperview()
         set(image: nil, focusOnFaces: true)
@@ -62,8 +66,8 @@ class AvatarView: UIImageView {
         }
     }
     
-    func setup(withRef ref: StorageReference, text: String, color: UIColor, roundCorners: Bool = true) {
-        baseSetup(roundCorners: roundCorners)
+    func setup(withRef ref: StorageReference, text: String, color: UIColor, roundCorners: Bool = true, cornerRadius: CGFloat? = nil) {
+        baseSetup(roundCorners: roundCorners, cornerRadius: cornerRadius)
         
         sd_setSmallImage(with: ref) { [weak self] _, err, _, _ in
             guard let self = self else { return }

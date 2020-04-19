@@ -57,7 +57,9 @@ class ChatDetailsMediaViewController: UICollectionViewController {
     }
     
     func updateData(_ chat: ChatProtocol) {
-        FirestoreService().listChatMedia(chatId: chat.documentId) { media in
+        guard let chatId = chat.documentId else { return }
+        
+        FirestoreService().listChatMedia(chatId: chatId) { media in
             if let media = media {
                 self.data = media
             }

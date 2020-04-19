@@ -27,17 +27,21 @@ public struct ChatModel: AutoCodable, AutoEquatable {
     static func fromUserId(_ userId: String) -> ChatModel {
         .init(
             documentId: nil,
-            users: [
-                Auth.auth().currentUser!.uid,
-                userId
-            ],
-            lastMessage: .empty(),
-            type: .personalCorr(
-                between: [
+            users: Auth.auth().currentUser!.uid != userId
+                ? [
                     Auth.auth().currentUser!.uid,
                     userId
                 ]
-            )
+                : [ userId ],
+            lastMessage: .empty(),
+            type: Auth.auth().currentUser!.uid != userId
+                ? .personalCorr(
+                    between: [
+                        Auth.auth().currentUser!.uid,
+                        userId
+                    ]
+                )
+                : .savedMessages
         )
     }
     

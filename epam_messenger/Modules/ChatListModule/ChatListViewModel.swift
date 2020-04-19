@@ -12,6 +12,7 @@ import CodableFirebase
 
 protocol ChatListViewModelProtocol: ViewModelProtocol {
     func goToChat(_ chatModel: ChatModel)
+    func goToChatDetails(_ chatModel: ChatModel)
     func firestoreQuery() -> FireQuery
     func searchChats(
         _ searchString: String,
@@ -59,6 +60,12 @@ class ChatListViewModel: ChatListViewModelProtocol {
         guard let router = router as? ChatRouter else { return }
         
         router.showChat(chatModel)
+    }
+    
+    func goToChatDetails(_ chatModel: ChatModel) {
+        guard let router = router as? ChatRouter else { return }
+        
+        router.showChatDetails(chatModel, from: nil)
     }
     
     func firestoreQuery() -> FireQuery {

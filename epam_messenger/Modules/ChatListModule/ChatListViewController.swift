@@ -16,6 +16,7 @@ protocol ForwardDelegate: AnyObject {
 }
 
 protocol ChatListCellDelegate: AnyObject {
+    func didAvatarTap()
     func userListData(
         _ userList: [String],
         completion: @escaping ([UserModel]?) -> Void
@@ -342,6 +343,10 @@ extension ChatListViewController: ChatListCellDelegate {
     
     func chatData(_ chatId: String, completion: @escaping (ChatModel?) -> Void) {
         viewModel.chatData(chatId, completion: completion)
+    }
+    
+    func didAvatarTap() {
+        //viewModel.goToChatDetails() TODO: chat details
     }
     
 }

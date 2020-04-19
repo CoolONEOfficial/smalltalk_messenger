@@ -48,7 +48,7 @@ class ChatViewController: UIViewController {
     let titleLabel = UILabel()
     let subtitleLabel = UILabel()
     
-    let avatarImage = AvatarView()
+    let avatar = AvatarView()
     
     var deleteButton = UIButton()
     var forwardButton = UIButton()
@@ -112,6 +112,7 @@ class ChatViewController: UIViewController {
     // MARK: - Events
     
     func didChatLoad() {
+        setupAvatar()
         setupTableView()
         setupInputBar()
         viewDidAppear(true)
@@ -123,7 +124,6 @@ class ChatViewController: UIViewController {
         view.tintColor = .accent
         
         setupTitle()
-        setupAvatar()
         setupEditModeButtons()
         setupFloatingBottomButton()
         viewModel.viewDidLoad()
@@ -141,10 +141,11 @@ class ChatViewController: UIViewController {
             }
             
             if let placeholderText = placeholderText {
-                self.avatarImage.setup(
+                self.avatar.setup(
                     withRef: self.viewModel.chat.avatarRef,
                     text: placeholderText,
-                    color: placeholderColor ?? .accent
+                    color: placeholderColor ?? .accent,
+                    cornerRadius: 20
                 )
             }
         }
@@ -191,12 +192,13 @@ class ChatViewController: UIViewController {
     
     private func setupAvatar() {
         if viewModel.chat.type != .savedMessages {
-            avatarImage.size(.init(width: 40, height: 40))
-            avatarImage.addGestureRecognizer(UITapGestureRecognizer.init(target: self, action: #selector(didNavigationItemsTap)
+            avatar.size(.init(width: 40, height: 40))
+            avatar.addGestureRecognizer(UITapGestureRecognizer.init(
+                target: self, action: #selector(didNavigationItemsTap)
             ))
-            avatarImage.hero.id = "avatar"
+            avatar.hero.id = "avatar"
             
-            navigationItem.setRightBarButton(UIBarButtonItem(customView: avatarImage), animated: true)
+            navigationItem.setRightBarButton(UIBarButtonItem(customView: avatar), animated: true)
         }
     }
     
