@@ -10,6 +10,8 @@ import Foundation
 protocol ChatDetailsViewModelProtocol {
     var chat: ChatProtocol { get }
     var chatGroup: DispatchGroup { get }
+    
+    func chatData(completion: @escaping (ChatModel?) -> Void)
 }
 
 class ChatDetailsViewModel: ChatDetailsViewModelProtocol {
@@ -49,12 +51,24 @@ class ChatDetailsViewModel: ChatDetailsViewModelProtocol {
         self.firestoreService = firestoreService
         
         chatGroup.enter()
-        firestoreService.chatData(userId: userId) { [weak self] chatModel in
+        firestoreService.getChatData(userId: userId) { [weak self] chatModel in
             guard let self = self else { return }
             if let chatModel = chatModel {
                 self.chat = chatModel
             }
             self.chatGroup.leave()
+        }
+    }
+    
+    // MARK: - Methods
+    
+    func chatData(completion: @escaping (ChatModel?) -> Void) {
+        firestoreService.listenChatData(chat.documentId) { [weak self] chat in
+            guard let self = self else { return }
+            if let chat = chat {
+                self.chat = chat
+            }
+            completion(chat)
         }
     }
 }

@@ -18,23 +18,25 @@ public struct UserModel: AutoCodable, AutoEquatable {
     var hexColor: String?
     let online: Bool
     let typing: String?
+    let deleted: Bool
     
+    static let defaultDeleted: Bool = false
     static let defaultOnline: Bool = false
     
     static func empty() -> UserModel {
         .init(documentId: nil, name: "", surname: "",
               phoneNumber: Auth.auth().currentUser!.phoneNumber!,
-              online: true, typing: nil)
+              online: true, typing: nil, deleted: false)
     }
     
-    static func deleted() -> UserModel {
-        .init(documentId: nil, name: "DELETED", surname: "", phoneNumber: "",
-              hexColor: "#7d7d7d", online: false, typing: nil)
+    static func deleted(_ documentId: String?) -> UserModel {
+        .init(documentId: documentId, name: "DELETED", surname: "", phoneNumber: "",
+              hexColor: "#7d7d7d", online: false, typing: nil, deleted: true)
     }
     
     static func saved() -> UserModel {
         .init(documentId: Auth.auth().currentUser!.uid, name: "Saved messages", surname: "", phoneNumber: Auth.auth().currentUser!.phoneNumber!,
-              hexColor: nil, online: true, typing: nil)
+              hexColor: nil, online: true, typing: nil, deleted: false)
     }
     
     static func fromSnapshot(_ snapshot: DocumentSnapshot) -> UserModel? {

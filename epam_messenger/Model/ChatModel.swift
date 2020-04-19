@@ -103,7 +103,7 @@ extension ChatModel: ChatProtocol {
         case .personalCorr, .savedMessages:
             if let friendId = friendId {
                 firestoreService.listenUserData(friendId) { user in
-                    let maybeDeletedUser = user ?? .deleted()
+                    let maybeDeletedUser = user ?? .deleted(friendId)
                     let title = maybeDeletedUser.fullName
                     completion(
                         title,

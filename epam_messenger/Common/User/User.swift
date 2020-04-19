@@ -21,4 +21,5 @@ protocol UserProtocol {
     var phoneNumber: String { get }
     var online: Bool { get }
     var typing: String? { get }
+    var deleted: Bool { get }
 }

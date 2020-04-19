@@ -232,7 +232,7 @@ extension ChatViewController: PaginatedTableViewDelegate {
             title: "Delete chat",
             style: .plain,
             target: self,
-            action: #selector(leaveChat)
+            action: #selector(deleteChat)
         )
         
         navigationItem.rightBarButtonItem = .init(
@@ -253,8 +253,11 @@ extension ChatViewController: PaginatedTableViewDelegate {
         }
     }
     
-    @objc internal func leaveChat() {
-        viewModel.leaveChat { _ in
+    @objc internal func deleteChat() {
+        displayActivityAlert()
+        viewModel.deleteChat { [weak self] _ in
+            guard let self = self else { return }
+            self.dismissActivityAlert()
             self.navigationController?.popViewController(animated: true)
         }
     }

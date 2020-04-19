@@ -46,7 +46,7 @@ class UserCell: UITableViewCell, NibReusable {
     // MARK: - Methods
     
     func loadUser(_ user: UserProtocol?, savedMessagesSupport: Bool = false, valueText: String? = nil) {
-        self.user = user ?? UserModel.deleted()
+        self.user = user ?? UserModel.deleted(nil)
         self.valueLabel.text = valueText
         self.valueLabel.isHidden = valueText != nil
         avatar.setup(withUser: self.user!, savedMessagesSupport: savedMessagesSupport)
@@ -56,7 +56,7 @@ class UserCell: UITableViewCell, NibReusable {
         FirestoreService().listenUserData(userId) { [weak self] user in
             guard let self = self else { return }
             
-            self.user = user ?? .deleted()
+            self.user = user ?? .deleted(userId)
             self.avatar.setup(withUser: self.user!)
             
             completion?(user)

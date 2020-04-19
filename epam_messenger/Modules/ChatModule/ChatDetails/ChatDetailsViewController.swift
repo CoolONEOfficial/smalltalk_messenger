@@ -10,6 +10,7 @@ import Hero
 import XLPagerTabStrip
 import SDWebImage
 import NYTPhotoViewer
+import FirebaseAuth
 
 protocol ChatDetailsViewControllerProtocol {
 }
@@ -20,7 +21,7 @@ class ChatDetailsViewController: UIViewController, ChatDetailsViewControllerProt
     
     @IBOutlet var scroll: UIScrollView!
     @IBOutlet var stack: UIStackView!
-    @IBOutlet var avatarImage: AvatarView!
+    @IBOutlet var avatar: AvatarView!
     @IBOutlet var titleLabel: UILabel!
     @IBOutlet var subtitleLabel: UILabel!
     
@@ -65,7 +66,7 @@ class ChatDetailsViewController: UIViewController, ChatDetailsViewControllerProt
             }
             
             if let placeholderText = placeholderText {
-                self.avatarImage.setup(
+                self.avatar.setup(
                     withRef: self.viewModel.chat.avatarRef,
                     text: placeholderText,
                     color: placeholderColor ?? .accent,
@@ -98,6 +99,12 @@ class ChatDetailsViewController: UIViewController, ChatDetailsViewControllerProt
             chatViewController: chatViewController
         )
         media.updateData(viewModel.chat)
+        
+        viewModel.chatData { [weak self] chat in
+            guard let self = self else { return }
+            media.updateData(chat!)
+            users.updateData(chat!)
+        }
         
         if case .chat = viewModel.chat.type {
             tabStrip.scrollViews.append(users.tableView)
@@ -148,15 +155,15 @@ class ChatDetailsViewController: UIViewController, ChatDetailsViewControllerProt
     }
     
     private func setupAvatar() {
-        avatarImage.top(to: view, priority: .defaultHigh)
+        avatar.top(to: view, priority: .defaultHigh)
         let gradient = CAGradientLayer()
-        var bounds = avatarImage!.bounds
+        var bounds = avatar!.bounds
         bounds.size.height = 100
         gradient.frame = bounds
         gradient.colors = [UIColor.clear.cgColor, UIColor.black.withAlphaComponent(0.5).cgColor]
         gradient.startPoint = CGPoint(x: 0, y: 1)
         gradient.endPoint = CGPoint(x: 0, y: 0)
-        avatarImage.layer.addSublayer(gradient)
+        avatar.layer.addSublayer(gradient)
     }
 
     @objc func didCancelTap() {
@@ -195,7 +202,7 @@ extension ChatDetailsViewController: UIScrollViewDelegate {
                 translationX: yOffsetScale * (stack.bounds.width / 2 - subtitleLabel.frame.width / 2),
                 y: 0
             )
-            avatarImage.layer.opacity = Float(1 - yOffsetScale)
+            avatar.layer.opacity = Float(1 - yOffsetScale)
             navigationItem.leftBarButtonItem?.tintColor = UIColor.blend(
                 color1: UIColor.lightText.withAlphaComponent(1), intensity1: 1 - yOffsetScale,
                 color2: .accent, intensity2: yOffsetScale

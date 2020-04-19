@@ -20,3 +20,31 @@ extension UIViewController {
     }
     
 }
+
+extension UIViewController {
+    private struct ActivityAlert {
+        static var activityIndicatorAlert: UIAlertController?
+    }
+    
+    func displayActivityAlert() {
+        ActivityAlert.activityIndicatorAlert = UIAlertController(title: nil, message: "Please wait...", preferredStyle: .alert)
+
+        let loadingIndicator = UIActivityIndicatorView(frame: CGRect(x: 10, y: 5, width: 50, height: 50))
+        loadingIndicator.hidesWhenStopped = true
+        loadingIndicator.startAnimating()
+        ActivityAlert.activityIndicatorAlert!.view.addSubview(loadingIndicator)
+
+        let keyWindow = UIApplication.shared.windows.first { $0.isKeyWindow }!
+        var topController: UIViewController = keyWindow.rootViewController!
+        while (topController.presentedViewController) != nil {
+            topController = topController.presentedViewController!
+        }
+
+        topController.present(ActivityAlert.activityIndicatorAlert!, animated: true, completion: nil)
+    }
+
+    func dismissActivityAlert() {
+        ActivityAlert.activityIndicatorAlert!.dismiss(animated: true, completion: nil)
+        ActivityAlert.activityIndicatorAlert = nil
+    }
+}

@@ -817,15 +817,6 @@
 			path = ContactsListModule;
 			sourceTree = "<group>";
 		};
-		949BF74B243612E1006C2AEC /* Cell */ = {
-			isa = PBXGroup;
-			children = (
-				949BF74C2436130A006C2AEC /* ContactCell.swift */,
-				949BF74D2436130A006C2AEC /* ContactCell.xib */,
-			);
-			path = Cell;
-			sourceTree = "<group>";
-		};
 		AA6B4220BB871C2A97BFCE99 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (

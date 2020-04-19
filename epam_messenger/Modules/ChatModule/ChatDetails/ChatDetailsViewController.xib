@@ -2,14 +2,14 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="dark"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16086"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ChatDetailsViewController" customModule="epam_messenger" customModuleProvider="target">
             <connections>
-                <outlet property="avatarImage" destination="MOO-7r-scm" id="dnX-Iv-UCo"/>
+                <outlet property="avatar" destination="MOO-7r-scm" id="dnX-Iv-UCo"/>
                 <outlet property="scroll" destination="Ab5-pv-7ia" id="OAU-ch-SsN"/>
                 <outlet property="stack" destination="u70-Tk-pB4" id="JhY-6E-zy6"/>
                 <outlet property="subtitleLabel" destination="fmr-Qg-Rhj" id="GdQ-Fj-xMW"/>

@@ -136,12 +136,9 @@ class MessageCell: UITableViewCell, NibReusable, MessageCellProtocol {
             delegate?.cellUserData(message.userId) { [weak self] userModel in
                 guard let self = self else { return }
                 
-                self.user = userModel ?? .deleted()
+                self.user = userModel ?? .deleted(self.message.userId)
                 
                 if !self.mergeNext {
-                    if self.message.userId == "uwHeAO0YgFNPzAxzD6IzJsVjHWE3" {
-                        debugPrint("message.str: \(self.message.previewText): \(userModel) prev: \(self.avatar.loading.isAnimating ? "animated" : "non animated")")
-                    }
                     self.avatar.setup(withUser: self.user!)
                     self.avatar.alpha = 1
                 } else {

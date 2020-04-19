@@ -7,6 +7,7 @@
 
 import UIKit
 import XLPagerTabStrip
+import FirebaseAuth
 
 class ChatDetailsUsersViewController: UITableViewController {
     
@@ -18,7 +19,7 @@ class ChatDetailsUsersViewController: UITableViewController {
         }
     }
     
-    // MARK: - Init
+    let firestoreService: FirestoreServiceProtocol = FirestoreService()
     
     override func viewDidLoad() {
         tableView.register(cellType: UserCell.self)
@@ -48,8 +49,43 @@ class ChatDetailsUsersViewController: UITableViewController {
             completion = nil
         }
         cell.loadUser(byId: chat!.users[indexPath.row], completion: completion)
+        let interaction = UIContextMenuInteraction(delegate: self)
+        
+        cell.addInteraction(interaction)
         return cell
     }
+}
+
+extension ChatDetailsUsersViewController: UIContextMenuInteractionDelegate {
+    
+    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
+        
+        let user = interaction.view as! UserCell
+        let userId = user.user!.documentId!
+        let identifier = "\(userId)" as NSString
+        
+        guard case .chat(_, let adminId, _) = chat!.type,
+            adminId == Auth.auth().currentUser!.uid,
+            userId != Auth.auth().currentUser!.uid else { return nil }
+        
+        return UIContextMenuConfiguration(
+            identifier: identifier,
+            previewProvider: nil) { _ in
+                
+                let kickAction = UIAction(
+                    title: "Kick",
+                    image: UIImage(systemName: "xmark")) { [weak self] _ in
+                        guard let self = self,
+                            let chat = self.chat else { return }
+                        
+                        self.firestoreService.kickChatUser(chatId: chat.documentId, userId: userId)
+                        
+                }
+                
+                return UIMenu(title: "", image: nil, children: [kickAction])
+        }
+    }
+    
 }
 
 extension ChatDetailsUsersViewController: IndicatorInfoProvider {

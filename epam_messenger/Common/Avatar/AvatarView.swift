@@ -51,7 +51,7 @@ class AvatarView: UIImageView {
     }
     
     func setup(withUser user: UserProtocol, savedMessagesSupport: Bool = false) {
-        if let userId = user.documentId {
+        if let userId = user.documentId, !user.deleted {
             if savedMessagesSupport && userId == Auth.auth().currentUser!.uid {
                setupBookmark()
            } else {

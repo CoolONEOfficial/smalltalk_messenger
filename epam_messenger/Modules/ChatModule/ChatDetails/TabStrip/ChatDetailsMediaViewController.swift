@@ -121,11 +121,9 @@ extension ChatDetailsMediaViewController: NYTPhotosViewControllerDelegate {
     func photosViewController(_ photosViewController: NYTPhotosViewController, referenceViewFor photo: NYTPhoto) -> UIView? {
         guard let box = photo as? PhotoBox else { return nil }
         
-        for (index, media) in data.enumerated() {
-            if box.path == media.path {
-                if let cell = collectionView.cellForItem(at: .init(row: index, section: 0)) as? MediaCell {
-                    return cell.image
-                }
+        for (index, media) in data.enumerated() where box.path == media.path {
+            if let cell = collectionView.cellForItem(at: .init(row: index, section: 0)) as? MediaCell {
+                return cell.image
             }
         }
         

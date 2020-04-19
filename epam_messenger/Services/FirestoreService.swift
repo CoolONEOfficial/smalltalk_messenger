@@ -28,7 +28,12 @@ protocol FirestoreServiceProtocol: AutoMockable {
     )
     func leaveChat(
         chatId: String,
-        completion: @escaping (Bool) -> Void
+        completion: @escaping (Error?) -> Void
+    )
+    func kickChatUser(
+        chatId: String,
+        userId: String,
+        completion: @escaping (Error?) -> Void
     )
     func clearSavedMessages(
         chatId: String,
@@ -66,11 +71,15 @@ protocol FirestoreServiceProtocol: AutoMockable {
         _ userList: [String],
         completion: @escaping ([UserModel]?) -> Void
     )
-    func chatData(
+    func getChatData(
         _ chatId: String,
         completion: @escaping (ChatModel?) -> Void
     )
-    func chatData(
+    func listenChatData(
+        _ chatId: String,
+        completion: @escaping (ChatModel?) -> Void
+    )
+    func getChatData(
         userId: String,
         completion: @escaping (ChatModel?) -> Void
     )
@@ -100,6 +109,14 @@ extension FirestoreServiceProtocol {
         )
     }
     
+    func kickChatUser(
+        chatId: String,
+        userId: String,
+        completion: @escaping (Error?) -> Void = {_ in}
+    ) {
+        kickChatUser(chatId: chatId, userId: userId, completion: completion)
+    }
+    
     func deleteMessage(
         chatId: String,
         messageDocumentId: String,
@@ -114,7 +131,7 @@ extension FirestoreServiceProtocol {
     
     func leaveChat(
         chatId: String,
-        completion: @escaping (Bool) -> Void = {_ in}
+        completion: @escaping (Error?) -> Void = {_ in}
     ) {
         leaveChat(
             chatId: chatId,
@@ -197,14 +214,25 @@ class FirestoreService: FirestoreServiceProtocol {
     
     func leaveChat(
         chatId: String,
-        completion: @escaping (Bool) -> Void = {_ in}
+        completion: @escaping (Error?) -> Void = {_ in}
     ) {
         db.collection("chats")
             .document(chatId).updateData([
                 "users": FieldValue.arrayRemove([ Auth.auth().currentUser!.uid ])
             ]) { err in
-                completion(err == nil)
+                completion(err)
         }
+    }
+    
+    func kickChatUser(chatId: String, userId: String, completion: @escaping (Error?) -> Void = {_ in}) {
+        db.collection("chats")
+            .document(chatId)
+            .updateData(
+                [
+                    "users": FieldValue.arrayRemove([ userId ])
+                ],
+                completion: completion
+        )
     }
     
     func clearSavedMessages(
@@ -307,7 +335,6 @@ class FirestoreService: FirestoreServiceProtocol {
                     return
                 }
                 
-                debugPrint("will parse: \(snapshot?.data())")
                 completion(UserModel.fromSnapshot(snapshot!))
         }
     }
@@ -344,7 +371,7 @@ class FirestoreService: FirestoreServiceProtocol {
         }
     }
     
-    func chatData(_ chatId: String, completion: @escaping (ChatModel?) -> Void) {
+    func getChatData(_ chatId: String, completion: @escaping (ChatModel?) -> Void) {
         db.collection("chats")
             .document(chatId).getDocument { snapshot, err in
                 guard err == nil else {
@@ -357,7 +384,23 @@ class FirestoreService: FirestoreServiceProtocol {
         }
     }
     
-    func chatData(userId: String, completion: @escaping (ChatModel?) -> Void) {
+    func listenChatData(
+        _ chatId: String,
+        completion: @escaping (ChatModel?) -> Void
+    ) {
+        db.collection("chats")
+            .document(chatId).addSnapshotListener { snapshot, err in
+                guard err == nil else {
+                    debugPrint("Error while listen chat data: \(err!.localizedDescription)")
+                    completion(nil)
+                    return
+                }
+                
+                completion(ChatModel.fromSnapshot(snapshot!))
+        }
+    }
+    
+    func getChatData(userId: String, completion: @escaping (ChatModel?) -> Void) {
         let currentId = Auth.auth().currentUser!.uid
         db.collection("chats")
             .whereField("type.personalCorr.between", in: [[currentId, userId], [userId, currentId]])

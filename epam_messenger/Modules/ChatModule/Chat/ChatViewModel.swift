@@ -25,8 +25,8 @@ protocol ChatViewModelProtocol: ViewModelProtocol, AutoMockable, MessageCellDele
         _ messageModel: MessageProtocol,
         completion: @escaping (Bool) -> Void
     )
-    func leaveChat(
-        completion: @escaping (Bool) -> Void
+    func deleteChat(
+        completion: @escaping (Error?) -> Void
     )
     func createChat(
         completion: @escaping (Error?) -> Void
@@ -66,10 +66,10 @@ extension ChatViewModelProtocol {
         return sendMessage(attachments: attachments, messageText: messageText, completion: completion)
     }
     
-    func leaveChat(
-        completion: @escaping (Bool) -> Void = {_ in}
+    func deleteChat(
+        completion: @escaping (Error?) -> Void = {_ in}
     ) {
-        return leaveChat(completion: completion)
+        return deleteChat(completion: completion)
     }
 }
 
@@ -138,7 +138,7 @@ class ChatViewModel: ChatViewModelProtocol {
                   firestoreService, storageService)
         
         chatGroup.enter()
-        firestoreService.chatData(userId: userId, completion: didChatLoad(_:))
+        firestoreService.getChatData(userId: userId, completion: didChatLoad(_:))
     }
     
     private func didChatLoad(_ chat: ChatModel?) {
@@ -232,13 +232,17 @@ class ChatViewModel: ChatViewModelProtocol {
         )
     }
     
-    func leaveChat(
-        completion: @escaping (Bool) -> Void = {_ in}
+    func deleteChat(
+        completion: @escaping (Error?) -> Void = {_ in}
     ) {
-        firestoreService.leaveChat(
-            chatId: chat.documentId,
-            completion: completion
-        )
+        if chat.type == .savedMessages {
+            firestoreService.clearSavedMessages(chatId: chat.documentId, completion: completion)
+        } else {
+            firestoreService.leaveChat(
+                chatId: chat.documentId,
+                completion: completion
+            )
+        }
     }
     
     func userListData(

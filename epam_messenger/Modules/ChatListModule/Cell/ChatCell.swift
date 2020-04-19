@@ -60,10 +60,9 @@ class ChatCell: UITableViewCell, NibReusable {
         )
 
         senderLabel.text = "..."
-        delegate?.userData(
-            chat.lastMessage.userId
-        ) { user in
-            let user = user ?? .deleted()
+        let userId = chat.lastMessage.userId
+        delegate?.userData(userId) { user in
+            let user = user ?? .deleted(userId)
             self.senderLabel.text = user.name
         }
     }
@@ -75,7 +74,7 @@ class ChatCell: UITableViewCell, NibReusable {
         
         if let friendId = chat.friendId {
             delegate?.userData(friendId) { friendModel in
-                let friendModel = friendModel ?? .deleted()
+                let friendModel = friendModel ?? .deleted(friendId)
                 
                 self.avatar.setup(withUser: friendModel)
                 
