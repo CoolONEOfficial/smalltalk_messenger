@@ -51,10 +51,14 @@ protocol FirestoreServiceProtocol: AutoMockable {
         _ contactModel: ContactModel,
         completion: @escaping (Error?) -> Void
     )
-    func currentUserData(
+    func listenCurrentUserData(
         completion: @escaping (UserModel?) -> Void
     )
-    func userData(
+    func listenUserData(
+        _ userId: String,
+        completion: @escaping (UserModel?) -> Void
+    )
+    func getUserData(
         _ userId: String,
         completion: @escaping (UserModel?) -> Void
     )
@@ -288,20 +292,34 @@ class FirestoreService: FirestoreServiceProtocol {
         }
     }
     
-    func currentUserData(
+    func listenCurrentUserData(
         completion: @escaping (UserModel?) -> Void
     ) {
-        return userData(Auth.auth().currentUser!.uid, completion: completion)
+        return listenUserData(Auth.auth().currentUser!.uid, completion: completion)
     }
     
-    func userData(
+    func getUserData(_ userId: String, completion: @escaping (UserModel?) -> Void) {
+        db.collection("users").document(userId)
+            .getDocument { snapshot, err in
+                guard err == nil else {
+                    debugPrint("Error while get user data: \(err!.localizedDescription)")
+                    completion(nil)
+                    return
+                }
+                
+                debugPrint("will parse: \(snapshot?.data())")
+                completion(UserModel.fromSnapshot(snapshot!))
+        }
+    }
+    
+    func listenUserData(
         _ userId: String,
         completion: @escaping (UserModel?) -> Void
     ) {
         db.collection("users").document(userId)
             .addSnapshotListener { snapshot, err in
                 guard err == nil else {
-                    debugPrint("Error while get user data: \(err!.localizedDescription)")
+                    debugPrint("Error while listen user data: \(err!.localizedDescription)")
                     completion(nil)
                     return
                 }

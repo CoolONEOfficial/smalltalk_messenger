@@ -58,12 +58,7 @@ class ChatCell: UITableViewCell, NibReusable {
             text: String(title.first ?? " "),
             color: UIColor(hexString: hexColor) ?? .accent
         )
-        avatar.addGestureRecognizer(
-            UITapGestureRecognizer(
-                target: self,
-                action: #selector(didTapAvatar)
-        ))
-        
+
         senderLabel.text = "..."
         delegate?.userData(
             chat.lastMessage.userId
@@ -73,10 +68,6 @@ class ChatCell: UITableViewCell, NibReusable {
         }
     }
     
-    @objc func didTapAvatar() {
-        delegate?.didAvatarTap()
-    }
-    
     private func setupSavedOrPersonalCorr() {
         titleLabel.text = "..."
         senderLabel.isHidden = true
@@ -84,13 +75,11 @@ class ChatCell: UITableViewCell, NibReusable {
         
         if let friendId = chat.friendId {
             delegate?.userData(friendId) { friendModel in
+                let friendModel = friendModel ?? .deleted()
+                
                 self.avatar.setup(withUser: friendModel)
                 
-                self.titleLabel.text = (
-                    friendModel != nil
-                        ? friendModel!
-                        : .deleted()
-                    ).fullName
+                self.titleLabel.text = friendModel.fullName
             }
         } else {
             avatar.setupBookmark()

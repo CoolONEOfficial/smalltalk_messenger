@@ -288,7 +288,12 @@ class ChatViewModel: ChatViewModelProtocol {
 
 extension ChatViewModel: MessageCellDelegate {
     
-    func didTapContent(_ content: MessageCellContentProtocol) {
+    func didAvatarTap(_ userId: String) {
+        guard let router = router as? ChatRouter else { return }
+        router.showChatDetails(userId, heroAnimations: false)
+    }
+    
+    func didContentTap(_ content: MessageCellContentProtocol) {
         lastTapCellContent = content
         switch content {
         case let messageContent as MessageImageContent:
@@ -325,7 +330,7 @@ extension ChatViewModel: MessageCellDelegate {
     }
     
     func cellUserData(_ userId: String, completion: @escaping (UserModel?) -> Void) {
-        return firestoreService.userData(userId, completion: completion)
+        return firestoreService.getUserData(userId, completion: completion)
     }
     
 }

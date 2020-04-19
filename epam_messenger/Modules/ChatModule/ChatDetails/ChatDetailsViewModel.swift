@@ -9,6 +9,7 @@ import Foundation
 
 protocol ChatDetailsViewModelProtocol {
     var chat: ChatProtocol { get }
+    var chatGroup: DispatchGroup { get }
 }
 
 class ChatDetailsViewModel: ChatDetailsViewModelProtocol {
@@ -19,7 +20,8 @@ class ChatDetailsViewModel: ChatDetailsViewModelProtocol {
     let viewController: ChatDetailsViewControllerProtocol
     let firestoreService: FirestoreServiceProtocol
     
-    let chat: ChatProtocol
+    var chat: ChatProtocol
+    var chatGroup = DispatchGroup()
     
     // MARK: - Init
     
@@ -33,5 +35,26 @@ class ChatDetailsViewModel: ChatDetailsViewModelProtocol {
         self.viewController = viewController
         self.chat = chat
         self.firestoreService = firestoreService
+    }
+    
+    init(
+        router: RouterProtocol,
+        viewController: ChatDetailsViewControllerProtocol,
+        userId: String,
+        firestoreService: FirestoreServiceProtocol = FirestoreService()
+    ) {
+        self.router = router
+        self.viewController = viewController
+        self.chat = ChatModel.fromUserId(userId)
+        self.firestoreService = firestoreService
+        
+        chatGroup.enter()
+        firestoreService.chatData(userId: userId) { [weak self] chatModel in
+            guard let self = self else { return }
+            if let chatModel = chatModel {
+                self.chat = chatModel
+            }
+            self.chatGroup.leave()
+        }
     }
 }

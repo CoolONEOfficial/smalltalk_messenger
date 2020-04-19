@@ -23,14 +23,15 @@ class ChatDetailsMediaViewController: UICollectionViewController {
     let cellsPerRow: CGFloat = 3
     
     var viewModel: ChatDetailsViewModelProtocol
-    var chatViewController: ChatViewControllerProtocol
+    
+    var chatViewController: ChatViewControllerProtocol?
+    var localDataSource: ChatPhotoViewerDataSource?
     
     // MARK: - Init
     
-    // initialized with a non-nil layout parameter
     init(
         viewModel: ChatDetailsViewModelProtocol,
-        chatViewController: ChatViewControllerProtocol
+        chatViewController: ChatViewControllerProtocol?
     ) {
         self.viewModel = viewModel
         self.chatViewController = chatViewController
@@ -85,7 +86,9 @@ extension ChatDetailsMediaViewController: MediaCellDelegate {
     func didMediaTap(_ media: MediaProtocol) {
         ChatPhotoViewerDataSource.loadByChatId(
             chatId: viewModel.chat.documentId,
-            cachedDatasource: chatViewController.photosViewerDataSource,
+            cachedDatasource: chatViewController != nil
+                ? chatViewController?.photosViewerDataSource
+                : localDataSource,
             initialIndexCompletion: { refs in
                 refs.firstIndex { ref in
                     ref.fullPath == media.path
@@ -95,13 +98,17 @@ extension ChatDetailsMediaViewController: MediaCellDelegate {
         ) { [weak self] photos, errorText in
             guard let self = self else { return }
             guard let photos = photos else {
-                self.chatViewController.presentErrorAlert(errorText ?? "Unknown error")
+                self.chatViewController?.presentErrorAlert(errorText ?? "Unknown error")
                 return
             }
 
             let photosController = photos.0
             let photosDataSource = photos.1
-            self.chatViewController.photosViewerDataSource = photosDataSource
+            if self.chatViewController != nil {
+                self.chatViewController?.photosViewerDataSource = photosDataSource
+            } else {
+                self.localDataSource = photosDataSource
+            }
             
             self.present(photosController, animated: true, completion: nil)
         }

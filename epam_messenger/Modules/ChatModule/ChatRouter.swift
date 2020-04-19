@@ -10,12 +10,16 @@ import Foundation
 protocol ChatRouter {
     func showChat(_ chat: ChatProtocol)
     func showChat(_ userId: String)
-    func showChatDetails(_ chat: ChatProtocol, from chatViewController: ChatViewControllerProtocol?)
+    func showChatDetails(_ chat: ChatProtocol, from chatViewController: ChatViewControllerProtocol?, heroAnimations: Bool)
+    func showChatDetails(_ userId: String, from chatViewController: ChatViewControllerProtocol?, heroAnimations: Bool)
 }
 
 extension ChatRouter {
-    func showChatDetails(_ chat: ChatProtocol, from chatViewController: ChatViewControllerProtocol? = nil) {
-        showChatDetails(chat, from: chatViewController)
+    func showChatDetails(_ chat: ChatProtocol, from chatViewController: ChatViewControllerProtocol? = nil, heroAnimations: Bool = true) {
+        showChatDetails(chat, from: chatViewController, heroAnimations: heroAnimations)
+    }
+    func showChatDetails(_ userId: String, from chatViewController: ChatViewControllerProtocol? = nil, heroAnimations: Bool = true) {
+        showChatDetails(userId, from: chatViewController, heroAnimations: heroAnimations)
     }
 }
 
@@ -35,10 +39,27 @@ extension Router: ChatRouter {
         navigationController.pushViewController(chatViewController, animated: true)
     }
     
-    func showChatDetails(_ chat: ChatProtocol, from chatViewController: ChatViewControllerProtocol?) {
+    func showChatDetails(_ chat: ChatProtocol, from chatViewController: ChatViewControllerProtocol?, heroAnimations: Bool) {
         guard let navigationController = navigationController else { return }
         guard let assemblyBuilder = assemblyBuilder as? ChatAssemblyBuilder else { return }
-        let chatDetailsViewController = assemblyBuilder.createChatDetails(router: self, chat: chat, from: chatViewController)
+        let chatDetailsViewController = assemblyBuilder.createChatDetails(
+            router: self,
+            chat: chat,
+            from: chatViewController,
+            heroAnimations: heroAnimations
+        )
+        navigationController.present(chatDetailsViewController, animated: true, completion: nil)
+    }
+    
+    func showChatDetails(_ userId: String, from chatViewController: ChatViewControllerProtocol?, heroAnimations: Bool) {
+        guard let navigationController = navigationController else { return }
+        guard let assemblyBuilder = assemblyBuilder as? ChatAssemblyBuilder else { return }
+        let chatDetailsViewController = assemblyBuilder.createChatDetails(
+            router: self,
+            userId: userId,
+            from: chatViewController,
+            heroAnimations: heroAnimations
+        )
         navigationController.present(chatDetailsViewController, animated: true, completion: nil)
     }
     

@@ -14,7 +14,7 @@ import NYTPhotoViewer
 protocol ChatDetailsViewControllerProtocol {
 }
 
-class ChatDetailsViewController: UIViewController {
+class ChatDetailsViewController: UIViewController, ChatDetailsViewControllerProtocol {
 
     // MARK: - Outlets
     
@@ -31,7 +31,7 @@ class ChatDetailsViewController: UIViewController {
     var staticContentHeight: CGFloat!
     
     var viewModel: ChatDetailsViewModelProtocol!
-    var chatViewController: ChatViewControllerProtocol!
+    var chatViewController: ChatViewControllerProtocol?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,8 +43,12 @@ class ChatDetailsViewController: UIViewController {
         setupScroll()
         setupNavigationBar()
         setupAvatar()
-        setupTabStrip()
         setupInfo()
+        
+        viewModel.chatGroup.notify(queue: .main) { [weak self] in
+            guard let self = self else { return }
+            self.setupTabStrip()
+        }
     }
     
     private func setupScroll() {
@@ -116,7 +120,7 @@ class ChatDetailsViewController: UIViewController {
         tabStrip.view.widthToSuperview()
     }
     
-    private func getImageFrom(gradientLayer:CAGradientLayer) -> UIImage? {
+    private func getImageFrom(gradientLayer: CAGradientLayer) -> UIImage? {
         var gradientImage: UIImage?
         UIGraphicsBeginImageContext(gradientLayer.frame.size)
         if let context = UIGraphicsGetCurrentContext() {
@@ -248,9 +252,5 @@ extension ChatDetailsViewController: UIScrollViewDelegate {
     private func offsetInBounds(_ offset: CGFloat, min: CGFloat, max: CGFloat) -> Bool {
         return offset > min && offset < max
     }
-    
-}
-
-extension ChatDetailsViewController: ChatDetailsViewControllerProtocol {
     
 }

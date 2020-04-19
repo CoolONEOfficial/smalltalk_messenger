@@ -299,21 +299,38 @@ class ChatViewModelProtocolMock: ChatViewModelProtocol {
         goToDetailsClosure?()
     }
 
-    //MARK: - didTapContent
+    //MARK: - didAvatarTap
 
-    var didTapContentCallsCount = 0
-    var didTapContentCalled: Bool {
-        return didTapContentCallsCount > 0
+    var didAvatarTapCallsCount = 0
+    var didAvatarTapCalled: Bool {
+        return didAvatarTapCallsCount > 0
     }
-    var didTapContentReceivedContent: MessageCellContentProtocol?
-    var didTapContentReceivedInvocations: [MessageCellContentProtocol] = []
-    var didTapContentClosure: ((MessageCellContentProtocol) -> Void)?
+    var didAvatarTapReceivedUserId: String?
+    var didAvatarTapReceivedInvocations: [String] = []
+    var didAvatarTapClosure: ((String) -> Void)?
 
-    func didTapContent(_ content: MessageCellContentProtocol) {
-        didTapContentCallsCount += 1
-        didTapContentReceivedContent = content
-        didTapContentReceivedInvocations.append(content)
-        didTapContentClosure?(content)
+    func didAvatarTap(_ userId: String) {
+        didAvatarTapCallsCount += 1
+        didAvatarTapReceivedUserId = userId
+        didAvatarTapReceivedInvocations.append(userId)
+        didAvatarTapClosure?(userId)
+    }
+
+    //MARK: - didContentTap
+
+    var didContentTapCallsCount = 0
+    var didContentTapCalled: Bool {
+        return didContentTapCallsCount > 0
+    }
+    var didContentTapReceivedContent: MessageCellContentProtocol?
+    var didContentTapReceivedInvocations: [MessageCellContentProtocol] = []
+    var didContentTapClosure: ((MessageCellContentProtocol) -> Void)?
+
+    func didContentTap(_ content: MessageCellContentProtocol) {
+        didContentTapCallsCount += 1
+        didContentTapReceivedContent = content
+        didContentTapReceivedInvocations.append(content)
+        didContentTapClosure?(content)
     }
 
     //MARK: - didError
@@ -600,38 +617,55 @@ class FirestoreServiceProtocolMock: FirestoreServiceProtocol {
         createContactCompletionClosure?(contactModel, completion)
     }
 
-    //MARK: - currentUserData
+    //MARK: - listenCurrentUserData
 
-    var currentUserDataCompletionCallsCount = 0
-    var currentUserDataCompletionCalled: Bool {
-        return currentUserDataCompletionCallsCount > 0
+    var listenCurrentUserDataCompletionCallsCount = 0
+    var listenCurrentUserDataCompletionCalled: Bool {
+        return listenCurrentUserDataCompletionCallsCount > 0
     }
-    var currentUserDataCompletionReceivedCompletion: ((UserModel?) -> Void)?
-    var currentUserDataCompletionReceivedInvocations: [((UserModel?) -> Void)] = []
-    var currentUserDataCompletionClosure: ((@escaping (UserModel?) -> Void) -> Void)?
+    var listenCurrentUserDataCompletionReceivedCompletion: ((UserModel?) -> Void)?
+    var listenCurrentUserDataCompletionReceivedInvocations: [((UserModel?) -> Void)] = []
+    var listenCurrentUserDataCompletionClosure: ((@escaping (UserModel?) -> Void) -> Void)?
 
-    func currentUserData(        completion: @escaping (UserModel?) -> Void    ) {
-        currentUserDataCompletionCallsCount += 1
-        currentUserDataCompletionReceivedCompletion = completion
-        currentUserDataCompletionReceivedInvocations.append(completion)
-        currentUserDataCompletionClosure?(completion)
+    func listenCurrentUserData(        completion: @escaping (UserModel?) -> Void    ) {
+        listenCurrentUserDataCompletionCallsCount += 1
+        listenCurrentUserDataCompletionReceivedCompletion = completion
+        listenCurrentUserDataCompletionReceivedInvocations.append(completion)
+        listenCurrentUserDataCompletionClosure?(completion)
     }
 
-    //MARK: - userData
+    //MARK: - listenUserData
 
-    var userDataCompletionCallsCount = 0
-    var userDataCompletionCalled: Bool {
-        return userDataCompletionCallsCount > 0
+    var listenUserDataCompletionCallsCount = 0
+    var listenUserDataCompletionCalled: Bool {
+        return listenUserDataCompletionCallsCount > 0
     }
-    var userDataCompletionReceivedArguments: (userId: String, completion: (UserModel?) -> Void)?
-    var userDataCompletionReceivedInvocations: [(userId: String, completion: (UserModel?) -> Void)] = []
-    var userDataCompletionClosure: ((String, @escaping (UserModel?) -> Void) -> Void)?
+    var listenUserDataCompletionReceivedArguments: (userId: String, completion: (UserModel?) -> Void)?
+    var listenUserDataCompletionReceivedInvocations: [(userId: String, completion: (UserModel?) -> Void)] = []
+    var listenUserDataCompletionClosure: ((String, @escaping (UserModel?) -> Void) -> Void)?
 
-    func userData(        _ userId: String,        completion: @escaping (UserModel?) -> Void    ) {
-        userDataCompletionCallsCount += 1
-        userDataCompletionReceivedArguments = (userId: userId, completion: completion)
-        userDataCompletionReceivedInvocations.append((userId: userId, completion: completion))
-        userDataCompletionClosure?(userId, completion)
+    func listenUserData(        _ userId: String,        completion: @escaping (UserModel?) -> Void    ) {
+        listenUserDataCompletionCallsCount += 1
+        listenUserDataCompletionReceivedArguments = (userId: userId, completion: completion)
+        listenUserDataCompletionReceivedInvocations.append((userId: userId, completion: completion))
+        listenUserDataCompletionClosure?(userId, completion)
+    }
+
+    //MARK: - getUserData
+
+    var getUserDataCompletionCallsCount = 0
+    var getUserDataCompletionCalled: Bool {
+        return getUserDataCompletionCallsCount > 0
+    }
+    var getUserDataCompletionReceivedArguments: (userId: String, completion: (UserModel?) -> Void)?
+    var getUserDataCompletionReceivedInvocations: [(userId: String, completion: (UserModel?) -> Void)] = []
+    var getUserDataCompletionClosure: ((String, @escaping (UserModel?) -> Void) -> Void)?
+
+    func getUserData(        _ userId: String,        completion: @escaping (UserModel?) -> Void    ) {
+        getUserDataCompletionCallsCount += 1
+        getUserDataCompletionReceivedArguments = (userId: userId, completion: completion)
+        getUserDataCompletionReceivedInvocations.append((userId: userId, completion: completion))
+        getUserDataCompletionClosure?(userId, completion)
     }
 
     //MARK: - userListData

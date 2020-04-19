@@ -55,7 +55,8 @@ extension MessageCellContentProtocol {
 }
 
 protocol MessageCellDelegate: AnyObject {
-    func didTapContent(_ content: MessageCellContentProtocol)
+    func didAvatarTap(_ userId: String)
+    func didContentTap(_ content: MessageCellContentProtocol)
     func didError(_ text: String)
     func cellUserData(_ userId: String, completion: @escaping (UserModel?) -> Void)
     
@@ -78,6 +79,9 @@ class MessageCell: UITableViewCell, NibReusable, MessageCellProtocol {
     
     var mergeNext: Bool!
     var mergePrev: Bool!
+    
+    var user: UserProtocol?
+    var userGroup = DispatchGroup()
     
     weak var delegate: MessageCellDelegate? {
         didSet {
@@ -128,19 +132,26 @@ class MessageCell: UITableViewCell, NibReusable, MessageCellProtocol {
     
     private func loadUser() {
         if message.isIncoming {
+            userGroup.enter()
             delegate?.cellUserData(message.userId) { [weak self] userModel in
                 guard let self = self else { return }
                 
+                self.user = userModel ?? .deleted()
+                
                 if !self.mergeNext {
-                    self.avatar.setup(withUser: userModel)
+                    if self.message.userId == "uwHeAO0YgFNPzAxzD6IzJsVjHWE3" {
+                        debugPrint("message.str: \(self.message.previewText): \(userModel) prev: \(self.avatar.loading.isAnimating ? "animated" : "non animated")")
+                    }
+                    self.avatar.setup(withUser: self.user!)
+                    self.avatar.alpha = 1
                 } else {
-                    self.avatar.setup(withImage: nil)
+                    self.avatar.alpha = 0
                 }
                 
-                let userModel = userModel ?? .deleted()
+                self.userGroup.leave()
                 
                 for content in self.contentStack.subviews as? [MessageCellContentProtocol] ?? [] {
-                    content.didLoadUser(userModel)
+                    content.didLoadUser(self.user!)
                 }
             }
         }
@@ -356,6 +367,8 @@ class MessageCell: UITableViewCell, NibReusable, MessageCellProtocol {
         messageLayer = nil
         contentSizeObserver = nil
         
+        avatar.reset()
+        
         do {
             contentStack.removeFromSuperview()
         } catch {
@@ -373,12 +386,24 @@ class MessageCell: UITableViewCell, NibReusable, MessageCellProtocol {
     // MARK: - Actions
     
     @objc func didCellTap(_ recognizer: UITapGestureRecognizer) {
+        if !avatar.isHidden && avatar.alpha > 0 {
+            let tapLocation = recognizer.location(in: self)
+            if avatar.frame.contains(tapLocation) {
+                self.userGroup.notify(queue: .main) {
+                    if let userId = self.user?.documentId {
+                        self.delegate?.didAvatarTap(userId)
+                    }
+                }
+                return
+            }
+        }
+        
         for content in contentStack.subviews {
             let tapLocation = recognizer.location(in: contentStack)
             if content.frame.contains(tapLocation),
                 let content = content as? MessageCellContentProtocol {
                 content.didTap(recognizer)
-                delegate?.didTapContent(content)
+                delegate?.didContentTap(content)
             }
         }
     }

@@ -28,7 +28,7 @@ class AvatarView: UIImageView {
         layer.masksToBounds = true
         placeholderLabel.removeFromSuperview()
         set(image: nil, focusOnFaces: true)
-        backgroundColor = .clear
+        backgroundColor = nil
     }
     
     private func setupPlaceholder(_ text: String?, _ color: UIColor) {
@@ -50,17 +50,17 @@ class AvatarView: UIImageView {
         loading.startAnimating()
     }
     
-    func setup(withUser user: UserProtocol?, savedMessagesSupport: Bool = false) {
-        if let user = user {
-            if savedMessagesSupport && user.documentId == Auth.auth().currentUser!.uid {
-                setupBookmark()
-            } else {
-                setup(
-                    withRef: user.avatarRef,
-                    text: user.placeholderName,
-                    color: user.color ?? .accent
-                )
-            }
+    func setup(withUser user: UserProtocol, savedMessagesSupport: Bool = false) {
+        if let userId = user.documentId {
+            if savedMessagesSupport && userId == Auth.auth().currentUser!.uid {
+               setupBookmark()
+           } else {
+               setup(
+                   withRef: user.avatarRef,
+                   text: user.placeholderName,
+                   color: user.color ?? .accent
+               )
+           }
         } else {
             setup(withImage: #imageLiteral(resourceName: "ic_unknown_user"))
         }
@@ -90,7 +90,7 @@ class AvatarView: UIImageView {
         baseSetup()
         
         loading.removeFromSuperview()
-        set(image: image, focusOnFaces: true)
+        self.image = image
     }
     
     func setupBookmark() {
