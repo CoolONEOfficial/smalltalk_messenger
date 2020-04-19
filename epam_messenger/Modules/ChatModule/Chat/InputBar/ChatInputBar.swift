@@ -90,6 +90,7 @@ class ChatInputBar: InputBarAccessoryView {
         sendButton.image = UIImage(systemName: "arrow.up")
         sendButton.tintColor = UIColor.lightText.withAlphaComponent(1)
         sendButton.activityViewColor = .plainText
+        sendButton.isEnabled = true
         
         sendButton.contentHorizontalAlignment = .fill
         sendButton.contentVerticalAlignment = .fill

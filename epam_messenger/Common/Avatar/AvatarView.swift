@@ -46,9 +46,9 @@ class AvatarView: UIImageView {
         loading.startAnimating()
     }
     
-    func setup(withUser user: UserProtocol?) {
+    func setup(withUser user: UserProtocol?, savedMessagesSupport: Bool = false) {
         if let user = user {
-            if user.documentId == Auth.auth().currentUser!.uid {
+            if savedMessagesSupport && user.documentId == Auth.auth().currentUser!.uid {
                 setupBookmark()
             } else {
                 setup(
@@ -99,4 +99,7 @@ class AvatarView: UIImageView {
         tintColor = .white
     }
     
+    func reset() {
+        baseSetup()
+    }
 }
