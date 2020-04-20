@@ -88,7 +88,7 @@ extension ChatDetailsUsersViewController: UIContextMenuInteractionDelegate {
                 
                 let kickAction = UIAction(
                     title: "Kick",
-                    image: UIImage(systemName: "xmark")) { [weak self] _ in
+                    image: UIImage(systemName: "person.badge.minus")) { [weak self] _ in
                         guard let self = self,
                             let chat = self.chat else { return }
                         
