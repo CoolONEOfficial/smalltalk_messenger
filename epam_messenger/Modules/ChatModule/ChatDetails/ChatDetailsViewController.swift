@@ -96,6 +96,7 @@ class ChatDetailsViewController: UIViewController, ChatDetailsViewControllerProt
         tabStrip = .init()
         
         let users = ChatDetailsUsersViewController()
+        users.router = viewModel.router
         users.updateData(viewModel.chat)
         let media = ChatDetailsMediaViewController(
             viewModel: viewModel,

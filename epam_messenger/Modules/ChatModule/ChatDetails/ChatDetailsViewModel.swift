@@ -11,6 +11,7 @@ import UIKit
 protocol ChatDetailsViewModelProtocol {
     var chat: ChatProtocol { get }
     var chatGroup: DispatchGroup { get }
+    var router: RouterProtocol { get }
     
     func chatData(completion: @escaping (ChatModel?) -> Void)
     func didInviteTap()

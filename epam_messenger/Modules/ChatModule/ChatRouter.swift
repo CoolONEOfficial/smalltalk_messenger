@@ -48,7 +48,8 @@ extension Router: ChatRouter {
             from: chatViewController,
             heroAnimations: heroAnimations
         )
-        navigationController.present(chatDetailsViewController, animated: true, completion: nil)
+        chatDetailsViewController.modalTransitionStyle = .crossDissolve
+        topMostController.present(chatDetailsViewController, animated: true, completion: nil)
     }
     
     func showChatDetails(_ userId: String, from chatViewController: ChatViewControllerProtocol?, heroAnimations: Bool) {
@@ -60,7 +61,8 @@ extension Router: ChatRouter {
             from: chatViewController,
             heroAnimations: heroAnimations
         )
-        navigationController.present(chatDetailsViewController, animated: true, completion: nil)
+        chatDetailsViewController.modalTransitionStyle = .crossDissolve
+        topMostController.present(chatDetailsViewController, animated: true, completion: nil)
     }
     
 }

@@ -18,6 +18,7 @@ class ChatDetailsUsersViewController: UITableViewController {
             tableView.animateRowChanges(oldData: oldValue?.users ?? [], newData: chat?.users ?? [])
         }
     }
+    var router: RouterProtocol?
     
     let firestoreService: FirestoreServiceProtocol = FirestoreService()
     
@@ -52,7 +53,20 @@ class ChatDetailsUsersViewController: UITableViewController {
         let interaction = UIContextMenuInteraction(delegate: self)
         
         cell.addInteraction(interaction)
+        cell.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didSelectRow(sender:))))
         return cell
+    }
+    
+    @objc func didSelectRow(sender: UITapGestureRecognizer) {
+        let cell = sender.view as! UserCell
+        
+        if let user = cell.user,
+            let userId = user.documentId,
+            !user.deleted,
+            userId != Auth.auth().currentUser?.uid,
+            let router = router as? ChatRouter {
+            router.showChatDetails(userId, from: nil, heroAnimations: false)
+        }
     }
 }
 
