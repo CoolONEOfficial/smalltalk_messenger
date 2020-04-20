@@ -91,6 +91,10 @@ class PaginatedSectionedTableView<KeyT: Hashable, ElementT: Equatable>: Paginate
         data.count
     }
     
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        paginatedDelegate?.tableView(tableView, titleForHeaderInSection: section)
+    }
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         data[section].elements.count
     }
@@ -122,7 +126,7 @@ class PaginatedSectionedTableView<KeyT: Hashable, ElementT: Equatable>: Paginate
                 row: lastSections.elements.count - 1,
                 section: lastIndex
             ),
-            at: .none,
+            at: .bottom,
             completion: completion
         )
     }

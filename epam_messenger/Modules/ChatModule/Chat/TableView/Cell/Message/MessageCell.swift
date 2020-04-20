@@ -131,7 +131,11 @@ class MessageCell: UITableViewCell, NibReusable, MessageCellProtocol {
             delegate?.cellUserData(message.userId) { [weak self] userModel in
                 guard let self = self else { return }
                 
-                self.avatar.setup(withUser: userModel)
+                if !self.mergeNext {
+                    self.avatar.setup(withUser: userModel)
+                } else {
+                    self.avatar.setup(withImage: nil)
+                }
                 
                 let userModel = userModel ?? .deleted()
                 
@@ -143,14 +147,7 @@ class MessageCell: UITableViewCell, NibReusable, MessageCellProtocol {
     }
     
     private func setupAvatarImage() {
-        let isHidden = !message.isIncoming
-        avatar.isHidden = isHidden
-        
-        if !isHidden {
-            if mergeNext {
-                avatar.image = nil
-            }
-        }
+        avatar.isHidden = !message.isIncoming
     }
     
     private func setupSideConstraints() {

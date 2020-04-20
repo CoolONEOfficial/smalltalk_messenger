@@ -12,7 +12,7 @@ class SearchChatCell: UITableViewCell, NibReusable {
 
     // MARK: - Outlets
     
-    @IBOutlet var avatarImage: UIImageView!
+    @IBOutlet var avatar: AvatarView!
     @IBOutlet var titleLabel: UILabel!
     
     // MARK: - Vars
@@ -34,11 +34,15 @@ class SearchChatCell: UITableViewCell, NibReusable {
     
     private func setupAvatar() {
         delegate?.chatData(chat.documentId!) { chatModel in
-            if let chatModel = chatModel {
-                self.avatarImage.sd_setSmallImage(with: chatModel.avatarRef, placeholderImage: #imageLiteral(resourceName: "logo"))
+            if let chatModel = chatModel, case .chat(let title, _, let hexColor) = self.chat.type {
+                self.avatar.setup(
+                    withRef: chatModel.avatarRef,
+                    text: String(title.first!),
+                    color: UIColor(hexString: hexColor)!
+                )
             }
         }
-        avatarImage.layer.cornerRadius = avatarImage.bounds.width / 2
+        avatar.layer.cornerRadius = avatar.bounds.width / 2
     }
     
     override func awakeFromNib() {

@@ -49,6 +49,17 @@ public func == (lhs: MediaModel, rhs: MediaModel) -> Bool {
     guard lhs.timestamp == rhs.timestamp else { return false }
     return true
 }
+// MARK: - MessageModel AutoEquatable
+extension MessageModel: Equatable {}
+public func == (lhs: MessageModel, rhs: MessageModel) -> Bool {
+    guard compareOptionals(lhs: lhs.documentId, rhs: rhs.documentId, compare: ==) else { return false }
+    guard lhs.kind == rhs.kind else { return false }
+    guard lhs.userId == rhs.userId else { return false }
+    guard lhs.timestamp == rhs.timestamp else { return false }
+    guard compareOptionals(lhs: lhs.chatId, rhs: rhs.chatId, compare: ==) else { return false }
+    guard compareOptionals(lhs: lhs.chatUsers, rhs: rhs.chatUsers, compare: ==) else { return false }
+    return true
+}
 // MARK: - UserModel AutoEquatable
 extension UserModel: Equatable {}
 public func == (lhs: UserModel, rhs: UserModel) -> Bool {
