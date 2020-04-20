@@ -41,7 +41,7 @@ class ContactsListViewController: UIViewController {
         super.viewDidLoad()
         
         if isSelect {
-            title = "Forward"
+            title = "Select user"
             let backItem = UIBarButtonItem()
             backItem.title = "Cancel"
             backItem.tintColor = .accent

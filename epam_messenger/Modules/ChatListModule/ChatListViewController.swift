@@ -66,7 +66,7 @@ class ChatListViewController: UIViewController {
         super.viewDidLoad()
         
         if isForward {
-            title = "Forward"
+            title = "Select chat"
             let backItem = UIBarButtonItem()
             backItem.title = "Cancel"
             backItem.tintColor = .accent
