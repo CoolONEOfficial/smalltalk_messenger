@@ -11,6 +11,10 @@ import FirebaseUI
 import CodableFirebase
 import Reusable
 
+protocol ContactsSelectDelegate: AnyObject {
+    func didSelectUser(_ userId: String)
+}
+
 protocol ContactsListViewControllerProtocol {
 }
 
@@ -29,12 +33,28 @@ class ContactsListViewController: UIViewController {
     let searchController = UISearchController(searchResultsController: nil)
     internal var searchItems: [UserModel] = .init()
     
+    weak var selectDelegate: ContactsSelectDelegate?
+    
     // MARK: - Methods
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        if isSelect {
+            title = "Forward"
+            let backItem = UIBarButtonItem()
+            backItem.title = "Cancel"
+            backItem.tintColor = .accent
+            backItem.action = #selector(didCancelTap)
+            backItem.target = self
+            navigationItem.leftBarButtonItem = backItem
+        }
+        
         setupTableView()
+    }
+    
+    @objc func didCancelTap() {
+        navigationController?.dismiss(animated: true, completion: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -83,16 +103,30 @@ class ContactsListViewController: UIViewController {
         view.addSubview(tableView)
         tableView.edgesToSuperview()
     }
+    
+    // MARK: - Helpers
+    
+    var isSelect: Bool {
+        return tabBarController == nil
+    }
+    
+    var isSearch: Bool {
+        return !(searchController.searchBar.text?.isEmpty ?? true)
+    }
 }
 
 extension ContactsListViewController: PaginatedTableViewDelegate {
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        guard (searchController.searchBar.text?.isEmpty ?? true) else { return nil }
+        guard !isSearch else { return nil }
         
         let deleteAction = UIContextualAction(style: .normal, title: "Delete") { _, _, complete in
             let contact = self.tableView.elementAt(indexPath)
-            self.db.collection("users").document(Auth.auth().currentUser!.uid).collection("contacts").document(contact.documentId!).delete()
+            self.db.collection("users")
+                .document(Auth.auth().currentUser!.uid)
+                .collection("contacts")
+                .document(contact.documentId!)
+                .delete()
             tableView.reloadData()
             complete(true)
         }
@@ -105,10 +139,22 @@ extension ContactsListViewController: PaginatedTableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if searchController.searchBar.text?.isEmpty ?? true {
-            viewModel.didContactSelect(self.tableView.elementAt(indexPath))
+        if isSearch {
+            let user = searchItems[indexPath.row]
+            if isSelect {
+                selectDelegate?.didSelectUser(user.documentId!)
+                navigationController?.dismiss(animated: true, completion: nil)
+            } else {
+                viewModel.didUserSelect(user)
+            }
         } else {
-            viewModel.didUserSelect(searchItems[indexPath.row])
+            let contact = self.tableView.elementAt(indexPath)
+            if isSelect {
+                selectDelegate?.didSelectUser(contact.userId)
+                navigationController?.dismiss(animated: true, completion: nil)
+            } else {
+                viewModel.didContactSelect(contact)
+            }
         }
         
         tableView.deselectRow(at: indexPath, animated: true)
@@ -121,9 +167,9 @@ extension ContactsListViewController: PaginatedTableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        (searchController.searchBar.text?.isEmpty ?? true)
-            ? self.tableView.keyAt(section)
-            : nil
+        isSearch
+            ? nil
+            : self.tableView.keyAt(section)
     }
     
 }

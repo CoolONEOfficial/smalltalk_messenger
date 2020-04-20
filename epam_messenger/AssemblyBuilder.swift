@@ -9,8 +9,8 @@ import UIKit
 
 protocol AssemblyBuilderProtocol {
     func createBottomBarModule(router: RouterProtocol) -> UIViewController
-    func createChatListModule(router: RouterProtocol, forwardDelegate: ForwardDelegate?) -> UIViewController
-    func createContactsListModule(router: RouterProtocol) -> UIViewController
+    func createChatListModule(router: RouterProtocol, selectDelegate: ChatSelectDelegate?) -> UIViewController
+    func createContactsListModule(router: RouterProtocol, selectDelegate: ContactsSelectDelegate?) -> UIViewController
 }
 
 class AssemblyBuilder: AssemblyBuilderProtocol {
@@ -28,10 +28,10 @@ class AssemblyBuilder: AssemblyBuilderProtocol {
     
     func createChatListModule(
         router: RouterProtocol,
-        forwardDelegate: ForwardDelegate? = nil
+        selectDelegate: ChatSelectDelegate? = nil
     ) -> UIViewController {
         let view = ChatListViewController()
-        view.forwardDelegate = forwardDelegate
+        view.forwardDelegate = selectDelegate
         let viewModel = ChatListViewModel(
             router: router,
             viewController: view
@@ -40,9 +40,16 @@ class AssemblyBuilder: AssemblyBuilderProtocol {
         return view
     }
     
-    func createContactsListModule(router: RouterProtocol) -> UIViewController {
+    func createContactsListModule(
+        router: RouterProtocol,
+        selectDelegate: ContactsSelectDelegate? = nil
+    ) -> UIViewController {
         let view = ContactsListViewController()
-        let viewModel = ContactsListViewModel(router: router, viewController: view)
+        view.selectDelegate = selectDelegate
+        let viewModel = ContactsListViewModel(
+            router: router,
+            viewController: view
+        )
         view.viewModel = viewModel
         return view
     }

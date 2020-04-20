@@ -35,6 +35,11 @@ protocol FirestoreServiceProtocol: AutoMockable {
         userId: String,
         completion: @escaping (Error?) -> Void
     )
+    func inviteChatUser(
+        chatId: String,
+        userId: String,
+        completion: @escaping (Error?) -> Void
+    )
     func clearSavedMessages(
         chatId: String,
         completion: @escaping (Error?) -> Void
@@ -115,6 +120,14 @@ extension FirestoreServiceProtocol {
         completion: @escaping (Error?) -> Void = {_ in}
     ) {
         kickChatUser(chatId: chatId, userId: userId, completion: completion)
+    }
+    
+    func inviteChatUser(
+        chatId: String,
+        userId: String,
+        completion: @escaping (Error?) -> Void = {_ in}
+    ) {
+        inviteChatUser(chatId: chatId, userId: userId, completion: completion)
     }
     
     func deleteMessage(
@@ -230,6 +243,17 @@ class FirestoreService: FirestoreServiceProtocol {
             .updateData(
                 [
                     "users": FieldValue.arrayRemove([ userId ])
+                ],
+                completion: completion
+        )
+    }
+    
+    func inviteChatUser(chatId: String, userId: String, completion: @escaping (Error?) -> Void = {_ in}) {
+        db.collection("chats")
+            .document(chatId)
+            .updateData(
+                [
+                    "users": FieldValue.arrayUnion([ userId ])
                 ],
                 completion: completion
         )

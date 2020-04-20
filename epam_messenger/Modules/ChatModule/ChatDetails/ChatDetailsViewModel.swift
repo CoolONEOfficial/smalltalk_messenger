@@ -6,12 +6,14 @@
 //
 
 import Foundation
+import UIKit
 
 protocol ChatDetailsViewModelProtocol {
     var chat: ChatProtocol { get }
     var chatGroup: DispatchGroup { get }
     
     func chatData(completion: @escaping (ChatModel?) -> Void)
+    func didInviteTap()
 }
 
 class ChatDetailsViewModel: ChatDetailsViewModelProtocol {
@@ -71,4 +73,16 @@ class ChatDetailsViewModel: ChatDetailsViewModelProtocol {
             completion(chat)
         }
     }
+    
+    func didInviteTap() {
+        router.showUserPicker(selectDelegate: self)
+    }
+}
+
+extension ChatDetailsViewModel: ContactsSelectDelegate {
+    
+    func didSelectUser(_ userId: String) {
+        firestoreService.inviteChatUser(chatId: chat.documentId!, userId: userId, completion: {_ in})
+    }
+    
 }

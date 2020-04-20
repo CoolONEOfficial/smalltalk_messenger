@@ -10,6 +10,7 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ChatDetailsViewController" customModule="epam_messenger" customModuleProvider="target">
             <connections>
                 <outlet property="avatar" destination="MOO-7r-scm" id="dnX-Iv-UCo"/>
+                <outlet property="inviteButton" destination="g1K-QO-WkW" id="boD-0Q-Zw9"/>
                 <outlet property="scroll" destination="Ab5-pv-7ia" id="OAU-ch-SsN"/>
                 <outlet property="stack" destination="u70-Tk-pB4" id="JhY-6E-zy6"/>
                 <outlet property="subtitleLabel" destination="fmr-Qg-Rhj" id="GdQ-Fj-xMW"/>
@@ -47,11 +48,11 @@
                                         <constraint firstItem="MOO-7r-scm" firstAttribute="height" relation="greaterThanOrEqual" secondItem="7X3-DB-AMg" secondAttribute="height" id="uka-eh-01c"/>
                                     </constraints>
                                 </view>
-                                <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Pij-oO-X7f">
+                                <stackView opaque="NO" contentMode="scaleToFill" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="Pij-oO-X7f">
                                     <rect key="frame" x="0.0" y="400" width="414" height="52"/>
                                     <subviews>
                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="top" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="0nV-eV-utm">
-                                            <rect key="frame" x="10" y="5" width="394" height="42"/>
+                                            <rect key="frame" x="10" y="5" width="367" height="42"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="..." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QSC-MR-ReS" userLabel="Title">
                                                     <rect key="frame" x="0.0" y="0.0" width="16" height="20"/>
@@ -82,8 +83,22 @@
                                                 <constraint firstAttribute="height" constant="42" id="qZu-8K-8T3"/>
                                             </constraints>
                                         </stackView>
+                                        <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="g1K-QO-WkW" userLabel="Invite Button">
+                                            <rect key="frame" x="377" y="5" width="27" height="42"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="30" id="3GL-mM-zr8"/>
+                                                <constraint firstAttribute="width" constant="30" id="YB2-yJ-vr1"/>
+                                            </constraints>
+                                            <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                            <state key="normal" image="person.badge.plus.fill" catalog="system">
+                                                <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="medium"/>
+                                            </state>
+                                            <connections>
+                                                <action selector="didInviteTap:" destination="-1" eventType="touchUpInside" id="itS-Zd-far"/>
+                                            </connections>
+                                        </button>
                                     </subviews>
-                                    <edgeInsets key="layoutMargins" top="5" left="10" bottom="5" right="10"/>
+                                    <edgeInsets key="layoutMargins" top="5" left="10" bottom="5" right="15"/>
                                 </stackView>
                             </subviews>
                         </stackView>
@@ -110,4 +125,7 @@
             <point key="canvasLocation" x="137.68115942028987" y="150.66964285714286"/>
         </view>
     </objects>
+    <resources>
+        <image name="person.badge.plus.fill" catalog="system" width="128" height="116"/>
+    </resources>
 </document>

@@ -24,6 +24,7 @@ class ChatDetailsViewController: UIViewController, ChatDetailsViewControllerProt
     @IBOutlet var avatar: AvatarView!
     @IBOutlet var titleLabel: UILabel!
     @IBOutlet var subtitleLabel: UILabel!
+    @IBOutlet var inviteButton: UIButton!
     
     // MARK: - Vars
     
@@ -34,6 +35,8 @@ class ChatDetailsViewController: UIViewController, ChatDetailsViewControllerProt
     var viewModel: ChatDetailsViewModelProtocol!
     var chatViewController: ChatViewControllerProtocol?
 
+    // MARK: - Init
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -152,6 +155,17 @@ class ChatDetailsViewController: UIViewController, ChatDetailsViewControllerProt
             action: #selector(didCancelTap)
         )
         navigationItem.leftBarButtonItem?.tintColor = UIColor.lightText.withAlphaComponent(1)
+        
+        setupInviteButton()
+    }
+    
+    private func setupInviteButton() {
+        inviteButton.backgroundColor = .secondary
+        inviteButton.tintColor = .systemBackground
+        inviteButton.layer.cornerRadius = 15
+        if case .chat(_, let adminId, _) = viewModel.chat.type {
+            inviteButton.isHidden = adminId != Auth.auth().currentUser!.uid
+        }
     }
     
     private func setupAvatar() {
@@ -165,7 +179,13 @@ class ChatDetailsViewController: UIViewController, ChatDetailsViewControllerProt
         gradient.endPoint = CGPoint(x: 0, y: 0)
         avatar.layer.addSublayer(gradient)
     }
+    
+    // MARK: - Actions
 
+    @IBAction func didInviteTap(_ sender: UIButton) {
+        viewModel.didInviteTap()
+    }
+    
     @objc func didCancelTap() {
         navigationController?.dismiss(animated: true, completion: nil)
     }
@@ -202,6 +222,7 @@ extension ChatDetailsViewController: UIScrollViewDelegate {
                 translationX: yOffsetScale * (stack.bounds.width / 2 - subtitleLabel.frame.width / 2),
                 y: 0
             )
+            inviteButton.transform = .init(scaleX: (1 - yOffsetScale), y: (1 - yOffsetScale))
             avatar.layer.opacity = Float(1 - yOffsetScale)
             navigationItem.leftBarButtonItem?.tintColor = UIColor.blend(
                 color1: UIColor.lightText.withAlphaComponent(1), intensity1: 1 - yOffsetScale,

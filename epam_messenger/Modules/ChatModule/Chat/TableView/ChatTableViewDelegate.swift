@@ -263,10 +263,7 @@ extension ChatViewController: PaginatedTableViewDelegate {
     }
     
     internal func presentForwardController() {
-        let forwardController = viewModel.createForwardViewController(forwardDelegate: self)
-        let navigationController = UINavigationController(rootViewController: forwardController)
-        navigationController.view.tintColor = .accent
-        present(navigationController, animated: true, completion: nil)
+        viewModel.presentForwardController(selectDelegate: self)
     }
     
     @objc internal func forwardSelectedMessages() {
@@ -312,7 +309,7 @@ extension ChatViewController: PaginatedTableViewDelegate {
     }
 }
 
-extension ChatViewController: ForwardDelegate {
+extension ChatViewController: ChatSelectDelegate {
     
     func didSelectChat(_ chatModel: ChatModel) {
         if forwardMessages != nil {

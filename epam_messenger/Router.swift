@@ -19,6 +19,9 @@ protocol RouterProtocol: RouterMain, AutoMockable {
     func showChatList()
     func popToRoot()
     func showContactsList()
+    
+    func showUserPicker(selectDelegate: ContactsSelectDelegate)
+    func showChatPicker(selectDelegate: ChatSelectDelegate)
 }
 
 class Router: RouterProtocol {
@@ -55,7 +58,7 @@ class Router: RouterProtocol {
         if let navigationController = navigationController {
             guard let chatViewController = assemblyBuilder?.createChatListModule(
                 router: self,
-                forwardDelegate: nil
+                selectDelegate: nil
             ) else { return }
             navigationController.viewControllers = [chatViewController]
         }
@@ -69,8 +72,30 @@ class Router: RouterProtocol {
     
     func showContactsList() {
         if let navigationController = navigationController {
-            guard let contactsListViewController = assemblyBuilder?.createContactsListModule(router: self) else { return }
+            guard let contactsListViewController = assemblyBuilder?.createContactsListModule(router: self, selectDelegate: nil) else { return }
             navigationController.viewControllers = [contactsListViewController]
+        }
+    }
+    
+    func showUserPicker(selectDelegate: ContactsSelectDelegate) {
+        if let contactsController = assemblyBuilder?.createContactsListModule(
+            router: self,
+            selectDelegate: selectDelegate
+        ) {
+            let navigationController = UINavigationController(rootViewController: contactsController)
+            navigationController.view.tintColor = .accent
+            topMostController.present(navigationController, animated: true, completion: nil)
+        }
+    }
+    
+    func showChatPicker(selectDelegate: ChatSelectDelegate) {
+        if let chatListController = assemblyBuilder?.createChatListModule(
+            router: self,
+            selectDelegate: selectDelegate
+        ) {
+            let navigationController = UINavigationController(rootViewController: chatListController)
+            navigationController.view.tintColor = .accent
+            topMostController.present(navigationController, animated: true, completion: nil)
         }
     }
     
@@ -78,5 +103,16 @@ class Router: RouterProtocol {
          assemblyBuilder: AssemblyBuilderProtocol) {
         self.navigationController = navigationController
         self.assemblyBuilder = assemblyBuilder
+    }
+    
+    // MARK: - Helpers
+    
+    var topMostController: UIViewController {
+        let keyWindow = UIApplication.shared.windows.first { $0.isKeyWindow }
+        var topController: UIViewController = keyWindow!.rootViewController!
+        while (topController.presentedViewController != nil) {
+            topController = topController.presentedViewController!
+        }
+        return topController
     }
 }

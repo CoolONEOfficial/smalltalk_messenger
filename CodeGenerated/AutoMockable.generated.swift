@@ -208,22 +208,21 @@ class ChatViewModelProtocolMock: ChatViewModelProtocol {
         createChatCompletionClosure?(completion)
     }
 
-    //MARK: - createForwardViewController
+    //MARK: - presentForwardController
 
-    var createForwardViewControllerForwardDelegateCallsCount = 0
-    var createForwardViewControllerForwardDelegateCalled: Bool {
-        return createForwardViewControllerForwardDelegateCallsCount > 0
+    var presentForwardControllerSelectDelegateCallsCount = 0
+    var presentForwardControllerSelectDelegateCalled: Bool {
+        return presentForwardControllerSelectDelegateCallsCount > 0
     }
-    var createForwardViewControllerForwardDelegateReceivedForwardDelegate: ForwardDelegate?
-    var createForwardViewControllerForwardDelegateReceivedInvocations: [ForwardDelegate] = []
-    var createForwardViewControllerForwardDelegateReturnValue: UIViewController!
-    var createForwardViewControllerForwardDelegateClosure: ((ForwardDelegate) -> UIViewController)?
+    var presentForwardControllerSelectDelegateReceivedSelectDelegate: ChatSelectDelegate?
+    var presentForwardControllerSelectDelegateReceivedInvocations: [ChatSelectDelegate] = []
+    var presentForwardControllerSelectDelegateClosure: ((ChatSelectDelegate) -> Void)?
 
-    func createForwardViewController(        forwardDelegate: ForwardDelegate    ) -> UIViewController {
-        createForwardViewControllerForwardDelegateCallsCount += 1
-        createForwardViewControllerForwardDelegateReceivedForwardDelegate = forwardDelegate
-        createForwardViewControllerForwardDelegateReceivedInvocations.append(forwardDelegate)
-        return createForwardViewControllerForwardDelegateClosure.map({ $0(forwardDelegate) }) ?? createForwardViewControllerForwardDelegateReturnValue
+    func presentForwardController(        selectDelegate: ChatSelectDelegate    ) {
+        presentForwardControllerSelectDelegateCallsCount += 1
+        presentForwardControllerSelectDelegateReceivedSelectDelegate = selectDelegate
+        presentForwardControllerSelectDelegateReceivedInvocations.append(selectDelegate)
+        presentForwardControllerSelectDelegateClosure?(selectDelegate)
     }
 
     //MARK: - goToChat
@@ -545,6 +544,23 @@ class FirestoreServiceProtocolMock: FirestoreServiceProtocol {
         kickChatUserChatIdUserIdCompletionReceivedArguments = (chatId: chatId, userId: userId, completion: completion)
         kickChatUserChatIdUserIdCompletionReceivedInvocations.append((chatId: chatId, userId: userId, completion: completion))
         kickChatUserChatIdUserIdCompletionClosure?(chatId, userId, completion)
+    }
+
+    //MARK: - inviteChatUser
+
+    var inviteChatUserChatIdUserIdCompletionCallsCount = 0
+    var inviteChatUserChatIdUserIdCompletionCalled: Bool {
+        return inviteChatUserChatIdUserIdCompletionCallsCount > 0
+    }
+    var inviteChatUserChatIdUserIdCompletionReceivedArguments: (chatId: String, userId: String, completion: (Error?) -> Void)?
+    var inviteChatUserChatIdUserIdCompletionReceivedInvocations: [(chatId: String, userId: String, completion: (Error?) -> Void)] = []
+    var inviteChatUserChatIdUserIdCompletionClosure: ((String, String, @escaping (Error?) -> Void) -> Void)?
+
+    func inviteChatUser(        chatId: String,        userId: String,        completion: @escaping (Error?) -> Void    ) {
+        inviteChatUserChatIdUserIdCompletionCallsCount += 1
+        inviteChatUserChatIdUserIdCompletionReceivedArguments = (chatId: chatId, userId: userId, completion: completion)
+        inviteChatUserChatIdUserIdCompletionReceivedInvocations.append((chatId: chatId, userId: userId, completion: completion))
+        inviteChatUserChatIdUserIdCompletionClosure?(chatId, userId, completion)
     }
 
     //MARK: - clearSavedMessages
@@ -948,6 +964,40 @@ class RouterProtocolMock: RouterProtocol {
     func showContactsList() {
         showContactsListCallsCount += 1
         showContactsListClosure?()
+    }
+
+    //MARK: - showUserPicker
+
+    var showUserPickerSelectDelegateCallsCount = 0
+    var showUserPickerSelectDelegateCalled: Bool {
+        return showUserPickerSelectDelegateCallsCount > 0
+    }
+    var showUserPickerSelectDelegateReceivedSelectDelegate: ContactsSelectDelegate?
+    var showUserPickerSelectDelegateReceivedInvocations: [ContactsSelectDelegate] = []
+    var showUserPickerSelectDelegateClosure: ((ContactsSelectDelegate) -> Void)?
+
+    func showUserPicker(selectDelegate: ContactsSelectDelegate) {
+        showUserPickerSelectDelegateCallsCount += 1
+        showUserPickerSelectDelegateReceivedSelectDelegate = selectDelegate
+        showUserPickerSelectDelegateReceivedInvocations.append(selectDelegate)
+        showUserPickerSelectDelegateClosure?(selectDelegate)
+    }
+
+    //MARK: - showChatPicker
+
+    var showChatPickerSelectDelegateCallsCount = 0
+    var showChatPickerSelectDelegateCalled: Bool {
+        return showChatPickerSelectDelegateCallsCount > 0
+    }
+    var showChatPickerSelectDelegateReceivedSelectDelegate: ChatSelectDelegate?
+    var showChatPickerSelectDelegateReceivedInvocations: [ChatSelectDelegate] = []
+    var showChatPickerSelectDelegateClosure: ((ChatSelectDelegate) -> Void)?
+
+    func showChatPicker(selectDelegate: ChatSelectDelegate) {
+        showChatPickerSelectDelegateCallsCount += 1
+        showChatPickerSelectDelegateReceivedSelectDelegate = selectDelegate
+        showChatPickerSelectDelegateReceivedInvocations.append(selectDelegate)
+        showChatPickerSelectDelegateClosure?(selectDelegate)
     }
 
 }

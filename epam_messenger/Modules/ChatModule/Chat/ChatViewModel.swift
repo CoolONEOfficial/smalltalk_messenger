@@ -31,9 +31,9 @@ protocol ChatViewModelProtocol: ViewModelProtocol, AutoMockable, MessageCellDele
     func createChat(
         completion: @escaping (Error?) -> Void
     )
-    func createForwardViewController(
-        forwardDelegate: ForwardDelegate
-    ) -> UIViewController
+    func presentForwardController(
+        selectDelegate: ChatSelectDelegate
+    )
     func goToChat(
         _ chatModel: ChatProtocol
     )
@@ -282,11 +282,8 @@ class ChatViewModel: ChatViewModelProtocol {
         router.showChatDetails(chat, from: viewController)
     }
     
-    func createForwardViewController(forwardDelegate: ForwardDelegate) -> UIViewController {
-        return AssemblyBuilder().createChatListModule(
-            router: router,
-            forwardDelegate: forwardDelegate
-        )
+    func presentForwardController(selectDelegate: ChatSelectDelegate) {
+        return router.showChatPicker(selectDelegate: selectDelegate)
     }
 }
 

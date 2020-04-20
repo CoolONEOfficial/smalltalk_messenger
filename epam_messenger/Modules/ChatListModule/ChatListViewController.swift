@@ -11,7 +11,7 @@ import FirebaseUI
 import CodableFirebase
 import Reusable
 
-protocol ForwardDelegate: AnyObject {
+protocol ChatSelectDelegate: AnyObject {
     func didSelectChat(_ chatModel: ChatModel)
 }
 
@@ -47,7 +47,7 @@ class ChatListViewController: UIViewController {
     internal var searchChatItems = [ChatModel]()
     internal var searchMessageItems = [MessageModel]()
     
-    weak var forwardDelegate: ForwardDelegate?
+    weak var forwardDelegate: ChatSelectDelegate?
     
     var searchDataSource: FUIFirestoreTableViewDataSource!
     
@@ -213,8 +213,6 @@ class ChatListViewController: UIViewController {
         }
         self.tabBarController?.tabBar.isHidden = hidden
     }
-    
-    // MARK: - Helpers
     
     var isForward: Bool {
         return tabBarController == nil
