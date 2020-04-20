@@ -283,6 +283,8 @@ class ChatViewModel: ChatViewModelProtocol {
     }
     
     func presentForwardController(selectDelegate: ChatSelectDelegate) {
+        guard let router = router as? ChatListRouter else { return }
+        
         return router.showChatPicker(selectDelegate: selectDelegate)
     }
 }

@@ -387,7 +387,9 @@ class MessageCell: UITableViewCell, NibReusable, MessageCellProtocol {
             let tapLocation = recognizer.location(in: self)
             if avatar.frame.contains(tapLocation) {
                 self.userGroup.notify(queue: .main) {
-                    if let userId = self.user?.documentId {
+                    if let user = self.user,
+                        !user.deleted,
+                        let userId = user.documentId {
                         self.delegate?.didAvatarTap(userId)
                     }
                 }
