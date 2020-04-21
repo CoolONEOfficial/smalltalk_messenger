@@ -40,7 +40,7 @@ class ContactsListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if isSelect {
+        if isSelectMode {
             title = "Select user"
             let backItem = UIBarButtonItem()
             backItem.title = "Cancel"
@@ -67,8 +67,13 @@ class ContactsListViewController: UIViewController {
     private func setupSearchController() {
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
-        searchController.searchBar.placeholder = "Search users"
-        tabBarController?.navigationItem.searchController = searchController
+        searchController.searchBar.placeholder = "Search by users"
+        if let navigationItem = isSelectMode
+            ? self.navigationItem
+            : tabBarController?.navigationItem {
+            navigationItem.searchController = searchController
+            navigationItem.hidesSearchBarWhenScrolling = false
+        }
     }
     
     private func setupTableView() {
@@ -106,7 +111,7 @@ class ContactsListViewController: UIViewController {
     
     // MARK: - Helpers
     
-    var isSelect: Bool {
+    var isSelectMode: Bool {
         return tabBarController == nil
     }
     
@@ -141,7 +146,7 @@ extension ContactsListViewController: PaginatedTableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if isSearch {
             let user = searchItems[indexPath.row]
-            if isSelect {
+            if isSelectMode {
                 selectDelegate?.didSelectUser(user.documentId!)
                 navigationController?.dismiss(animated: true, completion: nil)
             } else {
@@ -149,7 +154,7 @@ extension ContactsListViewController: PaginatedTableViewDelegate {
             }
         } else {
             let contact = self.tableView.elementAt(indexPath)
-            if isSelect {
+            if isSelectMode {
                 selectDelegate?.didSelectUser(contact.userId)
                 navigationController?.dismiss(animated: true, completion: nil)
             } else {

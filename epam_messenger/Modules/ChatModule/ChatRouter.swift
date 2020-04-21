@@ -40,7 +40,6 @@ extension Router: ChatRouter {
     }
     
     func showChatDetails(_ chat: ChatProtocol, from chatViewController: ChatViewControllerProtocol?, heroAnimations: Bool) {
-        guard let navigationController = navigationController else { return }
         guard let assemblyBuilder = assemblyBuilder as? ChatAssemblyBuilder else { return }
         let chatDetailsViewController = assemblyBuilder.createChatDetails(
             router: self,
@@ -49,11 +48,10 @@ extension Router: ChatRouter {
             heroAnimations: heroAnimations
         )
         chatDetailsViewController.modalTransitionStyle = .crossDissolve
-        topMostController.present(chatDetailsViewController, animated: true, completion: nil)
+        Router.topMostController.present(chatDetailsViewController, animated: true, completion: nil)
     }
     
     func showChatDetails(_ userId: String, from chatViewController: ChatViewControllerProtocol?, heroAnimations: Bool) {
-        guard let navigationController = navigationController else { return }
         guard let assemblyBuilder = assemblyBuilder as? ChatAssemblyBuilder else { return }
         let chatDetailsViewController = assemblyBuilder.createChatDetails(
             router: self,
@@ -62,7 +60,7 @@ extension Router: ChatRouter {
             heroAnimations: heroAnimations
         )
         chatDetailsViewController.modalTransitionStyle = .crossDissolve
-        topMostController.present(chatDetailsViewController, animated: true, completion: nil)
+        Router.topMostController.present(chatDetailsViewController, animated: true, completion: nil)
     }
     
 }

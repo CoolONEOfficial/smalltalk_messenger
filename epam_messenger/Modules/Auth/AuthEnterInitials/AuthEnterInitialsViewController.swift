@@ -16,38 +16,17 @@ class AuthEnterInitialsViewController: UIViewController {
     
     // MARK: - Outlets
     
-    @IBOutlet var galleryView: UIView!
-    @IBOutlet var avatarImage: AvatarView!
-    @IBOutlet var cameraView: UIView!
+    @IBOutlet var avatar: AvatarEditView!
     @IBOutlet var nameField: UITextField!
     @IBOutlet var surnameField: UITextField!
-    @IBOutlet var cancelOrColorWheelImage: UIImageView!
     
     // MARK: - Vars
     
     var viewModel: AuthEnterInitialsViewModelProtocol!
-    lazy var imagePickerService: ImagePickerServiceProtocol = {
-        return ImagePickerService(viewController: self)
-    }()
+    lazy var imagePickerService = ImagePickerService(viewController: self, cameraDevice: .front)
     
     var user: UserModel = .empty()
-    var userImage: UIImage? {
-        didSet {
-            UIView.animate(withDuration: 2, animations: { [weak self] in
-                guard let self = self else { return }
-                if let userImage = self.userImage {
-                    self.avatarImage.setup(withImage: userImage)
-                    self.cancelOrColorWheelImage.image = UIImage(systemName: "trash.fill")
-                    self.cancelOrColorWheelImage.contentMode = .center
-                } else {
-                    self.avatarImage.setup(withPlaceholder: self.user.placeholderName)
-                    self.cancelOrColorWheelImage.image = UIImage(named: "ic_color_wheel")
-                    self.cancelOrColorWheelImage.contentMode = .scaleAspectFit
-                }
-            })
-            
-        }
-    }
+    var userImage: UIImage?
     
     var nextButton = UIButton(type: .custom)
     
@@ -57,8 +36,6 @@ class AuthEnterInitialsViewController: UIViewController {
         super.viewDidLoad()
 
         setupNextButton()
-        setupCamera()
-        setupGallery()
         setupAvatar()
         setupNameLabel()
         setupSurnameLabel()
@@ -85,45 +62,10 @@ class AuthEnterInitialsViewController: UIViewController {
         surnameField.delegate = self
     }
     
-    private func setupCamera() {
-        cameraView.layer.cornerRadius = cameraView.bounds.width / 2
-        addImageLayer(cameraView, "camera.fill")
-        cameraView.addGestureRecognizer(
-            UITapGestureRecognizer(target: self, action: #selector(cameraDidTap))
-        )
-    }
-    
-    private func setupGallery() {
-        galleryView.layer.cornerRadius = galleryView.bounds.height / 2
-        addImageLayer(galleryView, "photo.fill")
-        galleryView.addGestureRecognizer(
-            UITapGestureRecognizer(target: self, action: #selector(galleryDidTap))
-        )
-    }
-    
     private func setupAvatar() {
-        avatarImage.setup(withPlaceholder: "")
-        setupColorWheel()
-    }
-    
-    private func setupColorWheel() {
-        cancelOrColorWheelImage.isUserInteractionEnabled = true
-        cancelOrColorWheelImage.addGestureRecognizer(
-            UITapGestureRecognizer(target: self, action: #selector(cancelOrColorWheelDidTap))
-        )
-        cancelOrColorWheelImage.layer.cornerRadius = cancelOrColorWheelImage.bounds.width / 2
-    }
-    
-    private func addImageLayer(_ view: UIView, _ name: String) {
-        let myLayer = CALayer()
-        let myImage = UIImage(
-            systemName: name,
-            withConfiguration: UIImage.SymbolConfiguration(pointSize: 30)
-        )?.imageWithColor(color: .white).cgImage
-        myLayer.contents = myImage
-        view.layer.contentsGravity = .center
-        myLayer.frame = galleryView.bounds.insetBy(dx: 25, dy: 30)
-        view.layer.addSublayer(myLayer)
+        avatar.delegate = self
+        avatar.imagePickerService = imagePickerService
+        avatar.setup(withPlaceholder: "")
     }
     
     // MARK: - Actions
@@ -143,7 +85,7 @@ class AuthEnterInitialsViewController: UIViewController {
             
             self.viewModel.createUser(
                 userModel: self.user,
-                avatar: self.avatarImage.image,
+                avatar: self.avatar.image,
                 progressAddiction: { addiction in
                     progressView.setProgress(progressView.progress + addiction, animated: true)
             }) { err in
@@ -160,7 +102,7 @@ class AuthEnterInitialsViewController: UIViewController {
     @IBAction func didNameChanged(_ sender: Any) {
         user.name = nameField.text ?? ""
         if userImage == nil {
-            avatarImage.setup(withPlaceholder: user.placeholderName)
+            avatar.setup(withPlaceholder: user.placeholderName)
         }
         updateNextButton()
     }
@@ -168,7 +110,7 @@ class AuthEnterInitialsViewController: UIViewController {
     @IBAction func didSurnameChanged(_ sender: Any) {
         user.surname = surnameField.text ?? ""
         if userImage == nil {
-            avatarImage.setup(withPlaceholder: user.placeholderName)
+            avatar.setup(withPlaceholder: user.placeholderName)
         }
         updateNextButton()
     }
@@ -186,11 +128,11 @@ class AuthEnterInitialsViewController: UIViewController {
     }
     
     @objc func galleryDidTap() {
-        imagePickerService.pickSingleImage(completion: didImageSelect(image:))
+        imagePickerService.pickSinglePhoto(completion: didImageSelect(image:))
     }
     
     @objc func cameraDidTap() {
-        imagePickerService.pickCamera(completion: didImageSelect(image:))
+        imagePickerService.pickCamera(completion: didImageSelect(image:), device: nil)
     }
     
     @objc func cancelOrColorWheelDidTap() {
@@ -198,7 +140,7 @@ class AuthEnterInitialsViewController: UIViewController {
             let vc = ColorPickerViewController(
                 initialColor: user.color ?? UIColor.accent
             )
-            vc.modalPresentationStyle = .overFullScreen
+            vc.modalPresentationStyle = .overCurrentContext
             vc.isHeroEnabled = true
             vc.delegate = self
             navigationController?.hero.isEnabled = true
@@ -211,6 +153,18 @@ class AuthEnterInitialsViewController: UIViewController {
     func didImageSelect(image: UIImage) {
         userImage = image
     }
+}
+
+extension AuthEnterInitialsViewController: AvatarEditViewDelegate {
+    
+    func didChangeImage(_ image: UIImage) {
+        userImage = image
+    }
+    
+    func didChangeColor(_ color: UIColor) {
+        user.color = color
+    }
+    
 }
 
 extension AuthEnterInitialsViewController: UITextFieldDelegate {
@@ -233,7 +187,7 @@ extension AuthEnterInitialsViewController: UITextFieldDelegate {
 extension AuthEnterInitialsViewController: ChromaColorPickerDelegate {
     
     func colorPickerHandleDidChange(_ colorPicker: ChromaColorPicker, handle: ChromaColorHandle, to color: UIColor) {
-        avatarImage.backgroundColor = color
+        avatar.backgroundColor = color
         user.color = color
     }
     

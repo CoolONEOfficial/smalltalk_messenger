@@ -12,9 +12,9 @@ import CodableFirebase
 public struct ChatModel: AutoCodable, AutoEquatable {
     
     var documentId: String!
-    let users: [String]
+    var users: [String]
     let lastMessage: MessageModel
-    let type: ChatType
+    var type: ChatType
     
     enum CodingKeys: String, CodingKey {
         case documentId
@@ -42,6 +42,19 @@ public struct ChatModel: AutoCodable, AutoEquatable {
                     ]
                 )
                 : .savedMessages
+        )
+    }
+    
+    static func empty() -> ChatModel {
+        .init(
+            documentId: nil,
+            users: [ Auth.auth().currentUser!.uid ],
+            lastMessage: .emptyChat(),
+            type: .chat(
+                title: "",
+                adminId: Auth.auth().currentUser!.uid,
+                hexColor: nil
+            )
         )
     }
     

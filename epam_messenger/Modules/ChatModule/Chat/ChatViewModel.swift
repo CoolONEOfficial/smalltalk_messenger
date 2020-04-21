@@ -14,16 +14,16 @@ protocol ChatViewModelProtocol: ViewModelProtocol, AutoMockable, MessageCellDele
     func sendMessage(
         attachments: [ChatViewController.MessageAttachment],
         messageText: String?,
-        completion: @escaping (Bool) -> Void
+        completion: @escaping (Error?) -> Void
     )
     func forwardMessage(
         _ chatModel: ChatModel,
         _ messageModel: MessageProtocol,
-        completion: @escaping (Bool) -> Void
+        completion: @escaping (Error?) -> Void
     )
     func deleteMessage(
         _ messageModel: MessageProtocol,
-        completion: @escaping (Bool) -> Void
+        completion: @escaping (Error?) -> Void
     )
     func deleteChat(
         completion: @escaping (Error?) -> Void
@@ -53,7 +53,7 @@ protocol ChatViewModelProtocol: ViewModelProtocol, AutoMockable, MessageCellDele
 extension ChatViewModelProtocol {
     func deleteMessage(
         _ messageModel: MessageProtocol,
-        completion: @escaping (Bool) -> Void = {_ in}
+        completion: @escaping (Error?) -> Void = {_ in}
     ) {
         return deleteMessage(messageModel, completion: completion)
     }
@@ -61,7 +61,7 @@ extension ChatViewModelProtocol {
     func sendMessage(
         attachments: [ChatViewController.MessageAttachment],
         messageText: String? = nil,
-        completion: @escaping (Bool) -> Void = {_ in}
+        completion: @escaping (Error?) -> Void = {_ in}
     ) {
         return sendMessage(attachments: attachments, messageText: messageText, completion: completion)
     }
@@ -151,7 +151,7 @@ class ChatViewModel: ChatViewModelProtocol {
     func sendMessage(
         attachments: [ChatViewController.MessageAttachment],
         messageText: String? = nil,
-        completion: @escaping (Bool) -> Void = {_ in}
+        completion: @escaping (Error?) -> Void = {_ in}
     ) {
         let uploadGroup = DispatchGroup()
         var uploadKinds: [MessageModel.MessageKind?] = .init(repeating: nil, count: attachments.count)
@@ -212,7 +212,7 @@ class ChatViewModel: ChatViewModelProtocol {
     func forwardMessage(
         _ chatModel: ChatModel,
         _ messageModel: MessageProtocol,
-        completion: @escaping (Bool) -> Void
+        completion: @escaping (Error?) -> Void
     ) {
         self.firestoreService.sendMessage(
             chatId: chatModel.documentId,
@@ -223,7 +223,7 @@ class ChatViewModel: ChatViewModelProtocol {
     
     func deleteMessage(
         _ messageModel: MessageProtocol,
-        completion: @escaping (Bool) -> Void = {_ in}
+        completion: @escaping (Error?) -> Void = {_ in}
     ) {
         firestoreService.deleteMessage(
             chatId: chat.documentId,
@@ -235,14 +235,7 @@ class ChatViewModel: ChatViewModelProtocol {
     func deleteChat(
         completion: @escaping (Error?) -> Void = {_ in}
     ) {
-        if chat.type == .savedMessages {
-            firestoreService.clearSavedMessages(chatId: chat.documentId, completion: completion)
-        } else {
-            firestoreService.leaveChat(
-                chatId: chat.documentId,
-                completion: completion
-            )
-        }
+        firestoreService.deleteChat(chat: chat, completion: completion)
     }
     
     func userListData(

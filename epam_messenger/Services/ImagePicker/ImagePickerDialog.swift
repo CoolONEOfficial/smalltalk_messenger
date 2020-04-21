@@ -1,16 +1,31 @@
 //
-//  ChatInputBarAttachMenu.swift
+//  ImagePickerDialog.swift
 //  epam_messenger
 //
-//  Created by Nickolay Truhin on 22.03.2020.
+//  Created by Nickolay Truhin on 20.04.2020.
 //
 
 import UIKit
+import AVFoundation
 import Photos
 
-class ChatInputBarAttachMenu: UIAlertController {
+protocol ImagePickerDialogDelegate: AnyObject {
+    func didCameraTap()
+    func didLastImageTap(_ image: UIImage)
+    func didPhotosTap(mode: ImagePickerDialog.Mode)
+}
+
+class ImagePickerDialog: UIAlertController {
+    
+    enum Mode {
+        case single
+        case multiple
+    }
     
     // MARK: - Vars
+    
+    weak var delegate: ImagePickerDialogDelegate?
+    var mode: Mode!
     
     lazy var stackItemWidth: CGFloat = (view.bounds.width - 20 - 5 * 4) / 5
     
@@ -35,9 +50,6 @@ class ChatInputBarAttachMenu: UIAlertController {
         return cameraView
     }()
     
-    var didImageTapCompletion: ((UIImage) -> Void)?
-    var didActionImageTapCompletion: (() -> Void)?
-    
     // MARK: - Init
     
     override init(
@@ -52,18 +64,19 @@ class ChatInputBarAttachMenu: UIAlertController {
     }
     
     convenience init(
-        cameraRecognizer: UITapGestureRecognizer,
-        didImageTapCompletion: @escaping (UIImage) -> Void,
-        didActionImageTapCompletion: @escaping () -> Void
+        delegate: ImagePickerDialogDelegate,
+        mode: Mode
     ) {
         self.init(nibName: nil, bundle: nil)
         
-        self.didImageTapCompletion = didImageTapCompletion
-        self.didActionImageTapCompletion = didActionImageTapCompletion
+        self.delegate = delegate
+        self.mode = mode
         
         setupView()
         
-        self.cameraView.addGestureRecognizer(cameraRecognizer)
+        self.cameraView.addGestureRecognizer(UITapGestureRecognizer(
+            target: self, action: #selector(didCameraTap)
+        ))
         self.stack.addArrangedSubview(self.cameraView)
         
         let photosCount = 4
@@ -86,26 +99,25 @@ class ChatInputBarAttachMenu: UIAlertController {
             }
         }
         
-        let photoAction = UIAlertAction(title: "Photo", style: .default) { _ in
-            self.didActionImageTapCompletion?()
+        let photoAction = UIAlertAction(title: "Photos", style: .default) { [weak self] _ in
+            guard let self = self else { return }
+            self.delegate?.didPhotosTap(mode: mode)
         }
-        let fileAction = UIAlertAction(title: "File", style: .default)
-        let geoAction = UIAlertAction(title: "Geoposition", style: .default)
-        let contactAction = UIAlertAction(title: "Contact", style: .default)
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
         
         addAction(photoAction)
-        addAction(fileAction) // TODO: file select
-        addAction(geoAction) // TODO: geolocations
-        addAction(contactAction) // TODO: contacts select
         addAction(cancelAction)
+    }
+    
+    @objc func didCameraTap() {
+        delegate?.didCameraTap()
     }
     
     @objc func didImageTap(_ sender: UITapGestureRecognizer? = nil) {
         if let sender = sender,
             let pickedImageView = sender.view as? UIImageView,
             let pickedImage = pickedImageView.image {
-            didImageTapCompletion?(pickedImage)
+            delegate?.didLastImageTap(pickedImage)
         }
     }
     
@@ -114,7 +126,7 @@ class ChatInputBarAttachMenu: UIAlertController {
         view.layer.masksToBounds = true
         view.clipsToBounds = true
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.height(380)
+        view.height(205)
     }
 
     // MARK: - Preview camera layers helpers
@@ -175,7 +187,7 @@ class ChatInputBarAttachMenu: UIAlertController {
     // MARK: Get last 4 photos from gallery
     
     private func getPhotos(_ count: Int, completion: @escaping (UIImage, Int) -> Void) {
-        PHPhotoLibrary.requestAuthorization { _ in 
+        PHPhotoLibrary.requestAuthorization { _ in
             let manager = PHImageManager.default()
             let requestOptions = PHImageRequestOptions()
             requestOptions.isSynchronous = false

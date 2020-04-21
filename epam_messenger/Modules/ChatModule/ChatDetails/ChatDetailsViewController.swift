@@ -104,10 +104,10 @@ class ChatDetailsViewController: UIViewController, ChatDetailsViewControllerProt
         )
         media.updateData(viewModel.chat)
         
-        viewModel.chatData { [weak self] chat in
-            guard let self = self else { return }
-            media.updateData(chat!)
-            users.updateData(chat!)
+        viewModel.listenChatData { [weak self] chat in
+            guard let chat = chat else { return }
+            media.updateData(chat)
+            users.updateData(chat)
         }
         
         if case .chat = viewModel.chat.type {

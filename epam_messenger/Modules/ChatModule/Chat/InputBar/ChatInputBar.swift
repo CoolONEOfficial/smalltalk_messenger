@@ -111,7 +111,7 @@ class ChatInputBar: InputBarAccessoryView {
         attachButton.contentVerticalAlignment = .fill
         attachButton.contentMode = .scaleToFill
         attachButton.title = nil
-        attachButton.addTarget(self, action: #selector(didClickAttachButton), for: .touchUpInside)
+        attachButton.addTarget(self, action: #selector(didAttachTap), for: .touchUpInside)
     }
     
     func setupVoiceCancelButton() {
@@ -200,18 +200,8 @@ class ChatInputBar: InputBarAccessoryView {
         voiceTimerLabel.text = String(format: "%02i:%02i:%02i", minutes, seconds, milliseconds)
     }
     
-    @objc func didClickAttachButton() {
-        let optionMenu = ChatInputBarAttachMenu(
-            cameraRecognizer: UITapGestureRecognizer(
-                target: self, action: #selector(self.showCameraPicker)
-            ),
-            didImageTapCompletion: pickImage,
-            didActionImageTapCompletion: presentImagePicker
-        )
-        
-        window?
-            .rootViewController?
-            .present(optionMenu, animated: true, completion: nil)
+    @objc func didAttachTap() {
+        chatDelegate?.didAttachTap()
     }
     
     @objc func didTouchDownVoiceCancelButton() {
@@ -320,24 +310,10 @@ class ChatInputBar: InputBarAccessoryView {
         setStackViewItems([voiceButton], forStack: .right, animated: true)
     }
     
-    @objc private func showCameraPicker() {
-        imagePicker.delegate = self
-        imagePicker.mediaTypes = ["public.image"]
-        imagePicker.sourceType = .camera
-        window?.rootViewController?.dismiss(animated: true) {
-            self.window?.rootViewController?
-                .present(self.imagePicker, animated: true, completion: nil)
-        }
-    }
-    
     private func pickImage(image: UIImage) {
         window?.rootViewController?.dismiss(animated: true) {
             self.inputPlugins.forEach { _ = $0.handleInput(of: image) }
         }
-    }
-    
-    private func presentImagePicker() {
-        chatDelegate?.didActionImageTap()
     }
     
     // MARK: - Side stacks visibility functions

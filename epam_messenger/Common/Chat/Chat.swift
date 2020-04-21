@@ -28,4 +28,17 @@ public enum ChatType: AutoCodable, AutoEquatable {
     case personalCorr(between: [String])
     case savedMessages
     case chat(title: String, adminId: String, hexColor: String?)
+    
+    mutating func changeChat(newTitle: String? = nil, newAdminId: String? = nil, newHexColor: String? = nil) {
+        switch self {
+        case .chat(let title, let adminId, let hexColor):
+            self = .chat(
+                title: newTitle ?? title,
+                adminId: newAdminId ?? adminId,
+                hexColor: newHexColor ?? hexColor
+            )
+        default:
+            break
+        }
+    }
 }

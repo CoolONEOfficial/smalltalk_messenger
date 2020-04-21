@@ -16,12 +16,9 @@ protocol RouterMain {
 protocol RouterProtocol: RouterMain, AutoMockable {
     func initialViewController()
     func showBottomBar()
-    func showChatList()
     func popToRoot()
     func showContactsList()
-    
     func showUserPicker(selectDelegate: ContactsSelectDelegate)
-    func showChatPicker(selectDelegate: ChatSelectDelegate)
 }
 
 class Router: RouterProtocol {
@@ -54,16 +51,6 @@ class Router: RouterProtocol {
         }
     }
     
-    func showChatList() {
-        if let navigationController = navigationController {
-            guard let chatViewController = assemblyBuilder?.createChatListModule(
-                router: self,
-                selectDelegate: nil
-            ) else { return }
-            navigationController.viewControllers = [chatViewController]
-        }
-    }
-    
     func popToRoot() {
         if let navigationController = navigationController {
             navigationController.popToRootViewController(animated: true)
@@ -84,18 +71,7 @@ class Router: RouterProtocol {
         ) {
             let navigationController = UINavigationController(rootViewController: contactsController)
             navigationController.view.tintColor = .accent
-            topMostController.present(navigationController, animated: true, completion: nil)
-        }
-    }
-    
-    func showChatPicker(selectDelegate: ChatSelectDelegate) {
-        if let chatListController = assemblyBuilder?.createChatListModule(
-            router: self,
-            selectDelegate: selectDelegate
-        ) {
-            let navigationController = UINavigationController(rootViewController: chatListController)
-            navigationController.view.tintColor = .accent
-            topMostController.present(navigationController, animated: true, completion: nil)
+            Router.topMostController.present(navigationController, animated: true, completion: nil)
         }
     }
     
@@ -107,10 +83,9 @@ class Router: RouterProtocol {
     
     // MARK: - Helpers
     
-    var topMostController: UIViewController {
-        let keyWindow = UIApplication.shared.windows.first { $0.isKeyWindow }
-        var topController: UIViewController = keyWindow!.rootViewController!
-        while (topController.presentedViewController != nil) {
+    static var topMostController: UIViewController {
+        var topController: UIViewController = UIApplication.keyWindow!.rootViewController!
+        while topController.presentedViewController != nil {
             topController = topController.presentedViewController!
         }
         return topController

@@ -32,7 +32,7 @@ class ChatViewController: UIViewController {
     
     var viewModel: ChatViewModelProtocol!
     lazy var imagePickerService: ImagePickerServiceProtocol = {
-        return ImagePickerService(viewController: self)
+        return ImagePickerService(viewController: self, cameraDevice: .rear)
     }()
     
     var defaultTitle = "..."

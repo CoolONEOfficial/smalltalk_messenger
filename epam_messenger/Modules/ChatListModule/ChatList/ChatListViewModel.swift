@@ -13,6 +13,7 @@ import CodableFirebase
 protocol ChatListViewModelProtocol: ViewModelProtocol {
     func goToChat(_ chatModel: ChatModel)
     func goToChatDetails(_ chatModel: ChatModel)
+    func goToChatCreate()
     func firestoreQuery() -> FireQuery
     func searchChats(
         _ searchString: String,
@@ -56,6 +57,12 @@ class ChatListViewModel: ChatListViewModelProtocol {
         self.algoliaService = algoliaService
     }
     
+    func goToChatCreate() {
+        guard let router = router as? ChatListRouter else { return }
+        
+        router.showChatCreate()
+    }
+    
     func goToChat(_ chatModel: ChatModel) {
         guard let router = router as? ChatRouter else { return }
         
@@ -92,11 +99,7 @@ class ChatListViewModel: ChatListViewModelProtocol {
     
     func deleteSelectedChats(_ chatList: [ChatModel]) {
         for chatModel in chatList {
-            if chatModel.type == .savedMessages {
-                firestoreService.clearSavedMessages(chatId: chatModel.documentId)
-            } else {
-                firestoreService.leaveChat(chatId: chatModel.documentId)
-            }
+            firestoreService.deleteChat(chat: chatModel)
         }
     }
     

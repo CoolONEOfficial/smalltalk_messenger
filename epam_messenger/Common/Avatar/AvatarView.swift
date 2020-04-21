@@ -16,9 +16,15 @@ class AvatarView: UIImageView {
     let loading = UIActivityIndicatorView()
     var placeholderLabel = UILabel()
     
+    override var image: UIImage? {
+        didSet {
+            placeholderLabel.isHidden = image != nil
+        }
+    }
+    
     // MARK: - Init
     
-    private func baseSetup(roundCorners: Bool = true, cornerRadius: CGFloat? = nil) {
+    internal func baseSetup(roundCorners: Bool = true, cornerRadius: CGFloat? = nil) {
         contentMode = .scaleAspectFill
         layer.cornerRadius = roundCorners
             ? cornerRadius != nil
@@ -74,6 +80,7 @@ class AvatarView: UIImageView {
             self.loading.removeFromSuperview()
             
             if err != nil {
+                debugPrint("ERROR while get small iamge: \(err!), description: \(err!.localizedDescription)")
                 self.setupPlaceholder(text, color)
             }
         }

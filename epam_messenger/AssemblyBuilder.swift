@@ -9,7 +9,6 @@ import UIKit
 
 protocol AssemblyBuilderProtocol {
     func createBottomBarModule(router: RouterProtocol) -> UIViewController
-    func createChatListModule(router: RouterProtocol, selectDelegate: ChatSelectDelegate?) -> UIViewController
     func createContactsListModule(router: RouterProtocol, selectDelegate: ContactsSelectDelegate?) -> UIViewController
 }
 
@@ -23,20 +22,6 @@ class AssemblyBuilder: AssemblyBuilderProtocol {
         view.settings = createChatListModule(router: router) // TODO: settings
         view.viewControllers = view.controllers
         view.selectedIndex = 1
-        return view
-    }
-    
-    func createChatListModule(
-        router: RouterProtocol,
-        selectDelegate: ChatSelectDelegate? = nil
-    ) -> UIViewController {
-        let view = ChatListViewController()
-        view.forwardDelegate = selectDelegate
-        let viewModel = ChatListViewModel(
-            router: router,
-            viewController: view
-        )
-        view.viewModel = viewModel
         return view
     }
     

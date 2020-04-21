@@ -19,15 +19,15 @@ protocol FirestoreServiceProtocol: AutoMockable {
     func sendMessage(
         chatId: String,
         messageKind: [MessageModel.MessageKind],
-        completion: @escaping (Bool) -> Void
+        completion: @escaping (Error?) -> Void
     )
     func deleteMessage(
         chatId: String,
         messageDocumentId: String,
-        completion: @escaping (Bool) -> Void
+        completion: @escaping (Error?) -> Void
     )
-    func leaveChat(
-        chatId: String,
+    func deleteChat(
+        chat: ChatProtocol,
         completion: @escaping (Error?) -> Void
     )
     func kickChatUser(
@@ -38,10 +38,6 @@ protocol FirestoreServiceProtocol: AutoMockable {
     func inviteChatUser(
         chatId: String,
         userId: String,
-        completion: @escaping (Error?) -> Void
-    )
-    func clearSavedMessages(
-        chatId: String,
         completion: @escaping (Error?) -> Void
     )
     func listChatMedia(
@@ -105,7 +101,7 @@ extension FirestoreServiceProtocol {
     func sendMessage(
         chatId: String,
         messageKind: [MessageModel.MessageKind],
-        completion: @escaping (Bool) -> Void = {_ in}
+        completion: @escaping (Error?) -> Void = {_ in}
     ) {
         return sendMessage(
             chatId: chatId,
@@ -133,7 +129,7 @@ extension FirestoreServiceProtocol {
     func deleteMessage(
         chatId: String,
         messageDocumentId: String,
-        completion: @escaping (Bool) -> Void = {_ in}
+        completion: @escaping (Error?) -> Void = {_ in}
     ) {
         deleteMessage(
             chatId: chatId,
@@ -142,22 +138,12 @@ extension FirestoreServiceProtocol {
         )
     }
     
-    func leaveChat(
-        chatId: String,
+    func deleteChat(
+        chat: ChatProtocol,
         completion: @escaping (Error?) -> Void = {_ in}
     ) {
-        leaveChat(
-            chatId: chatId,
-            completion: completion
-        )
-    }
-    
-    func clearSavedMessages(
-        chatId: String,
-        completion: @escaping (Error?) -> Void = {_ in}
-    ) {
-        clearSavedMessages(
-            chatId: chatId,
+        deleteChat(
+            chat: chat,
             completion: completion
         )
     }
@@ -190,7 +176,7 @@ class FirestoreService: FirestoreServiceProtocol {
     func sendMessage(
         chatId: String,
         messageKind: [MessageModel.MessageKind],
-        completion: @escaping (Bool) -> Void = {_ in}
+        completion: @escaping (Error?) -> Void = {_ in}
     ) {
         do {
             let messageModel = MessageModel(
@@ -205,30 +191,48 @@ class FirestoreService: FirestoreServiceProtocol {
                 .document(chatId)
                 .collection("messages")
                 .addDocument(data: messageData) { err in
-                    completion(err == nil)
+                    completion(err)
             }
         } catch let error {
             debugPrint("error! \(error.localizedDescription)")
-            completion(false)
+            completion(nil)
         }
     }
     
     func deleteMessage(
         chatId: String,
         messageDocumentId: String,
-        completion: @escaping (Bool) -> Void = {_ in}
+        completion: @escaping (Error?) -> Void = {_ in}
     ) {
         db.collection("chats")
             .document(chatId).collection("messages")
             .document(messageDocumentId).delete { err in
-                completion(err == nil)
+                completion(err)
         }
     }
     
-    func leaveChat(
-        chatId: String,
+    func deleteChat(
+        chat: ChatProtocol,
         completion: @escaping (Error?) -> Void = {_ in}
     ) {
+        switch chat.type {
+        case .personalCorr(between: let between):
+            leaveChat(chatId: chat.documentId!, completion: completion)
+        case .savedMessages:
+            clearChatMessages(chatId: chat.documentId!, completion: completion)
+        case .chat(title: let title, adminId: let adminId, hexColor: let hexColor):
+            if Auth.auth().currentUser?.uid == adminId {
+                db.collection("chats")
+                    .document(chat.documentId!).delete { err in
+                        completion(err)
+                }
+            } else {
+                leaveChat(chatId: chat.documentId!, completion: completion)
+            }
+        }
+    }
+    
+    private func leaveChat(chatId: String, completion: @escaping (Error?) -> Void) {
         db.collection("chats")
             .document(chatId).updateData([
                 "users": FieldValue.arrayRemove([ Auth.auth().currentUser!.uid ])
@@ -259,12 +263,12 @@ class FirestoreService: FirestoreServiceProtocol {
         )
     }
     
-    func clearSavedMessages(
+    private func clearChatMessages(
         chatId: String,
         completion: @escaping (Error?) -> Void = {_ in}
     ) {
         Functions.functions().httpsCallable("clearSavedMessages")
-            .call([ "chatId": chatId ]) { result, error in
+            .call([ "chatId": chatId ]) { _, error in
                 completion(error)
             }
     }
@@ -277,7 +281,7 @@ class FirestoreService: FirestoreServiceProtocol {
             .document(chatId)
             .collection("media")
             .order(by: "timestamp")
-            .getDocuments { snapshot, err in
+            .addSnapshotListener { snapshot, err in
                 guard err == nil else {
                     debugPrint("Error while get chat media: \(err!.localizedDescription)")
                     completion(nil)

@@ -254,7 +254,7 @@ extension ChatViewController: PaginatedTableViewDelegate {
     }
     
     @objc internal func deleteChat() {
-        displayActivityAlert()
+        presentActivityAlert()
         viewModel.deleteChat { [weak self] _ in
             guard let self = self else { return }
             self.dismissActivityAlert()
@@ -314,8 +314,11 @@ extension ChatViewController: ChatSelectDelegate {
     func didSelectChat(_ chatModel: ChatModel) {
         if forwardMessages != nil {
             for message in forwardMessages {
-                viewModel.forwardMessage(chatModel, message) { result in
-                    if result && self.viewModel.chat.documentId != chatModel.documentId {
+                viewModel.forwardMessage(chatModel, message) { [weak self] err in
+                    guard let self = self else { return }
+                    if let err = err {
+                        self.presentErrorAlert(err.localizedDescription)
+                    } else if self.viewModel.chat.documentId != chatModel.documentId {
                         self.viewModel.goToChat(chatModel)
                     }
                 }

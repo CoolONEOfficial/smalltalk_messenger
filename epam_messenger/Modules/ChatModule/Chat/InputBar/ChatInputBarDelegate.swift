@@ -9,14 +9,15 @@ import Foundation
 import InputBarAccessoryView
 
 protocol ChatInputBarDelegate: AnyObject {
-    func didActionImageTap()
+    func didAttachTap()
     func didVoiceMessageRecord(data: Data)
 }
 
 extension ChatViewController: ChatInputBarDelegate {
     
-    func didActionImageTap() {
-        imagePickerService.pickImages { image in
+    func didAttachTap() {
+        imagePickerService.showPickDialog(mode: .multiple) { [weak self] image in
+            guard let self = self else { return }
             self.attachmentManager.handleInput(of: image)
         }
     }
