@@ -6,10 +6,11 @@
 //
 
 import UIKit
+import FirebaseStorage
 import ChromaColorPicker
 
 protocol AvatarEditViewDelegate: AnyObject {
-    func didChangeImage(_ image: UIImage)
+    func didChangeImage(_ image: UIImage?)
     func didChangeColor(_ color: UIColor)
 }
 
@@ -29,6 +30,7 @@ class AvatarEditView: AvatarView {
         didSet {
             refreshColorWheelOrDelete()
             refreshPhotoPlaceholder()
+            self.delegate?.didChangeImage(image)
         }
     }
     
@@ -55,6 +57,15 @@ class AvatarEditView: AvatarView {
     
     override func setup(withPlaceholder text: String? = nil, color: UIColor = .accent) {
         super.setup(withPlaceholder: text, color: color)
+        refreshPhotoPlaceholderAlpha(text)
+    }
+    
+    override func setup(withRef ref: StorageReference, text: String, color: UIColor, roundCorners: Bool = true, cornerRadius: CGFloat? = nil) {
+        super.setup(withRef: ref, text: text, color: color)
+        refreshPhotoPlaceholderAlpha(text)
+    }
+    
+    private func refreshPhotoPlaceholderAlpha(_ text: String?) {
         photoPlaceholder.alpha = (text?.isEmpty ?? true) ? 1 : 0.2
     }
     
@@ -106,7 +117,6 @@ class AvatarEditView: AvatarView {
         imagePickerService?.showPickDialog(mode: .single) { [weak self] image in
             guard let self = self else { return }
             self.image = image
-            self.delegate?.didChangeImage(image)
         }
     }
     
@@ -115,7 +125,7 @@ class AvatarEditView: AvatarView {
             let vc = ColorPickerViewController(
                 initialColor: backgroundColor ?? UIColor.accent
             )
-            vc.modalPresentationStyle = .overCurrentContext
+            vc.modalPresentationStyle = .overFullScreen
             vc.isHeroEnabled = true
             vc.delegate = self
             let topMostController = Router.topMostController
@@ -123,6 +133,9 @@ class AvatarEditView: AvatarView {
             topMostController.present(vc, animated: true, completion: nil)
         } else {
             image = nil
+            if backgroundColor == nil {
+                backgroundColor = .accent
+            }
         }
     }
     

@@ -59,17 +59,18 @@ class SearchMessageCell: UITableViewCell, NibReusable {
                     self.avatar.setup(withUser: userModel)
                 }
             }
-        case .chat(let title, _, let hexColor):
-            self.titleLabel.text = title
+        case .chat(let chatData):
+            
+            self.titleLabel.text = chatData.title
             delegate?.userData(message.userId) { userModel in
                 if let userModel = userModel {
                     self.senderLabel.isHidden = false
                     self.senderLabel.text = userModel.fullName
                     self.messageLabel.numberOfLines = 1
+                    
                     self.avatar.setup(
-                        withRef: chatModel.avatarRef,
-                        text: title,
-                        color: UIColor(hexString: hexColor) ?? .accent
+                        withChat: chatData,
+                        avatarRef: chatModel.avatarRef
                     )
                 }
             }

@@ -138,7 +138,7 @@ class AuthEnterInitialsViewController: UIViewController {
     @objc func cancelOrColorWheelDidTap() {
         if userImage == nil { // color wheel
             let vc = ColorPickerViewController(
-                initialColor: user.color ?? UIColor.accent
+                initialColor: user.color
             )
             vc.modalPresentationStyle = .overCurrentContext
             vc.isHeroEnabled = true
@@ -157,8 +157,9 @@ class AuthEnterInitialsViewController: UIViewController {
 
 extension AuthEnterInitialsViewController: AvatarEditViewDelegate {
     
-    func didChangeImage(_ image: UIImage) {
+    func didChangeImage(_ image: UIImage?) {
         userImage = image
+        user.isAvatarExists = image != nil
     }
     
     func didChangeColor(_ color: UIColor) {

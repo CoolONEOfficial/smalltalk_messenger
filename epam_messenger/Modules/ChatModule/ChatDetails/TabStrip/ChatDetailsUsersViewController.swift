@@ -42,7 +42,7 @@ class ChatDetailsUsersViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(for: indexPath, cellType: UserCell.self)
         let completion: ((UserModel?) -> Void)?
-        if case .chat(_, let adminId, _) = chat!.type {
+        if case .chat(_, let adminId, _, _) = chat!.type {
             completion = { user in
                 cell.valueLabel.text = user?.documentId == adminId ? "admin" : nil
             }
@@ -78,7 +78,7 @@ extension ChatDetailsUsersViewController: UIContextMenuInteractionDelegate {
         let userId = user.user!.documentId!
         let identifier = "\(userId)" as NSString
         
-        guard case .chat(_, let adminId, _) = chat!.type,
+        guard case .chat(_, let adminId, _, _) = chat!.type,
             adminId == Auth.auth().currentUser!.uid,
             userId != Auth.auth().currentUser!.uid else { return nil }
         

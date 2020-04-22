@@ -60,7 +60,7 @@ class ChatDetailsViewController: UIViewController, ChatDetailsViewControllerProt
     }
     
     private func setupInfo() {
-        viewModel.chat.loadInfo { [weak self] title, subtitle, placeholderText, placeholderColor in
+        viewModel.chatModel.listenInfo { [weak self] title, subtitle, placeholderText, placeholderColor in
             guard let self = self else { return }
             
             self.transitionSubtitleLabel {
@@ -70,14 +70,14 @@ class ChatDetailsViewController: UIViewController, ChatDetailsViewControllerProt
             
             if let placeholderText = placeholderText {
                 self.avatar.setup(
-                    withRef: self.viewModel.chat.avatarRef,
+                    withRef: self.viewModel.chatModel.avatarRef,
                     text: placeholderText,
                     color: placeholderColor ?? .accent,
                     roundCorners: false
                 )
             }
         }
-        subtitleLabel.text = "\(viewModel.chat.users.count) users"
+        subtitleLabel.text = "\(viewModel.chatModel.users.count) users"
     }
     
     private func transitionSubtitleLabel(
@@ -97,20 +97,21 @@ class ChatDetailsViewController: UIViewController, ChatDetailsViewControllerProt
         
         let users = ChatDetailsUsersViewController()
         users.router = viewModel.router
-        users.updateData(viewModel.chat)
+        users.updateData(viewModel.chatModel)
         let media = ChatDetailsMediaViewController(
             viewModel: viewModel,
             chatViewController: chatViewController
         )
-        media.updateData(viewModel.chat)
+        media.updateData(viewModel.chatModel)
         
-        viewModel.listenChatData { [weak self] chat in
+        viewModel.listenChatData { chat in
             guard let chat = chat else { return }
             media.updateData(chat)
             users.updateData(chat)
+            self.setupInfo()
         }
         
-        if case .chat = viewModel.chat.type {
+        if case .chat = viewModel.chatModel.type {
             tabStrip.scrollViews.append(users.tableView)
             tabStrip.initialViewControllers.append(users)
         }
@@ -157,6 +158,17 @@ class ChatDetailsViewController: UIViewController, ChatDetailsViewControllerProt
         )
         navigationItem.leftBarButtonItem?.tintColor = UIColor.lightText.withAlphaComponent(1)
         
+        if case .chat(_, let adminId, _, _) = viewModel.chatModel.type,
+            adminId == Auth.auth().currentUser!.uid {
+            navigationItem.rightBarButtonItem = .init(
+                title: "Edit",
+                style: .plain,
+                target: self,
+                action: #selector(didEditTap)
+            )
+            navigationItem.rightBarButtonItem?.tintColor = UIColor.lightText.withAlphaComponent(1)
+        }
+        
         setupInviteButton()
     }
     
@@ -164,7 +176,7 @@ class ChatDetailsViewController: UIViewController, ChatDetailsViewControllerProt
         inviteButton.backgroundColor = .secondary
         inviteButton.tintColor = .systemBackground
         inviteButton.layer.cornerRadius = 15
-        if case .chat(_, let adminId, _) = viewModel.chat.type {
+        if case .chat(_, let adminId, _, _) = viewModel.chatModel.type {
             inviteButton.isHidden = adminId != Auth.auth().currentUser!.uid
         }
     }
@@ -189,6 +201,10 @@ class ChatDetailsViewController: UIViewController, ChatDetailsViewControllerProt
     
     @objc func didCancelTap() {
         navigationController?.dismiss(animated: true, completion: nil)
+    }
+    
+    @objc func didEditTap() {
+        viewModel.didEditTap()
     }
 }
 

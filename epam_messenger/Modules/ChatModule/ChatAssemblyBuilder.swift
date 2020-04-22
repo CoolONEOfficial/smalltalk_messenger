@@ -12,7 +12,7 @@ protocol ChatAssemblyBuilder {
     func createChat(router: RouterProtocol, userId: String) -> UIViewController
     func createChatDetails(
         router: RouterProtocol,
-        chat: ChatProtocol,
+        chatModel: ChatModel,
         from chatViewController: ChatViewControllerProtocol?,
         heroAnimations: Bool
     ) -> UIViewController
@@ -22,6 +22,7 @@ protocol ChatAssemblyBuilder {
         from chatViewController: ChatViewControllerProtocol?,
         heroAnimations: Bool
     ) -> UIViewController
+    func createChatEdit(router: RouterProtocol, chatModel: ChatModel) -> UIViewController
 }
 
 extension AssemblyBuilder: ChatAssemblyBuilder {
@@ -56,7 +57,7 @@ extension AssemblyBuilder: ChatAssemblyBuilder {
     
     func createChatDetails(
         router: RouterProtocol,
-        chat: ChatProtocol,
+        chatModel: ChatModel,
         from chatViewController: ChatViewControllerProtocol?,
         heroAnimations: Bool
     ) -> UIViewController {
@@ -64,7 +65,7 @@ extension AssemblyBuilder: ChatAssemblyBuilder {
         let viewModel = ChatDetailsViewModel(
             router: router,
             viewController: view,
-            chat: chat
+            chatModel: chatModel
         )
         view.viewModel = viewModel
         view.chatViewController =  chatViewController
@@ -97,6 +98,19 @@ extension AssemblyBuilder: ChatAssemblyBuilder {
             view.hero.isEnabled = true
             navigationController.hero.isEnabled = true
         }
+        return navigationController
+    }
+    
+    func createChatEdit(router: RouterProtocol, chatModel: ChatModel) -> UIViewController {
+        let view = ChatEditViewController()
+        let viewModel = ChatEditViewModel(
+            router: router,
+            viewController: view,
+            chatModel: chatModel
+        )
+        view.viewModel = viewModel
+        let navigationController = UINavigationController(rootViewController: view)
+        navigationController.modalPresentationStyle = .fullScreen
         return navigationController
     }
     

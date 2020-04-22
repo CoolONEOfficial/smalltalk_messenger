@@ -37,9 +37,11 @@ protocol ChatViewModelProtocol: ViewModelProtocol, AutoMockable, MessageCellDele
     func goToChat(
         _ chatModel: ChatProtocol
     )
-    func userListData(
-        _ userList: [String],
+    func listenUserListData(
         completion: @escaping ([UserModel]?) -> Void
+    )
+    func listenChatData(
+        completion: @escaping (ChatModel?) -> Void
     )
     func startTypingCurrentUser()
     func endTypingCurrentUser()
@@ -238,11 +240,20 @@ class ChatViewModel: ChatViewModelProtocol {
         firestoreService.deleteChat(chat: chat, completion: completion)
     }
     
-    func userListData(
-        _ userList: [String],
+    func listenUserListData(
         completion: @escaping ([UserModel]?) -> Void
     ) {
-        firestoreService.userListData(userList, completion: completion)
+        firestoreService.listenUserListData(chat.users, completion: completion)
+    }
+    
+    func listenChatData(completion: @escaping (ChatModel?) -> Void) {
+        firestoreService.listenChatData(chat.documentId) { [weak self] chatModel in
+            guard let self = self else { return }
+            if let chatModel = chatModel {
+                self.chat = chatModel
+            }
+            completion(chatModel)
+        }
     }
     
     func startTypingCurrentUser() {
@@ -272,7 +283,7 @@ class ChatViewModel: ChatViewModelProtocol {
     func goToDetails() {
         guard let router = router as? ChatRouter else { return }
         
-        router.showChatDetails(chat, from: viewController)
+        router.showChatDetails(chat as! ChatModel, from: viewController)
     }
     
     func presentForwardController(selectDelegate: ChatSelectDelegate) {

@@ -8,6 +8,7 @@
 import UIKit
 import FirebaseStorage
 import FirebaseAuth
+import SDWebImage
 
 class AvatarView: UIImageView {
     
@@ -60,27 +61,72 @@ class AvatarView: UIImageView {
         if let userId = user.documentId, !user.deleted {
             if savedMessagesSupport && userId == Auth.auth().currentUser!.uid {
                setupBookmark()
-           } else {
+            } else if user.isAvatarExists {
                setup(
                    withRef: user.avatarRef,
                    text: user.placeholderName,
-                   color: user.color ?? .accent
+                   color: user.color
                )
-           }
+            } else {
+                setup(
+                    withPlaceholder: user.placeholderName,
+                    color: user.color
+                )
+            }
         } else {
             setup(withImage: #imageLiteral(resourceName: "ic_unknown_user"))
+        }
+    }
+    
+    func setup(withChat chat: (title: String, adminId: String, hexColor: String?, isAvatarExists: Bool), avatarRef: StorageReference) {
+        let placeholderText = String(chat.title.first!)
+        let placeholderColor = UIColor(hexString: chat.hexColor) ?? .accent
+        
+        if chat.isAvatarExists {
+            setup(
+                withRef: avatarRef,
+                text: placeholderText,
+                color: placeholderColor
+            )
+        } else {
+            setup(
+                withPlaceholder: placeholderText,
+                color: placeholderColor
+            )
         }
     }
     
     func setup(withRef ref: StorageReference, text: String, color: UIColor, roundCorners: Bool = true, cornerRadius: CGFloat? = nil) {
         baseSetup(roundCorners: roundCorners, cornerRadius: cornerRadius)
         
-        sd_setSmallImage(with: ref) { [weak self] _, err, _, _ in
+        if frame.width > 200 {
+            sd_setImage(
+                with: ref,
+                placeholderImage: SDImageCache.shared.imageFromDiskCache(forKey: ref.small.storageLocation),
+                completion: didLoadImage(text, color)
+            )
+        } else {
+            sd_setSmallImage(
+                with: ref,
+                completion: didLoadImage(text, color)
+            )
+        }
+    }
+    
+    func didLoadImage(
+        _ text: String,
+        _ color: UIColor
+    ) -> (
+        _ image: UIImage?,
+        _ err: Error?,
+        _ cacheType: SDImageCacheType,
+        _ storageRef: StorageReference
+    ) -> Void {
+        { [weak self] _, err, _, _ in
             guard let self = self else { return }
             self.loading.removeFromSuperview()
             
             if err != nil {
-                debugPrint("ERROR while get small iamge: \(err!), description: \(err!.localizedDescription)")
                 self.setupPlaceholder(text, color)
             }
         }

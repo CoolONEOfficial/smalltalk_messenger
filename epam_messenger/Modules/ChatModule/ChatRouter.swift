@@ -10,15 +10,24 @@ import Foundation
 protocol ChatRouter {
     func showChat(_ chat: ChatProtocol)
     func showChat(_ userId: String)
-    func showChatDetails(_ chat: ChatProtocol, from chatViewController: ChatViewControllerProtocol?, heroAnimations: Bool)
+    func showChatDetails(_ chatModel: ChatModel, from chatViewController: ChatViewControllerProtocol?, heroAnimations: Bool)
     func showChatDetails(_ userId: String, from chatViewController: ChatViewControllerProtocol?, heroAnimations: Bool)
+    func showChatEdit(_ chatModel: ChatModel)
 }
 
 extension ChatRouter {
-    func showChatDetails(_ chat: ChatProtocol, from chatViewController: ChatViewControllerProtocol? = nil, heroAnimations: Bool = true) {
-        showChatDetails(chat, from: chatViewController, heroAnimations: heroAnimations)
+    func showChatDetails(
+        _ chatModel: ChatModel,
+        from chatViewController: ChatViewControllerProtocol? = nil,
+        heroAnimations: Bool = true
+    ) {
+        showChatDetails(chatModel, from: chatViewController, heroAnimations: heroAnimations)
     }
-    func showChatDetails(_ userId: String, from chatViewController: ChatViewControllerProtocol? = nil, heroAnimations: Bool = true) {
+    func showChatDetails(
+        _ userId: String,
+        from chatViewController: ChatViewControllerProtocol? = nil,
+        heroAnimations: Bool = true
+    ) {
         showChatDetails(userId, from: chatViewController, heroAnimations: heroAnimations)
     }
 }
@@ -39,11 +48,11 @@ extension Router: ChatRouter {
         navigationController.pushViewController(chatViewController, animated: true)
     }
     
-    func showChatDetails(_ chat: ChatProtocol, from chatViewController: ChatViewControllerProtocol?, heroAnimations: Bool) {
+    func showChatDetails(_ chatModel: ChatModel, from chatViewController: ChatViewControllerProtocol?, heroAnimations: Bool) {
         guard let assemblyBuilder = assemblyBuilder as? ChatAssemblyBuilder else { return }
         let chatDetailsViewController = assemblyBuilder.createChatDetails(
             router: self,
-            chat: chat,
+            chatModel: chatModel,
             from: chatViewController,
             heroAnimations: heroAnimations
         )
@@ -61,6 +70,16 @@ extension Router: ChatRouter {
         )
         chatDetailsViewController.modalTransitionStyle = .crossDissolve
         Router.topMostController.present(chatDetailsViewController, animated: true, completion: nil)
+    }
+    
+    func showChatEdit(_ chatModel: ChatModel) {
+        guard let assemblyBuilder = assemblyBuilder as? ChatAssemblyBuilder else { return }
+        let chatEditViewController = assemblyBuilder.createChatEdit(
+            router: self,
+            chatModel: chatModel
+        )
+        chatEditViewController.modalTransitionStyle = .crossDissolve
+        Router.topMostController.present(chatEditViewController, animated: true, completion: nil)
     }
     
 }

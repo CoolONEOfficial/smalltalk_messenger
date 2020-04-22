@@ -10,11 +10,13 @@ import UIKit
 extension UIViewController {
 
     func presentErrorAlert(_ text: String) {
-        let alert = UIAlertController(title: "Error",
-                                      message: text,
-                                      preferredStyle: .alert
+        let alert = UIAlertController(
+            title: "Error",
+            message: text,
+            preferredStyle: .alert
         )
-        alert.addAction(UIAlertAction(title: "Dismiss", style: .default))
+        alert.addAction(.init(title: "Dismiss", style: .cancel))
+        alert.view.tintColor = .accent
         
         self.present(alert, animated: true, completion: nil)
     }

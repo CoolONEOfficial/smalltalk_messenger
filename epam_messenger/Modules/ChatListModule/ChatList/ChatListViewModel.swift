@@ -104,7 +104,7 @@ class ChatListViewModel: ChatListViewModelProtocol {
     }
     
     func userListData(_ userList: [String], completion: @escaping ([UserModel]?) -> Void) {
-        firestoreService.userListData(userList, completion: completion)
+        firestoreService.listenUserListData(userList, completion: completion)
     }
     
     func userData(_ userId: String, completion: @escaping (UserModel?) -> Void) {

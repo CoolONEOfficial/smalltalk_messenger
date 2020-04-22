@@ -85,7 +85,7 @@ extension ChatDetailsMediaViewController: MediaCellDelegate {
     
     func didMediaTap(_ media: MediaProtocol) {
         ChatPhotoViewerDataSource.loadByChatId(
-            chatId: viewModel.chat.documentId,
+            chatId: viewModel.chatModel.documentId,
             cachedDatasource: chatViewController != nil
                 ? chatViewController?.photosViewerDataSource
                 : localDataSource,

@@ -9,11 +9,12 @@ import Foundation
 import UIKit
 
 protocol ChatDetailsViewModelProtocol {
-    var chat: ChatProtocol { get }
+    var chatModel: ChatModel { get }
     var chatGroup: DispatchGroup { get }
     var router: RouterProtocol { get }
     
     func listenChatData(completion: @escaping (ChatModel?) -> Void)
+    func didEditTap()
     func didInviteTap()
 }
 
@@ -25,7 +26,7 @@ class ChatDetailsViewModel: ChatDetailsViewModelProtocol {
     let viewController: ChatDetailsViewControllerProtocol
     let firestoreService: FirestoreServiceProtocol
     
-    var chat: ChatProtocol
+    var chatModel: ChatModel
     var chatGroup = DispatchGroup()
     
     // MARK: - Init
@@ -33,12 +34,12 @@ class ChatDetailsViewModel: ChatDetailsViewModelProtocol {
     init(
         router: RouterProtocol,
         viewController: ChatDetailsViewControllerProtocol,
-        chat: ChatProtocol,
+        chatModel: ChatModel,
         firestoreService: FirestoreServiceProtocol = FirestoreService()
     ) {
         self.router = router
         self.viewController = viewController
-        self.chat = chat
+        self.chatModel = chatModel
         self.firestoreService = firestoreService
     }
     
@@ -50,14 +51,14 @@ class ChatDetailsViewModel: ChatDetailsViewModelProtocol {
     ) {
         self.router = router
         self.viewController = viewController
-        self.chat = ChatModel.fromUserId(userId)
+        self.chatModel = ChatModel.fromUserId(userId)
         self.firestoreService = firestoreService
         
         chatGroup.enter()
         firestoreService.getChatData(userId: userId) { [weak self] chatModel in
             guard let self = self else { return }
             if let chatModel = chatModel {
-                self.chat = chatModel
+                self.chatModel = chatModel
             }
             self.chatGroup.leave()
         }
@@ -66,10 +67,10 @@ class ChatDetailsViewModel: ChatDetailsViewModelProtocol {
     // MARK: - Methods
     
     func listenChatData(completion: @escaping (ChatModel?) -> Void) {
-        firestoreService.listenChatData(chat.documentId) { [weak self] chat in
+        firestoreService.listenChatData(chatModel.documentId) { [weak self] chat in
             guard let self = self else { return }
             if let chat = chat {
-                self.chat = chat
+                self.chatModel = chat
             }
             completion(chat)
         }
@@ -78,12 +79,17 @@ class ChatDetailsViewModel: ChatDetailsViewModelProtocol {
     func didInviteTap() {
         router.showUserPicker(selectDelegate: self)
     }
+    
+    func didEditTap() {
+        guard let router = router as? ChatRouter else { return }
+        router.showChatEdit(chatModel)
+    }
 }
 
 extension ChatDetailsViewModel: ContactsSelectDelegate {
     
     func didSelectUser(_ userId: String) {
-        firestoreService.inviteChatUser(chatId: chat.documentId!, userId: userId, completion: {_ in})
+        firestoreService.inviteChatUser(chatId: chatModel.documentId!, userId: userId, completion: {_ in})
     }
     
 }

@@ -91,7 +91,7 @@ class ChatCreateViewController: UIViewController, ChatCreateViewControllerProtoc
     @IBAction func didTitleChanged(_ sender: Any) {
         let newTitle = titleField.text
         chatModel.type.changeChat(newTitle: newTitle)
-        if case .chat(_, _, let colorHex) = chatModel.type {
+        if case .chat(_, _, let colorHex, _) = chatModel.type {
             avatar.setup(
                 withPlaceholder: newTitle?.first != nil
                     ? String(newTitle!.first!)
@@ -175,8 +175,9 @@ extension ChatCreateViewController: ContactsSelectDelegate {
 
 extension ChatCreateViewController: AvatarEditViewDelegate {
     
-    func didChangeImage(_ image: UIImage) {
+    func didChangeImage(_ image: UIImage?) {
         chatAvatar = image
+        chatModel.type.changeChat(newAvatarExists: image != nil)
     }
     
     func didChangeColor(_ color: UIColor) {

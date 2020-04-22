@@ -147,14 +147,11 @@ extension ImagePickerService: ImagePickerDialogDelegate {
     }
     
     func didPhotosTap(mode: ImagePickerDialog.Mode) {
-        viewController.dismiss(animated: true) { [weak self] in
-            guard let self = self else { return }
-            switch mode {
-            case .single:
-                self.pickSinglePhoto(completion: self.completion!)
-            case .multiple:
-                self.pickPhotos(completion: self.completion!)
-            }
+        switch mode {
+        case .single:
+            self.pickSinglePhoto(completion: self.completion!)
+        case .multiple:
+            self.pickPhotos(completion: self.completion!)
         }
     }
     

@@ -16,6 +16,7 @@ public struct UserModel: AutoCodable, AutoEquatable {
     var surname: String
     var phoneNumber: String
     var hexColor: String?
+    var isAvatarExists: Bool
     let online: Bool
     let typing: String?
     let deleted: Bool
@@ -26,17 +27,17 @@ public struct UserModel: AutoCodable, AutoEquatable {
     static func empty() -> UserModel {
         .init(documentId: nil, name: "", surname: "",
               phoneNumber: Auth.auth().currentUser!.phoneNumber!,
-              online: true, typing: nil, deleted: false)
+              isAvatarExists: false, online: true, typing: nil, deleted: false)
     }
     
     static func deleted(_ documentId: String?) -> UserModel {
         .init(documentId: documentId, name: "DELETED", surname: "", phoneNumber: "",
-              hexColor: "#7d7d7d", online: false, typing: nil, deleted: true)
+              hexColor: "#7d7d7d", isAvatarExists: false, online: false, typing: nil, deleted: true)
     }
     
     static func saved() -> UserModel {
         .init(documentId: Auth.auth().currentUser!.uid, name: "Saved messages", surname: "", phoneNumber: Auth.auth().currentUser!.phoneNumber!,
-              hexColor: nil, online: true, typing: nil, deleted: false)
+              hexColor: nil, isAvatarExists: false, online: true, typing: nil, deleted: false)
     }
     
     static func fromSnapshot(_ snapshot: DocumentSnapshot) -> UserModel? {
@@ -62,12 +63,12 @@ public struct UserModel: AutoCodable, AutoEquatable {
 
 extension UserModel: UserProtocol {
     
-    var color: UIColor? {
+    var color: UIColor {
         get {
-            UIColor(hexString: hexColor)
+            UIColor(hexString: hexColor) ?? .accent
         }
         set {
-            hexColor = newValue?.hexString
+            hexColor = newValue.hexString
         }
     }
     

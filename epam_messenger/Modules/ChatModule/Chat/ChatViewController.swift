@@ -128,7 +128,14 @@ class ChatViewController: UIViewController {
         setupFloatingBottomButton()
         viewModel.viewDidLoad()
         
-        viewModel.chat.loadInfo { [weak self] title, subtitle, placeholderText, placeholderColor in
+        viewModel.listenChatData { [weak self] _ in
+            guard let self = self else { return }
+            self.setupInfo()
+        }
+    }
+    
+    private func setupInfo() {
+        viewModel.chat.listenInfo { [weak self] title, subtitle, placeholderText, placeholderColor in
             guard let self = self else { return }
             
             self.transitionSubtitleLabel {

@@ -42,7 +42,11 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
     var dataAtEnd = false
     
     /// Flatten data.
-    var flattenData: [ElementT] = []
+    var flattenData: [ElementT] = [] {
+        didSet {
+            debugPrint("cahnged from \(oldValue.count) to \(flattenData.count)")
+        }
+    }
     
     weak var paginatedDelegate: PaginatedTableViewDelegate?
     
