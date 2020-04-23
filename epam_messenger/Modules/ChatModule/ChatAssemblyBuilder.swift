@@ -110,6 +110,7 @@ extension AssemblyBuilder: ChatAssemblyBuilder {
         )
         view.viewModel = viewModel
         let navigationController = UINavigationController(rootViewController: view)
+        navigationController.view.tintColor = .accent
         navigationController.modalPresentationStyle = .fullScreen
         return navigationController
     }

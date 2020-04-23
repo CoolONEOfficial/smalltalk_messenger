@@ -64,6 +64,11 @@ class ContactsListViewController: UIViewController {
         tabBarController?.title = "Contacts"
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        searchController.searchBar.text = nil
+        searchController.isActive = false
+    }
+    
     private func setupSearchController() {
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false

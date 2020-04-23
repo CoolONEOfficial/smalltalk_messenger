@@ -88,24 +88,12 @@ extension ChatModel: ChatProtocol {
     }
     
     var avatarRef: StorageReference? {
-        let ref: StorageReference?
-        
-        switch type {
-        case .personalCorr, .savedMessages:
-            if let friendId = self.friendId ?? Auth.auth().currentUser?.uid {
-                ref = StorageService.getUserAvatarRef(friendId)
-            } else {
-                ref = nil
-            }
-        case .chat(_, _, _, let avatarPath):
-            if let avatarPath = avatarPath {
-                ref = Storage.storage().reference(withPath: avatarPath)
-            } else {
-                ref = nil
-            }
+        if case .chat(_, _, _, let avatarPath) = type,
+            let path = avatarPath {
+            return Storage.storage().reference(withPath: path)
         }
         
-        return ref
+        return nil
     }
     
     func listenInfo(completion: @escaping (

@@ -24,15 +24,15 @@ protocol ChatListViewModelProtocol: ViewModelProtocol {
         completion: @escaping SearchMessagesCompletion
     )
     func createChatPreview(_ chat: ChatProtocol) -> UIViewController
-    func userListData(
+    func listenUserListData(
         _ userList: [String],
         completion: @escaping ([UserModel]?) -> Void
     )
-    func userData(
+    func listenUserData(
         _ userId: String,
         completion: @escaping (UserModel?) -> Void
     )
-    func chatData(
+    func getChatData(
         _ chatId: String,
         completion: @escaping (ChatModel?) -> Void
     )
@@ -103,15 +103,15 @@ class ChatListViewModel: ChatListViewModelProtocol {
         }
     }
     
-    func userListData(_ userList: [String], completion: @escaping ([UserModel]?) -> Void) {
+    func listenUserListData(_ userList: [String], completion: @escaping ([UserModel]?) -> Void) {
         firestoreService.listenUserListData(userList, completion: completion)
     }
     
-    func userData(_ userId: String, completion: @escaping (UserModel?) -> Void) {
+    func listenUserData(_ userId: String, completion: @escaping (UserModel?) -> Void) {
         firestoreService.listenUserData(userId, completion: completion)
     }
     
-    func chatData(_ chatId: String, completion: @escaping (ChatModel?) -> Void) {
+    func getChatData(_ chatId: String, completion: @escaping (ChatModel?) -> Void) {
         firestoreService.getChatData(chatId, completion: completion)
     }
 }

@@ -32,7 +32,7 @@ class SearchMessageCell: UITableViewCell, NibReusable {
     private func setupUi() {
         senderLabel.text = "..."
         avatar.reset()
-        delegate?.chatData(message.chatId!) { chatModel in
+        delegate?.getChatData(message.chatId!) { chatModel in
             if let chatModel = chatModel {
                 self.didLoadChat(chatModel)
             }
@@ -51,7 +51,7 @@ class SearchMessageCell: UITableViewCell, NibReusable {
         case .personalCorr(let between):
             self.titleLabel.text = "..."
             
-            delegate?.userData(
+            delegate?.listenUserData(
                 between.first(where: { Auth.auth().currentUser!.uid != $0 })!
             ) { userModel in
                 if let userModel = userModel {
@@ -61,7 +61,7 @@ class SearchMessageCell: UITableViewCell, NibReusable {
             }
         case .chat(let chatData):
             self.titleLabel.text = chatData.title
-            delegate?.userData(message.userId) { userModel in
+            delegate?.listenUserData(message.userId) { userModel in
                 if let userModel = userModel {
                     self.senderLabel.isHidden = false
                     self.senderLabel.text = userModel.fullName

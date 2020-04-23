@@ -68,7 +68,7 @@ public func == (lhs: UserModel, rhs: UserModel) -> Bool {
     guard lhs.surname == rhs.surname else { return false }
     guard lhs.phoneNumber == rhs.phoneNumber else { return false }
     guard compareOptionals(lhs: lhs.hexColor, rhs: rhs.hexColor, compare: ==) else { return false }
-    guard compareOptionals(lhs: lhs.isAvatarExists, rhs: rhs.isAvatarExists, compare: ==) else { return false }
+    guard compareOptionals(lhs: lhs.avatarPath, rhs: rhs.avatarPath, compare: ==) else { return false }
     guard lhs.online == rhs.online else { return false }
     guard compareOptionals(lhs: lhs.typing, rhs: rhs.typing, compare: ==) else { return false }
     guard lhs.deleted == rhs.deleted else { return false }

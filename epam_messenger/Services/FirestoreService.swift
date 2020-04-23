@@ -68,8 +68,9 @@ protocol FirestoreServiceProtocol: AutoMockable {
         _ contactModel: ContactModel,
         completion: @escaping (Error?) -> Void
     )
-    func createUser(
+    @discardableResult func createUser(
         _ userModel: UserModel,
+        avatarTimestamp: Date?,
         completion: @escaping (Error?) -> Void
     ) -> String
     func listenCurrentUserData(
@@ -160,6 +161,18 @@ extension FirestoreServiceProtocol {
     ) -> String {
         createChat(
             chatModel,
+            avatarTimestamp: avatarTimestamp,
+            completion: completion
+        )
+    }
+    
+    @discardableResult func createUser(
+        _ userModel: UserModel,
+        avatarTimestamp: Date? = nil,
+        completion: @escaping (Error?) -> Void = {_ in}
+    ) -> String {
+        createUser(
+            userModel,
             avatarTimestamp: avatarTimestamp,
             completion: completion
         )
@@ -432,9 +445,17 @@ class FirestoreService: FirestoreServiceProtocol {
     
     func createUser(
         _ userModel: UserModel,
+        avatarTimestamp: Date? = nil,
         completion: @escaping (Error?) -> Void
     ) -> String {
         let newDoc = db.collection("users").document(Auth.auth().currentUser!.uid)
+        var userModel = userModel
+        if let avatarTimestamp = avatarTimestamp {
+            userModel.avatarPath = StorageService.getChatAvatarRef(
+                chatId: newDoc.documentID,
+                timestamp: avatarTimestamp
+            ).fullPath
+        }
         do {
             let userData = try FirestoreEncoder().encode(userModel)
             
@@ -478,7 +499,7 @@ class FirestoreService: FirestoreServiceProtocol {
                 .whereField("phoneNumber", in: chunk)
                 .getDocuments { snapshot, err in
                     self.loadedCount += 1
-                    let last = self.loadedCount == chunked.count - 1
+                    let last = self.loadedCount == chunked.count
                     guard err == nil else {
                         debugPrint("Error while get contacts data: \(err!.localizedDescription)")
                         completion(nil, last)

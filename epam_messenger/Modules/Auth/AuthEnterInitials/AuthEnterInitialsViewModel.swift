@@ -54,32 +54,37 @@ class AuthEnterInitialsViewModel: AuthEnterInitialsViewModelProtocol {
     ) {
         let createGroup = DispatchGroup()
         
-        var err: Error? = nil
-        var steps: Float = 0
+        var err: Error?
+        var totalSteps: Float = 0
+        let timestamp = Date()
         
-        steps += 1
+        totalSteps += 1
         createGroup.enter()
         let userId = firestoreService.createUser(userModel) { error in
             if error != nil {
                 err = error
             }
-            progressAddiction(1 / steps)
+            progressAddiction(1 / totalSteps)
             createGroup.leave()
         }
         
         if let avatar = avatar {
-            steps += 1
+            totalSteps += 1
             createGroup.enter()
-            storageService.uploadUserAvatar(userId: userId, avatar: avatar) { error in
+            storageService.uploadUserAvatar(
+                userId: userId,
+                avatar: avatar,
+                timestamp: timestamp
+            ) { _, error in
                 if error != nil {
                     err = error
                 }
-                progressAddiction(1 / steps)
+                progressAddiction(1 / totalSteps)
                 createGroup.leave()
             }
         }
         
-        steps += 1
+        totalSteps += 1
         createGroup.enter()
         let allContacts = getContacts()
         firestoreService.searchUsers(
@@ -117,14 +122,14 @@ class AuthEnterInitialsViewModel: AuthEnterInitialsViewModelProtocol {
                 
                 chatsGroup.notify(queue: .main) {
                     if last {
-                        progressAddiction(1 / steps)
+                        progressAddiction(1 / totalSteps)
                         createGroup.leave()
                     }
                 }
             }
         }
         
-        steps += 1
+        totalSteps += 1
         createGroup.enter()
         self.firestoreService.createChat(
             .init(
@@ -138,7 +143,7 @@ class AuthEnterInitialsViewModel: AuthEnterInitialsViewModelProtocol {
             if chatErr != nil {
                 err = chatErr
             }
-            progressAddiction(1 / steps)
+            progressAddiction(1 / totalSteps)
             createGroup.leave()
         }
         

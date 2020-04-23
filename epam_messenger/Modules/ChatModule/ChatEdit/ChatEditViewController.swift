@@ -71,7 +71,6 @@ class ChatEditViewController: UIViewController, ChatEditViewControllerProtocol {
             target: self,
             action: #selector(didCancelTap)
         )
-        navigationItem.leftBarButtonItem?.tintColor = UIColor.lightText.withAlphaComponent(1)
         
         navigationItem.rightBarButtonItem = .init(
             title: "Apply",
@@ -79,7 +78,6 @@ class ChatEditViewController: UIViewController, ChatEditViewControllerProtocol {
             target: self,
             action: #selector(didApplyTap)
         )
-        navigationItem.rightBarButtonItem?.tintColor = UIColor.lightText.withAlphaComponent(1)
     }
 
     // MARK: - Actions

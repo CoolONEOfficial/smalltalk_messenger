@@ -450,11 +450,11 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
     }
     
     public func elementAt(_ indexPath: IndexPath) -> ElementT {
-        return elementAt(indexPath.row)
+        elementAt(indexPath.row)
     }
     
     public func elementAt(_ index: Int) -> ElementT {
-        return flattenData[index]
+        flattenData[index]
     }
     
     // MARK: - PaginatedDelegate

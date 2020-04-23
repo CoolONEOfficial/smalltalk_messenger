@@ -57,20 +57,26 @@ class AvatarView: UIImageView {
         loading.startAnimating()
     }
     
-    func setup(withUser user: UserProtocol, savedMessagesSupport: Bool = false) {
+    func setup(
+        withUser user: UserProtocol,
+        savedMessagesSupport: Bool = false,
+        roundCorners: Bool = true
+    ) {
         if let userId = user.documentId, !user.deleted {
             if savedMessagesSupport && userId == Auth.auth().currentUser!.uid {
                setupBookmark()
-            } else if user.isAvatarExists != nil {
+            } else if let avatarRef = user.avatarRef {
                setup(
-                   withRef: user.avatarRef,
+                   withRef: avatarRef,
                    text: user.placeholderName,
-                   color: user.color
+                   color: user.color,
+                   roundCorners: roundCorners
                )
             } else {
                 setup(
                     withPlaceholder: user.placeholderName,
-                    color: user.color
+                    color: user.color,
+                    roundCorners: roundCorners
                 )
             }
         } else {
@@ -86,9 +92,9 @@ class AvatarView: UIImageView {
         let placeholderText = String(chat.title.first!)
         let placeholderColor = UIColor(hexString: chat.hexColor) ?? .accent
         
-        if chat.avatarPath != nil {
+        if let avatarRef = avatarRef {
             setup(
-                withRef: avatarRef!,
+                withRef: avatarRef,
                 text: placeholderText,
                 color: placeholderColor,
                 roundCorners: roundCorners

@@ -12,7 +12,8 @@ extension ContactsListViewController: UISearchResultsUpdating, UISearchControlle
     func updateSearchResults(for searchController: UISearchController) {
         NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(reload), object: nil)
         if searchController.searchBar.text?.isEmpty ?? true {
-            if !tableView.dataSource!.isEqual(tableView) {
+            if let dataSource = tableView.dataSource,
+                !dataSource.isEqual(tableView) {
                 tableView.dataSource = tableView
                 tableView.delegate = tableView
                 tableView.reloadData()
@@ -44,5 +45,3 @@ extension ContactsListViewController: UISearchResultsUpdating, UISearchControlle
         }
     }
 }
-
-

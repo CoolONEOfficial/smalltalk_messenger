@@ -16,7 +16,7 @@ public struct UserModel: AutoCodable, AutoEquatable {
     var surname: String
     var phoneNumber: String
     var hexColor: String?
-    var isAvatarExists: String?
+    var avatarPath: String?
     let online: Bool
     let typing: String?
     let deleted: Bool
@@ -27,17 +27,18 @@ public struct UserModel: AutoCodable, AutoEquatable {
     static func empty() -> UserModel {
         .init(documentId: nil, name: "", surname: "",
               phoneNumber: Auth.auth().currentUser!.phoneNumber!,
-              isAvatarExists: nil, online: true, typing: nil, deleted: false)
+              avatarPath: nil, online: true, typing: nil, deleted: false)
     }
     
     static func deleted(_ documentId: String?) -> UserModel {
         .init(documentId: documentId, name: "DELETED", surname: "", phoneNumber: "",
-              hexColor: "#7d7d7d", isAvatarExists: nil, online: false, typing: nil, deleted: true)
+              hexColor: "#7d7d7d", avatarPath: nil, online: false, typing: nil, deleted: true)
     }
     
     static func saved() -> UserModel {
-        .init(documentId: Auth.auth().currentUser!.uid, name: "Saved messages", surname: "", phoneNumber: Auth.auth().currentUser!.phoneNumber!,
-              hexColor: nil, isAvatarExists: nil, online: true, typing: nil, deleted: false)
+        .init(documentId: Auth.auth().currentUser!.uid, name: "Saved messages",
+              surname: "", phoneNumber: Auth.auth().currentUser!.phoneNumber!,
+              hexColor: nil, avatarPath: nil, online: true, typing: nil, deleted: false)
     }
     
     static func fromSnapshot(_ snapshot: DocumentSnapshot) -> UserModel? {
@@ -83,8 +84,8 @@ extension UserModel: UserProtocol {
             : "Offline"
     }
     
-    var avatarRef: StorageReference {
-        StorageService.getUserAvatarRef(documentId!)
+    var avatarRef: StorageReference? {
+        avatarPath != nil ? Storage.storage().reference(withPath: avatarPath!) : nil
     }
     
 }

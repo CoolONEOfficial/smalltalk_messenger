@@ -11,7 +11,8 @@ protocol StorageServiceProtocol: AutoMockable {
     func uploadUserAvatar(
         userId: String,
         avatar: UIImage,
-        completion: @escaping (Error?) -> Void
+        timestamp: Date,
+        completion: @escaping ((path: String, size: ImageSize)?, Error?) -> Void
     )
     func uploadChatAvatar(
         chatId: String,
@@ -95,26 +96,27 @@ class StorageService: StorageServiceProtocol {
         }
     }
     
-    static func getUserAvatarRef(_ userId: String) -> StorageReference {
+    static func getUserAvatarRef(userId: String, timestamp: Date) -> StorageReference {
         StorageService.storage.child("users")
             .child(userId)
-            .child("avatar.jpg")
+            .child("avatars")
+            .child("\(timestamp.iso8601withFractionalSeconds).jpg")
     }
     
     func uploadUserAvatar(
         userId: String,
         avatar: UIImage,
-        completion: @escaping (Error?) -> Void
+        timestamp: Date,
+        completion: @escaping ((path: String, size: ImageSize)?, Error?) -> Void
     ) {
-        let ref = StorageService.getUserAvatarRef(userId)
-        
-        ref.small.delete { _ in
-            self.uploadImage(
-                avatar,
-                to: ref
-            ) { _, err in
-                completion(err)
-            }
+        uploadImage(
+            avatar,
+            to: StorageService.getUserAvatarRef(
+                userId: userId,
+                timestamp: timestamp
+            )
+        ) { kind, err in
+            completion(kind, err)
         }
     }
     

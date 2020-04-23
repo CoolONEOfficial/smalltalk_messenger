@@ -684,20 +684,20 @@ class FirestoreServiceProtocolMock: FirestoreServiceProtocol {
 
     //MARK: - createUser
 
-    var createUserCompletionCallsCount = 0
-    var createUserCompletionCalled: Bool {
-        return createUserCompletionCallsCount > 0
+    var createUserAvatarTimestampCompletionCallsCount = 0
+    var createUserAvatarTimestampCompletionCalled: Bool {
+        return createUserAvatarTimestampCompletionCallsCount > 0
     }
-    var createUserCompletionReceivedArguments: (userModel: UserModel, completion: (Error?) -> Void)?
-    var createUserCompletionReceivedInvocations: [(userModel: UserModel, completion: (Error?) -> Void)] = []
-    var createUserCompletionReturnValue: String!
-    var createUserCompletionClosure: ((UserModel, @escaping (Error?) -> Void) -> String)?
+    var createUserAvatarTimestampCompletionReceivedArguments: (userModel: UserModel, avatarTimestamp: Date?, completion: (Error?) -> Void)?
+    var createUserAvatarTimestampCompletionReceivedInvocations: [(userModel: UserModel, avatarTimestamp: Date?, completion: (Error?) -> Void)] = []
+    var createUserAvatarTimestampCompletionReturnValue: String!
+    var createUserAvatarTimestampCompletionClosure: ((UserModel, Date?, @escaping (Error?) -> Void) -> String)?
 
-    func createUser(        _ userModel: UserModel,        completion: @escaping (Error?) -> Void    ) -> String {
-        createUserCompletionCallsCount += 1
-        createUserCompletionReceivedArguments = (userModel: userModel, completion: completion)
-        createUserCompletionReceivedInvocations.append((userModel: userModel, completion: completion))
-        return createUserCompletionClosure.map({ $0(userModel, completion) }) ?? createUserCompletionReturnValue
+    func createUser(        _ userModel: UserModel,        avatarTimestamp: Date?,        completion: @escaping (Error?) -> Void    ) -> String {
+        createUserAvatarTimestampCompletionCallsCount += 1
+        createUserAvatarTimestampCompletionReceivedArguments = (userModel: userModel, avatarTimestamp: avatarTimestamp, completion: completion)
+        createUserAvatarTimestampCompletionReceivedInvocations.append((userModel: userModel, avatarTimestamp: avatarTimestamp, completion: completion))
+        return createUserAvatarTimestampCompletionClosure.map({ $0(userModel, avatarTimestamp, completion) }) ?? createUserAvatarTimestampCompletionReturnValue
     }
 
     //MARK: - listenCurrentUserData
@@ -1009,19 +1009,19 @@ class StorageServiceProtocolMock: StorageServiceProtocol {
 
     //MARK: - uploadUserAvatar
 
-    var uploadUserAvatarUserIdAvatarCompletionCallsCount = 0
-    var uploadUserAvatarUserIdAvatarCompletionCalled: Bool {
-        return uploadUserAvatarUserIdAvatarCompletionCallsCount > 0
+    var uploadUserAvatarUserIdAvatarTimestampCompletionCallsCount = 0
+    var uploadUserAvatarUserIdAvatarTimestampCompletionCalled: Bool {
+        return uploadUserAvatarUserIdAvatarTimestampCompletionCallsCount > 0
     }
-    var uploadUserAvatarUserIdAvatarCompletionReceivedArguments: (userId: String, avatar: UIImage, completion: (Error?) -> Void)?
-    var uploadUserAvatarUserIdAvatarCompletionReceivedInvocations: [(userId: String, avatar: UIImage, completion: (Error?) -> Void)] = []
-    var uploadUserAvatarUserIdAvatarCompletionClosure: ((String, UIImage, @escaping (Error?) -> Void) -> Void)?
+    var uploadUserAvatarUserIdAvatarTimestampCompletionReceivedArguments: (userId: String, avatar: UIImage, timestamp: Date, completion: ((path: String, size: ImageSize)?, Error?) -> Void)?
+    var uploadUserAvatarUserIdAvatarTimestampCompletionReceivedInvocations: [(userId: String, avatar: UIImage, timestamp: Date, completion: ((path: String, size: ImageSize)?, Error?) -> Void)] = []
+    var uploadUserAvatarUserIdAvatarTimestampCompletionClosure: ((String, UIImage, Date, @escaping ((path: String, size: ImageSize)?, Error?) -> Void) -> Void)?
 
-    func uploadUserAvatar(        userId: String,        avatar: UIImage,        completion: @escaping (Error?) -> Void    ) {
-        uploadUserAvatarUserIdAvatarCompletionCallsCount += 1
-        uploadUserAvatarUserIdAvatarCompletionReceivedArguments = (userId: userId, avatar: avatar, completion: completion)
-        uploadUserAvatarUserIdAvatarCompletionReceivedInvocations.append((userId: userId, avatar: avatar, completion: completion))
-        uploadUserAvatarUserIdAvatarCompletionClosure?(userId, avatar, completion)
+    func uploadUserAvatar(        userId: String,        avatar: UIImage,        timestamp: Date,        completion: @escaping ((path: String, size: ImageSize)?, Error?) -> Void    ) {
+        uploadUserAvatarUserIdAvatarTimestampCompletionCallsCount += 1
+        uploadUserAvatarUserIdAvatarTimestampCompletionReceivedArguments = (userId: userId, avatar: avatar, timestamp: timestamp, completion: completion)
+        uploadUserAvatarUserIdAvatarTimestampCompletionReceivedInvocations.append((userId: userId, avatar: avatar, timestamp: timestamp, completion: completion))
+        uploadUserAvatarUserIdAvatarTimestampCompletionClosure?(userId, avatar, timestamp, completion)
     }
 
     //MARK: - uploadChatAvatar
