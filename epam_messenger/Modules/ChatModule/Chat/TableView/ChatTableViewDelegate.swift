@@ -232,7 +232,7 @@ extension ChatViewController: PaginatedTableViewDelegate {
             title: "Delete chat",
             style: .plain,
             target: self,
-            action: #selector(leaveChat)
+            action: #selector(deleteChat)
         )
         
         navigationItem.rightBarButtonItem = .init(
@@ -253,17 +253,17 @@ extension ChatViewController: PaginatedTableViewDelegate {
         }
     }
     
-    @objc internal func leaveChat() {
-        viewModel.leaveChat { _ in
+    @objc internal func deleteChat() {
+        presentActivityAlert()
+        viewModel.deleteChat { [weak self] _ in
+            guard let self = self else { return }
+            self.dismissActivityAlert()
             self.navigationController?.popViewController(animated: true)
         }
     }
     
     internal func presentForwardController() {
-        let forwardController = viewModel.createForwardViewController(forwardDelegate: self)
-        let navigationController = UINavigationController(rootViewController: forwardController)
-        navigationController.view.tintColor = .accent
-        present(navigationController, animated: true, completion: nil)
+        viewModel.presentForwardController(selectDelegate: self)
     }
     
     @objc internal func forwardSelectedMessages() {
@@ -309,13 +309,16 @@ extension ChatViewController: PaginatedTableViewDelegate {
     }
 }
 
-extension ChatViewController: ForwardDelegate {
+extension ChatViewController: ChatSelectDelegate {
     
     func didSelectChat(_ chatModel: ChatModel) {
         if forwardMessages != nil {
             for message in forwardMessages {
-                viewModel.forwardMessage(chatModel, message) { result in
-                    if result && self.viewModel.chat.documentId != chatModel.documentId {
+                viewModel.forwardMessage(chatModel, message) { [weak self] err in
+                    guard let self = self else { return }
+                    if let err = err {
+                        self.presentErrorAlert(err.localizedDescription)
+                    } else if self.viewModel.chat.documentId != chatModel.documentId {
                         self.viewModel.goToChat(chatModel)
                     }
                 }

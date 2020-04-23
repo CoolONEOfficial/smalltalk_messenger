@@ -2,17 +2,14 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="dark"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16086"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="AuthEnterInitialsViewController" customModule="epam_messenger" customModuleProvider="target">
             <connections>
-                <outlet property="avatarImage" destination="tQe-bN-P3C" id="Z6i-OM-EVF"/>
-                <outlet property="cameraView" destination="K6m-L2-2B9" id="7na-Gm-gfc"/>
-                <outlet property="cancelOrColorWheelImage" destination="IcW-SL-LPa" id="9Zr-TG-1x0"/>
-                <outlet property="galleryView" destination="2Ah-dE-rkr" id="bqX-67-v7V"/>
+                <outlet property="avatar" destination="tQe-bN-P3C" id="Z6i-OM-EVF"/>
                 <outlet property="nameField" destination="Zfe-Tn-RRa" id="3UR-8w-wLn"/>
                 <outlet property="surnameField" destination="V4Y-R9-mGh" id="0AC-I3-41Z"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
@@ -34,46 +31,11 @@
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="AgN-UH-4BB" userLabel="Initials Stack View">
-                    <rect key="frame" x="24" y="328.5" width="366" height="48"/>
-                    <subviews>
-                        <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" placeholder="Name" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Zfe-Tn-RRa">
-                            <rect key="frame" x="0.0" y="0.0" width="183" height="48"/>
-                            <constraints>
-                                <constraint firstAttribute="height" constant="48" id="NoJ-gW-XWX"/>
-                            </constraints>
-                            <fontDescription key="fontDescription" type="system" pointSize="18"/>
-                            <textInputTraits key="textInputTraits" autocapitalizationType="words" returnKeyType="next" textContentType="name"/>
-                            <connections>
-                                <action selector="didNameChanged:" destination="-1" eventType="editingChanged" id="HCu-cB-1O0"/>
-                            </connections>
-                        </textField>
-                        <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" placeholder="Surname" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="V4Y-R9-mGh">
-                            <rect key="frame" x="183" y="0.0" width="183" height="48"/>
-                            <constraints>
-                                <constraint firstAttribute="height" constant="48" id="94r-FY-jyS"/>
-                            </constraints>
-                            <fontDescription key="fontDescription" type="system" pointSize="18"/>
-                            <textInputTraits key="textInputTraits" autocapitalizationType="words" returnKeyType="done" textContentType="additional-name"/>
-                            <connections>
-                                <action selector="didSurnameChanged:" destination="-1" eventType="editingChanged" id="ttf-Is-th3"/>
-                            </connections>
-                        </textField>
-                    </subviews>
-                </stackView>
-                <stackView opaque="NO" contentMode="scaleToFill" distribution="equalCentering" alignment="center" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="m5u-XA-NyW" userLabel="Avatar Stack View">
+                <stackView opaque="NO" contentMode="scaleToFill" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="m5u-XA-NyW" userLabel="Avatar Stack View">
                     <rect key="frame" x="24" y="208.5" width="366" height="100"/>
                     <subviews>
-                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2Ah-dE-rkr" userLabel="Gallery View">
+                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="tQe-bN-P3C" customClass="AvatarEditView" customModule="epam_messenger" customModuleProvider="target">
                             <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
-                            <color key="backgroundColor" systemColor="tertiaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.29999999999999999" colorSpace="custom" customColorSpace="sRGB"/>
-                            <constraints>
-                                <constraint firstAttribute="width" constant="100" id="BeX-3a-SRC"/>
-                                <constraint firstAttribute="height" constant="100" id="nj1-1g-gx1"/>
-                            </constraints>
-                        </view>
-                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="tQe-bN-P3C" customClass="AvatarView" customModule="epam_messenger" customModuleProvider="target">
-                            <rect key="frame" x="133" y="0.0" width="100" height="100"/>
                             <color key="backgroundColor" systemColor="tertiaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.29999999999999999" colorSpace="custom" customColorSpace="sRGB"/>
                             <constraints>
                                 <constraint firstAttribute="width" constant="100" id="Ywd-yG-fnd"/>
@@ -83,53 +45,45 @@
                                 <userDefinedRuntimeAttribute type="boolean" keyPath="focusOnFaces" value="YES"/>
                             </userDefinedRuntimeAttributes>
                         </imageView>
-                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="K6m-L2-2B9" userLabel="Camera View">
-                            <rect key="frame" x="266" y="0.0" width="100" height="100"/>
-                            <color key="backgroundColor" systemColor="tertiaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.29999999999999999" colorSpace="custom" customColorSpace="sRGB"/>
-                            <constraints>
-                                <constraint firstAttribute="width" constant="100" id="IZs-Cq-5pF"/>
-                                <constraint firstAttribute="height" constant="100" id="KcJ-bg-u7G"/>
-                            </constraints>
-                        </view>
+                        <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="AgN-UH-4BB" userLabel="Initials Stack View">
+                            <rect key="frame" x="110" y="0.0" width="256" height="100"/>
+                            <subviews>
+                                <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" placeholder="Name" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Zfe-Tn-RRa">
+                                    <rect key="frame" x="0.0" y="0.0" width="256" height="50"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                    <textInputTraits key="textInputTraits" autocapitalizationType="words" returnKeyType="next" textContentType="name"/>
+                                    <connections>
+                                        <action selector="didNameChanged:" destination="-1" eventType="editingChanged" id="HCu-cB-1O0"/>
+                                    </connections>
+                                </textField>
+                                <textField opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="249" contentHorizontalAlignment="center" contentVerticalAlignment="center" placeholder="Surname" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="V4Y-R9-mGh">
+                                    <rect key="frame" x="0.0" y="50" width="256" height="50"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                    <textInputTraits key="textInputTraits" autocapitalizationType="words" returnKeyType="done" textContentType="additional-name"/>
+                                    <connections>
+                                        <action selector="didSurnameChanged:" destination="-1" eventType="editingChanged" id="ttf-Is-th3"/>
+                                    </connections>
+                                </textField>
+                            </subviews>
+                        </stackView>
                     </subviews>
                     <constraints>
                         <constraint firstAttribute="height" constant="100" id="aNe-S5-vxk"/>
                     </constraints>
                 </stackView>
-                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ic_color_wheel" translatesAutoresizingMaskIntoConstraints="NO" id="IcW-SL-LPa" userLabel="Cancel or color wheel">
-                    <rect key="frame" x="192" y="293.5" width="30" height="30"/>
-                    <color key="backgroundColor" systemColor="systemGray2Color" red="0.68235294120000001" green="0.68235294120000001" blue="0.69803921570000005" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                    <color key="tintColor" cocoaTouchSystemColor="lightTextColor"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="30" id="FqP-sE-bWA"/>
-                        <constraint firstAttribute="height" constant="30" id="gxA-cC-mMq"/>
-                    </constraints>
-                    <userDefinedRuntimeAttributes>
-                        <userDefinedRuntimeAttribute type="string" keyPath="heroID" value="color_wheel"/>
-                        <userDefinedRuntimeAttribute type="boolean" keyPath="isHeroEnabled" value="YES"/>
-                    </userDefinedRuntimeAttributes>
-                </imageView>
             </subviews>
             <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
             <constraints>
-                <constraint firstItem="IcW-SL-LPa" firstAttribute="bottom" secondItem="m5u-XA-NyW" secondAttribute="bottom" constant="15" id="AnY-Nf-4uO"/>
-                <constraint firstItem="AgN-UH-4BB" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="24" id="EOJ-7v-mh2"/>
                 <constraint firstItem="rFh-eZ-saX" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="G4H-QG-3j9"/>
                 <constraint firstItem="rFh-eZ-saX" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" constant="54" id="Hze-ID-YcO"/>
-                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="AgN-UH-4BB" secondAttribute="trailing" constant="24" id="NZ6-2C-w7U"/>
                 <constraint firstItem="d36-of-lJc" firstAttribute="top" secondItem="rFh-eZ-saX" secondAttribute="bottom" constant="8" id="RfH-GI-iOp"/>
                 <constraint firstItem="m5u-XA-NyW" firstAttribute="top" secondItem="d36-of-lJc" secondAttribute="bottom" constant="54" id="Vxn-ID-zW7"/>
                 <constraint firstItem="d36-of-lJc" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="ei0-EY-bjR"/>
-                <constraint firstItem="IcW-SL-LPa" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="oLQ-3m-lcy"/>
                 <constraint firstItem="m5u-XA-NyW" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="24" id="wDD-o4-VYb"/>
                 <constraint firstAttribute="trailing" secondItem="m5u-XA-NyW" secondAttribute="trailing" constant="24" id="yBO-hO-fvP"/>
-                <constraint firstItem="AgN-UH-4BB" firstAttribute="top" secondItem="m5u-XA-NyW" secondAttribute="bottom" constant="20" id="zPf-HZ-bih"/>
             </constraints>
             <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
             <point key="canvasLocation" x="137.68115942028987" y="152.67857142857142"/>
         </view>
     </objects>
-    <resources>
-        <image name="ic_color_wheel" width="243.33332824707031" height="243.33332824707031"/>
-    </resources>
 </document>

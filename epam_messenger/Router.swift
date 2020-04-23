@@ -16,9 +16,9 @@ protocol RouterMain {
 protocol RouterProtocol: RouterMain, AutoMockable {
     func initialViewController()
     func showBottomBar()
-    func showChatList()
     func popToRoot()
     func showContactsList()
+    func showUserPicker(selectDelegate: ContactsSelectDelegate)
 }
 
 class Router: RouterProtocol {
@@ -51,16 +51,6 @@ class Router: RouterProtocol {
         }
     }
     
-    func showChatList() {
-        if let navigationController = navigationController {
-            guard let chatViewController = assemblyBuilder?.createChatListModule(
-                router: self,
-                forwardDelegate: nil
-            ) else { return }
-            navigationController.viewControllers = [chatViewController]
-        }
-    }
-    
     func popToRoot() {
         if let navigationController = navigationController {
             navigationController.popToRootViewController(animated: true)
@@ -69,8 +59,19 @@ class Router: RouterProtocol {
     
     func showContactsList() {
         if let navigationController = navigationController {
-            guard let contactsListViewController = assemblyBuilder?.createContactsListModule(router: self) else { return }
+            guard let contactsListViewController = assemblyBuilder?.createContactsListModule(router: self, selectDelegate: nil) else { return }
             navigationController.viewControllers = [contactsListViewController]
+        }
+    }
+    
+    func showUserPicker(selectDelegate: ContactsSelectDelegate) {
+        if let contactsController = assemblyBuilder?.createContactsListModule(
+            router: self,
+            selectDelegate: selectDelegate
+        ) {
+            let navigationController = UINavigationController(rootViewController: contactsController)
+            navigationController.view.tintColor = .accent
+            Router.topMostController.present(navigationController, animated: true, completion: nil)
         }
     }
     
@@ -78,5 +79,15 @@ class Router: RouterProtocol {
          assemblyBuilder: AssemblyBuilderProtocol) {
         self.navigationController = navigationController
         self.assemblyBuilder = assemblyBuilder
+    }
+    
+    // MARK: - Helpers
+    
+    static var topMostController: UIViewController {
+        var topController: UIViewController = UIApplication.keyWindow!.rootViewController!
+        while topController.presentedViewController != nil {
+            topController = topController.presentedViewController!
+        }
+        return topController
     }
 }

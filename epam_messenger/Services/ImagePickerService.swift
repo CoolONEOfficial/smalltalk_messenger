@@ -12,9 +12,10 @@ import Photos
 typealias ImageCompletion = (UIImage) -> Void
 
 protocol ImagePickerServiceProtocol: AutoMockable {
-    func pickImages(completion: @escaping ImageCompletion)
-    func pickSingleImage(completion: @escaping ImageCompletion)
-    func pickCamera(completion: @escaping ImageCompletion)
+    func pickPhotos(completion: @escaping ImageCompletion)
+    func pickSinglePhoto(completion: @escaping ImageCompletion)
+    func pickCamera(completion: @escaping ImageCompletion, device: UIImagePickerController.CameraDevice?)
+    func showPickDialog(mode: ImagePickerDialog.Mode, completion: @escaping ImageCompletion)
 }
 
 class ImagePickerService: NSObject, ImagePickerServiceProtocol {
@@ -31,29 +32,32 @@ class ImagePickerService: NSObject, ImagePickerServiceProtocol {
     }()
     
     private var completion: ImageCompletion?
+    let cameraDevice: UIImagePickerController.CameraDevice
     
     // MARK: - Init
     
-    init(viewController: UIViewController) {
+    init(viewController: UIViewController, cameraDevice: UIImagePickerController.CameraDevice) {
         self.viewController = viewController
+        self.cameraDevice = cameraDevice
     }
     
     // MARK: - Methods
     
-    func pickCamera(completion: @escaping ImageCompletion) {
+    func pickCamera(completion: @escaping ImageCompletion, device: UIImagePickerController.CameraDevice? = nil) {
+        self.completion = completion
         imagePicker.sourceType = .camera
-        imagePicker.cameraDevice = .front
-        self.completion = completion
+        imagePicker.cameraDevice = cameraDevice
         viewController.present(imagePicker, animated: true, completion: nil)
     }
     
-    func pickSingleImage(completion: @escaping ImageCompletion) {
+    func pickSinglePhoto(completion: @escaping ImageCompletion) {
+        self.completion = completion
         imagePicker.sourceType = .photoLibrary
-        self.completion = completion
         viewController.present(imagePicker, animated: true, completion: nil)
     }
     
-    func pickImages(completion: @escaping ImageCompletion) {
+    func pickPhotos(completion: @escaping ImageCompletion) {
+        self.completion = completion
         let imagePicker = ImagePickerController()
         let theme = imagePicker.settings.theme
         
@@ -90,6 +94,13 @@ class ImagePickerService: NSObject, ImagePickerServiceProtocol {
             }
         })
     }
+    
+    func showPickDialog(mode: ImagePickerDialog.Mode, completion: @escaping ImageCompletion) {
+        self.completion = completion
+        
+        let dialog = ImagePickerDialog(delegate: self, mode: mode)
+        viewController.present(dialog, animated: true)
+    }
 }
 
 extension ImagePickerService: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
@@ -116,6 +127,31 @@ extension ImagePickerService: UIImagePickerControllerDelegate, UINavigationContr
             } else {
                 debugPrint("error while unwrapping selected image")
             }
+        }
+    }
+    
+}
+
+extension ImagePickerService: ImagePickerDialogDelegate {
+    
+    func didCameraTap() {
+        viewController.dismiss(animated: true) { [weak self] in
+            guard let self = self else { return }
+            self.pickCamera(completion: self.completion!)
+        }
+    }
+    
+    func didLastImageTap(_ image: UIImage) {
+        completion!(image)
+        viewController.dismiss(animated: true)
+    }
+    
+    func didPhotosTap(mode: ImagePickerDialog.Mode) {
+        switch mode {
+        case .single:
+            self.pickSinglePhoto(completion: self.completion!)
+        case .multiple:
+            self.pickPhotos(completion: self.completion!)
         }
     }
     

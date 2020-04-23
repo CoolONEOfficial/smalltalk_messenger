@@ -36,34 +36,27 @@ class ChatCell: UITableViewCell, NibReusable {
         switch chat.type {
         case .personalCorr, .savedMessages:
             setupSavedOrPersonalCorr()
-        case .chat(let title, let adminId, let hexColor):
-            setupChat(title, adminId, hexColor)
+        case .chat(let chatData):
+            setup(withChat: chatData)
         }
         
         messageLabel.text = chat.lastMessage.previewText
         timestampLabel.text = chat.lastMessage.timestampText
     }
     
-    private func setupChat(
-        _ title: String,
-        _ adminId: String,
-        _ hexColor: String?
+    private func setup(
+        withChat chatData: (title: String, adminId: String, hexColor: String?, isAvatarExists: Bool)
     ) {
-        titleLabel.text = title
+        titleLabel.text = chatData.title
         senderLabel.isHidden = false
         messageLabel.numberOfLines = 1
         
-        avatar.setup(
-            withRef: chat.avatarRef,
-            text: String(title.first ?? " "),
-            color: UIColor(hexString: hexColor) ?? .accent
-        )
-        
+        avatar.setup(withChat: chatData, avatarRef: chat.avatarRef)
+
         senderLabel.text = "..."
-        delegate?.userData(
-            chat.lastMessage.userId
-        ) { user in
-            let user = user ?? .deleted()
+        let userId = chat.lastMessage.userId
+        delegate?.userData(userId) { user in
+            let user = user ?? .deleted(userId)
             self.senderLabel.text = user.name
         }
     }
@@ -75,13 +68,11 @@ class ChatCell: UITableViewCell, NibReusable {
         
         if let friendId = chat.friendId {
             delegate?.userData(friendId) { friendModel in
+                let friendModel = friendModel ?? .deleted(friendId)
+                
                 self.avatar.setup(withUser: friendModel)
                 
-                self.titleLabel.text = (
-                    friendModel != nil
-                        ? friendModel!
-                        : .deleted()
-                    ).fullName
+                self.titleLabel.text = friendModel.fullName
             }
         } else {
             avatar.setupBookmark()

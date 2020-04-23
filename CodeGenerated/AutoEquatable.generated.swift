@@ -49,6 +49,17 @@ public func == (lhs: MediaModel, rhs: MediaModel) -> Bool {
     guard lhs.timestamp == rhs.timestamp else { return false }
     return true
 }
+// MARK: - MessageModel AutoEquatable
+extension MessageModel: Equatable {}
+public func == (lhs: MessageModel, rhs: MessageModel) -> Bool {
+    guard compareOptionals(lhs: lhs.documentId, rhs: rhs.documentId, compare: ==) else { return false }
+    guard lhs.kind == rhs.kind else { return false }
+    guard lhs.userId == rhs.userId else { return false }
+    guard lhs.timestamp == rhs.timestamp else { return false }
+    guard compareOptionals(lhs: lhs.chatId, rhs: rhs.chatId, compare: ==) else { return false }
+    guard compareOptionals(lhs: lhs.chatUsers, rhs: rhs.chatUsers, compare: ==) else { return false }
+    return true
+}
 // MARK: - UserModel AutoEquatable
 extension UserModel: Equatable {}
 public func == (lhs: UserModel, rhs: UserModel) -> Bool {
@@ -57,8 +68,10 @@ public func == (lhs: UserModel, rhs: UserModel) -> Bool {
     guard lhs.surname == rhs.surname else { return false }
     guard lhs.phoneNumber == rhs.phoneNumber else { return false }
     guard compareOptionals(lhs: lhs.hexColor, rhs: rhs.hexColor, compare: ==) else { return false }
+    guard lhs.isAvatarExists == rhs.isAvatarExists else { return false }
     guard lhs.online == rhs.online else { return false }
     guard compareOptionals(lhs: lhs.typing, rhs: rhs.typing, compare: ==) else { return false }
+    guard lhs.deleted == rhs.deleted else { return false }
     return true
 }
 
@@ -75,6 +88,7 @@ public func == (lhs: ChatType, rhs: ChatType) -> Bool {
         if lhs.title != rhs.title { return false }
         if lhs.adminId != rhs.adminId { return false }
         if lhs.hexColor != rhs.hexColor { return false }
+        if lhs.isAvatarExists != rhs.isAvatarExists { return false }
         return true
     default: return false
     }

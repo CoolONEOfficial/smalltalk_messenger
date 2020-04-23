@@ -23,14 +23,15 @@ class ChatDetailsMediaViewController: UICollectionViewController {
     let cellsPerRow: CGFloat = 3
     
     var viewModel: ChatDetailsViewModelProtocol
-    var chatViewController: ChatViewControllerProtocol
+    
+    var chatViewController: ChatViewControllerProtocol?
+    var localDataSource: ChatPhotoViewerDataSource?
     
     // MARK: - Init
     
-    // initialized with a non-nil layout parameter
     init(
         viewModel: ChatDetailsViewModelProtocol,
-        chatViewController: ChatViewControllerProtocol
+        chatViewController: ChatViewControllerProtocol?
     ) {
         self.viewModel = viewModel
         self.chatViewController = chatViewController
@@ -57,7 +58,9 @@ class ChatDetailsMediaViewController: UICollectionViewController {
     }
     
     func updateData(_ chat: ChatProtocol) {
-        FirestoreService().listChatMedia(chatId: chat.documentId) { media in
+        guard let chatId = chat.documentId else { return }
+        
+        FirestoreService().listChatMedia(chatId: chatId) { media in
             if let media = media {
                 self.data = media
             }
@@ -82,8 +85,10 @@ extension ChatDetailsMediaViewController: MediaCellDelegate {
     
     func didMediaTap(_ media: MediaProtocol) {
         ChatPhotoViewerDataSource.loadByChatId(
-            chatId: viewModel.chat.documentId,
-            cachedDatasource: chatViewController.photosViewerDataSource,
+            chatId: viewModel.chatModel.documentId,
+            cachedDatasource: chatViewController != nil
+                ? chatViewController?.photosViewerDataSource
+                : localDataSource,
             initialIndexCompletion: { refs in
                 refs.firstIndex { ref in
                     ref.fullPath == media.path
@@ -93,13 +98,17 @@ extension ChatDetailsMediaViewController: MediaCellDelegate {
         ) { [weak self] photos, errorText in
             guard let self = self else { return }
             guard let photos = photos else {
-                self.chatViewController.presentErrorAlert(errorText ?? "Unknown error")
+                self.chatViewController?.presentErrorAlert(errorText ?? "Unknown error")
                 return
             }
 
             let photosController = photos.0
             let photosDataSource = photos.1
-            self.chatViewController.photosViewerDataSource = photosDataSource
+            if self.chatViewController != nil {
+                self.chatViewController?.photosViewerDataSource = photosDataSource
+            } else {
+                self.localDataSource = photosDataSource
+            }
             
             self.present(photosController, animated: true, completion: nil)
         }
@@ -112,11 +121,9 @@ extension ChatDetailsMediaViewController: NYTPhotosViewControllerDelegate {
     func photosViewController(_ photosViewController: NYTPhotosViewController, referenceViewFor photo: NYTPhoto) -> UIView? {
         guard let box = photo as? PhotoBox else { return nil }
         
-        for (index, media) in data.enumerated() {
-            if box.path == media.path {
-                if let cell = collectionView.cellForItem(at: .init(row: index, section: 0)) as? MediaCell {
-                    return cell.image
-                }
+        for (index, media) in data.enumerated() where box.path == media.path {
+            if let cell = collectionView.cellForItem(at: .init(row: index, section: 0)) as? MediaCell {
+                return cell.image
             }
         }
         

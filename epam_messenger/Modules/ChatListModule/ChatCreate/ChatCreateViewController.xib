@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ChatCreateViewController" customModule="epam_messenger" customModuleProvider="target">
+            <connections>
+                <outlet property="avatar" destination="gK1-Bs-MWt" id="4Un-cs-tiP"/>
+                <outlet property="tableView" destination="6ci-b6-Qc5" id="yEI-Jn-qyt"/>
+                <outlet property="titleField" destination="EQQ-O4-gpN" id="M6K-Jq-b2d"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="6ci-b6-Qc5">
+                    <rect key="frame" x="0.0" y="174" width="414" height="722"/>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                    <inset key="separatorInset" minX="10" minY="0.0" maxX="0.0" maxY="0.0"/>
+                </tableView>
+                <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="JHx-BX-ltX">
+                    <rect key="frame" x="0.0" y="44" width="414" height="120"/>
+                    <subviews>
+                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="gK1-Bs-MWt" customClass="AvatarEditView" customModule="epam_messenger" customModuleProvider="target">
+                            <rect key="frame" x="15" y="10" width="100" height="100"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="100" id="iz3-jz-hqh"/>
+                                <constraint firstAttribute="height" constant="100" id="lbk-5C-dg9"/>
+                            </constraints>
+                        </imageView>
+                        <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Title" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="EQQ-O4-gpN">
+                            <rect key="frame" x="130" y="49.5" width="269" height="21"/>
+                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="16"/>
+                            <textInputTraits key="textInputTraits"/>
+                            <connections>
+                                <action selector="didTitleChanged:" destination="-1" eventType="editingChanged" id="r6D-Kv-xMz"/>
+                            </connections>
+                        </textField>
+                    </subviews>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="120" id="Gv9-rl-cUZ"/>
+                    </constraints>
+                    <edgeInsets key="layoutMargins" top="8" left="15" bottom="8" right="15"/>
+                </stackView>
+            </subviews>
+            <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+            <constraints>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="JHx-BX-ltX" secondAttribute="trailing" id="K5N-lB-Wbd"/>
+                <constraint firstItem="6ci-b6-Qc5" firstAttribute="top" secondItem="JHx-BX-ltX" secondAttribute="bottom" constant="10" id="Z57-YX-4xK"/>
+                <constraint firstItem="6ci-b6-Qc5" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="d9B-hi-DeO"/>
+                <constraint firstAttribute="bottom" secondItem="6ci-b6-Qc5" secondAttribute="bottom" id="iCK-Yy-tXK"/>
+                <constraint firstItem="JHx-BX-ltX" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="lEe-K7-DuN"/>
+                <constraint firstAttribute="trailing" secondItem="6ci-b6-Qc5" secondAttribute="trailing" id="mly-BR-uxD"/>
+                <constraint firstItem="JHx-BX-ltX" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" id="up4-dI-Orc"/>
+            </constraints>
+            <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
+            <point key="canvasLocation" x="139" y="153"/>
+        </view>
+    </objects>
+</document>

@@ -13,12 +13,14 @@ protocol UserProtocol {
     var placeholderName: String { get }
     var onlineText: String { get }
     var avatarRef: StorageReference { get }
-    var color: UIColor? { get set }
+    var color: UIColor { get set }
     
     var documentId: String? { get }
     var name: String { get }
     var surname: String { get }
     var phoneNumber: String { get }
+    var isAvatarExists: Bool { get set }
     var online: Bool { get }
     var typing: String? { get }
+    var deleted: Bool { get }
 }

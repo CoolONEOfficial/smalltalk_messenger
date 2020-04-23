@@ -11,7 +11,7 @@ import FirebaseUI
 import CodableFirebase
 import Reusable
 
-protocol ForwardDelegate: AnyObject {
+protocol ChatSelectDelegate: AnyObject {
     func didSelectChat(_ chatModel: ChatModel)
 }
 
@@ -47,7 +47,7 @@ class ChatListViewController: UIViewController {
     internal var searchChatItems = [ChatModel]()
     internal var searchMessageItems = [MessageModel]()
     
-    weak var forwardDelegate: ForwardDelegate?
+    weak var forwardDelegate: ChatSelectDelegate?
     
     var searchDataSource: FUIFirestoreTableViewDataSource!
     
@@ -65,8 +65,8 @@ class ChatListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if isForward {
-            title = "Forward"
+        if isSelectMode {
+            title = "Select chat"
             let backItem = UIBarButtonItem()
             backItem.title = "Cancel"
             backItem.tintColor = .accent
@@ -74,15 +74,18 @@ class ChatListViewController: UIViewController {
             backItem.target = self
             navigationItem.leftBarButtonItem = backItem
         }
-        
-        setupTableView()
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        setupTableView()
         setupSearchController()
         setupNavigationItem()
         setupToolbarItems()
         didSelectionChange()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        tableView.reloadData()
     }
     
     @objc func didCancelTap() {
@@ -130,9 +133,9 @@ class ChatListViewController: UIViewController {
     private func setupSearchController() {
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
-        searchController.searchBar.placeholder = "Search by chats"
+        searchController.searchBar.placeholder = "Search by chats and messages"
         searchController.navigationItem.rightBarButtonItem?.tintColor = .red
-        if let navigationItem = isForward
+        if let navigationItem = isSelectMode
             ? self.navigationItem
             : tabBarController?.navigationItem {
             navigationItem.searchController = searchController
@@ -143,24 +146,43 @@ class ChatListViewController: UIViewController {
     // MARK: - Edit mode
     
     private func setupNavigationItem() {
-        let rightItem = UIBarButtonItem(
+        let leftItem = UIBarButtonItem(
             title: "Edit",
             style: .plain,
             target: self,
             action: #selector(toggleEditMode)
         )
-        tabBarController?.navigationItem.setRightBarButton(rightItem, animated: false)
+        tabBarController?.navigationItem.setLeftBarButton(leftItem, animated: true)
+        
+        let rightItem = UIBarButtonItem(
+            barButtonSystemItem: .add,
+            target: self,
+            action: #selector(goToChatCreate)
+        )
+        tabBarController?.navigationItem.setRightBarButton(rightItem, animated: true)
+    }
+    
+    @objc private func goToChatCreate() {
+        viewModel.goToChatCreate()
     }
     
     @objc private func toggleEditMode(_ sender: UIBarButtonItem) {
-        tableView.setEditing(!tableView.isEditing, animated: true)
-        tableView.separatorInset.left = tableView.isEditing
-            ? separatorInsetEdit
-            : separatorInsetPlain
-        sender.title = tableView.isEditing ? "Done" : "Edit"
+        tableView.reloadRows(at: [ .init(row: 0, section: 0) ], with: .fade)
         
-        setToolbarHidden(!tableView.isEditing)
-        self.setTabBarHidden(tableView.isEditing)
+//        tableView.setEditing(!tableView.isEditing, animated: true)
+//        tableView.separatorInset.left = tableView.isEditing
+//            ? separatorInsetEdit
+//            : separatorInsetPlain
+//        sender.title = tableView.isEditing ? "Done" : "Edit"
+//        sender.style = tableView.isEditing ? .done : .plain
+//        searchController.searchBar.isUserInteractionEnabled = !tableView.isEditing
+//        UIView.animate(withDuration: 0.3) {
+//            self.searchController.searchBar.alpha = self.tableView.isEditing ? 0.75 : 1
+//        }
+//        tabBarController?.navigationItem.rightBarButtonItem?.isEnabled = !tableView.isEditing
+//
+//        setToolbarHidden(!tableView.isEditing)
+//        self.setTabBarHidden(tableView.isEditing)
     }
     
     private func setToolbarHidden(_ isHidden: Bool, completion: @escaping () -> Void = {}) {
@@ -214,9 +236,7 @@ class ChatListViewController: UIViewController {
         self.tabBarController?.tabBar.isHidden = hidden
     }
     
-    // MARK: - Helpers
-    
-    var isForward: Bool {
+    var isSelectMode: Bool {
         return tabBarController == nil
     }
     
@@ -248,7 +268,7 @@ extension ChatListViewController: PaginatedTableViewDelegate {
     
     private func didSelect(_ chatModel: ChatModel?, _ indexPath: IndexPath) {
         if let chatModel = chatModel {
-            if isForward {
+            if isSelectMode {
                 navigationController?.dismiss(animated: true) {
                     self.forwardDelegate?.didSelectChat(chatModel)
                 }
@@ -280,17 +300,17 @@ extension ChatListViewController: PaginatedTableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, shouldBeginMultipleSelectionInteractionAt indexPath: IndexPath) -> Bool {
-        return !isForward && !isSearch
+        return !isSelectMode && !isSearch
     }
     
     func tableView(_ tableView: UITableView, didBeginMultipleSelectionInteractionAt indexPath: IndexPath) {
-        if !isForward && !isSearch {
+        if !isSelectMode && !isSearch {
             self.setEditing(true, animated: true)
         }
     }
     
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
-        if !isForward, !isSearch {
+        if !isSelectMode, !isSearch {
             let identifier = NSString(string: String(indexPath.item))
             let chatModel = self.tableView.elementAt(indexPath)
             let configuration = UIContextMenuConfiguration(identifier: identifier, previewProvider: { () -> UIViewController? in
@@ -314,7 +334,7 @@ extension ChatListViewController: PaginatedTableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating) {
-        if !isForward {
+        if !isSelectMode {
             guard let identifier = configuration.identifier as? String else { return }
             guard let itemIndex = Int(identifier) else { return }
             

@@ -14,32 +14,34 @@ protocol ChatViewModelProtocol: ViewModelProtocol, AutoMockable, MessageCellDele
     func sendMessage(
         attachments: [ChatViewController.MessageAttachment],
         messageText: String?,
-        completion: @escaping (Bool) -> Void
+        completion: @escaping (Error?) -> Void
     )
     func forwardMessage(
         _ chatModel: ChatModel,
         _ messageModel: MessageProtocol,
-        completion: @escaping (Bool) -> Void
+        completion: @escaping (Error?) -> Void
     )
     func deleteMessage(
         _ messageModel: MessageProtocol,
-        completion: @escaping (Bool) -> Void
+        completion: @escaping (Error?) -> Void
     )
-    func leaveChat(
-        completion: @escaping (Bool) -> Void
+    func deleteChat(
+        completion: @escaping (Error?) -> Void
     )
     func createChat(
         completion: @escaping (Error?) -> Void
     )
-    func createForwardViewController(
-        forwardDelegate: ForwardDelegate
-    ) -> UIViewController
+    func presentForwardController(
+        selectDelegate: ChatSelectDelegate
+    )
     func goToChat(
         _ chatModel: ChatProtocol
     )
-    func userListData(
-        _ userList: [String],
+    func listenUserListData(
         completion: @escaping ([UserModel]?) -> Void
+    )
+    func listenChatData(
+        completion: @escaping (ChatModel?) -> Void
     )
     func startTypingCurrentUser()
     func endTypingCurrentUser()
@@ -53,7 +55,7 @@ protocol ChatViewModelProtocol: ViewModelProtocol, AutoMockable, MessageCellDele
 extension ChatViewModelProtocol {
     func deleteMessage(
         _ messageModel: MessageProtocol,
-        completion: @escaping (Bool) -> Void = {_ in}
+        completion: @escaping (Error?) -> Void = {_ in}
     ) {
         return deleteMessage(messageModel, completion: completion)
     }
@@ -61,15 +63,15 @@ extension ChatViewModelProtocol {
     func sendMessage(
         attachments: [ChatViewController.MessageAttachment],
         messageText: String? = nil,
-        completion: @escaping (Bool) -> Void = {_ in}
+        completion: @escaping (Error?) -> Void = {_ in}
     ) {
         return sendMessage(attachments: attachments, messageText: messageText, completion: completion)
     }
     
-    func leaveChat(
-        completion: @escaping (Bool) -> Void = {_ in}
+    func deleteChat(
+        completion: @escaping (Error?) -> Void = {_ in}
     ) {
-        return leaveChat(completion: completion)
+        return deleteChat(completion: completion)
     }
 }
 
@@ -138,7 +140,7 @@ class ChatViewModel: ChatViewModelProtocol {
                   firestoreService, storageService)
         
         chatGroup.enter()
-        firestoreService.chatData(userId: userId, completion: didChatLoad(_:))
+        firestoreService.getChatData(userId: userId, completion: didChatLoad(_:))
     }
     
     private func didChatLoad(_ chat: ChatModel?) {
@@ -151,7 +153,7 @@ class ChatViewModel: ChatViewModelProtocol {
     func sendMessage(
         attachments: [ChatViewController.MessageAttachment],
         messageText: String? = nil,
-        completion: @escaping (Bool) -> Void = {_ in}
+        completion: @escaping (Error?) -> Void = {_ in}
     ) {
         let uploadGroup = DispatchGroup()
         var uploadKinds: [MessageModel.MessageKind?] = .init(repeating: nil, count: attachments.count)
@@ -212,7 +214,7 @@ class ChatViewModel: ChatViewModelProtocol {
     func forwardMessage(
         _ chatModel: ChatModel,
         _ messageModel: MessageProtocol,
-        completion: @escaping (Bool) -> Void
+        completion: @escaping (Error?) -> Void
     ) {
         self.firestoreService.sendMessage(
             chatId: chatModel.documentId,
@@ -223,7 +225,7 @@ class ChatViewModel: ChatViewModelProtocol {
     
     func deleteMessage(
         _ messageModel: MessageProtocol,
-        completion: @escaping (Bool) -> Void = {_ in}
+        completion: @escaping (Error?) -> Void = {_ in}
     ) {
         firestoreService.deleteMessage(
             chatId: chat.documentId,
@@ -232,20 +234,26 @@ class ChatViewModel: ChatViewModelProtocol {
         )
     }
     
-    func leaveChat(
-        completion: @escaping (Bool) -> Void = {_ in}
+    func deleteChat(
+        completion: @escaping (Error?) -> Void = {_ in}
     ) {
-        firestoreService.leaveChat(
-            chatId: chat.documentId,
-            completion: completion
-        )
+        firestoreService.deleteChat(chat: chat, completion: completion)
     }
     
-    func userListData(
-        _ userList: [String],
+    func listenUserListData(
         completion: @escaping ([UserModel]?) -> Void
     ) {
-        firestoreService.userListData(userList, completion: completion)
+        firestoreService.listenUserListData(chat.users, completion: completion)
+    }
+    
+    func listenChatData(completion: @escaping (ChatModel?) -> Void) {
+        firestoreService.listenChatData(chat.documentId) { [weak self] chatModel in
+            guard let self = self else { return }
+            if let chatModel = chatModel {
+                self.chat = chatModel
+            }
+            completion(chatModel)
+        }
     }
     
     func startTypingCurrentUser() {
@@ -275,20 +283,24 @@ class ChatViewModel: ChatViewModelProtocol {
     func goToDetails() {
         guard let router = router as? ChatRouter else { return }
         
-        router.showChatDetails(chat, from: viewController)
+        router.showChatDetails(chat as! ChatModel, from: viewController)
     }
     
-    func createForwardViewController(forwardDelegate: ForwardDelegate) -> UIViewController {
-        return AssemblyBuilder().createChatListModule(
-            router: router,
-            forwardDelegate: forwardDelegate
-        )
+    func presentForwardController(selectDelegate: ChatSelectDelegate) {
+        guard let router = router as? ChatListRouter else { return }
+        
+        return router.showChatPicker(selectDelegate: selectDelegate)
     }
 }
 
 extension ChatViewModel: MessageCellDelegate {
     
-    func didTapContent(_ content: MessageCellContentProtocol) {
+    func didAvatarTap(_ userId: String) {
+        guard let router = router as? ChatRouter else { return }
+        router.showChatDetails(userId, heroAnimations: false)
+    }
+    
+    func didContentTap(_ content: MessageCellContentProtocol) {
         lastTapCellContent = content
         switch content {
         case let messageContent as MessageImageContent:
@@ -325,7 +337,7 @@ extension ChatViewModel: MessageCellDelegate {
     }
     
     func cellUserData(_ userId: String, completion: @escaping (UserModel?) -> Void) {
-        return firestoreService.userData(userId, completion: completion)
+        return firestoreService.getUserData(userId, completion: completion)
     }
     
 }

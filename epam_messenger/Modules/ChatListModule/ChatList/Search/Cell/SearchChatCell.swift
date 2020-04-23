@@ -12,7 +12,7 @@ class SearchChatCell: UITableViewCell, NibReusable {
 
     // MARK: - Outlets
     
-    @IBOutlet var avatarImage: UIImageView!
+    @IBOutlet var avatar: AvatarView!
     @IBOutlet var titleLabel: UILabel!
     
     // MARK: - Vars
@@ -26,7 +26,7 @@ class SearchChatCell: UITableViewCell, NibReusable {
     internal var chat: ChatProtocol!
     
     private func setupUi() {
-        if case .chat(let title, _, _) = chat.type {
+        if case .chat(let title, _, _, _) = chat.type {
             titleLabel.text = title
         }
         setupAvatar()
@@ -34,11 +34,14 @@ class SearchChatCell: UITableViewCell, NibReusable {
     
     private func setupAvatar() {
         delegate?.chatData(chat.documentId!) { chatModel in
-            if let chatModel = chatModel {
-                self.avatarImage.sd_setSmallImage(with: chatModel.avatarRef, placeholderImage: #imageLiteral(resourceName: "logo"))
+            if let chatModel = chatModel,
+                case .chat(let chatData) = self.chat.type {
+                self.avatar.setup(
+                    withChat: chatData,
+                    avatarRef: chatModel.avatarRef
+                )
             }
         }
-        avatarImage.layer.cornerRadius = avatarImage.bounds.width / 2
     }
     
     override func awakeFromNib() {
@@ -46,10 +49,4 @@ class SearchChatCell: UITableViewCell, NibReusable {
         separatorInset.left = 54
     }
 
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
-    }
-    
 }

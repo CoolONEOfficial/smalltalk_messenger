@@ -13,6 +13,11 @@ protocol StorageServiceProtocol: AutoMockable {
         avatar: UIImage,
         completion: @escaping (Error?) -> Void
     )
+    func uploadChatAvatar(
+        chatId: String,
+        avatar: UIImage,
+        completion: @escaping (Error?) -> Void
+    )
     func uploadImage(
         chatId: String,
         image: UIImage,
@@ -100,6 +105,21 @@ class StorageService: StorageServiceProtocol {
             avatar,
             to: storage.child("users")
                 .child(userId)
+                .child("avatar.jpg")
+        ) { kind, err in
+            completion(err)
+        }
+    }
+    
+    func uploadChatAvatar(
+        chatId: String,
+        avatar: UIImage,
+        completion: @escaping (Error?) -> Void
+    ) {
+        uploadImage(
+            avatar,
+            to: storage.child("chats")
+                .child(chatId)
                 .child("avatar.jpg")
         ) { kind, err in
             completion(err)

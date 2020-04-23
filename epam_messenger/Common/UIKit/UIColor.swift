@@ -59,6 +59,16 @@ extension UIColor {
             return UIColor(red: 0, green: 0, blue: 0, alpha: 0.4)
         }
     }
+    
+    // MARK: - Secondary elements
+    
+    static let secondary = UIColor { (UITraitCollection: UITraitCollection) -> UIColor in
+        if UITraitCollection.userInterfaceStyle == .dark {
+            return UIColor.lightText.withAlphaComponent(0.8)
+        } else {
+            return .systemIndigo
+        }
+    }
 }
 
 extension UIColor {

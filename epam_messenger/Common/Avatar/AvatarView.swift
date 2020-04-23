@@ -8,6 +8,7 @@
 import UIKit
 import FirebaseStorage
 import FirebaseAuth
+import SDWebImage
 
 class AvatarView: UIImageView {
     
@@ -16,15 +17,25 @@ class AvatarView: UIImageView {
     let loading = UIActivityIndicatorView()
     var placeholderLabel = UILabel()
     
+    override var image: UIImage? {
+        didSet {
+            placeholderLabel.isHidden = image != nil
+        }
+    }
+    
     // MARK: - Init
     
-    private func baseSetup(roundCorners: Bool = true) {
+    internal func baseSetup(roundCorners: Bool = true, cornerRadius: CGFloat? = nil) {
         contentMode = .scaleAspectFill
-        layer.cornerRadius = roundCorners ? bounds.width / 2 : 0
+        layer.cornerRadius = roundCorners
+            ? cornerRadius != nil
+                ? cornerRadius!
+                : bounds.width / 2
+            : 0
         layer.masksToBounds = true
         placeholderLabel.removeFromSuperview()
         set(image: nil, focusOnFaces: true)
-        backgroundColor = .clear
+        backgroundColor = nil
     }
     
     private func setupPlaceholder(_ text: String?, _ color: UIColor) {
@@ -46,15 +57,20 @@ class AvatarView: UIImageView {
         loading.startAnimating()
     }
     
-    func setup(withUser user: UserProtocol?) {
-        if let user = user {
-            if user.documentId == Auth.auth().currentUser!.uid {
-                setupBookmark()
+    func setup(withUser user: UserProtocol, savedMessagesSupport: Bool = false) {
+        if let userId = user.documentId, !user.deleted {
+            if savedMessagesSupport && userId == Auth.auth().currentUser!.uid {
+               setupBookmark()
+            } else if user.isAvatarExists {
+               setup(
+                   withRef: user.avatarRef,
+                   text: user.placeholderName,
+                   color: user.color
+               )
             } else {
                 setup(
-                    withRef: user.avatarRef,
-                    text: user.placeholderName,
-                    color: user.color ?? .accent
+                    withPlaceholder: user.placeholderName,
+                    color: user.color
                 )
             }
         } else {
@@ -62,10 +78,51 @@ class AvatarView: UIImageView {
         }
     }
     
-    func setup(withRef ref: StorageReference, text: String, color: UIColor, roundCorners: Bool = true) {
-        baseSetup(roundCorners: roundCorners)
+    func setup(withChat chat: (title: String, adminId: String, hexColor: String?, isAvatarExists: Bool), avatarRef: StorageReference) {
+        let placeholderText = String(chat.title.first!)
+        let placeholderColor = UIColor(hexString: chat.hexColor) ?? .accent
         
-        sd_setSmallImage(with: ref) { [weak self] _, err, _, _ in
+        if chat.isAvatarExists {
+            setup(
+                withRef: avatarRef,
+                text: placeholderText,
+                color: placeholderColor
+            )
+        } else {
+            setup(
+                withPlaceholder: placeholderText,
+                color: placeholderColor
+            )
+        }
+    }
+    
+    func setup(withRef ref: StorageReference, text: String, color: UIColor, roundCorners: Bool = true, cornerRadius: CGFloat? = nil) {
+        baseSetup(roundCorners: roundCorners, cornerRadius: cornerRadius)
+        
+        if frame.width > 200 {
+            sd_setImage(
+                with: ref,
+                placeholderImage: SDImageCache.shared.imageFromDiskCache(forKey: ref.small.storageLocation),
+                completion: didLoadImage(text, color)
+            )
+        } else {
+            sd_setSmallImage(
+                with: ref,
+                completion: didLoadImage(text, color)
+            )
+        }
+    }
+    
+    func didLoadImage(
+        _ text: String,
+        _ color: UIColor
+    ) -> (
+        _ image: UIImage?,
+        _ err: Error?,
+        _ cacheType: SDImageCacheType,
+        _ storageRef: StorageReference
+    ) -> Void {
+        { [weak self] _, err, _, _ in
             guard let self = self else { return }
             self.loading.removeFromSuperview()
             
@@ -86,7 +143,7 @@ class AvatarView: UIImageView {
         baseSetup()
         
         loading.removeFromSuperview()
-        set(image: image, focusOnFaces: true)
+        self.image = image
     }
     
     func setupBookmark() {
@@ -99,4 +156,7 @@ class AvatarView: UIImageView {
         tintColor = .white
     }
     
+    func reset() {
+        baseSetup()
+    }
 }

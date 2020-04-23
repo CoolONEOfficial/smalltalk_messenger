@@ -12,4 +12,8 @@ extension UIApplication {
         let window = (UIApplication.shared.windows.first { $0.isKeyWindow })!
         return window.safeAreaInsets
     }
+    
+    static var keyWindow: UIWindow? {
+        UIApplication.shared.windows.first { $0.isKeyWindow }
+    }
 }

@@ -42,7 +42,11 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
     var dataAtEnd = false
     
     /// Flatten data.
-    var flattenData: [ElementT] = []
+    var flattenData: [ElementT] = [] {
+        didSet {
+            debugPrint("cahnged from \(oldValue.count) to \(flattenData.count)")
+        }
+    }
     
     weak var paginatedDelegate: PaginatedTableViewDelegate?
     
@@ -502,7 +506,7 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        paginatedDelegate?.tableView(tableView, titleForHeaderInSection: section)
+        nil
     }
     
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {

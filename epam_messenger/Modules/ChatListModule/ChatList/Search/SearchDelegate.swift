@@ -31,9 +31,10 @@ extension ChatListViewController: UISearchResultsUpdating, UISearchControllerDel
         searchController.searchBar.isLoading = true
         
         let searchGroup = DispatchGroup()
+        let searchText = searchController.searchBar.text!
         
         searchGroup.enter()
-        viewModel.searchChats(searchController.searchBar.text!) { chats in
+        viewModel.searchChats(searchText) { chats in
             if let chats = chats {
                 self.searchChatItems = chats
             }
@@ -41,7 +42,7 @@ extension ChatListViewController: UISearchResultsUpdating, UISearchControllerDel
         }
         
         searchGroup.enter()
-        viewModel.searchMessages(searchController.searchBar.text!) { messages in
+        viewModel.searchMessages(searchText) { messages in
             if let messages = messages {
                 self.searchMessageItems = messages
 
