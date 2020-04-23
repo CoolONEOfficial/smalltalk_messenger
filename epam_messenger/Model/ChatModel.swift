@@ -54,7 +54,7 @@ public struct ChatModel: AutoCodable, AutoEquatable {
                 title: "",
                 adminId: Auth.auth().currentUser!.uid,
                 hexColor: nil,
-                isAvatarExists: false
+                avatarPath: nil
             )
         )
     }
@@ -87,25 +87,25 @@ extension ChatModel: ChatProtocol {
         return nil
     }
     
-    var avatarRef: StorageReference {
-        let path: String?
+    var avatarRef: StorageReference? {
+        let ref: StorageReference?
         
         switch type {
         case .personalCorr, .savedMessages:
             if let friendId = self.friendId ?? Auth.auth().currentUser?.uid {
-                path = "users/\(friendId)/avatar.jpg"
+                ref = StorageService.getUserAvatarRef(friendId)
             } else {
-                path = nil
+                ref = nil
             }
-        case .chat:
-            if let docId = documentId {
-                path = "chats/\(docId)/avatar.jpg"
+        case .chat(_, _, _, let avatarPath):
+            if let avatarPath = avatarPath {
+                ref = Storage.storage().reference(withPath: avatarPath)
             } else {
-                path = nil
+                ref = nil
             }
         }
         
-        return Storage.storage().reference(withPath: path!)
+        return ref
     }
     
     func listenInfo(completion: @escaping (

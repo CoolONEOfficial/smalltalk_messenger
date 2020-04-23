@@ -67,15 +67,6 @@ class ChatDetailsViewController: UIViewController, ChatDetailsViewControllerProt
                 self.titleLabel.text = title
                 self.subtitleLabel.text = subtitle
             }
-            
-            if let placeholderText = placeholderText {
-                self.avatar.setup(
-                    withRef: self.viewModel.chatModel.avatarRef,
-                    text: placeholderText,
-                    color: placeholderColor ?? .accent,
-                    roundCorners: false
-                )
-            }
         }
         subtitleLabel.text = "\(viewModel.chatModel.users.count) users"
     }
@@ -109,6 +100,7 @@ class ChatDetailsViewController: UIViewController, ChatDetailsViewControllerProt
             media.updateData(chat)
             users.updateData(chat)
             self.setupInfo()
+            self.setupAvatar()
         }
         
         if case .chat = viewModel.chatModel.type {
@@ -191,6 +183,14 @@ class ChatDetailsViewController: UIViewController, ChatDetailsViewControllerProt
         gradient.startPoint = CGPoint(x: 0, y: 1)
         gradient.endPoint = CGPoint(x: 0, y: 0)
         avatar.layer.addSublayer(gradient)
+        
+        if case .chat(let chatData) = viewModel.chatModel.type {
+            avatar.setup(
+                withChat: chatData,
+                avatarRef: viewModel.chatModel.avatarRef,
+                roundCorners: false
+            )
+        }
     }
     
     // MARK: - Actions

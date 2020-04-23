@@ -60,7 +60,6 @@ class SearchMessageCell: UITableViewCell, NibReusable {
                 }
             }
         case .chat(let chatData):
-            
             self.titleLabel.text = chatData.title
             delegate?.userData(message.userId) { userModel in
                 if let userModel = userModel {

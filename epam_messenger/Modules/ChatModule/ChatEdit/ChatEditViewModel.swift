@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SDWebImage
 
 protocol ChatEditViewModelProtocol {
     var chatModel: ChatModel { get set }
@@ -47,30 +48,31 @@ class ChatEditViewModel: ChatEditViewModelProtocol {
     func updateChat(completion: @escaping (Error?) -> Void) {
         let updateGroup = DispatchGroup()
         var err: Error?
-    
-        updateGroup.enter()
-        firestoreService.updateChat(chatModel) { chatErr in
-            if let chatErr = chatErr {
-                err = chatErr
-            }
-            updateGroup.leave()
-        }
+        let avatarTimestamp = chatAvatar != nil ? Date() : nil
         
         if let chatAvatar = chatAvatar {
             updateGroup.enter()
             storageService.uploadChatAvatar(
                 chatId: chatModel.documentId,
-                avatar: chatAvatar
-            ) { avatarErr in
+                avatar: chatAvatar,
+                timestamp: avatarTimestamp!
+            ) { kind, avatarErr in
                 if let avatarErr = avatarErr {
                     err = avatarErr
                 }
+                self.chatModel.type.changeChat(newAvatarPath: kind!.path)
                 updateGroup.leave()
             }
         }
         
-        updateGroup.notify(queue: .main) {
-            completion(err)
+        updateGroup.notify(queue: .main) { [weak self] in
+            guard let self = self else { return }
+            self.firestoreService.updateChat(self.chatModel) { chatErr in
+                if let chatErr = chatErr {
+                    err = chatErr
+                }
+                completion(err)
+            }
         }
     }
     

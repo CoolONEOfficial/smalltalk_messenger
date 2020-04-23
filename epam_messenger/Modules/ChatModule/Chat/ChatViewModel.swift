@@ -174,7 +174,7 @@ class ChatViewModel: ChatViewModelProtocol {
                     }
                     
                     if let kind = kind {
-                        uploadKinds[index] = kind
+                        uploadKinds[index] = .image(path: kind.path, size: kind.size)
                     }
                     uploadGroup.leave()
                 }
@@ -189,7 +189,7 @@ class ChatViewModel: ChatViewModelProtocol {
                     }
                     
                     if let kind = kind {
-                        uploadKinds[index] = kind
+                        uploadKinds[index] = .audio(path: kind)
                     }
                     uploadGroup.leave()
                 }

@@ -304,23 +304,21 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
     
     private func snapshotListener(
         completion: (([ElementT]?) -> Void)? = nil
-    ) -> ((QuerySnapshot?, Error?) -> Void) {
-        { snapshot, err in
-            guard err == nil else {
-                debugPrint("Error while get snapshot")
-                return
-            }
-            
-            let completion = completion ?? self.updateElements
-            if let snapshot = snapshot {
-                completion(snapshot.documents.map { doc in
-                    return self.fromSnapshot(doc)!
-                })
-            } else {
-                completion(nil)
-            }
+    ) -> ((QuerySnapshot?, Error?) -> Void) { { snapshot, err in
+        guard err == nil else {
+            debugPrint("Error while get snapshot")
+            return
         }
-    }
+        
+        let completion = completion ?? self.updateElements
+        if let snapshot = snapshot {
+            completion(snapshot.documents.map { doc in
+                return self.fromSnapshot(doc)!
+            })
+        } else {
+            completion(nil)
+        }
+    } }
     
     func updateElements(elements: [ElementT]?) {
         updateElements(elements)

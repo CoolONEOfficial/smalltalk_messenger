@@ -55,12 +55,23 @@ class AvatarEditView: AvatarView {
         ))
     }
     
-    override func setup(withPlaceholder text: String? = nil, color: UIColor = .accent) {
-        super.setup(withPlaceholder: text, color: color)
+    override func setup(
+        withPlaceholder text: String? = nil,
+        color: UIColor? = nil,
+        roundCorners: Bool = true,
+        cornerRadius: CGFloat? = nil
+    ) {
+        super.setup(withPlaceholder: text, color: color, cornerRadius: cornerRadius)
         refreshPhotoPlaceholderAlpha(text)
     }
     
-    override func setup(withRef ref: StorageReference, text: String, color: UIColor, roundCorners: Bool = true, cornerRadius: CGFloat? = nil) {
+    override func setup(
+        withRef ref: StorageReference,
+        text: String,
+        color: UIColor?,
+        roundCorners: Bool = true,
+        cornerRadius: CGFloat? = nil
+    ) {
         super.setup(withRef: ref, text: text, color: color)
         refreshPhotoPlaceholderAlpha(text)
     }

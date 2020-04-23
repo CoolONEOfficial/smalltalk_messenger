@@ -177,7 +177,7 @@ extension ChatCreateViewController: AvatarEditViewDelegate {
     
     func didChangeImage(_ image: UIImage?) {
         chatAvatar = image
-        chatModel.type.changeChat(newAvatarExists: image != nil)
+        chatModel.type.changeChat(clearAvatarPath: image == nil)
     }
     
     func didChangeColor(_ color: UIColor) {

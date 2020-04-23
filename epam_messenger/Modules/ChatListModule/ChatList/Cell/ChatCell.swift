@@ -45,7 +45,7 @@ class ChatCell: UITableViewCell, NibReusable {
     }
     
     private func setup(
-        withChat chatData: (title: String, adminId: String, hexColor: String?, isAvatarExists: Bool)
+        withChat chatData: (title: String, adminId: String, hexColor: String?, avatarPath: String?)
     ) {
         titleLabel.text = chatData.title
         senderLabel.isHidden = false

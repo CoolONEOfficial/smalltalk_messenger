@@ -19,7 +19,7 @@ protocol UserProtocol {
     var name: String { get }
     var surname: String { get }
     var phoneNumber: String { get }
-    var isAvatarExists: Bool { get set }
+    var isAvatarExists: String? { get set }
     var online: Bool { get }
     var typing: String? { get }
     var deleted: Bool { get }

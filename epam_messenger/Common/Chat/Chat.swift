@@ -7,10 +7,12 @@
 
 import Foundation
 import FirebaseStorage
+import CodableFirebase
+import FirebaseFirestore
 
 protocol ChatProtocol {
     var friendId: String? { get }
-    var avatarRef: StorageReference { get }
+    var avatarRef: StorageReference? { get }
     func listenInfo(completion: @escaping (
         _ title: String,
         _ subtitle: String,
@@ -27,19 +29,35 @@ protocol ChatProtocol {
 public enum ChatType: AutoCodable, AutoEquatable {
     case personalCorr(between: [String])
     case savedMessages
-    case chat(title: String, adminId: String, hexColor: String?, isAvatarExists: Bool)
+    case chat(
+        title: String,
+        adminId: String,
+        hexColor: String?,
+        avatarPath: String?
+    )
     
-    mutating func changeChat(newTitle: String? = nil, newAdminId: String? = nil, newHexColor: String? = nil, newAvatarExists: Bool? = nil) {
+    mutating func changeChat(
+        newTitle: String? = nil,
+        newAdminId: String? = nil,
+        newHexColor: String? = nil,
+        newAvatarPath: String? = nil,
+        clearAvatarPath: Bool? = nil
+    ) {
         switch self {
-        case .chat(let title, let adminId, let hexColor, let isAvatarExists):
+        case .chat(let title, let adminId, let hexColor, let avatarPath):
             self = .chat(
                 title: newTitle ?? title,
                 adminId: newAdminId ?? adminId,
                 hexColor: newHexColor ?? hexColor,
-                isAvatarExists: newAvatarExists ?? isAvatarExists
+                avatarPath: clearAvatarPath ?? false
+                    ? nil
+                    : newAvatarPath ?? avatarPath
             )
         default:
             break
         }
     }
+    
+    
+
 }

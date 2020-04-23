@@ -11,8 +11,8 @@ import FirebaseFirestore
 import CodableFirebase
 import FirebaseFunctions
 
-typealias FireQuery = Query
-typealias FireTimestamp = Timestamp
+public typealias FireQuery = Query
+public typealias FireTimestamp = Timestamp
 
 protocol FirestoreServiceProtocol: AutoMockable {
     func sendMessage(
@@ -61,6 +61,7 @@ protocol FirestoreServiceProtocol: AutoMockable {
     )
     @discardableResult func createChat(
         _ chatModel: ChatModel,
+        avatarTimestamp: Date?,
         completion: @escaping (Error?) -> Void
     ) -> String
     func createContact(
@@ -151,6 +152,18 @@ extension FirestoreServiceProtocol {
             completion: completion
         )
     }
+    
+    @discardableResult func createChat(
+        _ chatModel: ChatModel,
+        avatarTimestamp: Date? = nil,
+        completion: @escaping (Error?) -> Void = {_ in}
+    ) -> String {
+        createChat(
+            chatModel,
+            avatarTimestamp: avatarTimestamp,
+            completion: completion
+        )
+    }
 }
 
 class FirestoreService: FirestoreServiceProtocol {
@@ -215,9 +228,19 @@ class FirestoreService: FirestoreServiceProtocol {
     @discardableResult
     func createChat(
         _ chatModel: ChatModel,
+        avatarTimestamp: Date? = nil,
         completion: @escaping (Error?) -> Void
     ) -> String {
         let newDoc = db.collection("chats").document()
+        var chatModel = chatModel
+        if let avatarTimestamp = avatarTimestamp {
+            chatModel.type.changeChat(
+                newAvatarPath: StorageService.getChatAvatarRef(
+                    chatId: newDoc.documentID,
+                    timestamp: avatarTimestamp
+                ).fullPath
+            )
+        }
         do {
             let chatData = try FirestoreEncoder().encode(chatModel)
             
@@ -545,7 +568,7 @@ class FirestoreService: FirestoreServiceProtocol {
                 completion(snapshot?.documents.map { UserModel.fromSnapshot($0)! })
         }
     }
-
+    
 }
 
 // MARK: Contacts creation helper

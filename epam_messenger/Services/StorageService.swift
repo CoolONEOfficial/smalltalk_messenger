@@ -16,19 +16,20 @@ protocol StorageServiceProtocol: AutoMockable {
     func uploadChatAvatar(
         chatId: String,
         avatar: UIImage,
-        completion: @escaping (Error?) -> Void
+        timestamp: Date,
+        completion: @escaping ((path: String, size: ImageSize)?, Error?) -> Void
     )
     func uploadImage(
         chatId: String,
         image: UIImage,
         timestamp: Date,
         index: Int,
-        completion: @escaping (MessageModel.MessageKind?, Error?) -> Void
+        completion: @escaping ((path: String, size: ImageSize)?, Error?) -> Void
     )
     func uploadAudio(
         chatId: String,
         data: Data,
-        completion: @escaping (MessageModel.MessageKind?, Error?) -> Void
+        completion: @escaping (_ path: String?, Error?) -> Void
     )
 }
 
@@ -38,32 +39,32 @@ extension StorageServiceProtocol {
         image: UIImage,
         timestamp: Date,
         index: Int,
-        completion: @escaping (MessageModel.MessageKind?, Error?) -> Void = {_, _ in}
+        completion: @escaping ((path: String, size: ImageSize)?, Error?) -> Void = {_, _ in}
     ) {
         uploadImage(chatId: chatId, image: image, timestamp: timestamp, index: index, completion: completion)
     }
     func uploadAudio(
         chatId: String,
         data: Data,
-        completion: @escaping (MessageModel.MessageKind?, Error?) -> Void = {_, _ in}
+        completion: @escaping (_ path: String?, Error?) -> Void = {_, _ in}
     ) {
         uploadAudio(chatId: chatId, data: data, completion: completion)
     }
 }
 
 class StorageService: StorageServiceProtocol {
-    lazy var storage = Storage.storage().reference()
+    static let storage = Storage.storage().reference()
     
     func uploadImage(
         chatId: String,
         image: UIImage,
         timestamp: Date,
         index: Int,
-        completion: @escaping (MessageModel.MessageKind?, Error?) -> Void
+        completion: @escaping ((path: String, size: ImageSize)?, Error?) -> Void
     ) {
         uploadImage(
             image,
-            to: storage.child("chats")
+            to: StorageService.storage.child("chats")
                 .child(chatId)
                 .child("media")
                 .child("\(timestamp.iso8601withFractionalSeconds)_\(index).jpg"),
@@ -74,12 +75,12 @@ class StorageService: StorageServiceProtocol {
     func uploadAudio(
         chatId: String,
         data: Data,
-        completion: @escaping (MessageModel.MessageKind?, Error?) -> Void
+        completion: @escaping (_ path: String?, Error?) -> Void
     ) {
         let metadata = StorageMetadata()
         metadata.contentType = "audio/x-m4a"
         
-        storage.child("chats")
+        StorageService.storage.child("chats")
             .child(chatId)
             .child("audio")
             .child("\(Date().iso8601withFractionalSeconds).m4a")
@@ -90,10 +91,14 @@ class StorageService: StorageServiceProtocol {
                 }
                 
                 let path = metadata!.path!
-                completion(.audio(
-                    path: path
-                ), err)
+                completion(path, err)
         }
+    }
+    
+    static func getUserAvatarRef(_ userId: String) -> StorageReference {
+        StorageService.storage.child("users")
+            .child(userId)
+            .child("avatar.jpg")
     }
     
     func uploadUserAvatar(
@@ -101,28 +106,39 @@ class StorageService: StorageServiceProtocol {
         avatar: UIImage,
         completion: @escaping (Error?) -> Void
     ) {
-        uploadImage(
-            avatar,
-            to: storage.child("users")
-                .child(userId)
-                .child("avatar.jpg")
-        ) { kind, err in
-            completion(err)
+        let ref = StorageService.getUserAvatarRef(userId)
+        
+        ref.small.delete { _ in
+            self.uploadImage(
+                avatar,
+                to: ref
+            ) { _, err in
+                completion(err)
+            }
         }
+    }
+    
+    static func getChatAvatarRef(chatId: String, timestamp: Date) -> StorageReference {
+        StorageService.storage.child("chats")
+            .child(chatId)
+            .child("avatars")
+            .child("\(timestamp.iso8601withFractionalSeconds).jpg")
     }
     
     func uploadChatAvatar(
         chatId: String,
         avatar: UIImage,
-        completion: @escaping (Error?) -> Void
+        timestamp: Date,
+        completion: @escaping ((path: String, size: ImageSize)?, Error?) -> Void
     ) {
         uploadImage(
             avatar,
-            to: storage.child("chats")
-                .child(chatId)
-                .child("avatar.jpg")
+            to: StorageService.getChatAvatarRef(
+                chatId: chatId,
+                timestamp: timestamp
+            )
         ) { kind, err in
-            completion(err)
+            completion(kind, err)
         }
     }
     
@@ -131,7 +147,7 @@ class StorageService: StorageServiceProtocol {
     private func uploadImage(
         _ image: UIImage,
         to imageRef: StorageReference,
-        completion: @escaping (MessageModel.MessageKind?, Error?) -> Void
+        completion: @escaping ((path: String, size: ImageSize)?, Error?) -> Void
     ) {
         let metadata = StorageMetadata()
         metadata.contentType = "image/jpeg"
@@ -144,7 +160,7 @@ class StorageService: StorageServiceProtocol {
             }
         
             self.waitSmallImageCreation(imageRef) {
-                completion(.image(
+                completion((
                     path: metadata!.path!,
                     size: image.size
                 ), nil)
@@ -157,7 +173,6 @@ class StorageService: StorageServiceProtocol {
         completion: @escaping () -> Void
     ) {
         ref.small.getMetadata { _, error in
-
             if error != nil {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                     self.waitSmallImageCreation(ref, completion: completion)

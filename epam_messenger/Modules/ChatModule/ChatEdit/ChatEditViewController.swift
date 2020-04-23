@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SDWebImage
 
 protocol ChatEditViewControllerProtocol {
 }
@@ -16,7 +17,8 @@ class ChatEditViewController: UIViewController, ChatEditViewControllerProtocol {
     
     @IBOutlet var avatar: AvatarEditView!
     @IBOutlet var titleField: UITextField!
-    lazy var imagePickerService: ImagePickerServiceProtocol = ImagePickerService(viewController: self, cameraDevice: .rear)
+    lazy var imagePickerService: ImagePickerServiceProtocol =
+        ImagePickerService(viewController: self, cameraDevice: .rear)
     
     // MARK: - Vars
     
@@ -28,8 +30,11 @@ class ChatEditViewController: UIViewController, ChatEditViewControllerProtocol {
         super.viewDidLoad()
 
         setupNavigationBar()
-        setupAvatar()
         setupTitleField()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        setupAvatar()
     }
     
     private func setupTitleField() {
@@ -39,13 +44,13 @@ class ChatEditViewController: UIViewController, ChatEditViewControllerProtocol {
     }
     
     private func setupAvatar() {
-        if case .chat(let title, _, let hexColor, let avatarExists) = viewModel.chatModel.type {
+        if case .chat(let title, _, let hexColor, let isAvatarExists) = viewModel.chatModel.type {
             avatar.imagePickerService = imagePickerService
             let placeholderText = String(title.first!)
             let placeholderColor = UIColor(hexString: hexColor) ?? .accent
-            if avatarExists {
+            if isAvatarExists != nil {
                 avatar.setup(
-                    withRef: viewModel.chatModel.avatarRef,
+                    withRef: viewModel.chatModel.avatarRef!,
                     text: placeholderText,
                     color: placeholderColor
                 )
@@ -112,7 +117,7 @@ extension ChatEditViewController: AvatarEditViewDelegate {
     
     func didChangeImage(_ image: UIImage?) {
         viewModel.chatAvatar = image
-        viewModel.chatModel.type.changeChat(newAvatarExists: image != nil)
+        viewModel.chatModel.type.changeChat(clearAvatarPath: image == nil)
     }
     
     func didChangeColor(_ color: UIColor) {

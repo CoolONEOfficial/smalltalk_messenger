@@ -167,7 +167,12 @@ class ChatListViewController: UIViewController {
     }
     
     @objc private func toggleEditMode(_ sender: UIBarButtonItem) {
-        tableView.reloadRows(at: [ .init(row: 0, section: 0) ], with: .fade)
+        
+        self.tableView.reloadRows(at: [ .init(row: 0, section: 0) ], with: .fade)
+//        SDImageCache.shared.clear(with: .all) {
+//            //self.tableView.reloadData()
+//
+//        }
         
 //        tableView.setEditing(!tableView.isEditing, animated: true)
 //        tableView.separatorInset.left = tableView.isEditing
