@@ -33,7 +33,7 @@ class SearchChatCell: UITableViewCell, NibReusable {
     }
     
     private func setupAvatar() {
-        delegate?.chatData(chat.documentId!) { chatModel in
+        delegate?.getChatData(chat.documentId!) { chatModel in
             if let chatModel = chatModel,
                 case .chat(let chatData) = self.chat.type {
                 self.avatar.setup(

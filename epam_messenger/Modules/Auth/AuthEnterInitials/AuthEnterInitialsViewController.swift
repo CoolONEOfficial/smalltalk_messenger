@@ -159,7 +159,9 @@ extension AuthEnterInitialsViewController: AvatarEditViewDelegate {
     
     func didChangeImage(_ image: UIImage?) {
         userImage = image
-        user.isAvatarExists = image != nil
+        if image == nil {
+            user.avatarPath = nil
+        }
     }
     
     func didChangeColor(_ color: UIColor) {

@@ -16,15 +16,15 @@ protocol ChatSelectDelegate: AnyObject {
 }
 
 protocol ChatListCellDelegate: AnyObject {
-    func userListData(
+    func listenUserListData(
         _ userList: [String],
         completion: @escaping ([UserModel]?) -> Void
     )
-    func userData(
+    func listenUserData(
         _ userId: String,
         completion: @escaping (UserModel?) -> Void
     )
-    func chatData(
+    func getChatData(
         _ chatId: String,
         completion: @escaping (ChatModel?) -> Void
     )
@@ -84,8 +84,9 @@ class ChatListViewController: UIViewController {
         didSelectionChange()
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        tableView.reloadData()
+    override func viewWillDisappear(_ animated: Bool) {
+        searchController.searchBar.text = nil
+        searchController.isActive = false
     }
     
     @objc func didCancelTap() {
@@ -167,22 +168,20 @@ class ChatListViewController: UIViewController {
     }
     
     @objc private func toggleEditMode(_ sender: UIBarButtonItem) {
-        tableView.reloadRows(at: [ .init(row: 0, section: 0) ], with: .fade)
-        
-//        tableView.setEditing(!tableView.isEditing, animated: true)
-//        tableView.separatorInset.left = tableView.isEditing
-//            ? separatorInsetEdit
-//            : separatorInsetPlain
-//        sender.title = tableView.isEditing ? "Done" : "Edit"
-//        sender.style = tableView.isEditing ? .done : .plain
-//        searchController.searchBar.isUserInteractionEnabled = !tableView.isEditing
-//        UIView.animate(withDuration: 0.3) {
-//            self.searchController.searchBar.alpha = self.tableView.isEditing ? 0.75 : 1
-//        }
-//        tabBarController?.navigationItem.rightBarButtonItem?.isEnabled = !tableView.isEditing
-//
-//        setToolbarHidden(!tableView.isEditing)
-//        self.setTabBarHidden(tableView.isEditing)
+        tableView.setEditing(!tableView.isEditing, animated: true)
+        tableView.separatorInset.left = tableView.isEditing
+            ? separatorInsetEdit
+            : separatorInsetPlain
+        sender.title = tableView.isEditing ? "Done" : "Edit"
+        sender.style = tableView.isEditing ? .done : .plain
+        searchController.searchBar.isUserInteractionEnabled = !tableView.isEditing
+        UIView.animate(withDuration: 0.3) {
+            self.searchController.searchBar.alpha = self.tableView.isEditing ? 0.75 : 1
+        }
+        tabBarController?.navigationItem.rightBarButtonItem?.isEnabled = !tableView.isEditing
+
+        setToolbarHidden(!tableView.isEditing)
+        self.setTabBarHidden(tableView.isEditing)
     }
     
     private func setToolbarHidden(_ isHidden: Bool, completion: @escaping () -> Void = {}) {
@@ -260,7 +259,7 @@ extension ChatListViewController: PaginatedTableViewDelegate {
             completion(searchChatItems[indexPath.item])
         case 1:
             let message = searchMessageItems[indexPath.item]
-            viewModel.chatData(message.chatId!, completion: completion)
+            viewModel.getChatData(message.chatId!, completion: completion)
         default:
             fatalError("Unknown section")
         }
@@ -352,16 +351,16 @@ extension ChatListViewController: PaginatedTableViewDelegate {
 
 extension ChatListViewController: ChatListCellDelegate {
     
-    func userData(_ userId: String, completion: @escaping (UserModel?) -> Void) {
-        viewModel.userData(userId, completion: completion)
+    func listenUserData(_ userId: String, completion: @escaping (UserModel?) -> Void) {
+        viewModel.listenUserData(userId, completion: completion)
     }
     
-    func userListData(_ userList: [String], completion: @escaping ([UserModel]?) -> Void) {
-        viewModel.userListData(userList, completion: completion)
+    func listenUserListData(_ userList: [String], completion: @escaping ([UserModel]?) -> Void) {
+        viewModel.listenUserListData(userList, completion: completion)
     }
     
-    func chatData(_ chatId: String, completion: @escaping (ChatModel?) -> Void) {
-        viewModel.chatData(chatId, completion: completion)
+    func getChatData(_ chatId: String, completion: @escaping (ChatModel?) -> Void) {
+        viewModel.getChatData(chatId, completion: completion)
     }
     
 }

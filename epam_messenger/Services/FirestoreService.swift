@@ -11,8 +11,8 @@ import FirebaseFirestore
 import CodableFirebase
 import FirebaseFunctions
 
-typealias FireQuery = Query
-typealias FireTimestamp = Timestamp
+public typealias FireQuery = Query
+public typealias FireTimestamp = Timestamp
 
 protocol FirestoreServiceProtocol: AutoMockable {
     func sendMessage(
@@ -61,14 +61,16 @@ protocol FirestoreServiceProtocol: AutoMockable {
     )
     @discardableResult func createChat(
         _ chatModel: ChatModel,
+        avatarTimestamp: Date?,
         completion: @escaping (Error?) -> Void
     ) -> String
     func createContact(
         _ contactModel: ContactModel,
         completion: @escaping (Error?) -> Void
     )
-    func createUser(
+    @discardableResult func createUser(
         _ userModel: UserModel,
+        avatarTimestamp: Date?,
         completion: @escaping (Error?) -> Void
     ) -> String
     func listenCurrentUserData(
@@ -151,6 +153,30 @@ extension FirestoreServiceProtocol {
             completion: completion
         )
     }
+    
+    @discardableResult func createChat(
+        _ chatModel: ChatModel,
+        avatarTimestamp: Date? = nil,
+        completion: @escaping (Error?) -> Void = {_ in}
+    ) -> String {
+        createChat(
+            chatModel,
+            avatarTimestamp: avatarTimestamp,
+            completion: completion
+        )
+    }
+    
+    @discardableResult func createUser(
+        _ userModel: UserModel,
+        avatarTimestamp: Date? = nil,
+        completion: @escaping (Error?) -> Void = {_ in}
+    ) -> String {
+        createUser(
+            userModel,
+            avatarTimestamp: avatarTimestamp,
+            completion: completion
+        )
+    }
 }
 
 class FirestoreService: FirestoreServiceProtocol {
@@ -215,9 +241,19 @@ class FirestoreService: FirestoreServiceProtocol {
     @discardableResult
     func createChat(
         _ chatModel: ChatModel,
+        avatarTimestamp: Date? = nil,
         completion: @escaping (Error?) -> Void
     ) -> String {
         let newDoc = db.collection("chats").document()
+        var chatModel = chatModel
+        if let avatarTimestamp = avatarTimestamp {
+            chatModel.type.changeChat(
+                newAvatarPath: StorageService.getChatAvatarRef(
+                    chatId: newDoc.documentID,
+                    timestamp: avatarTimestamp
+                ).fullPath
+            )
+        }
         do {
             let chatData = try FirestoreEncoder().encode(chatModel)
             
@@ -409,9 +445,17 @@ class FirestoreService: FirestoreServiceProtocol {
     
     func createUser(
         _ userModel: UserModel,
+        avatarTimestamp: Date? = nil,
         completion: @escaping (Error?) -> Void
     ) -> String {
         let newDoc = db.collection("users").document(Auth.auth().currentUser!.uid)
+        var userModel = userModel
+        if let avatarTimestamp = avatarTimestamp {
+            userModel.avatarPath = StorageService.getChatAvatarRef(
+                chatId: newDoc.documentID,
+                timestamp: avatarTimestamp
+            ).fullPath
+        }
         do {
             let userData = try FirestoreEncoder().encode(userModel)
             
@@ -455,7 +499,7 @@ class FirestoreService: FirestoreServiceProtocol {
                 .whereField("phoneNumber", in: chunk)
                 .getDocuments { snapshot, err in
                     self.loadedCount += 1
-                    let last = self.loadedCount == chunked.count - 1
+                    let last = self.loadedCount == chunked.count
                     guard err == nil else {
                         debugPrint("Error while get contacts data: \(err!.localizedDescription)")
                         completion(nil, last)
@@ -545,7 +589,7 @@ class FirestoreService: FirestoreServiceProtocol {
                 completion(snapshot?.documents.map { UserModel.fromSnapshot($0)! })
         }
     }
-
+    
 }
 
 // MARK: Contacts creation helper

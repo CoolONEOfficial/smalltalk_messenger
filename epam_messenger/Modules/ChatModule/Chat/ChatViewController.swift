@@ -148,12 +148,20 @@ class ChatViewController: UIViewController {
             }
             
             if let placeholderText = placeholderText {
-                self.avatar.setup(
-                    withRef: self.viewModel.chat.avatarRef,
-                    text: placeholderText,
-                    color: placeholderColor ?? .accent,
-                    cornerRadius: 20
-                )
+                if let avatarRef = self.viewModel.chat.avatarRef {
+                    self.avatar.setup(
+                        withRef: avatarRef,
+                        text: placeholderText,
+                        color: placeholderColor,
+                        cornerRadius: 20
+                    )
+                } else {
+                    self.avatar.setup(
+                        withPlaceholder: placeholderText,
+                        color: placeholderColor,
+                        cornerRadius: 20
+                    )
+                }
             }
         }
     }

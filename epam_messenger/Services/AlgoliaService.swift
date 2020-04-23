@@ -55,6 +55,7 @@ class AlgoliaService: AlgoliaServiceProtocol {
         let query = Query()
         query.hitsPerPage = 20
         query.query = searchString
+        query.filters = "NOT objectID:\(Auth.auth().currentUser!.uid)"
         usersIndex.search(query) { (content, error) in
             completion(self.parseContent(content: content, error: error))
         }

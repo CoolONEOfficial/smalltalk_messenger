@@ -174,7 +174,7 @@ class ChatViewModel: ChatViewModelProtocol {
                     }
                     
                     if let kind = kind {
-                        uploadKinds[index] = kind
+                        uploadKinds[index] = .image(path: kind.path, size: kind.size)
                     }
                     uploadGroup.leave()
                 }
@@ -189,7 +189,7 @@ class ChatViewModel: ChatViewModelProtocol {
                     }
                     
                     if let kind = kind {
-                        uploadKinds[index] = kind
+                        uploadKinds[index] = .audio(path: kind)
                     }
                     uploadGroup.leave()
                 }
@@ -247,7 +247,12 @@ class ChatViewModel: ChatViewModelProtocol {
     }
     
     func listenChatData(completion: @escaping (ChatModel?) -> Void) {
-        firestoreService.listenChatData(chat.documentId) { [weak self] chatModel in
+        guard let chatId = chat.documentId else {
+            completion(.fromUserId(chat.friendId!))
+            return
+        }
+        
+        firestoreService.listenChatData(chatId) { [weak self] chatModel in
             guard let self = self else { return }
             if let chatModel = chatModel {
                 self.chat = chatModel

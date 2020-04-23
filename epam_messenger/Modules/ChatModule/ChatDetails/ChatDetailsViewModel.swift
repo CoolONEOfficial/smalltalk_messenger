@@ -14,6 +14,7 @@ protocol ChatDetailsViewModelProtocol {
     var router: RouterProtocol { get }
     
     func listenChatData(completion: @escaping (ChatModel?) -> Void)
+    func listenUserData(completion: @escaping (UserModel?) -> Void)
     func didEditTap()
     func didInviteTap()
 }
@@ -67,13 +68,20 @@ class ChatDetailsViewModel: ChatDetailsViewModelProtocol {
     // MARK: - Methods
     
     func listenChatData(completion: @escaping (ChatModel?) -> Void) {
-        firestoreService.listenChatData(chatModel.documentId) { [weak self] chat in
+        guard let chatId = chatModel.documentId else { return }
+        
+        firestoreService.listenChatData(chatId) { [weak self] chat in
             guard let self = self else { return }
             if let chat = chat {
                 self.chatModel = chat
             }
             completion(chat)
         }
+    }
+    
+    func listenUserData(completion: @escaping (UserModel?) -> Void) {
+        guard let friendId = chatModel.friendId else { return }
+        firestoreService.listenUserData(friendId, completion: completion)
     }
     
     func didInviteTap() {

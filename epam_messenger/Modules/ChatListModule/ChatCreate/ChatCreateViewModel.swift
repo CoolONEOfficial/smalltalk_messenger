@@ -45,9 +45,13 @@ class ChatCreateViewModel: ChatCreateViewModelProtocol {
     func createChat(chatModel: ChatModel, avatar: UIImage?, completion: @escaping (Error?) -> Void) {
         let chatGroup = DispatchGroup()
         var err: Error?
+        let timestamp = avatar != nil ? Date() : nil
         
         chatGroup.enter()
-        let chatId = firestoreService.createChat(chatModel) { chatErr in
+        let chatId = firestoreService.createChat(
+            chatModel,
+            avatarTimestamp: timestamp
+        ) { chatErr in
             if chatErr != nil {
                 err = chatErr
             }
@@ -56,7 +60,11 @@ class ChatCreateViewModel: ChatCreateViewModelProtocol {
         
         if let avatar = avatar {
             chatGroup.enter()
-            storageService.uploadChatAvatar(chatId: chatId, avatar: avatar) { avatarErr in
+            storageService.uploadChatAvatar(
+                chatId: chatId,
+                avatar: avatar,
+                timestamp: timestamp!
+            ) { kind, avatarErr in
                 if avatarErr != nil {
                     err = avatarErr
                 }
@@ -65,6 +73,7 @@ class ChatCreateViewModel: ChatCreateViewModelProtocol {
         }
         
         chatGroup.notify(queue: .main) {
+            
             completion(err)
         }
     }
