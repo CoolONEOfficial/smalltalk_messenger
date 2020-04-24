@@ -221,7 +221,7 @@
 		859330022417CD9C00F1F32E /* BottomBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomBarViewController.swift; sourceTree = "<group>"; };
 		85B3F1CB24336F9A001F92D9 /* AuthEnterCodeTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthEnterCodeTextField.swift; sourceTree = "<group>"; };
 		85B3F1CD243386A3001F92D9 /* UserModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
-		85BE9A6524118CF200E6643B /* epam_messenger.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = epam_messenger.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		85BE9A6524118CF200E6643B /* SmallTalk.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SmallTalk.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		85BE9A6824118CF200E6643B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		85BE9A7124118CF200E6643B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		85BE9A7424118CF200E6643B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -662,7 +662,7 @@
 		85BE9A6624118CF200E6643B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				85BE9A6524118CF200E6643B /* epam_messenger.app */,
+				85BE9A6524118CF200E6643B /* SmallTalk.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -995,7 +995,7 @@
 			);
 			name = epam_messenger;
 			productName = epam_messenger;
-			productReference = 85BE9A6524118CF200E6643B /* epam_messenger.app */;
+			productReference = 85BE9A6524118CF200E6643B /* SmallTalk.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -1552,7 +1552,7 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "ru.coolone.epam-messenger";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = SmallTalk;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1571,7 +1571,7 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "ru.coolone.epam-messenger";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = SmallTalk;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
