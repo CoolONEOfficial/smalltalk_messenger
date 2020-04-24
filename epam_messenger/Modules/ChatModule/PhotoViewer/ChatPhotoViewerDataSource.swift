@@ -101,7 +101,7 @@ class ChatPhotoViewerDataSource: NYTPhotoViewerArrayDataSource {
                                 }
                                 
                                 let image = UIImage(data: data!)
-                                SDImageCache.shared.storeImage(toMemory: image, forKey: cacheKey)
+                                SDImageCache.shared.storeImageData(toDisk: image?.sd_imageData(), forKey: cacheKey)
                                 photoBox.image = image
                                 
                                 photosViewController.updatePhoto(at: index)

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="dark"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ChatEditViewController" customModule="epam_messenger" customModuleProvider="target">
+            <connections>
+                <outlet property="avatar" destination="Jgq-QF-3KD" id="ZJf-1e-U8h"/>
+                <outlet property="titleField" destination="yZt-D3-jYP" id="fNm-QJ-Jf0"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="hN5-xC-LXs">
+                    <rect key="frame" x="0.0" y="44" width="414" height="168"/>
+                    <subviews>
+                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Jgq-QF-3KD" customClass="AvatarEditView" customModule="epam_messenger" customModuleProvider="target">
+                            <rect key="frame" x="24" y="24" width="120" height="120"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="120" id="j7R-Th-zL9"/>
+                                <constraint firstAttribute="width" constant="120" id="zYX-YL-qSd"/>
+                            </constraints>
+                        </imageView>
+                        <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Title" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="yZt-D3-jYP">
+                            <rect key="frame" x="159" y="75" width="231" height="18.5"/>
+                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="16"/>
+                            <textInputTraits key="textInputTraits"/>
+                            <connections>
+                                <action selector="didTitleChange:" destination="-1" eventType="editingChanged" id="bzA-Cm-osB"/>
+                            </connections>
+                        </textField>
+                    </subviews>
+                    <edgeInsets key="layoutMargins" top="24" left="24" bottom="24" right="24"/>
+                </stackView>
+            </subviews>
+            <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+            <constraints>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="hN5-xC-LXs" secondAttribute="trailing" id="5JV-0R-gEW"/>
+                <constraint firstItem="hN5-xC-LXs" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="5tC-vQ-cf7"/>
+                <constraint firstItem="hN5-xC-LXs" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" id="wb4-dG-YsQ"/>
+            </constraints>
+            <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
+            <point key="canvasLocation" x="137.68115942028987" y="152.67857142857142"/>
+        </view>
+    </objects>
+</document>

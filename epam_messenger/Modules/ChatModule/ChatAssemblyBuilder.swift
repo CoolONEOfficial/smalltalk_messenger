@@ -10,7 +10,19 @@ import UIKit
 protocol ChatAssemblyBuilder {
     func createChat(router: RouterProtocol, chat: ChatProtocol) -> UIViewController
     func createChat(router: RouterProtocol, userId: String) -> UIViewController
-    func createChatDetails(router: RouterProtocol, chat: ChatProtocol, from chatViewController: ChatViewControllerProtocol?) -> UIViewController
+    func createChatDetails(
+        router: RouterProtocol,
+        chatModel: ChatModel,
+        from chatViewController: ChatViewControllerProtocol?,
+        heroAnimations: Bool
+    ) -> UIViewController
+    func createChatDetails(
+        router: RouterProtocol,
+        userId: String,
+        from chatViewController: ChatViewControllerProtocol?,
+        heroAnimations: Bool
+    ) -> UIViewController
+    func createChatEdit(router: RouterProtocol, chatModel: ChatModel) -> UIViewController
 }
 
 extension AssemblyBuilder: ChatAssemblyBuilder {
@@ -45,22 +57,61 @@ extension AssemblyBuilder: ChatAssemblyBuilder {
     
     func createChatDetails(
         router: RouterProtocol,
-        chat: ChatProtocol,
-        from chatViewController: ChatViewControllerProtocol?
+        chatModel: ChatModel,
+        from chatViewController: ChatViewControllerProtocol?,
+        heroAnimations: Bool
     ) -> UIViewController {
         let view = ChatDetailsViewController()
         let viewModel = ChatDetailsViewModel(
             router: router,
             viewController: view,
-            chat: chat
+            chatModel: chatModel
         )
         view.viewModel = viewModel
         view.chatViewController =  chatViewController
-        view.hero.isEnabled = true
         let navigationController = UINavigationController(rootViewController: view)
         navigationController.modalPresentationStyle = .fullScreen
-        navigationController.hero.isEnabled = true
+        if heroAnimations {
+            view.hero.isEnabled = true
+            navigationController.hero.isEnabled = true
+        }
+        return navigationController
+    }
+    
+    func createChatDetails(
+        router: RouterProtocol,
+        userId: String,
+        from chatViewController: ChatViewControllerProtocol?,
+        heroAnimations: Bool
+    ) -> UIViewController {
+        let view = ChatDetailsViewController()
+        let viewModel = ChatDetailsViewModel(
+            router: router,
+            viewController: view,
+            userId: userId
+        )
+        view.viewModel = viewModel
+        view.chatViewController =  chatViewController
+        let navigationController = UINavigationController(rootViewController: view)
+        navigationController.modalPresentationStyle = .fullScreen
+        if heroAnimations {
+            view.hero.isEnabled = true
+            navigationController.hero.isEnabled = true
+        }
+        return navigationController
+    }
+    
+    func createChatEdit(router: RouterProtocol, chatModel: ChatModel) -> UIViewController {
+        let view = ChatEditViewController()
+        let viewModel = ChatEditViewModel(
+            router: router,
+            viewController: view,
+            chatModel: chatModel
+        )
+        view.viewModel = viewModel
+        let navigationController = UINavigationController(rootViewController: view)
         navigationController.view.tintColor = .accent
+        navigationController.modalPresentationStyle = .fullScreen
         return navigationController
     }
     

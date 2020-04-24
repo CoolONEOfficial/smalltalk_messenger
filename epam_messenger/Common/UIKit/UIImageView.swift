@@ -19,7 +19,7 @@ extension UIImageView {
             with: storageReference.small,
             maxImageSize: UInt64(1e+7), // 10mb
             placeholderImage: placeholderImage,
-            options: [.progressiveLoad],
+            options: [.progressiveLoad, .retryFailed],
             completion: completion
         )
     }

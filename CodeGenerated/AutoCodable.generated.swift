@@ -34,6 +34,7 @@ extension ChatType {
         case title
         case adminId
         case hexColor
+        case avatarPath
     }
 
     public init(from decoder: Decoder) throws {
@@ -54,7 +55,8 @@ extension ChatType {
             let title = try associatedValues.decode(String.self, forKey: .title)
             let adminId = try associatedValues.decode(String.self, forKey: .adminId)
             let hexColor = try associatedValues.decode(String?.self, forKey: .hexColor)
-            self = .chat(title: title, adminId: adminId, hexColor: hexColor)
+            let avatarPath = try associatedValues.decode(String?.self, forKey: .avatarPath)
+            self = .chat(title: title, adminId: adminId, hexColor: hexColor, avatarPath: avatarPath)
             return
         }
         throw DecodingError.dataCorrupted(.init(codingPath: decoder.codingPath, debugDescription: "Unknown enum case"))
@@ -69,11 +71,12 @@ extension ChatType {
             try associatedValues.encode(between, forKey: .between)
         case .savedMessages:
             _ = container.nestedContainer(keyedBy: CodingKeys.self, forKey: .savedMessages)
-        case let .chat(title, adminId, hexColor):
+        case let .chat(title, adminId, hexColor, avatarPath):
             var associatedValues = container.nestedContainer(keyedBy: CodingKeys.self, forKey: .chat)
             try associatedValues.encode(title, forKey: .title)
             try associatedValues.encode(adminId, forKey: .adminId)
             try associatedValues.encode(hexColor, forKey: .hexColor)
+            try associatedValues.encode(avatarPath, forKey: .avatarPath)
         }
     }
 
@@ -180,8 +183,10 @@ extension UserModel {
         case surname
         case phoneNumber
         case hexColor
+        case avatarPath
         case online
         case typing
+        case deleted
     }
 
     public init(from decoder: Decoder) throws {
@@ -192,8 +197,10 @@ extension UserModel {
         surname = try container.decode(String.self, forKey: .surname)
         phoneNumber = try container.decode(String.self, forKey: .phoneNumber)
         hexColor = try container.decodeIfPresent(String.self, forKey: .hexColor)
+        avatarPath = try container.decodeIfPresent(String.self, forKey: .avatarPath)
         online = (try? container.decode(Bool.self, forKey: .online)) ?? UserModel.defaultOnline
         typing = try container.decodeIfPresent(String.self, forKey: .typing)
+        deleted = (try? container.decode(Bool.self, forKey: .deleted)) ?? UserModel.defaultDeleted
     }
 
 }

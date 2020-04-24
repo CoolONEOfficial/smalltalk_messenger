@@ -12,9 +12,9 @@ import CodableFirebase
 public struct ChatModel: AutoCodable, AutoEquatable {
     
     var documentId: String!
-    let users: [String]
+    var users: [String]
     let lastMessage: MessageModel
-    let type: ChatType
+    var type: ChatType
     
     enum CodingKeys: String, CodingKey {
         case documentId
@@ -27,16 +27,34 @@ public struct ChatModel: AutoCodable, AutoEquatable {
     static func fromUserId(_ userId: String) -> ChatModel {
         .init(
             documentId: nil,
-            users: [
-                Auth.auth().currentUser!.uid,
-                userId
-            ],
-            lastMessage: .empty(),
-            type: .personalCorr(
-                between: [
+            users: Auth.auth().currentUser!.uid != userId
+                ? [
                     Auth.auth().currentUser!.uid,
                     userId
                 ]
+                : [ userId ],
+            lastMessage: .empty(),
+            type: Auth.auth().currentUser!.uid != userId
+                ? .personalCorr(
+                    between: [
+                        Auth.auth().currentUser!.uid,
+                        userId
+                    ]
+                )
+                : .savedMessages
+        )
+    }
+    
+    static func empty() -> ChatModel {
+        .init(
+            documentId: nil,
+            users: [ Auth.auth().currentUser!.uid ],
+            lastMessage: .emptyChat(),
+            type: .chat(
+                title: "",
+                adminId: Auth.auth().currentUser!.uid,
+                hexColor: nil,
+                avatarPath: nil
             )
         )
     }
@@ -69,37 +87,28 @@ extension ChatModel: ChatProtocol {
         return nil
     }
     
-    var avatarRef: StorageReference {
-        let path: String?
-        
-        switch type {
-        case .personalCorr, .savedMessages:
-            if let friendId = self.friendId ?? Auth.auth().currentUser?.uid {
-                path = "users/\(friendId)/avatar.jpg"
-            } else {
-                path = nil
-            }
-        case .chat:
-            if let docId = documentId {
-                path = "chats/\(docId)/avatar.jpg"
-            } else {
-                path = nil
-            }
+    var avatarRef: StorageReference? {
+        if case .chat(_, _, _, let avatarPath) = type,
+            let path = avatarPath {
+            return Storage.storage().reference(withPath: path)
         }
         
-        return Storage.storage().reference(withPath: path!)
+        return nil
     }
     
-    func loadInfo(completion: @escaping (
-        _ title: String, _ subtitle: String, _ placeholderText: String?, _ placeholderColor: UIColor?
+    func listenInfo(completion: @escaping (
+        _ title: String, _ subtitle: String,
+        _ placeholderText: String?, _ placeholderColor: UIColor?
     ) -> Void) {
         let firestoreService = FirestoreService()
         
         switch type {
-        case .personalCorr, .savedMessages:
+        case .savedMessages:
+            completion("Saved messages", "", "", nil)
+        case .personalCorr:
             if let friendId = friendId {
-                firestoreService.userData(friendId) { user in
-                    let maybeDeletedUser = user ?? .deleted()
+                firestoreService.listenUserData(friendId) { user in
+                    let maybeDeletedUser = user ?? .deleted(friendId)
                     let title = maybeDeletedUser.fullName
                     completion(
                         title,
@@ -110,11 +119,9 @@ extension ChatModel: ChatProtocol {
                         user?.color
                     )
                 }
-            } else {
-                completion("Saved messages", "", "", nil)
             }
-        case .chat(let title, _, let color):
-            firestoreService.userListData(users) { userList in
+        case .chat(let title, _, let color, _):
+            firestoreService.listenUserListData(users) { userList in
                 if let userList = userList {
                     let typingUsers = userList.filter({
                         $0.typing == self.documentId

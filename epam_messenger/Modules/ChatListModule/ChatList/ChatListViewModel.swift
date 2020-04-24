@@ -12,6 +12,8 @@ import CodableFirebase
 
 protocol ChatListViewModelProtocol: ViewModelProtocol {
     func goToChat(_ chatModel: ChatModel)
+    func goToChatDetails(_ chatModel: ChatModel)
+    func goToChatCreate()
     func firestoreQuery() -> FireQuery
     func searchChats(
         _ searchString: String,
@@ -22,15 +24,15 @@ protocol ChatListViewModelProtocol: ViewModelProtocol {
         completion: @escaping SearchMessagesCompletion
     )
     func createChatPreview(_ chat: ChatProtocol) -> UIViewController
-    func userListData(
+    func listenUserListData(
         _ userList: [String],
         completion: @escaping ([UserModel]?) -> Void
     )
-    func userData(
+    func listenUserData(
         _ userId: String,
         completion: @escaping (UserModel?) -> Void
     )
-    func chatData(
+    func getChatData(
         _ chatId: String,
         completion: @escaping (ChatModel?) -> Void
     )
@@ -55,10 +57,22 @@ class ChatListViewModel: ChatListViewModelProtocol {
         self.algoliaService = algoliaService
     }
     
+    func goToChatCreate() {
+        guard let router = router as? ChatListRouter else { return }
+        
+        router.showChatCreate()
+    }
+    
     func goToChat(_ chatModel: ChatModel) {
         guard let router = router as? ChatRouter else { return }
         
         router.showChat(chatModel)
+    }
+    
+    func goToChatDetails(_ chatModel: ChatModel) {
+        guard let router = router as? ChatRouter else { return }
+        
+        router.showChatDetails(chatModel, from: nil)
     }
     
     func firestoreQuery() -> FireQuery {
@@ -85,23 +99,19 @@ class ChatListViewModel: ChatListViewModelProtocol {
     
     func deleteSelectedChats(_ chatList: [ChatModel]) {
         for chatModel in chatList {
-            if chatModel.type == .savedMessages {
-                firestoreService.clearSavedMessages(chatId: chatModel.documentId)
-            } else {
-                firestoreService.leaveChat(chatId: chatModel.documentId)
-            }
+            firestoreService.deleteChat(chat: chatModel)
         }
     }
     
-    func userListData(_ userList: [String], completion: @escaping ([UserModel]?) -> Void) {
-        firestoreService.userListData(userList, completion: completion)
+    func listenUserListData(_ userList: [String], completion: @escaping ([UserModel]?) -> Void) {
+        firestoreService.listenUserListData(userList, completion: completion)
     }
     
-    func userData(_ userId: String, completion: @escaping (UserModel?) -> Void) {
-        firestoreService.userData(userId, completion: completion)
+    func listenUserData(_ userId: String, completion: @escaping (UserModel?) -> Void) {
+        firestoreService.listenUserData(userId, completion: completion)
     }
     
-    func chatData(_ chatId: String, completion: @escaping (ChatModel?) -> Void) {
-        firestoreService.chatData(chatId, completion: completion)
+    func getChatData(_ chatId: String, completion: @escaping (ChatModel?) -> Void) {
+        firestoreService.getChatData(chatId, completion: completion)
     }
 }

@@ -32,7 +32,7 @@ class ChatViewController: UIViewController {
     
     var viewModel: ChatViewModelProtocol!
     lazy var imagePickerService: ImagePickerServiceProtocol = {
-        return ImagePickerService(viewController: self)
+        return ImagePickerService(viewController: self, cameraDevice: .rear)
     }()
     
     var defaultTitle = "..."
@@ -48,7 +48,7 @@ class ChatViewController: UIViewController {
     let titleLabel = UILabel()
     let subtitleLabel = UILabel()
     
-    let avatarImage = AvatarView()
+    let avatar = AvatarView()
     
     var deleteButton = UIButton()
     var forwardButton = UIButton()
@@ -112,6 +112,7 @@ class ChatViewController: UIViewController {
     // MARK: - Events
     
     func didChatLoad() {
+        setupAvatar()
         setupTableView()
         setupInputBar()
         viewDidAppear(true)
@@ -123,12 +124,18 @@ class ChatViewController: UIViewController {
         view.tintColor = .accent
         
         setupTitle()
-        setupAvatar()
         setupEditModeButtons()
         setupFloatingBottomButton()
         viewModel.viewDidLoad()
         
-        viewModel.chat.loadInfo { [weak self] title, subtitle, placeholderText, placeholderColor in
+        viewModel.listenChatData { [weak self] _ in
+            guard let self = self else { return }
+            self.setupInfo()
+        }
+    }
+    
+    private func setupInfo() {
+        viewModel.chat.listenInfo { [weak self] title, subtitle, placeholderText, placeholderColor in
             guard let self = self else { return }
             
             self.transitionSubtitleLabel {
@@ -141,11 +148,20 @@ class ChatViewController: UIViewController {
             }
             
             if let placeholderText = placeholderText {
-                self.avatarImage.setup(
-                    withRef: self.viewModel.chat.avatarRef,
-                    text: placeholderText,
-                    color: placeholderColor ?? .accent
-                )
+                if let avatarRef = self.viewModel.chat.avatarRef {
+                    self.avatar.setup(
+                        withRef: avatarRef,
+                        text: placeholderText,
+                        color: placeholderColor,
+                        cornerRadius: 20
+                    )
+                } else {
+                    self.avatar.setup(
+                        withPlaceholder: placeholderText,
+                        color: placeholderColor,
+                        cornerRadius: 20
+                    )
+                }
             }
         }
     }
@@ -191,12 +207,13 @@ class ChatViewController: UIViewController {
     
     private func setupAvatar() {
         if viewModel.chat.type != .savedMessages {
-            avatarImage.size(.init(width: 40, height: 40))
-            avatarImage.addGestureRecognizer(UITapGestureRecognizer.init(target: self, action: #selector(didNavigationItemsTap)
+            avatar.size(.init(width: 40, height: 40))
+            avatar.addGestureRecognizer(UITapGestureRecognizer.init(
+                target: self, action: #selector(didNavigationItemsTap)
             ))
-            avatarImage.hero.id = "avatar"
+            avatar.hero.id = "avatar"
             
-            navigationItem.setRightBarButton(UIBarButtonItem(customView: avatarImage), animated: true)
+            navigationItem.setRightBarButton(UIBarButtonItem(customView: avatar), animated: true)
         }
     }
     

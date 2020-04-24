@@ -89,10 +89,11 @@ class MessageForwardContent: UIView, MessageCellContentProtocol {
     }
     
     func didDelegateSet(_ delegate: MessageCellDelegate?) {
-        cell.delegate?.cellUserData(messageForward.kindForwardUser(at: kindIndex)!) { userModel in
+        let userId = messageForward.kindForwardUser(at: kindIndex)!
+        cell.delegate?.cellUserData(userId) { userModel in
             let userName: String
             
-            let userModel = userModel ?? .deleted()
+            let userModel = userModel ?? .deleted(userId)
             userName = userModel.name
             
             self.forwardLabel.text = "Forwarded from \(userName)"

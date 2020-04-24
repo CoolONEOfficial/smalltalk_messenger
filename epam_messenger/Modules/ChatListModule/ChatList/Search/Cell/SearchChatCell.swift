@@ -26,23 +26,22 @@ class SearchChatCell: UITableViewCell, NibReusable {
     internal var chat: ChatProtocol!
     
     private func setupUi() {
-        if case .chat(let title, _, _) = chat.type {
+        if case .chat(let title, _, _, _) = chat.type {
             titleLabel.text = title
         }
         setupAvatar()
     }
     
     private func setupAvatar() {
-        delegate?.chatData(chat.documentId!) { chatModel in
-            if let chatModel = chatModel, case .chat(let title, _, let hexColor) = self.chat.type {
+        delegate?.getChatData(chat.documentId!) { chatModel in
+            if let chatModel = chatModel,
+                case .chat(let chatData) = self.chat.type {
                 self.avatar.setup(
-                    withRef: chatModel.avatarRef,
-                    text: String(title.first!),
-                    color: UIColor(hexString: hexColor)!
+                    withChat: chatData,
+                    avatarRef: chatModel.avatarRef
                 )
             }
         }
-        avatar.layer.cornerRadius = avatar.bounds.width / 2
     }
     
     override func awakeFromNib() {
@@ -50,10 +49,4 @@ class SearchChatCell: UITableViewCell, NibReusable {
         separatorInset.left = 54
     }
 
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
-    }
-    
 }

@@ -45,6 +45,11 @@ public struct MessageModel: AutoCodable, AutoEquatable {
               timestamp: .init(), chatId: nil, chatUsers: nil)
     }
     
+    static func emptyChat() -> MessageModel {
+        .init(documentId: nil, kind: [ .text("Chat has been created") ], userId: Auth.auth().currentUser!.uid,
+              timestamp: .init(), chatId: nil, chatUsers: nil)
+    }
+    
     static func fromSnapshot(_ snapshot: DocumentSnapshot) -> MessageModel? {
         var data = snapshot.data() ?? [:]
         data["documentId"] = snapshot.documentID

@@ -10,19 +10,21 @@ import Hero
 import XLPagerTabStrip
 import SDWebImage
 import NYTPhotoViewer
+import FirebaseAuth
 
 protocol ChatDetailsViewControllerProtocol {
 }
 
-class ChatDetailsViewController: UIViewController {
+class ChatDetailsViewController: UIViewController, ChatDetailsViewControllerProtocol {
 
     // MARK: - Outlets
     
     @IBOutlet var scroll: UIScrollView!
     @IBOutlet var stack: UIStackView!
-    @IBOutlet var avatarImage: AvatarView!
+    @IBOutlet var avatar: AvatarView!
     @IBOutlet var titleLabel: UILabel!
     @IBOutlet var subtitleLabel: UILabel!
+    @IBOutlet var inviteButton: UIButton!
     
     // MARK: - Vars
     
@@ -31,8 +33,10 @@ class ChatDetailsViewController: UIViewController {
     var staticContentHeight: CGFloat!
     
     var viewModel: ChatDetailsViewModelProtocol!
-    var chatViewController: ChatViewControllerProtocol!
-
+    var chatViewController: ChatViewControllerProtocol?
+    
+    // MARK: - Init
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -43,8 +47,12 @@ class ChatDetailsViewController: UIViewController {
         setupScroll()
         setupNavigationBar()
         setupAvatar()
-        setupTabStrip()
         setupInfo()
+        
+        viewModel.chatGroup.notify(queue: .main) { [weak self] in
+            guard let self = self else { return }
+            self.setupTabStrip()
+        }
     }
     
     private func setupScroll() {
@@ -52,24 +60,15 @@ class ChatDetailsViewController: UIViewController {
     }
     
     private func setupInfo() {
-        viewModel.chat.loadInfo { [weak self] title, subtitle, placeholderText, placeholderColor in
+        viewModel.chatModel.listenInfo { [weak self] title, subtitle, _, _ in
             guard let self = self else { return }
             
             self.transitionSubtitleLabel {
                 self.titleLabel.text = title
                 self.subtitleLabel.text = subtitle
             }
-            
-            if let placeholderText = placeholderText {
-                self.avatarImage.setup(
-                    withRef: self.viewModel.chat.avatarRef,
-                    text: placeholderText,
-                    color: placeholderColor ?? .accent,
-                    roundCorners: false
-                )
-            }
         }
-        subtitleLabel.text = "\(viewModel.chat.users.count) users"
+        subtitleLabel.text = "\(viewModel.chatModel.users.count) users"
     }
     
     private func transitionSubtitleLabel(
@@ -88,14 +87,23 @@ class ChatDetailsViewController: UIViewController {
         tabStrip = .init()
         
         let users = ChatDetailsUsersViewController()
-        users.updateData(viewModel.chat)
+        users.router = viewModel.router
+        users.updateData(viewModel.chatModel)
         let media = ChatDetailsMediaViewController(
             viewModel: viewModel,
             chatViewController: chatViewController
         )
-        media.updateData(viewModel.chat)
+        media.updateData(viewModel.chatModel)
         
-        if case .chat = viewModel.chat.type {
+        viewModel.listenChatData { chat in
+            guard let chat = chat else { return }
+            media.updateData(chat)
+            users.updateData(chat)
+            self.setupInfo()
+            self.setupAvatar()
+        }
+        
+        if case .chat = viewModel.chatModel.type {
             tabStrip.scrollViews.append(users.tableView)
             tabStrip.initialViewControllers.append(users)
         }
@@ -116,7 +124,7 @@ class ChatDetailsViewController: UIViewController {
         tabStrip.view.widthToSuperview()
     }
     
-    private func getImageFrom(gradientLayer:CAGradientLayer) -> UIImage? {
+    private func getImageFrom(gradientLayer: CAGradientLayer) -> UIImage? {
         var gradientImage: UIImage?
         UIGraphicsBeginImageContext(gradientLayer.frame.size)
         if let context = UIGraphicsGetCurrentContext() {
@@ -132,6 +140,7 @@ class ChatDetailsViewController: UIViewController {
         navBar?.setBackgroundImage(UIImage(), for: .default)
         navBar?.shadowImage = .init()
         navBar?.isTranslucent = true
+        navBar?.barStyle = .black
         navigationController?.view.backgroundColor = .clear
 
         navigationItem.leftBarButtonItem = .init(
@@ -141,26 +150,87 @@ class ChatDetailsViewController: UIViewController {
             action: #selector(didCancelTap)
         )
         navigationItem.leftBarButtonItem?.tintColor = UIColor.lightText.withAlphaComponent(1)
+        
+        if case .chat(_, let adminId, _, _) = viewModel.chatModel.type,
+            adminId == Auth.auth().currentUser!.uid {
+            navigationItem.rightBarButtonItem = .init(
+                title: "Edit",
+                style: .plain,
+                target: self,
+                action: #selector(didEditTap)
+            )
+            navigationItem.rightBarButtonItem?.tintColor = UIColor.lightText.withAlphaComponent(1)
+        }
+        
+        setupInviteButton()
+    }
+    
+    private func setupInviteButton() {
+        inviteButton.backgroundColor = .secondary
+        inviteButton.tintColor = .systemBackground
+        inviteButton.layer.cornerRadius = 15
+        if case .chat(_, let adminId, _, _) = viewModel.chatModel.type {
+            inviteButton.isHidden = adminId != Auth.auth().currentUser!.uid
+        }
     }
     
     private func setupAvatar() {
-        avatarImage.top(to: view, priority: .defaultHigh)
+        avatar.top(to: view, priority: .defaultHigh)
         let gradient = CAGradientLayer()
-        var bounds = avatarImage!.bounds
+        var bounds = avatar!.bounds
         bounds.size.height = 100
         gradient.frame = bounds
         gradient.colors = [UIColor.clear.cgColor, UIColor.black.withAlphaComponent(0.5).cgColor]
         gradient.startPoint = CGPoint(x: 0, y: 1)
         gradient.endPoint = CGPoint(x: 0, y: 0)
-        avatarImage.layer.addSublayer(gradient)
+        avatar.layer.addSublayer(gradient)
+        
+        switch viewModel.chatModel.type {
+        case .personalCorr:
+            viewModel.listenUserData { [weak self] user in
+                guard let self = self, let user = user else { return }
+                self.avatar.setup(
+                    withUser: user,
+                    roundCorners: false
+                )
+            }
+        case .chat(let chatData):
+            avatar.setup(
+                withChat: chatData,
+                avatarRef: viewModel.chatModel.avatarRef,
+                roundCorners: false
+            )
+        default: break
+        }
     }
+    
+    // MARK: - Actions
 
+    @IBAction func didInviteTap(_ sender: UIButton) {
+        viewModel.didInviteTap()
+    }
+    
     @objc func didCancelTap() {
         navigationController?.dismiss(animated: true, completion: nil)
+    }
+    
+    @objc func didEditTap() {
+        if scroll.contentOffset.y == 0 {
+            viewModel.didEditTap()
+        }
     }
 }
 
 extension ChatDetailsViewController: UIScrollViewDelegate {
+    
+    private func animateNavBarStyle(_ barStyle: UIBarStyle) {
+        let navBar = navigationController?.navigationBar
+        if navBar?.barStyle != barStyle {
+            UIView.animate(withDuration: 0.2, animations: {
+                navBar?.barStyle = barStyle
+            })
+        }
+    }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let yOffset = scrollView.contentOffset.y
@@ -183,19 +253,37 @@ extension ChatDetailsViewController: UIScrollViewDelegate {
                     : yOffset
                 ) / staticContentHeight
             
+            let container = titleLabel.superview!
+            let absLeft = container.superview!.convert(container.frame.origin, to: nil).x
             titleLabel.transform = .init(
-                translationX: yOffsetScale * (stack.bounds.width / 2 - titleLabel.frame.width / 2),
+                translationX: yOffsetScale * (
+                    stack.bounds.width / 2
+                        - absLeft
+                        - titleLabel.frame.width / 2
+                ),
                 y: 0
             )
+            
             subtitleLabel.transform = .init(
-                translationX: yOffsetScale * (stack.bounds.width / 2 - subtitleLabel.frame.width / 2),
+                translationX: yOffsetScale * (
+                    stack.bounds.width / 2
+                        - absLeft
+                        - subtitleLabel.frame.width / 2
+                ),
                 y: 0
             )
-            avatarImage.layer.opacity = Float(1 - yOffsetScale)
+            inviteButton.transform = .init(scaleX: (1 - yOffsetScale), y: (1 - yOffsetScale))
+            avatar.layer.opacity = Float(1 - yOffsetScale)
             navigationItem.leftBarButtonItem?.tintColor = UIColor.blend(
                 color1: UIColor.lightText.withAlphaComponent(1), intensity1: 1 - yOffsetScale,
                 color2: .accent, intensity2: yOffsetScale
             )
+            navigationItem.rightBarButtonItem?.tintColor = UIColor.blend(
+                color1: UIColor.lightText.withAlphaComponent(1), intensity1: 1 - yOffsetScale,
+                color2: .clear, intensity2: yOffsetScale
+            )
+            
+            animateNavBarStyle(yOffsetScale > 0.5 ? .default : .black)
             
         case tabStripViewController:
             if yOffset <= 0 {
@@ -248,9 +336,5 @@ extension ChatDetailsViewController: UIScrollViewDelegate {
     private func offsetInBounds(_ offset: CGFloat, min: CGFloat, max: CGFloat) -> Bool {
         return offset > min && offset < max
     }
-    
-}
-
-extension ChatDetailsViewController: ChatDetailsViewControllerProtocol {
     
 }

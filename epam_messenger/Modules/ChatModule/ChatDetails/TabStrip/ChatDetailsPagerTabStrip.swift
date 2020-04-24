@@ -17,9 +17,8 @@ class ChatDetailsPagerTabStrip: ButtonBarPagerTabStripViewController {
         pagerBehaviour = .progressive(skipIntermediateViewControllers: true, elasticIndicatorLimit: true)
         
         settings.style.buttonBarItemBackgroundColor = .clear
-        settings.style.selectedBarBackgroundColor = .plainText
+        settings.style.selectedBarBackgroundColor = .secondary
         settings.style.buttonBarBackgroundColor = .clear
-        settings.style.buttonBarItemTitleColor = .red
         settings.style.buttonBarItemFont = .systemFont(ofSize: 14, weight: .semibold)
         
         super.viewDidLoad()
@@ -37,7 +36,7 @@ class ChatDetailsPagerTabStrip: ButtonBarPagerTabStripViewController {
         changeCurrentIndex: Bool,
         animated: Bool
     ) {
-        let first: UIColor = .plainText
+        let first: UIColor = .secondary
         let second: UIColor = .secondaryLabel
         oldCell?.label.textColor = UIColor.blend(
             color1: progressPercentage > 0.5 ? first : second, intensity1: 1.0 - progressPercentage,
