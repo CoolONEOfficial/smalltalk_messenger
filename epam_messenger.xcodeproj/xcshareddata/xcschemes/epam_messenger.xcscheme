@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "85BE9A6424118CF200E6643B"
-               BuildableName = "epam_messenger.app"
+               BuildableName = "SmallTalk.app"
                BlueprintName = "epam_messenger"
                ReferencedContainer = "container:epam_messenger.xcodeproj">
             </BuildableReference>
@@ -66,7 +66,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "85BE9A6424118CF200E6643B"
-            BuildableName = "epam_messenger.app"
+            BuildableName = "SmallTalk.app"
             BlueprintName = "epam_messenger"
             ReferencedContainer = "container:epam_messenger.xcodeproj">
          </BuildableReference>
@@ -90,7 +90,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "85BE9A6424118CF200E6643B"
-            BuildableName = "epam_messenger.app"
+            BuildableName = "SmallTalk.app"
             BlueprintName = "epam_messenger"
             ReferencedContainer = "container:epam_messenger.xcodeproj">
          </BuildableReference>

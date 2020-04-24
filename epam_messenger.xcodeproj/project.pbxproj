@@ -109,6 +109,7 @@
 		85FF25752415976600A25D7A /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FF25742415976600A25D7A /* ViewModel.swift */; };
 		94389AA3243F756600587218 /* ContactsSearchDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94389AA2243F756600587218 /* ContactsSearchDelegate.swift */; };
 		94389AA5243F757C00587218 /* ContactsSearchDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94389AA4243F757C00587218 /* ContactsSearchDataSource.swift */; };
+		948E884D24508A470096363B /* Epam_messenger_LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 948E884C24508A470096363B /* Epam_messenger_LaunchScreen.storyboard */; };
 		949BF7492436126D006C2AEC /* ContactModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 949BF7482436126D006C2AEC /* ContactModel.swift */; };
 		949BF75224361534006C2AEC /* ContactsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 949BF75024361534006C2AEC /* ContactsListViewController.swift */; };
 		949BF75324361534006C2AEC /* ContactsListViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 949BF75124361534006C2AEC /* ContactsListViewController.xib */; };
@@ -238,7 +239,7 @@
 		85AA7920244E0D7A00853519 /* AvatarEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarEditView.swift; sourceTree = "<group>"; };
 		85B3F1CB24336F9A001F92D9 /* AuthEnterCodeTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthEnterCodeTextField.swift; sourceTree = "<group>"; };
 		85B3F1CD243386A3001F92D9 /* UserModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserModel.swift; sourceTree = "<group>"; };
-		85BE9A6524118CF200E6643B /* epam_messenger.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = epam_messenger.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		85BE9A6524118CF200E6643B /* SmallTalk.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SmallTalk.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		85BE9A6824118CF200E6643B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		85BE9A7124118CF200E6643B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		85BE9A7424118CF200E6643B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -269,6 +270,7 @@
 		8BB22E56906C2943B962CF3A /* Pods-epam_messengerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-epam_messengerTests.release.xcconfig"; path = "Target Support Files/Pods-epam_messengerTests/Pods-epam_messengerTests.release.xcconfig"; sourceTree = "<group>"; };
 		94389AA2243F756600587218 /* ContactsSearchDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsSearchDelegate.swift; sourceTree = "<group>"; };
 		94389AA4243F757C00587218 /* ContactsSearchDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsSearchDataSource.swift; sourceTree = "<group>"; };
+		948E884C24508A470096363B /* Epam_messenger_LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Epam_messenger_LaunchScreen.storyboard; sourceTree = "<group>"; };
 		949BF7482436126D006C2AEC /* ContactModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactModel.swift; sourceTree = "<group>"; };
 		949BF75024361534006C2AEC /* ContactsListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsListViewController.swift; sourceTree = "<group>"; };
 		949BF75124361534006C2AEC /* ContactsListViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ContactsListViewController.xib; sourceTree = "<group>"; };
@@ -720,7 +722,7 @@
 		85BE9A6624118CF200E6643B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				85BE9A6524118CF200E6643B /* epam_messenger.app */,
+				85BE9A6524118CF200E6643B /* SmallTalk.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -740,6 +742,7 @@
 				E6B74975241427C700F00B29 /* AssemblyBuilder.swift */,
 				E6B749872414377500F00B29 /* Router.swift */,
 				85BE9A7624118CF200E6643B /* Info.plist */,
+				948E884C24508A470096363B /* Epam_messenger_LaunchScreen.storyboard */,
 				8526F3D22417907B00ED62E8 /* Assets.xcassets */,
 				856A9C1E2411B8D10039E977 /* GoogleService-Info.plist */,
 			);
@@ -1051,7 +1054,7 @@
 			);
 			name = epam_messenger;
 			productName = epam_messenger;
-			productReference = 85BE9A6524118CF200E6643B /* epam_messenger.app */;
+			productReference = 85BE9A6524118CF200E6643B /* SmallTalk.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -1139,6 +1142,7 @@
 				856A9C1F2411B8D10039E977 /* GoogleService-Info.plist in Resources */,
 				8526F3D32417907B00ED62E8 /* Assets.xcassets in Resources */,
 				85E67A02243FE14C0001F7E1 /* UserCell.xib in Resources */,
+				948E884D24508A470096363B /* Epam_messenger_LaunchScreen.storyboard in Resources */,
 				85C4DB4124410B4A0081029F /* MediaCell.xib in Resources */,
 				852C011E2431604500BCC056 /* MessageForwardContent.xib in Resources */,
 				85B3F1D52433887A001F92D9 /* MessageAudioContent.xib in Resources */,
@@ -1616,7 +1620,7 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "ru.coolone.epam-messenger";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = SmallTalk;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1635,7 +1639,7 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "ru.coolone.epam-messenger";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = SmallTalk;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
