@@ -15,8 +15,10 @@ protocol ChatDetailsViewModelProtocol {
     
     func listenChatData(completion: @escaping (ChatModel?) -> Void)
     func listenUserData(completion: @escaping (UserModel?) -> Void)
-    func didEditTap()
-    func didInviteTap()
+    func checkContactExists(completion: @escaping (Bool?, Error?) -> Void)
+    func showChatEdit()
+    func inviteUser()
+    func addContact(completion: @escaping (Error?) -> Void)
 }
 
 class ChatDetailsViewModel: ChatDetailsViewModelProtocol {
@@ -28,6 +30,7 @@ class ChatDetailsViewModel: ChatDetailsViewModelProtocol {
     let firestoreService: FirestoreServiceProtocol
     
     var chatModel: ChatModel
+    var friendModel: UserProtocol?
     var chatGroup = DispatchGroup()
     
     // MARK: - Init
@@ -81,14 +84,28 @@ class ChatDetailsViewModel: ChatDetailsViewModelProtocol {
     
     func listenUserData(completion: @escaping (UserModel?) -> Void) {
         guard let friendId = chatModel.friendId else { return }
-        firestoreService.listenUserData(friendId, completion: completion)
+        firestoreService.listenUserData(friendId) { user in
+            self.friendModel = user
+            completion(user)
+        }
     }
     
-    func didInviteTap() {
+    func checkContactExists(completion: @escaping (Bool?, Error?) -> Void) {
+        guard let friendId = chatModel.friendId else { return }
+        firestoreService.checkContactExists(friendId, completion: completion)
+    }
+    
+    func inviteUser() {
         router.showUserPicker(selectDelegate: self)
     }
     
-    func didEditTap() {
+    func addContact(completion: @escaping (Error?) -> Void) {
+        if let friendModel = friendModel {
+            firestoreService.createContact(.fromUser(friendModel), completion: completion)
+        }
+    }
+    
+    func showChatEdit() {
         guard let router = router as? ChatRouter else { return }
         router.showChatEdit(chatModel)
     }

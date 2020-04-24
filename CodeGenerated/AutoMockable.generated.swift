@@ -682,6 +682,40 @@ class FirestoreServiceProtocolMock: FirestoreServiceProtocol {
         createContactCompletionClosure?(contactModel, completion)
     }
 
+    //MARK: - deleteContact
+
+    var deleteContactCompletionCallsCount = 0
+    var deleteContactCompletionCalled: Bool {
+        return deleteContactCompletionCallsCount > 0
+    }
+    var deleteContactCompletionReceivedArguments: (contactId: String, completion: (Error?) -> Void)?
+    var deleteContactCompletionReceivedInvocations: [(contactId: String, completion: (Error?) -> Void)] = []
+    var deleteContactCompletionClosure: ((String, @escaping (Error?) -> Void) -> Void)?
+
+    func deleteContact(        _ contactId: String,        completion: @escaping (Error?) -> Void    ) {
+        deleteContactCompletionCallsCount += 1
+        deleteContactCompletionReceivedArguments = (contactId: contactId, completion: completion)
+        deleteContactCompletionReceivedInvocations.append((contactId: contactId, completion: completion))
+        deleteContactCompletionClosure?(contactId, completion)
+    }
+
+    //MARK: - checkContactExists
+
+    var checkContactExistsCompletionCallsCount = 0
+    var checkContactExistsCompletionCalled: Bool {
+        return checkContactExistsCompletionCallsCount > 0
+    }
+    var checkContactExistsCompletionReceivedArguments: (userId: String, completion: (Bool?, Error?) -> Void)?
+    var checkContactExistsCompletionReceivedInvocations: [(userId: String, completion: (Bool?, Error?) -> Void)] = []
+    var checkContactExistsCompletionClosure: ((String, @escaping (Bool?, Error?) -> Void) -> Void)?
+
+    func checkContactExists(        _ userId: String,        completion: @escaping (Bool?, Error?) -> Void    ) {
+        checkContactExistsCompletionCallsCount += 1
+        checkContactExistsCompletionReceivedArguments = (userId: userId, completion: completion)
+        checkContactExistsCompletionReceivedInvocations.append((userId: userId, completion: completion))
+        checkContactExistsCompletionClosure?(userId, completion)
+    }
+
     //MARK: - createUser
 
     var createUserAvatarTimestampCompletionCallsCount = 0

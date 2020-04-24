@@ -13,12 +13,14 @@ protocol PaginatedTableViewDelegate: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String?
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int)
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath)
 }
 
 extension PaginatedTableViewDelegate {
     func didUpdateElements() {}
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? { nil }
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {}
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {}
 }
 
 private let queryCount = 40
@@ -42,11 +44,7 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
     var dataAtEnd = false
     
     /// Flatten data.
-    var flattenData: [ElementT] = [] {
-        didSet {
-            debugPrint("cahnged from \(oldValue.count) to \(flattenData.count)")
-        }
-    }
+    var flattenData: [ElementT] = []
     
     weak var paginatedDelegate: PaginatedTableViewDelegate?
     
@@ -361,11 +359,11 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
                     if unlockPagination {
                         self.unlockPagination()
                     }
-                    self.paginatedDelegate?.didUpdateElements()
                 }
                 willAnimateChanges()
                 animateChanges(oldData)
                 CATransaction.commit()
+                self.paginatedDelegate?.didUpdateElements()
             } else {
                 reloadData()
                 if unlockPagination {
@@ -513,6 +511,17 @@ class PaginatedTableView<ElementT: Equatable>: UITableView, UITableViewDelegate,
     
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         paginatedDelegate?.tableView?(tableView, trailingSwipeActionsConfigurationForRowAt: indexPath)
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        paginatedDelegate?.tableView(tableView, commit: editingStyle, forRowAt: indexPath)
+    }
+    
+    func tableView(
+        _ tableView: UITableView,
+        editingStyleForRowAt indexPath: IndexPath
+    ) -> UITableViewCell.EditingStyle {
+        paginatedDelegate?.tableView?(tableView, editingStyleForRowAt: indexPath) ?? .none
     }
     
     // MARK: - Helpers

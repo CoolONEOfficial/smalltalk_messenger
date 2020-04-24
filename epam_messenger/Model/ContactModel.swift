@@ -14,6 +14,10 @@ public struct ContactModel: AutoCodable, AutoEquatable {
     let localName: String
     let userId: String
     
+    static func fromUser(_ user: UserProtocol) -> ContactModel {
+        .init(localName: user.fullName, userId: user.documentId!)
+    }
+    
     static func fromSnapshot(_ snapshot: DocumentSnapshot) -> ContactModel? {
         var data = snapshot.data() ?? [:]
         data["documentId"] = snapshot.documentID

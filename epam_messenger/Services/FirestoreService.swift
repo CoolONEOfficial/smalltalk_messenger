@@ -68,6 +68,14 @@ protocol FirestoreServiceProtocol: AutoMockable {
         _ contactModel: ContactModel,
         completion: @escaping (Error?) -> Void
     )
+    func deleteContact(
+        _ contactId: String,
+        completion: @escaping (Error?) -> Void
+    )
+    func checkContactExists(
+        _ userId: String,
+        completion: @escaping (Bool?, Error?) -> Void
+    )
     @discardableResult func createUser(
         _ userModel: UserModel,
         avatarTimestamp: Date?,
@@ -152,6 +160,13 @@ extension FirestoreServiceProtocol {
             chat: chat,
             completion: completion
         )
+    }
+    
+    func deleteContact(
+        _ contactId: String,
+        completion: @escaping (Error?) -> Void = {_ in}
+    ) {
+        deleteContact(contactId, completion: completion)
     }
     
     @discardableResult func createChat(
@@ -448,7 +463,7 @@ class FirestoreService: FirestoreServiceProtocol {
         avatarTimestamp: Date? = nil,
         completion: @escaping (Error?) -> Void
     ) -> String {
-        let newDoc = db.collection("users").document(Auth.auth().currentUser!.uid)
+        let newDoc = currentUserQuery
         var userModel = userModel
         if let avatarTimestamp = avatarTimestamp {
             userModel.avatarPath = StorageService.getChatAvatarRef(
@@ -523,8 +538,7 @@ class FirestoreService: FirestoreServiceProtocol {
     }
     
     private func updateOnlineStatus(_ online: Bool) {
-        db.collection("users")
-            .document(Auth.auth().currentUser!.uid)
+        currentUserQuery
             .updateData([
                 "online": online
             ])
@@ -539,8 +553,7 @@ class FirestoreService: FirestoreServiceProtocol {
     }
     
     private func updateTypingStatus(_ typing: Any) {
-        db.collection("users")
-            .document(Auth.auth().currentUser!.uid)
+        currentUserQuery
             .updateData([
                 "typing": typing
             ])
@@ -549,8 +562,7 @@ class FirestoreService: FirestoreServiceProtocol {
     // MARK: - Contact
     
     lazy var contactListQuery: Query = {
-        return db.collection("users")
-            .document(Auth.auth().currentUser!.uid)
+        currentUserQuery
             .collection("contacts")
             .order(by: "localName")
     }()
@@ -562,8 +574,7 @@ class FirestoreService: FirestoreServiceProtocol {
         do {
             let contactData = try FirestoreEncoder().encode(contactModel)
             
-            db.collection("users")
-                .document(Auth.auth().currentUser!.uid)
+            currentUserQuery
                 .collection("contacts")
                 .addDocument(data: contactData) { err in
                     completion(err)
@@ -571,6 +582,33 @@ class FirestoreService: FirestoreServiceProtocol {
         } catch {
             debugPrint("Error: \(error)")
             completion(error)
+        }
+    }
+    
+    func deleteContact(
+        _ contactId: String,
+        completion: @escaping (Error?) -> Void
+    ) {
+        currentUserQuery
+            .collection("contacts")
+            .document(contactId)
+            .delete()
+    }
+    
+    func checkContactExists(
+        _ userId: String,
+        completion: @escaping (Bool?, Error?) -> Void
+    ) {
+        currentUserQuery
+            .collection("contacts")
+            .whereField("userId", isEqualTo: userId)
+            .limit(to: 1)
+            .getDocuments { snapshot, err in
+                guard err == nil else {
+                    completion(nil, err)
+                    return
+                }
+                completion(snapshot?.documents.isEmpty, nil)
         }
     }
     
@@ -590,6 +628,13 @@ class FirestoreService: FirestoreServiceProtocol {
         }
     }
     
+    
+    // MARK: - Helpers
+    
+    var currentUserQuery: DocumentReference {
+        db.collection("users")
+            .document(Auth.auth().currentUser!.uid)
+    }
 }
 
 // MARK: Contacts creation helper

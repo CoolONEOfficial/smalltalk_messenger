@@ -27,6 +27,7 @@
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo white" translatesAutoresizingMaskIntoConstraints="NO" id="lnr-HE-Ov9">
                                 <rect key="frame" x="111" y="115.33333333333331" width="192" height="128"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="128" id="Vsy-n2-0xG"/>
                                     <constraint firstAttribute="width" constant="192" id="lwP-lz-jZp"/>
@@ -54,7 +55,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="ic_ls_background" width="564" height="1033"/>
+        <image name="ic_ls_background" width="188" height="344.33334350585938"/>
         <image name="logo white" width="500" height="350"/>
     </resources>
 </document>

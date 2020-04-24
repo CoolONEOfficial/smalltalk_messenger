@@ -17,6 +17,7 @@ extension ContactsListViewController: UISearchResultsUpdating, UISearchControlle
                 tableView.dataSource = tableView
                 tableView.delegate = tableView
                 tableView.reloadData()
+                tableView.loadAtStart()
             }
         } else {
             self.perform(#selector(reload), with: nil, afterDelay: 0.5)

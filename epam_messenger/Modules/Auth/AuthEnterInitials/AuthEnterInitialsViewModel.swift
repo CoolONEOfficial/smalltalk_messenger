@@ -108,11 +108,7 @@ class AuthEnterInitialsViewModel: AuthEnterInitialsViewModelProtocol {
                     }
                     
                     chatsGroup.enter()
-                    self.firestoreService.createContact(.init(
-                        localName: contact.fullName,
-                        userId: contact.documentId!
-                    )
-                    ) { error in
+                    self.firestoreService.createContact(.fromUser(contact)) { error in
                         if error != nil {
                             err = error
                         }

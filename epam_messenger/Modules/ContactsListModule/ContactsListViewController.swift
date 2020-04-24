@@ -127,25 +127,25 @@ class ContactsListViewController: UIViewController {
 
 extension ContactsListViewController: PaginatedTableViewDelegate {
     
-    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        guard !isSearch else { return nil }
-        
-        let deleteAction = UIContextualAction(style: .normal, title: "Delete") { _, _, complete in
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
             let contact = self.tableView.elementAt(indexPath)
-            self.db.collection("users")
-                .document(Auth.auth().currentUser!.uid)
-                .collection("contacts")
-                .document(contact.documentId!)
-                .delete()
-            tableView.reloadData()
-            complete(true)
+            viewModel.deleteContact(contact.documentId!) { err in
+                if let err = err {
+                    self.presentErrorAlert(err.localizedDescription)
+                    return
+                }
+            }
         }
-        
-        deleteAction.backgroundColor = .red
-        
-        let configuration = UISwipeActionsConfiguration(actions: [deleteAction])
-        configuration.performsFirstActionWithFullSwipe = false
-        return configuration
+    }
+    
+    public func tableView(
+        _ tableView: UITableView,
+        editingStyleForRowAt indexPath: IndexPath
+    ) -> UITableViewCell.EditingStyle {
+        isSearch
+            ? .none
+            : .delete
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
