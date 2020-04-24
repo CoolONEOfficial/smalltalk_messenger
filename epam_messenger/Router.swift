@@ -30,7 +30,6 @@ class Router: RouterProtocol {
     }
     
     var rootViewController: UIViewController? {
-        try! Auth.auth().signOut()
         if isAuthorized {
             return assemblyBuilder?.createBottomBarModule(router: self)
         } else {
