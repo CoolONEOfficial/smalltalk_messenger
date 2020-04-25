@@ -12,7 +12,7 @@ import CodableFirebase
 import Reusable
 
 protocol ChatSelectDelegate: AnyObject {
-    func didSelectChat(_ chatModel: ChatModel)
+    func didSelectChat(_ chatId: String)
 }
 
 protocol ChatListCellDelegate: AnyObject {
@@ -250,33 +250,13 @@ extension ChatListViewController: PaginatedTableViewDelegate {
         searchController.searchBar.resignFirstResponder()
     }
     
-    private func chatModel(
-        at indexPath: IndexPath,
-        completion: @escaping (ChatModel?) -> Void
-    ) {
-        switch indexPath.section {
-        case 0:
-            completion(searchChatItems[indexPath.item])
-        case 1:
-            let message = searchMessageItems[indexPath.item]
-            viewModel.getChatData(message.chatId!, completion: completion)
-        default:
-            fatalError("Unknown section")
-        }
-    }
-    
-    private func didSelect(_ chatModel: ChatModel?, _ indexPath: IndexPath) {
-        if let chatModel = chatModel {
-            if isSelectMode {
-                navigationController?.dismiss(animated: true) {
-                    self.forwardDelegate?.didSelectChat(chatModel)
-                }
-            } else {
-                tableView.deselectRow(at: indexPath, animated: true)
-                viewModel.goToChat(chatModel)
+    private func didSelect(_ chatId: String, _ indexPath: IndexPath) {
+        if isSelectMode {
+            navigationController?.dismiss(animated: true) {
+                self.forwardDelegate?.didSelectChat(chatId)
             }
         } else {
-            debugPrint("Error while parse selected chat")
+            viewModel.goToChat(chatId)
         }
     }
     
@@ -284,12 +264,20 @@ extension ChatListViewController: PaginatedTableViewDelegate {
         if tableView.isEditing {
             didSelectionChange()
         } else {
+            tableView.deselectRow(at: indexPath, animated: true)
             if isSearch {
-                chatModel(at: indexPath) { chatModel in
-                    self.didSelect(chatModel, indexPath)
+                switch indexPath.section {
+                case 0:
+                    didSelect(searchChatItems[indexPath.item].documentId!, indexPath)
+                case 1:
+                    let message = searchMessageItems[indexPath.item]
+                    didSelect(message.chatId!, indexPath)
+                default:
+                    fatalError("Unknown section")
                 }
+                
             } else {
-                didSelect(self.tableView.elementAt(indexPath), indexPath)
+                didSelect(self.tableView.elementAt(indexPath).documentId!, indexPath)
             }
         }
     }
@@ -340,7 +328,7 @@ extension ChatListViewController: PaginatedTableViewDelegate {
             let chatModel = self.tableView.elementAt(itemIndex)
             
             animator.addCompletion {
-                self.viewModel.goToChat(chatModel)
+                self.viewModel.goToChat(chatModel.documentId!)
             }
         }
     }

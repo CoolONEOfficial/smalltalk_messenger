@@ -50,7 +50,6 @@ class SearchMessageCell: UITableViewCell, NibReusable {
             self.avatar.setupBookmark()
         case .personalCorr(let between):
             self.titleLabel.text = "..."
-            
             delegate?.listenUserData(
                 between.first(where: { Auth.auth().currentUser!.uid != $0 })!
             ) { userModel in
@@ -79,12 +78,6 @@ class SearchMessageCell: UITableViewCell, NibReusable {
     override func awakeFromNib() {
         super.awakeFromNib()
         separatorInset.left = 75
-    }
-
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
     }
     
 }

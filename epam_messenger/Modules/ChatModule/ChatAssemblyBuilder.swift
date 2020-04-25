@@ -10,6 +10,7 @@ import UIKit
 protocol ChatAssemblyBuilder {
     func createChat(router: RouterProtocol, chat: ChatProtocol) -> UIViewController
     func createChat(router: RouterProtocol, userId: String) -> UIViewController
+    func createChat(router: RouterProtocol, chatId: String) -> UIViewController
     func createChatDetails(
         router: RouterProtocol,
         chatModel: ChatModel,
@@ -50,6 +51,20 @@ extension AssemblyBuilder: ChatAssemblyBuilder {
             router: router,
             viewController: view,
             userId: userId
+        )
+        view.viewModel = viewModel
+        return view
+    }
+    
+    func createChat(
+        router: RouterProtocol,
+        chatId: String
+    ) -> UIViewController {
+        let view = ChatViewController()
+        let viewModel = ChatViewModel(
+            router: router,
+            viewController: view,
+            chatId: chatId
         )
         view.viewModel = viewModel
         return view

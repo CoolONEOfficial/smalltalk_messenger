@@ -146,15 +146,15 @@ class ChatViewModelProtocolMock: ChatViewModelProtocol {
     var forwardMessageCompletionCalled: Bool {
         return forwardMessageCompletionCallsCount > 0
     }
-    var forwardMessageCompletionReceivedArguments: (chatModel: ChatModel, messageModel: MessageProtocol, completion: (Error?) -> Void)?
-    var forwardMessageCompletionReceivedInvocations: [(chatModel: ChatModel, messageModel: MessageProtocol, completion: (Error?) -> Void)] = []
-    var forwardMessageCompletionClosure: ((ChatModel, MessageProtocol, @escaping (Error?) -> Void) -> Void)?
+    var forwardMessageCompletionReceivedArguments: (chatId: String, messageModel: MessageProtocol, completion: (Error?) -> Void)?
+    var forwardMessageCompletionReceivedInvocations: [(chatId: String, messageModel: MessageProtocol, completion: (Error?) -> Void)] = []
+    var forwardMessageCompletionClosure: ((String, MessageProtocol, @escaping (Error?) -> Void) -> Void)?
 
-    func forwardMessage(        _ chatModel: ChatModel,        _ messageModel: MessageProtocol,        completion: @escaping (Error?) -> Void    ) {
+    func forwardMessage(        _ chatId: String,        _ messageModel: MessageProtocol,        completion: @escaping (Error?) -> Void    ) {
         forwardMessageCompletionCallsCount += 1
-        forwardMessageCompletionReceivedArguments = (chatModel: chatModel, messageModel: messageModel, completion: completion)
-        forwardMessageCompletionReceivedInvocations.append((chatModel: chatModel, messageModel: messageModel, completion: completion))
-        forwardMessageCompletionClosure?(chatModel, messageModel, completion)
+        forwardMessageCompletionReceivedArguments = (chatId: chatId, messageModel: messageModel, completion: completion)
+        forwardMessageCompletionReceivedInvocations.append((chatId: chatId, messageModel: messageModel, completion: completion))
+        forwardMessageCompletionClosure?(chatId, messageModel, completion)
     }
 
     //MARK: - deleteMessage
@@ -231,15 +231,15 @@ class ChatViewModelProtocolMock: ChatViewModelProtocol {
     var goToChatCalled: Bool {
         return goToChatCallsCount > 0
     }
-    var goToChatReceivedChatModel: ChatProtocol?
-    var goToChatReceivedInvocations: [ChatProtocol] = []
-    var goToChatClosure: ((ChatProtocol) -> Void)?
+    var goToChatReceivedChatId: String?
+    var goToChatReceivedInvocations: [String] = []
+    var goToChatClosure: ((String) -> Void)?
 
-    func goToChat(        _ chatModel: ChatProtocol    ) {
+    func goToChat(        _ chatId: String    ) {
         goToChatCallsCount += 1
-        goToChatReceivedChatModel = chatModel
-        goToChatReceivedInvocations.append(chatModel)
-        goToChatClosure?(chatModel)
+        goToChatReceivedChatId = chatId
+        goToChatReceivedInvocations.append(chatId)
+        goToChatClosure?(chatId)
     }
 
     //MARK: - listenUserListData

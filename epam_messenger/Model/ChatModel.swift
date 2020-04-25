@@ -45,9 +45,9 @@ public struct ChatModel: AutoCodable, AutoEquatable {
         )
     }
     
-    static func empty() -> ChatModel {
+    static func empty(documentId: String? = nil) -> ChatModel {
         .init(
-            documentId: nil,
+            documentId: documentId,
             users: [ Auth.auth().currentUser!.uid ],
             lastMessage: .emptyChat(),
             type: .chat(

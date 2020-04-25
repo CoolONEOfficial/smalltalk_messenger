@@ -52,11 +52,21 @@ class UserCell: UITableViewCell, NibReusable {
         avatar.setup(withUser: self.user!, savedMessagesSupport: savedMessagesSupport)
     }
     
-    func loadUser(byId userId: String, savedMessagesSupport: Bool = false, completion: ((UserModel?) -> Void)? = nil) {
+    func loadUser(
+        byId userId: String,
+        savedMessagesSupport: Bool = false,
+        withLocalName localName: String? = nil,
+        completion: ((UserModel?) -> Void)? = nil
+    ) {
         FirestoreService().listenUserData(userId) { [weak self] user in
             guard let self = self else { return }
             
             self.user = user ?? .deleted(userId)
+            if let localName = localName {
+                let localNameWords = localName.components(separatedBy: " ")
+                self.user?.name = localNameWords.first!
+                self.user?.surname = localNameWords.dropFirst().joined(separator: " ")
+            }
             self.avatar.setup(withUser: self.user!)
             
             completion?(user)

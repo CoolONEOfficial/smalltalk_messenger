@@ -89,7 +89,11 @@ class ContactsListViewController: UIViewController {
                 let cell = self.tableView.dequeueReusableCell(for: indexPath, cellType: UserCell.self)
                 let contact = self.tableView.elementAt(indexPath)
                 
-                cell.loadUser(byId: contact.userId, savedMessagesSupport: true)
+                cell.loadUser(
+                    byId: contact.userId,
+                    savedMessagesSupport: true,
+                    withLocalName: contact.localName
+                )
                 
                 return cell
             },

@@ -40,12 +40,12 @@ class ContactsListViewModel: ContactsListViewModelProtocol {
     
     func didContactSelect(_ contact: ContactModel) {
         guard let router = self.router as? ChatRouter else { return }
-        router.showChat(contact.userId)
+        router.showChat(userId: contact.userId)
     }
     
     func didUserSelect(_ user: UserModel) {
         guard let router = self.router as? ChatRouter else { return }
-        router.showChat(user.documentId!)
+        router.showChat(userId: user.documentId!)
     }
     
     func searchUsers(_ searchString: String, completion: @escaping AlgoliaService.SearchUsersCompletion) {

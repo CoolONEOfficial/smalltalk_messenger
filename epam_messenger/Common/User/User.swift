@@ -16,8 +16,8 @@ protocol UserProtocol {
     var color: UIColor { get set }
     
     var documentId: String? { get }
-    var name: String { get }
-    var surname: String { get }
+    var name: String { get set }
+    var surname: String { get set }
     var phoneNumber: String { get }
     var avatarPath: String? { get set }
     var online: Bool { get }

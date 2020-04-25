@@ -9,7 +9,8 @@ import Foundation
 
 protocol ChatRouter {
     func showChat(_ chat: ChatProtocol)
-    func showChat(_ userId: String)
+    func showChat(userId: String)
+    func showChat(chatId: String)
     func showChatDetails(_ chatModel: ChatModel, from chatViewController: ChatViewControllerProtocol?, heroAnimations: Bool)
     func showChatDetails(_ userId: String, from chatViewController: ChatViewControllerProtocol?, heroAnimations: Bool)
     func showChatEdit(_ chatModel: ChatModel)
@@ -34,10 +35,17 @@ extension ChatRouter {
 
 extension Router: ChatRouter {
     
-    func showChat(_ userId: String) {
+    func showChat(userId: String) {
         guard let navigationController = navigationController else { return }
         guard let assemblyBuilder = assemblyBuilder as? ChatAssemblyBuilder else { return }
         let chatViewController = assemblyBuilder.createChat(router: self, userId: userId)
+        navigationController.pushViewController(chatViewController, animated: true)
+    }
+    
+    func showChat(chatId: String) {
+        guard let navigationController = navigationController else { return }
+        guard let assemblyBuilder = assemblyBuilder as? ChatAssemblyBuilder else { return }
+        let chatViewController = assemblyBuilder.createChat(router: self, chatId: chatId)
         navigationController.pushViewController(chatViewController, animated: true)
     }
     

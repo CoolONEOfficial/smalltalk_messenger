@@ -323,15 +323,15 @@ extension ChatViewController: PaginatedTableViewDelegate {
 
 extension ChatViewController: ChatSelectDelegate {
     
-    func didSelectChat(_ chatModel: ChatModel) {
+    func didSelectChat(_ chatId: String) {
         if forwardMessages != nil {
             for message in forwardMessages {
-                viewModel.forwardMessage(chatModel, message) { [weak self] err in
+                viewModel.forwardMessage(chatId, message) { [weak self] err in
                     guard let self = self else { return }
                     if let err = err {
                         self.presentErrorAlert(err.localizedDescription)
-                    } else if self.viewModel.chat.documentId != chatModel.documentId {
-                        self.viewModel.goToChat(chatModel)
+                    } else if self.viewModel.chat.documentId != chatId {
+                        self.viewModel.goToChat(chatId)
                     }
                 }
             }
