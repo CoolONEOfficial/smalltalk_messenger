@@ -140,7 +140,17 @@ class ChatViewModel: ChatViewModelProtocol {
                   firestoreService, storageService)
         
         chatGroup.enter()
-        firestoreService.getChatData(userId: userId, completion: didChatLoad(_:))
+        firestoreService.getChatData(userId: userId) { [weak self] chat in
+            guard let self = self else { return }
+            if chat != nil {
+                self.didChatLoad(chat)
+            } else {
+                self.firestoreService.getUserData(userId) { user in
+                    self.viewController.defaultTitle = user?.fullName ?? "DELETED"
+                    self.didChatLoad(ChatModel.fromUserId(userId, friendName: user?.fullName))
+                }
+            }
+        }
     }
     
     convenience init(
@@ -262,17 +272,22 @@ class ChatViewModel: ChatViewModelProtocol {
     }
     
     func listenChatData(completion: @escaping (ChatModel?) -> Void) {
-        guard let chatId = chat.documentId else {
-            completion(.fromUserId(chat.friendId!))
-            return
-        }
-        
-        firestoreService.listenChatData(chatId) { [weak self] chatModel in
-            guard let self = self else { return }
-            if let chatModel = chatModel {
-                self.chat = chatModel
+        if let chatId = chat.documentId {
+            firestoreService.listenChatData(chatId) { [weak self] chatModel in
+                guard let self = self else { return }
+                if let chatModel = chatModel {
+                    self.chat = chatModel
+                }
+                completion(chatModel)
             }
-            completion(chatModel)
+        } else {
+            firestoreService.listenChatData(userId: chat.friendId!) { [weak self] chatModel in
+                guard let self = self else { return }
+                if let chatModel = chatModel {
+                    self.chat = chatModel
+                }
+                completion(chatModel)
+            }
         }
     }
     

@@ -34,10 +34,10 @@ class SearchChatCell: UITableViewCell, NibReusable {
             )
             titleLabel.text = chatData.title
         case .personalCorr:
+            self.titleLabel.text = chat.friendName!
             self.delegate?.listenUserData(chat.friendId!) { [weak self] userModel in
                 guard let self = self, let userModel = userModel else { return }
                 self.avatar.setup(withUser: userModel)
-                self.titleLabel.text = userModel.fullName
             }
         default: break
         }

@@ -168,8 +168,8 @@ class ChatDetailsViewController: UIViewController, ChatDetailsViewControllerProt
         switch viewModel.chatModel.type {
         case .personalCorr:
             viewModel.checkContactExists { [weak self] exists, _ in
-                guard let self = self, let exists = exists else { return }
-                if exists {
+                guard let self = self else { return }
+                if !(exists ?? false) {
                     self.addContactButton.isHidden = false
                     self.addContactButton.zoomIn()
                 }

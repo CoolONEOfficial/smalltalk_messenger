@@ -48,11 +48,9 @@ class SearchMessageCell: UITableViewCell, NibReusable {
         case .savedMessages:
             self.titleLabel.text = "Saved messages"
             self.avatar.setupBookmark()
-        case .personalCorr(let between):
+        case .personalCorr:
             self.titleLabel.text = "..."
-            delegate?.listenUserData(
-                between.first(where: { Auth.auth().currentUser!.uid != $0 })!
-            ) { userModel in
+            delegate?.listenUserData(chatModel.friendId!) { userModel in
                 if let userModel = userModel {
                     self.titleLabel.text = userModel.fullName
                     self.avatar.setup(withUser: userModel)

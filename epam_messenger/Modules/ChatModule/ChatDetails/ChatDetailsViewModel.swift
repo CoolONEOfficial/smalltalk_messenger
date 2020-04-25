@@ -92,7 +92,9 @@ class ChatDetailsViewModel: ChatDetailsViewModelProtocol {
     
     func checkContactExists(completion: @escaping (Bool?, Error?) -> Void) {
         guard let friendId = chatModel.friendId else { return }
-        firestoreService.checkContactExists(friendId, completion: completion)
+        firestoreService.getContact(friendId) { contactModel, err in
+            completion(contactModel != nil, err)
+        }
     }
     
     func inviteUser() {

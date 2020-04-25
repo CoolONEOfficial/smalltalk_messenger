@@ -168,7 +168,7 @@ extension ContactsListViewController: PaginatedTableViewDelegate {
                 selectDelegate?.didSelectUser(contact.userId)
                 navigationController?.dismiss(animated: true, completion: nil)
             } else {
-                viewModel.didContactSelect(contact)
+                viewModel.didContactSelect(contact, self.tableView.cellForRow(at: indexPath) as! UserCell)
             }
         }
         

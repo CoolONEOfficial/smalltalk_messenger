@@ -59,6 +59,10 @@ protocol FirestoreServiceProtocol: AutoMockable {
         userId: String,
         completion: @escaping (ChatModel?) -> Void
     )
+    func listenChatData(
+        userId: String,
+        completion: @escaping (ChatModel?) -> Void
+    )
     @discardableResult func createChat(
         _ chatModel: ChatModel,
         avatarTimestamp: Date?,
@@ -72,9 +76,9 @@ protocol FirestoreServiceProtocol: AutoMockable {
         _ contactId: String,
         completion: @escaping (Error?) -> Void
     )
-    func checkContactExists(
+    func getContact(
         _ userId: String,
-        completion: @escaping (Bool?, Error?) -> Void
+        completion: @escaping (ContactModel?, Error?) -> Void
     )
     @discardableResult func createUser(
         _ userModel: UserModel,
@@ -270,10 +274,20 @@ class FirestoreService: FirestoreServiceProtocol {
             )
         }
         do {
-            let chatData = try FirestoreEncoder().encode(chatModel)
-            
-            newDoc.setData(chatData) { err in
-                completion(err)
+            if case .personalCorr = chatModel.type {
+                let chatData = try JSONEncoder().encode(chatModel)
+                let chatDict = try JSONSerialization.jsonObject(with: chatData, options: []) as! [String: Any]
+                Functions.functions().httpsCallable("createPersonalCorr")
+                    .call([
+                        "chatId": newDoc.documentID,
+                        "chat": chatDict
+                    ]) { _, error in
+                        completion(error)
+                }
+            } else {
+                newDoc.setData(try FirestoreEncoder().encode(chatModel)) { err in
+                    completion(err)
+                }
             }
         } catch {
             debugPrint("Error: \(error)")
@@ -389,6 +403,25 @@ class FirestoreService: FirestoreServiceProtocol {
                 }
                 
                 completion(ChatModel.fromSnapshot(snapshot!))
+        }
+    }
+    
+    func listenChatData(userId: String, completion: @escaping (ChatModel?) -> Void) {
+        let currentId = Auth.auth().currentUser!.uid
+        db.collection("chats")
+            .whereField("type.personalCorr.between", in: [[currentId, userId], [userId, currentId]])
+            .limit(to: 1)
+            .addSnapshotListener { snapshot, err in
+                guard err == nil else {
+                    debugPrint("Error while get chat data: \(err!.localizedDescription)")
+                    completion(nil)
+                    return
+                }
+                
+                completion(!(snapshot?.documents.isEmpty ?? true)
+                    ? ChatModel.fromSnapshot(snapshot!.documents.first!)
+                    : nil
+                )
         }
     }
     
@@ -595,9 +628,9 @@ class FirestoreService: FirestoreServiceProtocol {
             .delete()
     }
     
-    func checkContactExists(
+    func getContact(
         _ userId: String,
-        completion: @escaping (Bool?, Error?) -> Void
+        completion: @escaping (ContactModel?, Error?) -> Void
     ) {
         currentUserQuery
             .collection("contacts")
@@ -608,7 +641,10 @@ class FirestoreService: FirestoreServiceProtocol {
                     completion(nil, err)
                     return
                 }
-                completion(snapshot?.documents.isEmpty, nil)
+                
+                completion(snapshot?.documents.map(
+                    { ContactModel.fromSnapshot($0)! }
+                ).first, nil)
         }
     }
     

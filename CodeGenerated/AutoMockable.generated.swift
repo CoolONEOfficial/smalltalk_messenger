@@ -64,6 +64,11 @@ class AlgoliaServiceProtocolMock: AlgoliaServiceProtocol {
 
 }
 class ChatViewControllerProtocolMock: ChatViewControllerProtocol {
+    var defaultTitle: String {
+        get { return underlyingDefaultTitle }
+        set(value) { underlyingDefaultTitle = value }
+    }
+    var underlyingDefaultTitle: String!
     var photosViewerDataSource: ChatPhotoViewerDataSource!
 
     //MARK: - present
@@ -647,6 +652,23 @@ class FirestoreServiceProtocolMock: FirestoreServiceProtocol {
         getChatDataUserIdCompletionClosure?(userId, completion)
     }
 
+    //MARK: - listenChatData
+
+    var listenChatDataUserIdCompletionCallsCount = 0
+    var listenChatDataUserIdCompletionCalled: Bool {
+        return listenChatDataUserIdCompletionCallsCount > 0
+    }
+    var listenChatDataUserIdCompletionReceivedArguments: (userId: String, completion: (ChatModel?) -> Void)?
+    var listenChatDataUserIdCompletionReceivedInvocations: [(userId: String, completion: (ChatModel?) -> Void)] = []
+    var listenChatDataUserIdCompletionClosure: ((String, @escaping (ChatModel?) -> Void) -> Void)?
+
+    func listenChatData(        userId: String,        completion: @escaping (ChatModel?) -> Void    ) {
+        listenChatDataUserIdCompletionCallsCount += 1
+        listenChatDataUserIdCompletionReceivedArguments = (userId: userId, completion: completion)
+        listenChatDataUserIdCompletionReceivedInvocations.append((userId: userId, completion: completion))
+        listenChatDataUserIdCompletionClosure?(userId, completion)
+    }
+
     //MARK: - createChat
 
     var createChatAvatarTimestampCompletionCallsCount = 0
@@ -699,21 +721,21 @@ class FirestoreServiceProtocolMock: FirestoreServiceProtocol {
         deleteContactCompletionClosure?(contactId, completion)
     }
 
-    //MARK: - checkContactExists
+    //MARK: - getContact
 
-    var checkContactExistsCompletionCallsCount = 0
-    var checkContactExistsCompletionCalled: Bool {
-        return checkContactExistsCompletionCallsCount > 0
+    var getContactCompletionCallsCount = 0
+    var getContactCompletionCalled: Bool {
+        return getContactCompletionCallsCount > 0
     }
-    var checkContactExistsCompletionReceivedArguments: (userId: String, completion: (Bool?, Error?) -> Void)?
-    var checkContactExistsCompletionReceivedInvocations: [(userId: String, completion: (Bool?, Error?) -> Void)] = []
-    var checkContactExistsCompletionClosure: ((String, @escaping (Bool?, Error?) -> Void) -> Void)?
+    var getContactCompletionReceivedArguments: (userId: String, completion: (ContactModel?, Error?) -> Void)?
+    var getContactCompletionReceivedInvocations: [(userId: String, completion: (ContactModel?, Error?) -> Void)] = []
+    var getContactCompletionClosure: ((String, @escaping (ContactModel?, Error?) -> Void) -> Void)?
 
-    func checkContactExists(        _ userId: String,        completion: @escaping (Bool?, Error?) -> Void    ) {
-        checkContactExistsCompletionCallsCount += 1
-        checkContactExistsCompletionReceivedArguments = (userId: userId, completion: completion)
-        checkContactExistsCompletionReceivedInvocations.append((userId: userId, completion: completion))
-        checkContactExistsCompletionClosure?(userId, completion)
+    func getContact(        _ userId: String,        completion: @escaping (ContactModel?, Error?) -> Void    ) {
+        getContactCompletionCallsCount += 1
+        getContactCompletionReceivedArguments = (userId: userId, completion: completion)
+        getContactCompletionReceivedInvocations.append((userId: userId, completion: completion))
+        getContactCompletionClosure?(userId, completion)
     }
 
     //MARK: - createUser

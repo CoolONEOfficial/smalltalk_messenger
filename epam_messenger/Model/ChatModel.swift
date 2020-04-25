@@ -24,14 +24,24 @@ public struct ChatModel: AutoCodable, AutoEquatable {
         case enumCaseKey
     }
     
-    static func fromUserId(_ userId: String) -> ChatModel {
+    static func fromUserId(
+        _ userId: String,
+        firestoreService: FirestoreServiceProtocol = FirestoreService(),
+        completion: @escaping (ChatModel) -> Void
+    ) {
+        firestoreService.getUserData(userId) { user in
+            completion(.fromUserId(userId, friendName: user?.fullName))
+        }
+    }
+    
+    static func fromUserId(_ userId: String, friendName: String? = nil) -> ChatModel {
         .init(
             documentId: nil,
             users: Auth.auth().currentUser!.uid != userId
                 ? [
                     Auth.auth().currentUser!.uid,
                     userId
-                ]
+                    ]
                 : [ userId ],
             lastMessage: .empty(),
             type: Auth.auth().currentUser!.uid != userId
@@ -39,8 +49,12 @@ public struct ChatModel: AutoCodable, AutoEquatable {
                     between: [
                         Auth.auth().currentUser!.uid,
                         userId
+                    ],
+                    betweenNames: [
+                        "",
+                        friendName ?? "..."
                     ]
-                )
+                    )
                 : .savedMessages
         )
     }
@@ -80,9 +94,25 @@ public struct ChatModel: AutoCodable, AutoEquatable {
 
 extension ChatModel: ChatProtocol {
     
+    private var friendIndex: Int? {
+        if case .personalCorr(let between, _) = type {
+            return between.firstIndex(where: { Auth.auth().currentUser!.uid != $0 })
+        }
+        return nil
+    }
+    
     var friendId: String? {
-        if case .personalCorr(let between) = type {
-            return between.first(where: { Auth.auth().currentUser!.uid != $0 })
+        if case .personalCorr(let between, _) = type,
+            let friendIndex = friendIndex {
+            return between[friendIndex]
+        }
+        return nil
+    }
+    
+    var friendName: String? {
+        if case .personalCorr(_, let betweenNames) = type,
+            let friendIndex = friendIndex {
+            return betweenNames.count > friendIndex ? betweenNames[friendIndex] : nil
         }
         return nil
     }
@@ -99,7 +129,7 @@ extension ChatModel: ChatProtocol {
     func listenInfo(completion: @escaping (
         _ title: String, _ subtitle: String,
         _ placeholderText: String?, _ placeholderColor: UIColor?
-    ) -> Void) {
+        ) -> Void) {
         let firestoreService = FirestoreService()
         
         switch type {
@@ -109,9 +139,8 @@ extension ChatModel: ChatProtocol {
             if let friendId = friendId {
                 firestoreService.listenUserData(friendId) { user in
                     let maybeDeletedUser = user ?? .deleted(friendId)
-                    let title = maybeDeletedUser.fullName
                     completion(
-                        title,
+                        self.friendName ?? user?.fullName ?? "...",
                         self.documentId != nil && maybeDeletedUser.typing == self.documentId
                             ? "\(maybeDeletedUser.name) typing..."
                             : maybeDeletedUser.onlineText,

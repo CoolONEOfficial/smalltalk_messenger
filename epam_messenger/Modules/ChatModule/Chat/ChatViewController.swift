@@ -19,6 +19,7 @@ protocol ChatViewControllerProtocol: AutoMockable {
     func presentErrorAlert(_ text: String)
     func didChatLoad()
     
+    var defaultTitle: String { get set }
     var photosViewerDataSource: ChatPhotoViewerDataSource! { get set }
 }
 
@@ -139,7 +140,9 @@ class ChatViewController: UIViewController {
             guard let self = self else { return }
             
             self.transitionSubtitleLabel {
-                self.defaultTitle = title
+                if title != "..." {
+                    self.defaultTitle = title
+                }
                 self.subtitleLabel.text = subtitle
                 
                 if !(self.tableView?.isEditing ?? false) {
