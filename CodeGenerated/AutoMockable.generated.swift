@@ -721,6 +721,23 @@ class FirestoreServiceProtocolMock: FirestoreServiceProtocol {
         deleteContactCompletionClosure?(contactId, completion)
     }
 
+    //MARK: - updateContact
+
+    var updateContactUserIdContactModelCompletionCallsCount = 0
+    var updateContactUserIdContactModelCompletionCalled: Bool {
+        return updateContactUserIdContactModelCompletionCallsCount > 0
+    }
+    var updateContactUserIdContactModelCompletionReceivedArguments: (userId: String, contactModel: ContactModel, completion: (Error?) -> Void)?
+    var updateContactUserIdContactModelCompletionReceivedInvocations: [(userId: String, contactModel: ContactModel, completion: (Error?) -> Void)] = []
+    var updateContactUserIdContactModelCompletionClosure: ((String, ContactModel, @escaping (Error?) -> Void) -> Void)?
+
+    func updateContact(        userId: String,        contactModel: ContactModel,        completion: @escaping (Error?) -> Void    ) {
+        updateContactUserIdContactModelCompletionCallsCount += 1
+        updateContactUserIdContactModelCompletionReceivedArguments = (userId: userId, contactModel: contactModel, completion: completion)
+        updateContactUserIdContactModelCompletionReceivedInvocations.append((userId: userId, contactModel: contactModel, completion: completion))
+        updateContactUserIdContactModelCompletionClosure?(userId, contactModel, completion)
+    }
+
     //MARK: - getContact
 
     var getContactCompletionCallsCount = 0

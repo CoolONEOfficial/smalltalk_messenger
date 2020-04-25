@@ -141,18 +141,32 @@ class ChatDetailsViewController: UIViewController, ChatDetailsViewControllerProt
         )
         navigationItem.leftBarButtonItem?.tintColor = UIColor.lightText.withAlphaComponent(1)
         
-        if case .chat(_, let adminId, _, _) = viewModel.chatModel.type,
-            adminId == Auth.auth().currentUser!.uid {
-            navigationItem.rightBarButtonItem = .init(
-                title: "Edit",
-                style: .plain,
-                target: self,
-                action: #selector(didEditTap)
-            )
-            navigationItem.rightBarButtonItem?.tintColor = UIColor.lightText.withAlphaComponent(1)
+        switch viewModel.chatModel.type {
+        case .personalCorr:
+            viewModel.checkContactExists { [weak self] exists, _ in
+                guard let self = self else { return }
+                if exists ?? false {
+                    self.addEditButton()
+                }
+            }
+        case .chat(_, let adminId, _, _):
+            if adminId == Auth.auth().currentUser!.uid {
+                addEditButton()
+            }
+        default: break
         }
         
         setupButtons()
+    }
+    
+    private func addEditButton() {
+        navigationItem.rightBarButtonItem = .init(
+            title: "Edit",
+            style: .plain,
+            target: self,
+            action: #selector(didEditTap)
+        )
+        navigationItem.rightBarButtonItem?.tintColor = UIColor.lightText.withAlphaComponent(1)
     }
     
     private func baseSetupButton(_ button: UIButton) {
@@ -227,6 +241,7 @@ class ChatDetailsViewController: UIViewController, ChatDetailsViewControllerProt
                 }) { _ in
                     self.addContactButton.isHidden = true
                 }
+                self.addEditButton()
             }
         }
     }

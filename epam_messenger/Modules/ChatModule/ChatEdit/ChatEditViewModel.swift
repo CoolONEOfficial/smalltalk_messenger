@@ -9,10 +9,14 @@ import UIKit
 import SDWebImage
 
 protocol ChatEditViewModelProtocol {
+    var contactModel: ContactModel! { get set }
+    var contactGroup: DispatchGroup { get }
+    
     var chatModel: ChatModel { get set }
     var chatAvatar: UIImage? { get set }
     
-    func updateChat(completion: @escaping (Error?) -> Void)
+    func loadFriend(completion: @escaping (UserModel?) -> Void)
+    func applyChanges(completion: @escaping (Error?) -> Void)
 }
 
 class ChatEditViewModel: ChatEditViewModelProtocol {
@@ -24,8 +28,12 @@ class ChatEditViewModel: ChatEditViewModelProtocol {
     let firestoreService: FirestoreServiceProtocol
     let storageService: StorageServiceProtocol
     
+    var contactModel: ContactModel!
+    
     var chatModel: ChatModel
     var chatAvatar: UIImage?
+    
+    let contactGroup = DispatchGroup()
     
     // MARK: - Init
     
@@ -41,11 +49,38 @@ class ChatEditViewModel: ChatEditViewModelProtocol {
         self.chatModel = chatModel
         self.firestoreService = firestoreService
         self.storageService = storageService
+        
+        if case .personalCorr = chatModel.type {
+            contactGroup.enter()
+            firestoreService.getContact(chatModel.friendId!) { [weak self] contactModel, err in
+                guard let self = self else { return }
+                self.contactModel = contactModel
+                self.contactGroup.leave()
+            }
+        }
     }
     
     // MARK: - Actions
     
-    func updateChat(completion: @escaping (Error?) -> Void) {
+    func applyChanges(completion: @escaping (Error?) -> Void) {
+        switch chatModel.type {
+        case .personalCorr:
+            updateContact(completion: completion)
+        case .chat:
+            updateChat(completion: completion)
+        default: break
+        }
+    }
+    
+    private func updateContact(completion: @escaping (Error?) -> Void) {
+        firestoreService.updateContact(
+            userId: chatModel.friendId!,
+            contactModel: contactModel,
+            completion: completion
+        )
+    }
+    
+    private func updateChat(completion: @escaping (Error?) -> Void) {
         let updateGroup = DispatchGroup()
         var err: Error?
         let avatarTimestamp = chatAvatar != nil ? Date() : nil
@@ -74,6 +109,10 @@ class ChatEditViewModel: ChatEditViewModelProtocol {
                 completion(err)
             }
         }
+    }
+    
+    func loadFriend(completion: @escaping (UserModel?) -> Void) {
+        firestoreService.listenUserData(chatModel.friendId!, completion: completion)
     }
     
 }

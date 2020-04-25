@@ -87,7 +87,8 @@ class AvatarView: UIImageView {
     func setup(
         withChat chat: (title: String, adminId: String, hexColor: String?, avatarPath: String?),
         avatarRef: StorageReference?,
-        roundCorners: Bool = true
+        roundCorners: Bool = true,
+        cornerRadius: CGFloat? = nil
     ) {
         let placeholderText = String(chat.title.first!)
         let placeholderColor = UIColor(hexString: chat.hexColor) ?? .accent
@@ -97,13 +98,15 @@ class AvatarView: UIImageView {
                 withRef: avatarRef,
                 text: placeholderText,
                 color: placeholderColor,
-                roundCorners: roundCorners
+                roundCorners: roundCorners,
+                cornerRadius: cornerRadius
             )
         } else {
             setup(
                 withPlaceholder: placeholderText,
                 color: placeholderColor,
-                roundCorners: roundCorners
+                roundCorners: roundCorners,
+                cornerRadius: cornerRadius
             )
         }
     }

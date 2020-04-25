@@ -72,7 +72,7 @@ class AvatarEditView: AvatarView {
         roundCorners: Bool = true,
         cornerRadius: CGFloat? = nil
     ) {
-        super.setup(withRef: ref, text: text, color: color)
+        super.setup(withRef: ref, text: text, color: color, roundCorners: roundCorners, cornerRadius: cornerRadius)
         refreshPhotoPlaceholderAlpha(text)
     }
     

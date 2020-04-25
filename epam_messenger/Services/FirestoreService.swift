@@ -76,6 +76,11 @@ protocol FirestoreServiceProtocol: AutoMockable {
         _ contactId: String,
         completion: @escaping (Error?) -> Void
     )
+    func updateContact(
+        userId: String,
+        contactModel: ContactModel,
+        completion: @escaping (Error?) -> Void
+    )
     func getContact(
         _ userId: String,
         completion: @escaping (ContactModel?, Error?) -> Void
@@ -626,6 +631,34 @@ class FirestoreService: FirestoreServiceProtocol {
             .collection("contacts")
             .document(contactId)
             .delete()
+    }
+    
+    func updateContact(
+        userId: String,
+        contactModel: ContactModel,
+        completion: @escaping (Error?) -> Void
+    ) {
+        currentUserQuery
+            .collection("contacts")
+            .whereField("userId", isEqualTo: userId)
+            .limit(to: 1)
+            .getDocuments { [weak self] snapshot, err in
+                guard let self = self else { return }
+                guard err == nil else {
+                    completion(err)
+                    return
+                }
+                
+                let contactId = ContactModel.fromSnapshot(snapshot!.documents.first!)!.documentId!
+                
+                self.currentUserQuery
+                    .collection("contacts")
+                    .document(contactId)
+                    .updateData(
+                        try! FirestoreEncoder().encode(contactModel),
+                        completion: completion
+                )
+        }
     }
     
     func getContact(

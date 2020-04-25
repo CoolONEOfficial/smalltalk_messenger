@@ -11,7 +11,7 @@ import CodableFirebase
 
 public struct ContactModel: AutoCodable, AutoEquatable {
     var documentId: String?
-    let localName: String
+    var localName: String
     let userId: String
     
     static func fromUser(_ user: UserProtocol) -> ContactModel {
