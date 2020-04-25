@@ -24,6 +24,14 @@ extension ChatListViewController: UISearchResultsUpdating, UISearchControllerDel
         }
     }
     
+    func willPresentSearchController(_ searchController: UISearchController) {
+        setTabBarHidden(true)
+    }
+    
+    func didDismissSearchController(_ searchController: UISearchController) {
+        setTabBarHidden(false)
+    }
+    
     @objc func reload() {
         if tableView.isEqual(tableView.dataSource) {
             tableView.listener.remove()

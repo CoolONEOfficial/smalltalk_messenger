@@ -133,6 +133,7 @@ class ChatListViewController: UIViewController {
     
     private func setupSearchController() {
         searchController.searchResultsUpdater = self
+        searchController.delegate = self
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = "Search by chats and messages"
         searchController.navigationItem.rightBarButtonItem?.tintColor = .red
@@ -209,31 +210,6 @@ class ChatListViewController: UIViewController {
     }
     
     // MARK: - Helpers
-    
-    func setTabBarHidden(
-        _ hidden: Bool,
-        animated: Bool = true,
-        duration: TimeInterval = 0.3,
-        completion: @escaping () -> Void = {}
-    ) {
-        
-        if animated,
-            let tabbar = tabBarController?.tabBar {
-            if !hidden {
-                tabbar.isHidden = false
-            }
-            UIView.animate(withDuration: duration, animations: {
-                tabbar.alpha = hidden ? 0.0 : 1.0
-            }) { _ in
-                completion()
-                if hidden {
-                    tabbar.isHidden = true
-                }
-            }
-            return
-        }
-        self.tabBarController?.tabBar.isHidden = hidden
-    }
     
     var isSelectMode: Bool {
         return tabBarController == nil

@@ -48,4 +48,30 @@ extension UIViewController {
         ActivityAlert.activityIndicatorAlert!.dismiss(animated: true, completion: completion)
         ActivityAlert.activityIndicatorAlert = nil
     }
+    
+    // MARK: - Tabbar show/hide helper
+    
+    func setTabBarHidden(
+        _ hidden: Bool,
+        animated: Bool = true,
+        duration: TimeInterval = 0.3,
+        completion: @escaping () -> Void = {}
+    ) {
+        if animated,
+            let tabbar = tabBarController?.tabBar {
+            if !hidden {
+                tabbar.isHidden = false
+            }
+            UIView.animate(withDuration: duration, animations: {
+                tabbar.alpha = hidden ? 0.0 : 1.0
+            }) { _ in
+                completion()
+                if hidden {
+                    tabbar.isHidden = true
+                }
+            }
+            return
+        }
+        self.tabBarController?.tabBar.isHidden = hidden
+    }
 }

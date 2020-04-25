@@ -71,6 +71,7 @@ class ContactsListViewController: UIViewController {
     
     private func setupSearchController() {
         searchController.searchResultsUpdater = self
+        searchController.delegate = self
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = "Search by users"
         if let navigationItem = isSelectMode
