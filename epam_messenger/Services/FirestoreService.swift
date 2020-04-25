@@ -33,6 +33,12 @@ protocol FirestoreServiceProtocol: AutoMockable {
         _ chatModel: ChatModel,
         completion: @escaping (Error?) -> Void
     )
+    
+    func updateUser(
+        _ chatModel: UserModel,
+        completion: @escaping (Error?) -> Void
+    )
+    
     func kickChatUser(
         chatId: String,
         userId: String,
@@ -96,6 +102,13 @@ protocol FirestoreServiceProtocol: AutoMockable {
     func offlineCurrentUser()
     func startTypingCurrentUser(_ chatId: String)
     func endTypingCurrentUser()
+    
+    func updateSurname(
+        userSurname: String
+    )
+    func updateName(
+        userName: String
+    )
     
     var contactListQuery: Query { get }
     var chatListQuery: Query { get }
@@ -275,6 +288,18 @@ class FirestoreService: FirestoreServiceProtocol {
             .document(chatModel.documentId!)
             .updateData(
                 try! FirestoreEncoder().encode(chatModel),
+                completion: completion
+        )
+    }
+    
+    func updateUser(
+        _ userModel: UserModel,
+        completion: @escaping (Error?) -> Void
+    ) {
+        db.collection("users")
+            .document(userModel.documentId!)
+            .updateData(
+                try! FirestoreEncoder().encode(userModel),
                 completion: completion
         )
     }
@@ -530,6 +555,8 @@ class FirestoreService: FirestoreServiceProtocol {
             ])
     }
     
+    
+    
     func startTypingCurrentUser(_ chatId: String) {
         updateTypingStatus(chatId)
     }
@@ -543,6 +570,22 @@ class FirestoreService: FirestoreServiceProtocol {
             .document(Auth.auth().currentUser!.uid)
             .updateData([
                 "typing": typing
+            ])
+    }
+    
+    func updateName( userName: String) {
+        db.collection("users")
+            .document(Auth.auth().currentUser!.uid)
+            .updateData([
+                "name": userName
+            ])
+    }
+    
+    func updateSurname( userSurname: String) {
+        db.collection("users")
+            .document(Auth.auth().currentUser!.uid)
+            .updateData([
+                "surname": userSurname
             ])
     }
     

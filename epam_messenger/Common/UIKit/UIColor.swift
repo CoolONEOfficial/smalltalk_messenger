@@ -69,6 +69,15 @@ extension UIColor {
             return .systemIndigo
         }
     }
+    
+    // MARK: - UserSettings
+    
+    static let userBackground = UIColor { (UITraitCollection: UITraitCollection) -> UIColor in
+        if UITraitCollection.userInterfaceStyle == .dark {
+            return UIColor.black
+        } else {
+            return UIColor.white        }
+    }
 }
 
 extension UIColor {
