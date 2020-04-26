@@ -40,14 +40,14 @@ public struct MessageModel: AutoCodable, AutoEquatable {
     
     static let defaultKind: [MessageKind] = []
     
-    static func empty() -> MessageModel {
-        .init(documentId: nil, kind: [], userId: Auth.auth().currentUser!.uid,
+    static func empty(kind: [MessageKind] = []) -> MessageModel {
+        .init(documentId: nil, kind: kind,
+              userId: Auth.auth().currentUser!.uid,
               timestamp: .init(), chatId: nil, chatUsers: nil)
     }
     
     static func emptyChat() -> MessageModel {
-        .init(documentId: nil, kind: [ .text("Chat has been created") ], userId: Auth.auth().currentUser!.uid,
-              timestamp: .init(), chatId: nil, chatUsers: nil)
+        .empty(kind: [ .text("Chat has been created") ])
     }
     
     static func fromSnapshot(_ snapshot: DocumentSnapshot) -> MessageModel? {

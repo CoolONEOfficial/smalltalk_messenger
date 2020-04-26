@@ -34,7 +34,11 @@ public struct ChatModel: AutoCodable, AutoEquatable {
         }
     }
     
-    static func fromUserId(_ userId: String, friendName: String? = nil) -> ChatModel {
+    static func fromUserId(
+        _ userId: String,
+        friendName: String? = nil,
+        lastMessageKind: [MessageModel.MessageKind] = []
+    ) -> ChatModel {
         .init(
             documentId: nil,
             users: Auth.auth().currentUser!.uid != userId
@@ -43,7 +47,7 @@ public struct ChatModel: AutoCodable, AutoEquatable {
                     userId
                     ]
                 : [ userId ],
-            lastMessage: .empty(),
+            lastMessage: .empty(kind: lastMessageKind),
             type: Auth.auth().currentUser!.uid != userId
                 ? .personalCorr(
                     between: [

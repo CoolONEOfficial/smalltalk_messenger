@@ -948,40 +948,6 @@ class FirestoreServiceProtocolMock: FirestoreServiceProtocol {
         endTypingCurrentUserClosure?()
     }
 
-    //MARK: - updateSurname
-
-    var updateSurnameUserSurnameCallsCount = 0
-    var updateSurnameUserSurnameCalled: Bool {
-        return updateSurnameUserSurnameCallsCount > 0
-    }
-    var updateSurnameUserSurnameReceivedUserSurname: String?
-    var updateSurnameUserSurnameReceivedInvocations: [String] = []
-    var updateSurnameUserSurnameClosure: ((String) -> Void)?
-
-    func updateSurname(        userSurname: String    ) {
-        updateSurnameUserSurnameCallsCount += 1
-        updateSurnameUserSurnameReceivedUserSurname = userSurname
-        updateSurnameUserSurnameReceivedInvocations.append(userSurname)
-        updateSurnameUserSurnameClosure?(userSurname)
-    }
-
-    //MARK: - updateName
-
-    var updateNameUserNameCallsCount = 0
-    var updateNameUserNameCalled: Bool {
-        return updateNameUserNameCallsCount > 0
-    }
-    var updateNameUserNameReceivedUserName: String?
-    var updateNameUserNameReceivedInvocations: [String] = []
-    var updateNameUserNameClosure: ((String) -> Void)?
-
-    func updateName(        userName: String    ) {
-        updateNameUserNameCallsCount += 1
-        updateNameUserNameReceivedUserName = userName
-        updateNameUserNameReceivedInvocations.append(userName)
-        updateNameUserNameClosure?(userName)
-    }
-
     //MARK: - chatBaseQuery
 
     var chatBaseQueryCallsCount = 0

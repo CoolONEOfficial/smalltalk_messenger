@@ -33,13 +33,22 @@ class AvatarView: UIImageView {
                 : bounds.width / 2
             : 0
         layer.masksToBounds = true
-        placeholderLabel.removeFromSuperview()
-        image = nil
+        if placeholderLabel.superview != nil {
+            placeholderLabel.removeFromSuperview()
+        }
+        set(image: nil, focusOnFaces: true)
         backgroundColor = nil
     }
     
-    private func setupPlaceholder(_ text: String?, _ color: UIColor?) {
-        placeholderLabel.font = UIFont.systemFont(ofSize: bounds.height / 5 * 2, weight: .semibold)
+    private func setupPlaceholder(
+        _ text: String?,
+        _ color: UIColor?,
+        defaultHeight: CGFloat? = nil
+    ) {
+        placeholderLabel.font = UIFont.systemFont(
+            ofSize: (bounds.height > 0 ? bounds.height : defaultHeight ?? 40) / 5 * 2,
+            weight: .semibold
+        )
         placeholderLabel.textColor = UIColor.lightText.withAlphaComponent(1)
         placeholderLabel.numberOfLines = 1
         placeholderLabel.textAlignment = .center
@@ -65,15 +74,18 @@ class AvatarView: UIImageView {
     ) {
         if let userId = user.documentId, !user.deleted {
             if savedMessagesSupport && userId == Auth.auth().currentUser!.uid {
-               setupBookmark()
+                setupBookmark(
+                    roundCorners: roundCorners,
+                    cornerRadius: cornerRadius
+                )
             } else if let avatarRef = user.avatarRef {
-               setup(
-                   withRef: avatarRef,
-                   text: user.placeholderName,
-                   color: user.color,
-                   roundCorners: roundCorners,
-                   cornerRadius: cornerRadius
-               )
+                setup(
+                    withRef: avatarRef,
+                    text: user.placeholderName,
+                    color: user.color,
+                    roundCorners: roundCorners,
+                    cornerRadius: cornerRadius
+                )
             } else {
                 setup(
                     withPlaceholder: user.placeholderName,
@@ -149,14 +161,14 @@ class AvatarView: UIImageView {
         _ err: Error?,
         _ cacheType: SDImageCacheType,
         _ storageRef: StorageReference
-    ) -> Void { { [weak self] _, err, _, _ in
-        guard let self = self else { return }
-        self.loading.removeFromSuperview()
-        
-        if err != nil {
-            self.setupPlaceholder(text, color)
-        }
-    } }
+        ) -> Void { { [weak self] _, err, _, _ in
+            guard let self = self else { return }
+            self.loading.removeFromSuperview()
+            
+            if err != nil {
+                self.setupPlaceholder(text, color)
+            }
+            } }
     
     func setup(
         withPlaceholder text: String? = nil,
@@ -167,7 +179,7 @@ class AvatarView: UIImageView {
         baseSetup(roundCorners: roundCorners, cornerRadius: cornerRadius)
         
         loading.removeFromSuperview()
-        setupPlaceholder(text, color)
+        setupPlaceholder(text, color, defaultHeight: cornerRadius != nil ? cornerRadius! * 2 : 40)
     }
     
     func setup(
@@ -181,7 +193,10 @@ class AvatarView: UIImageView {
         self.image = image
     }
     
-    func setupBookmark() {
+    func setupBookmark(
+        roundCorners: Bool = true,
+        cornerRadius: CGFloat? = nil
+    ) {
         baseSetup()
         contentMode = .center
         

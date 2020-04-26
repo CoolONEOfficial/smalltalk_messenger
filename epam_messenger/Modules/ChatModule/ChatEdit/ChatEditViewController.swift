@@ -18,8 +18,6 @@ class ChatEditViewController: UIViewController, ChatEditViewControllerProtocol {
     @IBOutlet var stack: UIStackView!
     @IBOutlet var contactNameField: UITextField!
     @IBOutlet var chatTitleField: UITextField!
-    lazy var imagePickerService: ImagePickerServiceProtocol =
-        ImagePickerService(viewController: self, cameraDevice: .rear)
     
     // MARK: - Vars
     
@@ -27,6 +25,9 @@ class ChatEditViewController: UIViewController, ChatEditViewControllerProtocol {
     
     var chatAvatar: AvatarEditView = .init()
     var contactAvatar: AvatarView = .init()
+    
+    lazy var imagePickerService: ImagePickerServiceProtocol =
+        ImagePickerService(viewController: self, cameraDevice: .rear)
     
     // MARK: - Init
     
@@ -122,8 +123,9 @@ class ChatEditViewController: UIViewController, ChatEditViewControllerProtocol {
     
     @IBAction func didChatTitleChange(_ sender: Any?) {
         guard case .chat(_, _, let chatColorHex, _) = viewModel.chatModel.type else { return }
+        let ph = chatTitleField?.text?.first != nil ? String(chatTitleField.text!.first!) : nil
         chatAvatar.setup(
-            withPlaceholder: chatTitleField.text?.first != nil ? String(chatTitleField.text!.first!) : nil,
+            withPlaceholder: ph,
             color: UIColor(hexString: chatColorHex) ?? .accent
         )
         viewModel.chatModel.type.changeChat(newTitle: chatTitleField.text)

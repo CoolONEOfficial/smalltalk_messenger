@@ -99,7 +99,12 @@ class AuthEnterInitialsViewModel: AuthEnterInitialsViewModelProtocol {
                 for contact in contactList {
                     chatsGroup.enter()
                     self.firestoreService.createChat(
-                        .fromUserId(contact.documentId!)
+                        .fromUserId(
+                            contact.documentId!,
+                            lastMessageKind: [
+                                .text("\(userModel.name) is now in SmallTalk!")
+                            ]
+                        )
                     ) { error in
                         if error != nil {
                             err = error

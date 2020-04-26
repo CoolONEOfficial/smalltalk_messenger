@@ -540,7 +540,7 @@
 			children = (
 				E7B7A2C124535F8D00E9323D /* SettingsModule */,
 				949BF74A243612CC006C2AEC /* ContactsListModule */,
-				E6846B8B242A95E9006818DE /* Auth */,
+				E6846B8B242A95E9006818DE /* AuthModule */,
 				859330012417CD7F00F1F32E /* BottomBarModule */,
 				E6B749772414281F00F00B29 /* ChatListModule */,
 				E6B74990241448A000F00B29 /* ChatModule */,
@@ -909,7 +909,7 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		E6846B8B242A95E9006818DE /* Auth */ = {
+		E6846B8B242A95E9006818DE /* AuthModule */ = {
 			isa = PBXGroup;
 			children = (
 				E6846B95242A95E9006818DE /* AuthEnterInitials */,
@@ -919,7 +919,7 @@
 				E6846B99242A95E9006818DE /* AuthRouter.swift */,
 				E6846B8C242A95E9006818DE /* AuthAssemblyBuilder.swift */,
 			);
-			path = Auth;
+			path = AuthModule;
 			sourceTree = "<group>";
 		};
 		E6846B8D242A95E9006818DE /* AuthEnterCode */ = {

@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import Firebase
+import FirebaseAuth
 import FirebaseFirestore
 import CodableFirebase
 import FirebaseFunctions
@@ -33,12 +33,10 @@ protocol FirestoreServiceProtocol: AutoMockable {
         _ chatModel: ChatModel,
         completion: @escaping (Error?) -> Void
     )
-    
     func updateUser(
         _ chatModel: UserModel,
         completion: @escaping (Error?) -> Void
     )
-    
     func kickChatUser(
         chatId: String,
         userId: String,
@@ -119,14 +117,6 @@ protocol FirestoreServiceProtocol: AutoMockable {
     func offlineCurrentUser()
     func startTypingCurrentUser(_ chatId: String)
     func endTypingCurrentUser()
-    
-    func updateSurname(
-        userSurname: String
-    )
-    func updateName(
-        userName: String
-    )
-    
     var contactListQuery: Query { get }
     var chatListQuery: Query { get }
     func chatBaseQuery(_ chatId: String) -> FireQuery
@@ -621,22 +611,6 @@ class FirestoreService: FirestoreServiceProtocol {
         currentUserQuery
             .updateData([
                 "typing": typing
-            ])
-    }
-    
-    func updateName( userName: String) {
-        db.collection("users")
-            .document(Auth.auth().currentUser!.uid)
-            .updateData([
-                "name": userName
-            ])
-    }
-    
-    func updateSurname( userSurname: String) {
-        db.collection("users")
-            .document(Auth.auth().currentUser!.uid)
-            .updateData([
-                "surname": userSurname
             ])
     }
     

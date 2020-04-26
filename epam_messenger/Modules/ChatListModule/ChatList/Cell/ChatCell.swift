@@ -57,7 +57,8 @@ class ChatCell: UITableViewCell, NibReusable {
             withChat: chatData,
             avatarRef: chatData.avatarPath != nil
                 ? Storage.storage().reference(withPath: chatData.avatarPath!)
-                : nil
+                : nil,
+            cornerRadius: 28
         )
         
         senderLabel.text = "..."

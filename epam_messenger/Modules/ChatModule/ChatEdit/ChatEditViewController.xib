@@ -9,8 +9,8 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ChatEditViewController" customModule="SmallTalk" customModuleProvider="target">
             <connections>
-                <outlet property="chatTitleField" destination="yZt-D3-jYP" id="fNm-QJ-Jf0"/>
-                <outlet property="contactNameField" destination="UV0-7L-JpU" id="4Z4-TW-ukw"/>
+                <outlet property="chatTitleField" destination="yZt-D3-jYP" id="4zW-1o-LUh"/>
+                <outlet property="contactNameField" destination="UV0-7L-JpU" id="7dz-LU-YU9"/>
                 <outlet property="stack" destination="hN5-xC-LXs" id="NSz-xb-RFO"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
