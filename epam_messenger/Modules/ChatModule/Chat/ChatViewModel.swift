@@ -40,6 +40,9 @@ protocol ChatViewModelProtocol: ViewModelProtocol, AutoMockable, MessageCellDele
     func listenUserListData(
         completion: @escaping ([UserModel]?) -> Void
     )
+    func listenUserData(
+        completion: @escaping (UserModel?) -> Void
+    )
     func listenChatData(
         completion: @escaping (ChatModel?) -> Void
     )
@@ -269,6 +272,12 @@ class ChatViewModel: ChatViewModelProtocol {
         completion: @escaping ([UserModel]?) -> Void
     ) {
         firestoreService.listenUserListData(chat.users, completion: completion)
+    }
+    
+    func listenUserData(
+        completion: @escaping (UserModel?) -> Void
+    ) {
+        firestoreService.listenUserData(chat.friendId!, completion: completion)
     }
     
     func listenChatData(completion: @escaping (ChatModel?) -> Void) {

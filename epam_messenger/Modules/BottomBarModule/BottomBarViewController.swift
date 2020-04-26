@@ -36,5 +36,6 @@ class BottomBarViewController: UITabBarController {
         navigationItem.setLeftBarButton(nil, animated: true)
         
         navigationController?.navigationItem.title = nil
+        navigationItem.searchController = nil
     }
 }

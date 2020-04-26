@@ -132,6 +132,7 @@ class ChatViewController: UIViewController {
         viewModel.listenChatData { [weak self] _ in
             guard let self = self else { return }
             self.setupInfo()
+            self.setupAvatar()
         }
     }
     
@@ -217,6 +218,24 @@ class ChatViewController: UIViewController {
             avatar.hero.id = "avatar"
             
             navigationItem.setRightBarButton(UIBarButtonItem(customView: avatar), animated: true)
+            
+            switch viewModel.chat.type {
+            case .personalCorr:
+                viewModel.listenUserData { [weak self] user in
+                    guard let self = self, let user = user else { return }
+                    self.avatar.setup(
+                        withUser: user,
+                        cornerRadius: 20
+                    )
+                }
+            case .chat(let chatData):
+                avatar.setup(
+                    withChat: chatData,
+                    avatarRef: viewModel.chat.avatarRef,
+                    cornerRadius: 20
+                )
+            default: break
+            }
         }
     }
     

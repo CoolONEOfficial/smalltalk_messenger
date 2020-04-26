@@ -33,6 +33,12 @@ protocol FirestoreServiceProtocol: AutoMockable {
         _ chatModel: ChatModel,
         completion: @escaping (Error?) -> Void
     )
+    
+    func updateUser(
+        _ chatModel: UserModel,
+        completion: @escaping (Error?) -> Void
+    )
+    
     func kickChatUser(
         chatId: String,
         userId: String,
@@ -113,6 +119,13 @@ protocol FirestoreServiceProtocol: AutoMockable {
     func offlineCurrentUser()
     func startTypingCurrentUser(_ chatId: String)
     func endTypingCurrentUser()
+    
+    func updateSurname(
+        userSurname: String
+    )
+    func updateName(
+        userName: String
+    )
     
     var contactListQuery: Query { get }
     var chatListQuery: Query { get }
@@ -522,6 +535,18 @@ class FirestoreService: FirestoreServiceProtocol {
         return newDoc.documentID
     }
     
+    func updateUser(
+        _ userModel: UserModel,
+        completion: @escaping (Error?) -> Void
+    ) {
+        db.collection("users")
+            .document(userModel.documentId!)
+            .setData(
+                try! FirestoreEncoder().encode(userModel),
+                completion: completion
+        )
+    }
+    
     func listenUserData(
         _ userId: String,
         completion: @escaping (UserModel?) -> Void
@@ -582,6 +607,8 @@ class FirestoreService: FirestoreServiceProtocol {
             ])
     }
     
+    
+    
     func startTypingCurrentUser(_ chatId: String) {
         updateTypingStatus(chatId)
     }
@@ -594,6 +621,22 @@ class FirestoreService: FirestoreServiceProtocol {
         currentUserQuery
             .updateData([
                 "typing": typing
+            ])
+    }
+    
+    func updateName( userName: String) {
+        db.collection("users")
+            .document(Auth.auth().currentUser!.uid)
+            .updateData([
+                "name": userName
+            ])
+    }
+    
+    func updateSurname( userSurname: String) {
+        db.collection("users")
+            .document(Auth.auth().currentUser!.uid)
+            .updateData([
+                "surname": userSurname
             ])
     }
     
