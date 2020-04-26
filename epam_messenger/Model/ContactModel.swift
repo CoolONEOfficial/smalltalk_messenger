@@ -14,8 +14,8 @@ public struct ContactModel: AutoCodable, AutoEquatable {
     var localName: String
     let userId: String
     
-    static func fromUser(_ user: UserProtocol) -> ContactModel {
-        .init(localName: user.fullName, userId: user.documentId!)
+    static func fromUser(_ user: UserProtocol, localName: String? = nil) -> ContactModel {
+        .init(localName: localName ?? user.fullName, userId: user.documentId!)
     }
     
     static func fromSnapshot(_ snapshot: DocumentSnapshot) -> ContactModel? {

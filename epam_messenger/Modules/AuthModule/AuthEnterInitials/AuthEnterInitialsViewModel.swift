@@ -88,36 +88,42 @@ class AuthEnterInitialsViewModel: AuthEnterInitialsViewModelProtocol {
         createGroup.enter()
         let allContacts = getContacts()
         firestoreService.searchUsers(
-            by: allContacts
+            by: allContacts.map { $0.number }
         ) { [weak self] contactList, last in
             guard let self = self else { return }
             
             if let contactList = contactList {
                 
                 let chatsGroup = DispatchGroup()
-               
+                
                 for contact in contactList {
                     chatsGroup.enter()
-                    self.firestoreService.createChat(
-                        .fromUserId(
-                            contact.documentId!,
-                            lastMessageKind: [
-                                .text("\(userModel.name) is now in SmallTalk!")
-                            ]
+                    self.firestoreService.createContact(
+                        .fromUser(
+                            contact,
+                            localName: allContacts.first { $0.number == contact.phoneNumber }?.name
+                                ?? contact.fullName
                         )
                     ) { error in
-                        if error != nil {
+                        guard error == nil else {
                             err = error
+                            chatsGroup.leave()
+                            return
                         }
-                        chatsGroup.leave()
-                    }
-                    
-                    chatsGroup.enter()
-                    self.firestoreService.createContact(.fromUser(contact)) { error in
-                        if error != nil {
-                            err = error
+                        
+                        self.firestoreService.createChat(
+                            .fromUserId(
+                                contact.documentId!,
+                                lastMessageKind: [
+                                    .text("\(userModel.name) is now in SmallTalk!")
+                                ]
+                            )
+                        ) { error in
+                            if error != nil {
+                                err = error
+                            }
+                            chatsGroup.leave()
                         }
-                        chatsGroup.leave()
                     }
                 }
                 
@@ -155,13 +161,13 @@ class AuthEnterInitialsViewModel: AuthEnterInitialsViewModelProtocol {
         }
     }
     
-    private func getContacts() -> [String] {
+    private func getContacts() -> [(number: String, name: String?)] {
         let contactStore = CNContactStore()
-        var contacts = [String]()
+        var contacts = [(number: String, name: String?)]()
         let keys = [
-                CNContactFormatter.descriptorForRequiredKeys(for: .fullName),
-                        CNContactPhoneNumbersKey
-                ] as [Any]
+            CNContactFormatter.descriptorForRequiredKeys(for: .fullName),
+            CNContactPhoneNumbersKey
+            ] as [Any]
         let request = CNContactFetchRequest(keysToFetch: keys as! [CNKeyDescriptor])
         do {
             try contactStore.enumerateContacts(with: request) { (contact, _) in
@@ -170,11 +176,14 @@ class AuthEnterInitialsViewModel: AuthEnterInitialsViewModelProtocol {
                     CNLabelPhoneNumberMobile,
                     CNLabelPhoneNumberMain
                 ]
-
+                
                 let numbers = contact.phoneNumbers.compactMap { phoneNumber -> String? in
                     guard let label = phoneNumber.label, validTypes.contains(label) else { return nil }
                     return phoneNumber.value.stringValue
-                }
+                }.map {(
+                    number: $0,
+                    name: CNContactFormatter.string(from: contact, style: .fullName)
+                    )}
                 
                 contacts.append(contentsOf: numbers)
             }
@@ -184,12 +193,36 @@ class AuthEnterInitialsViewModel: AuthEnterInitialsViewModelProtocol {
         
         let phoneNumberKit = PhoneNumberKit()
         let currentPhoneNumber = Auth.auth().currentUser!.phoneNumber
-        let parsed = phoneNumberKit.parse(contacts, shouldReturnFailedEmptyNumbers: true)
-            .filter({ !$0.notParsed() })
-            .map({ phoneNumberKit.format($0, toType: .e164) })
-            .filter({ $0 != currentPhoneNumber })
-            .unique()
         
-        return parsed
+        for (index, contact) in contacts.enumerated() {
+            if let number = try? phoneNumberKit
+                .parse(contact.number) {
+                contacts[index].number = phoneNumberKit.format(number, toType: .e164)
+            } else {
+                contacts[index].number = ""
+            }
+        }
+        let result = contacts
+            .filter { $0.number != currentPhoneNumber && !$0.number.isEmpty}
+            .unique { $0.number }
+        
+        return result
+    }
+}
+
+// MARK: - Array unique by property helper
+
+extension Array {
+    func unique <T:Hashable>(by: ((Element) -> (T))) -> [Element] {
+        var set = Set<T>() //the unique list kept in a Set for fast retrieval
+        var arrayOrdered = [Element]() //keeping the unique list of elements but ordered
+        for value in self {
+            if !set.contains(by(value)) {
+                set.insert(by(value))
+                arrayOrdered.append(value)
+            }
+        }
+
+        return arrayOrdered
     }
 }

@@ -23,6 +23,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         
         window = UIWindow(frame: windowScene.coordinateSpace.bounds)
+        window?.backgroundColor = .systemBackground
         window?.windowScene = windowScene
         
         let navigationController = UINavigationController()

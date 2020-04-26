@@ -30,7 +30,7 @@ class BottomBarViewController: UITabBarController {
     lazy var controllers: [UIViewController] = {
         return [contacts, chatList, settings]
     }()
-
+    
     override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
         navigationItem.setRightBarButton(nil, animated: true)
         navigationItem.setLeftBarButton(nil, animated: true)
