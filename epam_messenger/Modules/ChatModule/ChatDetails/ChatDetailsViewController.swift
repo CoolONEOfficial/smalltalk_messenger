@@ -25,6 +25,7 @@ class ChatDetailsViewController: UIViewController, ChatDetailsViewControllerProt
     @IBOutlet var titleLabel: UILabel!
     @IBOutlet var subtitleLabel: UILabel!
     @IBOutlet var inviteButton: UIButton!
+    @IBOutlet var addContactButton: UIButton!
     
     // MARK: - Vars
     
@@ -124,17 +125,6 @@ class ChatDetailsViewController: UIViewController, ChatDetailsViewControllerProt
         tabStrip.view.widthToSuperview()
     }
     
-    private func getImageFrom(gradientLayer: CAGradientLayer) -> UIImage? {
-        var gradientImage: UIImage?
-        UIGraphicsBeginImageContext(gradientLayer.frame.size)
-        if let context = UIGraphicsGetCurrentContext() {
-            gradientLayer.render(in: context)
-            gradientImage = UIGraphicsGetImageFromCurrentImageContext()?.resizableImage(withCapInsets: UIEdgeInsets.zero, resizingMode: .stretch)
-        }
-        UIGraphicsEndImageContext()
-        return gradientImage
-    }
-    
     private func setupNavigationBar() {
         let navBar = navigationController?.navigationBar
         navBar?.setBackgroundImage(UIImage(), for: .default)
@@ -151,26 +141,56 @@ class ChatDetailsViewController: UIViewController, ChatDetailsViewControllerProt
         )
         navigationItem.leftBarButtonItem?.tintColor = UIColor.lightText.withAlphaComponent(1)
         
-        if case .chat(_, let adminId, _, _) = viewModel.chatModel.type,
-            adminId == Auth.auth().currentUser!.uid {
-            navigationItem.rightBarButtonItem = .init(
-                title: "Edit",
-                style: .plain,
-                target: self,
-                action: #selector(didEditTap)
-            )
-            navigationItem.rightBarButtonItem?.tintColor = UIColor.lightText.withAlphaComponent(1)
+        switch viewModel.chatModel.type {
+        case .personalCorr:
+            viewModel.checkContactExists { [weak self] exists, _ in
+                guard let self = self else { return }
+                if exists ?? false {
+                    self.addEditButton()
+                }
+            }
+        case .chat(_, let adminId, _, _):
+            if adminId == Auth.auth().currentUser!.uid {
+                addEditButton()
+            }
+        default: break
         }
         
-        setupInviteButton()
+        setupButtons()
     }
     
-    private func setupInviteButton() {
-        inviteButton.backgroundColor = .secondary
-        inviteButton.tintColor = .systemBackground
-        inviteButton.layer.cornerRadius = 15
-        if case .chat(_, let adminId, _, _) = viewModel.chatModel.type {
+    private func addEditButton() {
+        navigationItem.rightBarButtonItem = .init(
+            title: "Edit",
+            style: .plain,
+            target: self,
+            action: #selector(didEditTap)
+        )
+        navigationItem.rightBarButtonItem?.tintColor = UIColor.lightText.withAlphaComponent(1)
+    }
+    
+    private func baseSetupButton(_ button: UIButton) {
+        button.backgroundColor = .secondary
+        button.tintColor = .systemBackground
+        button.layer.cornerRadius = 15
+    }
+    
+    private func setupButtons() {
+        baseSetupButton(inviteButton)
+        baseSetupButton(addContactButton)
+        
+        switch viewModel.chatModel.type {
+        case .personalCorr:
+            viewModel.checkContactExists { [weak self] exists, _ in
+                guard let self = self else { return }
+                if !(exists ?? false) {
+                    self.addContactButton.isHidden = false
+                    self.addContactButton.zoomIn()
+                }
+            }
+        case .chat(_, let adminId, _, _):
             inviteButton.isHidden = adminId != Auth.auth().currentUser!.uid
+        default: break
         }
     }
     
@@ -207,7 +227,23 @@ class ChatDetailsViewController: UIViewController, ChatDetailsViewControllerProt
     // MARK: - Actions
 
     @IBAction func didInviteTap(_ sender: UIButton) {
-        viewModel.didInviteTap()
+        viewModel.inviteUser()
+    }
+    
+    @IBAction func didAddContactTap(_ sender: Any) {
+        viewModel.addContact { [weak self] err in
+            guard let self = self else { return }
+            if let err = err {
+                self.presentErrorAlert(err.localizedDescription)
+            } else {
+                UIView.animate(withDuration: 0.3, animations: {
+                    self.addContactButton.alpha = 0
+                }) { _ in
+                    self.addContactButton.isHidden = true
+                }
+                self.addEditButton()
+            }
+        }
     }
     
     @objc func didCancelTap() {
@@ -216,7 +252,7 @@ class ChatDetailsViewController: UIViewController, ChatDetailsViewControllerProt
     
     @objc func didEditTap() {
         if scroll.contentOffset.y == 0 {
-            viewModel.didEditTap()
+            viewModel.showChatEdit()
         }
     }
 }
@@ -272,7 +308,14 @@ extension ChatDetailsViewController: UIScrollViewDelegate {
                 ),
                 y: 0
             )
-            inviteButton.transform = .init(scaleX: (1 - yOffsetScale), y: (1 - yOffsetScale))
+            
+            let buttonsTransform = CGAffineTransform(
+                scaleX: (1 - yOffsetScale),
+                y: (1 - yOffsetScale)
+            )
+            inviteButton.transform = buttonsTransform
+            addContactButton.transform = buttonsTransform
+            
             avatar.layer.opacity = Float(1 - yOffsetScale)
             navigationItem.leftBarButtonItem?.tintColor = UIColor.blend(
                 color1: UIColor.lightText.withAlphaComponent(1), intensity1: 1 - yOffsetScale,

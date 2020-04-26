@@ -11,7 +11,7 @@ import InstantSearchClient
 import CodableFirebase
 
 protocol ChatListViewModelProtocol: ViewModelProtocol {
-    func goToChat(_ chatModel: ChatModel)
+    func goToChat(_ chatId: String)
     func goToChatDetails(_ chatModel: ChatModel)
     func goToChatCreate()
     func firestoreQuery() -> FireQuery
@@ -63,10 +63,10 @@ class ChatListViewModel: ChatListViewModelProtocol {
         router.showChatCreate()
     }
     
-    func goToChat(_ chatModel: ChatModel) {
+    func goToChat(_ chatId: String) {
         guard let router = router as? ChatRouter else { return }
         
-        router.showChat(chatModel)
+        router.showChat(chatId: chatId)
     }
     
     func goToChatDetails(_ chatModel: ChatModel) {

@@ -31,6 +31,7 @@ extension ChatType {
         case savedMessages
         case chat
         case between
+        case betweenNames
         case title
         case adminId
         case hexColor
@@ -43,7 +44,8 @@ extension ChatType {
         if container.allKeys.contains(.personalCorr), try container.decodeNil(forKey: .personalCorr) == false {
             let associatedValues = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: .personalCorr)
             let between = try associatedValues.decode([String].self, forKey: .between)
-            self = .personalCorr(between: between)
+            let betweenNames = try associatedValues.decode([String].self, forKey: .betweenNames)
+            self = .personalCorr(between: between, betweenNames: betweenNames)
             return
         }
         if container.allKeys.contains(.savedMessages), try container.decodeNil(forKey: .savedMessages) == false {
@@ -66,9 +68,10 @@ extension ChatType {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
         switch self {
-        case let .personalCorr(between):
+        case let .personalCorr(between, betweenNames):
             var associatedValues = container.nestedContainer(keyedBy: CodingKeys.self, forKey: .personalCorr)
             try associatedValues.encode(between, forKey: .between)
+            try associatedValues.encode(betweenNames, forKey: .betweenNames)
         case .savedMessages:
             _ = container.nestedContainer(keyedBy: CodingKeys.self, forKey: .savedMessages)
         case let .chat(title, adminId, hexColor, avatarPath):

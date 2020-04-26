@@ -12,6 +12,7 @@ import FirebaseFirestore
 
 protocol ChatProtocol {
     var friendId: String? { get }
+    var friendName: String? { get }
     var avatarRef: StorageReference? { get }
     func listenInfo(completion: @escaping (
         _ title: String,
@@ -27,7 +28,10 @@ protocol ChatProtocol {
 }
 
 public enum ChatType: AutoCodable, AutoEquatable {
-    case personalCorr(between: [String])
+    case personalCorr(
+        between: [String],
+        betweenNames: [String]
+    )
     case savedMessages
     case chat(
         title: String,

@@ -26,21 +26,20 @@ class SearchChatCell: UITableViewCell, NibReusable {
     internal var chat: ChatProtocol!
     
     private func setupUi() {
-        if case .chat(let title, _, _, _) = chat.type {
-            titleLabel.text = title
-        }
-        setupAvatar()
-    }
-    
-    private func setupAvatar() {
-        delegate?.getChatData(chat.documentId!) { chatModel in
-            if let chatModel = chatModel,
-                case .chat(let chatData) = self.chat.type {
-                self.avatar.setup(
-                    withChat: chatData,
-                    avatarRef: chatModel.avatarRef
-                )
+        switch self.chat.type {
+        case .chat(let chatData):
+            self.avatar.setup(
+                withChat: chatData,
+                avatarRef: chat.avatarRef
+            )
+            titleLabel.text = chatData.title
+        case .personalCorr:
+            self.titleLabel.text = chat.friendName!
+            self.delegate?.listenUserData(chat.friendId!) { [weak self] userModel in
+                guard let self = self, let userModel = userModel else { return }
+                self.avatar.setup(withUser: userModel)
             }
+        default: break
         }
     }
     

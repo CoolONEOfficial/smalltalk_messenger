@@ -30,7 +30,7 @@ public struct UserModel: AutoCodable, AutoEquatable {
               avatarPath: nil, online: true, typing: nil, deleted: false)
     }
     
-    static func deleted(_ documentId: String?) -> UserModel {
+    static func deleted(_ documentId: String? = nil) -> UserModel {
         .init(documentId: documentId, name: "DELETED", surname: "", phoneNumber: "",
               hexColor: "#7d7d7d", avatarPath: nil, online: false, typing: nil, deleted: true)
     }

@@ -66,6 +66,7 @@
 		85812DB52436596D00EA2626 /* UIImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85812DB42436596D00EA2626 /* UIImageView.swift */; };
 		85900B9724422F02008F297E /* UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85900B9624422F02008F297E /* UIViewController.swift */; };
 		859330032417CD9C00F1F32E /* BottomBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 859330022417CD9C00F1F32E /* BottomBarViewController.swift */; };
+		85A0F8982453605B00B30D52 /* UIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85A0F8972453605B00B30D52 /* UIView.swift */; };
 		85AA7914244DEF1D00853519 /* ChatListRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85AA7913244DEF1D00853519 /* ChatListRouter.swift */; };
 		85AA7916244DEF2D00853519 /* ChatListAssemblyBulder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85AA7915244DEF2D00853519 /* ChatListAssemblyBulder.swift */; };
 		85AA791A244DF7B200853519 /* ChatCreateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85AA7918244DF7B200853519 /* ChatCreateViewController.swift */; };
@@ -231,6 +232,7 @@
 		858F211B24217BCA00CF8BF0 /* AutoMockable.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoMockable.generated.swift; sourceTree = "<group>"; };
 		85900B9624422F02008F297E /* UIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewController.swift; sourceTree = "<group>"; };
 		859330022417CD9C00F1F32E /* BottomBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomBarViewController.swift; sourceTree = "<group>"; };
+		85A0F8972453605B00B30D52 /* UIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIView.swift; sourceTree = "<group>"; };
 		85AA7913244DEF1D00853519 /* ChatListRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListRouter.swift; sourceTree = "<group>"; };
 		85AA7915244DEF2D00853519 /* ChatListAssemblyBulder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListAssemblyBulder.swift; sourceTree = "<group>"; };
 		85AA7918244DF7B200853519 /* ChatCreateViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatCreateViewController.swift; sourceTree = "<group>"; };
@@ -605,6 +607,7 @@
 				85812DB42436596D00EA2626 /* UIImageView.swift */,
 				854E829124409AAC00E0F2DE /* UIApplication.swift */,
 				85900B9624422F02008F297E /* UIViewController.swift */,
+				85A0F8972453605B00B30D52 /* UIView.swift */,
 			);
 			path = UIKit;
 			sourceTree = "<group>";
@@ -1303,6 +1306,7 @@
 				850808CF2446586D00DC9A26 /* ColorPickerViewController.swift in Sources */,
 				85900B9724422F02008F297E /* UIViewController.swift in Sources */,
 				852C0121243161F900BCC056 /* MessageForward.swift in Sources */,
+				85A0F8982453605B00B30D52 /* UIView.swift in Sources */,
 				85B3F1D7243388AD001F92D9 /* UIImage.swift in Sources */,
 				85812DB3243653BB00EA2626 /* User.swift in Sources */,
 				85B3F1D624338882001F92D9 /* MessageImageContent.swift in Sources */,

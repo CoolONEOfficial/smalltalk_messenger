@@ -36,20 +36,32 @@ extension ChatViewController: PaginatedTableViewDelegate {
     // MARK: - Reload messages merge
     
     func didUpdateElements() {
-        if tableView.dataAtEnd {
-            let flattenData = tableView.flattenData
-            if flattenData.count >= 2, MessageModel.checkMerge(
-                flattenData[flattenData.count - 1],
-                flattenData[flattenData.count - 2]
-            ) {
-                let data = tableView.data
-                let section = data.count - 1
-                let lastRow = data[section].elements.count - 1
-                tableView.reloadRows(
-                    at: [.init(row: lastRow - 1, section: section)],
-                    with: .fade
-                )
+        let flattenData = tableView.flattenData
+        if flattenData.count > 1, MessageModel.checkMerge(
+            flattenData[flattenData.count - 1],
+            flattenData[flattenData.count - 2]
+        ) {
+            let data = tableView.data
+            var rows: [IndexPath] = .init()
+            let section = data.count - 1
+            
+            rows.append(.init(item: data[section].elements.count - 1, section: section))
+            if data[section].count > 1 {
+                rows.append(.init(
+                    item: data[section].elements.count - 2,
+                    section: section
+                ))
+            } else if data.count > 1 {
+                rows.append(.init(
+                    row: data[section - 1].elements.count - 1,
+                    section: section - 1
+                ))
             }
+            
+            tableView.reloadRows(
+                at: rows,
+                with: .fade
+            )
         }
     }
     
@@ -177,7 +189,7 @@ extension ChatViewController: PaginatedTableViewDelegate {
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if !tableView.paginationLock && !bottomScrollAnimationsLock {
-            let hidden = tableView.dataAtEnd && tableView.bottomOffset < 100
+            let hidden = tableView.bottomOffset < 100
             if self.floatingBottomButton.isHidden != hidden {
                 bottomScrollAnimationsLock = true
                 
@@ -311,15 +323,15 @@ extension ChatViewController: PaginatedTableViewDelegate {
 
 extension ChatViewController: ChatSelectDelegate {
     
-    func didSelectChat(_ chatModel: ChatModel) {
+    func didSelectChat(_ chatId: String) {
         if forwardMessages != nil {
             for message in forwardMessages {
-                viewModel.forwardMessage(chatModel, message) { [weak self] err in
+                viewModel.forwardMessage(chatId, message) { [weak self] err in
                     guard let self = self else { return }
                     if let err = err {
                         self.presentErrorAlert(err.localizedDescription)
-                    } else if self.viewModel.chat.documentId != chatModel.documentId {
-                        self.viewModel.goToChat(chatModel)
+                    } else if self.viewModel.chat.documentId != chatId {
+                        self.viewModel.goToChat(chatId)
                     }
                 }
             }

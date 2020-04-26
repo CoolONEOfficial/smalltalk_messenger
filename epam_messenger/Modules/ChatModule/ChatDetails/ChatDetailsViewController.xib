@@ -7,8 +7,9 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ChatDetailsViewController" customModule="epam_messenger" customModuleProvider="target">
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ChatDetailsViewController" customModule="SmallTalk" customModuleProvider="target">
             <connections>
+                <outlet property="addContactButton" destination="Rri-hB-opU" id="NmS-bq-eV0"/>
                 <outlet property="avatar" destination="MOO-7r-scm" id="dnX-Iv-UCo"/>
                 <outlet property="inviteButton" destination="g1K-QO-WkW" id="boD-0Q-Zw9"/>
                 <outlet property="scroll" destination="Ab5-pv-7ia" id="OAU-ch-SsN"/>
@@ -32,7 +33,7 @@
                                 <view contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7X3-DB-AMg" userLabel="Avatar Container">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="400"/>
                                     <subviews>
-                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MOO-7r-scm" userLabel="Avatar" customClass="AvatarView" customModule="epam_messenger" customModuleProvider="target">
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MOO-7r-scm" userLabel="Avatar" customClass="AvatarView" customModule="SmallTalk" customModuleProvider="target">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="400"/>
                                             <userDefinedRuntimeAttributes>
                                                 <userDefinedRuntimeAttribute type="string" keyPath="heroID" value="avatar"/>
@@ -48,7 +49,7 @@
                                         <constraint firstItem="MOO-7r-scm" firstAttribute="height" relation="greaterThanOrEqual" secondItem="7X3-DB-AMg" secondAttribute="height" id="uka-eh-01c"/>
                                     </constraints>
                                 </view>
-                                <stackView opaque="NO" contentMode="scaleToFill" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="Pij-oO-X7f">
+                                <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="Pij-oO-X7f">
                                     <rect key="frame" x="0.0" y="400" width="414" height="52"/>
                                     <subviews>
                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="top" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="0nV-eV-utm">
@@ -83,6 +84,17 @@
                                                 <constraint firstAttribute="height" constant="42" id="qZu-8K-8T3"/>
                                             </constraints>
                                         </stackView>
+                                        <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Rri-hB-opU" userLabel="Add contact Button">
+                                            <rect key="frame" x="0.0" y="11" width="30" height="30"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="30" id="Xbc-XQ-2mG"/>
+                                                <constraint firstAttribute="width" constant="30" id="did-Vu-11s"/>
+                                            </constraints>
+                                            <state key="normal" image="person.badge.plus.fill" catalog="system"/>
+                                            <connections>
+                                                <action selector="didAddContactTap:" destination="-1" eventType="touchUpInside" id="btu-sM-eBY"/>
+                                            </connections>
+                                        </button>
                                         <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="g1K-QO-WkW" userLabel="Invite Button">
                                             <rect key="frame" x="0.0" y="11" width="30" height="30"/>
                                             <constraints>

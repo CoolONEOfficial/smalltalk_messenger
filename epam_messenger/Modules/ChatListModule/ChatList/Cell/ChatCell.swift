@@ -11,7 +11,7 @@ import FirebaseAuth
 import FirebaseStorage
 
 class ChatCell: UITableViewCell, NibReusable {
-
+    
     // MARK: - Outlets
     
     @IBOutlet private var avatar: AvatarView!
@@ -31,7 +31,7 @@ class ChatCell: UITableViewCell, NibReusable {
     internal var chat: ChatModel!
     
     // MARK: - Init
-     
+    
     private func setupUi() {
         switch chat.type {
         case .savedMessages:
@@ -59,7 +59,7 @@ class ChatCell: UITableViewCell, NibReusable {
                 ? Storage.storage().reference(withPath: chatData.avatarPath!)
                 : nil
         )
-
+        
         senderLabel.text = "..."
         let userId = chat.lastMessage.userId
         delegate?.listenUserData(userId) { user in
@@ -76,17 +76,14 @@ class ChatCell: UITableViewCell, NibReusable {
     }
     
     private func setupPersonalCorr() {
-        titleLabel.text = "..."
+        titleLabel.text = chat.friendName!
         senderLabel.isHidden = true
         messageLabel.numberOfLines = 2
         
         let friendId = chat.friendId!
         delegate?.listenUserData(friendId) { friendModel in
             let friendModel = friendModel ?? .deleted(friendId)
-            
             self.avatar.setup(withUser: friendModel)
-            
-            self.titleLabel.text = friendModel.fullName
         }
     }
 }

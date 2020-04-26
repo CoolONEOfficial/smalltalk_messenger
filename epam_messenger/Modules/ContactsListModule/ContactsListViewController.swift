@@ -71,6 +71,7 @@ class ContactsListViewController: UIViewController {
     
     private func setupSearchController() {
         searchController.searchResultsUpdater = self
+        searchController.delegate = self
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = "Search by users"
         if let navigationItem = isSelectMode
@@ -89,7 +90,11 @@ class ContactsListViewController: UIViewController {
                 let cell = self.tableView.dequeueReusableCell(for: indexPath, cellType: UserCell.self)
                 let contact = self.tableView.elementAt(indexPath)
                 
-                cell.loadUser(byId: contact.userId, savedMessagesSupport: true)
+                cell.loadUser(
+                    byId: contact.userId,
+                    savedMessagesSupport: true,
+                    withLocalName: contact.localName
+                )
                 
                 return cell
             },
@@ -127,25 +132,25 @@ class ContactsListViewController: UIViewController {
 
 extension ContactsListViewController: PaginatedTableViewDelegate {
     
-    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        guard !isSearch else { return nil }
-        
-        let deleteAction = UIContextualAction(style: .normal, title: "Delete") { _, _, complete in
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
             let contact = self.tableView.elementAt(indexPath)
-            self.db.collection("users")
-                .document(Auth.auth().currentUser!.uid)
-                .collection("contacts")
-                .document(contact.documentId!)
-                .delete()
-            tableView.reloadData()
-            complete(true)
+            viewModel.deleteContact(contact.documentId!) { err in
+                if let err = err {
+                    self.presentErrorAlert(err.localizedDescription)
+                    return
+                }
+            }
         }
-        
-        deleteAction.backgroundColor = .red
-        
-        let configuration = UISwipeActionsConfiguration(actions: [deleteAction])
-        configuration.performsFirstActionWithFullSwipe = false
-        return configuration
+    }
+    
+    public func tableView(
+        _ tableView: UITableView,
+        editingStyleForRowAt indexPath: IndexPath
+    ) -> UITableViewCell.EditingStyle {
+        isSearch
+            ? .none
+            : .delete
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -163,7 +168,7 @@ extension ContactsListViewController: PaginatedTableViewDelegate {
                 selectDelegate?.didSelectUser(contact.userId)
                 navigationController?.dismiss(animated: true, completion: nil)
             } else {
-                viewModel.didContactSelect(contact)
+                viewModel.didContactSelect(contact, self.tableView.cellForRow(at: indexPath) as! UserCell)
             }
         }
         

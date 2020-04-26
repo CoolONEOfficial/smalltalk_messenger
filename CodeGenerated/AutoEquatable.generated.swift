@@ -81,7 +81,9 @@ extension ChatType: Equatable {}
 public func == (lhs: ChatType, rhs: ChatType) -> Bool {
     switch (lhs, rhs) {
     case (.personalCorr(let lhs), .personalCorr(let rhs)):
-        return lhs == rhs
+        if lhs.between != rhs.between { return false }
+        if lhs.betweenNames != rhs.betweenNames { return false }
+        return true
     case (.savedMessages, .savedMessages):
         return true
     case (.chat(let lhs), .chat(let rhs)):

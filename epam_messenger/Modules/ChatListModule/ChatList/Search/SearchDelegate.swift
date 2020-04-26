@@ -17,10 +17,19 @@ extension ChatListViewController: UISearchResultsUpdating, UISearchControllerDel
                 tableView.delegate = tableView
                 self.tableView.separatorInset.left = 75
                 tableView.reloadData()
+                tableView.loadAtStart()
             }
         } else {
             self.perform(#selector(reload), with: nil, afterDelay: 0.5)
         }
+    }
+    
+    func willPresentSearchController(_ searchController: UISearchController) {
+        setTabBarHidden(true)
+    }
+    
+    func didDismissSearchController(_ searchController: UISearchController) {
+        setTabBarHidden(false)
     }
     
     @objc func reload() {

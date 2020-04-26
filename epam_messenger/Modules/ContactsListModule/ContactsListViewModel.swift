@@ -10,8 +10,9 @@ import Firebase
 import CodableFirebase
 
 protocol ContactsListViewModelProtocol: ViewModelProtocol {
-    func didContactSelect(_ contact: ContactModel)
+    func didContactSelect(_ contact: ContactModel, _ cell: UserCell)
     func didUserSelect(_ user: UserModel)
+    func deleteContact(_ contactId: String, completion: @escaping (Error?) -> Void)
     func searchUsers(_ searchString: String, completion: @escaping AlgoliaService.SearchUsersCompletion)
     var baseQuery: FireQuery { get }
 }
@@ -37,17 +38,23 @@ class ContactsListViewModel: ContactsListViewModelProtocol {
         return firestoreService.contactListQuery
     }
     
-    func didContactSelect(_ contact: ContactModel) {
-        guard let router = self.router as? ChatRouter else { return }
-        router.showChat(contact.userId)
+    func didContactSelect(_ contact: ContactModel, _ cell: UserCell) {
+        guard let router = self.router as? ChatRouter,
+            let user = cell.user,
+            !user.deleted else { return }
+        router.showChat(userId: contact.userId)
     }
     
     func didUserSelect(_ user: UserModel) {
         guard let router = self.router as? ChatRouter else { return }
-        router.showChat(user.documentId!)
+        router.showChat(userId: user.documentId!)
     }
     
     func searchUsers(_ searchString: String, completion: @escaping AlgoliaService.SearchUsersCompletion) {
-        return algoliaService.searchUsers(searchString, completion: completion)
+        algoliaService.searchUsers(searchString, completion: completion)
+    }
+    
+    func deleteContact(_ contactId: String, completion: @escaping (Error?) -> Void) {
+        firestoreService.deleteContact(contactId, completion: completion)
     }
 }

@@ -15,7 +15,7 @@ protocol AuthEnterNumberViewControllerProtocol {
 class AuthEnterNumberViewController: UIViewController {
     var viewModel: AuthEnterNumberViewModelProtocol!
     
-    @IBOutlet weak var numberTextField: PhoneNumberTextField!
+    @IBOutlet weak var numberTextField: AuthPhoneNumberTextField!
     
     @objc func touchNext() {
         guard let number = numberTextField.text else { return }
@@ -42,6 +42,7 @@ class AuthEnterNumberViewController: UIViewController {
         
         numberTextField.withFlag = true
         numberTextField.withPrefix = true
+        numberTextField.delegate = self
         
         numberTextField.becomeFirstResponder()
     }
@@ -50,16 +51,38 @@ class AuthEnterNumberViewController: UIViewController {
         let padding = numberTextField.frame.minX
         
         let borderTop = CALayer()
-        borderTop.frame = CGRect(x: -padding, y: 0, width: numberTextField.frame.width + padding * 2, height: 0.75)
+        borderTop.frame = CGRect(
+            x: -padding,
+            y: 0,
+            width: numberTextField.frame.width + padding * 2,
+            height: 0.75
+        )
         borderTop.backgroundColor = UIColor.systemGray2.cgColor
 
         let borderBottom = CALayer()
-        borderBottom.frame = CGRect(x: -padding, y: numberTextField.frame.height - 0.75, width: numberTextField.frame.width + padding * 2, height: 0.75)
+        borderBottom.frame = CGRect(
+            x: -padding,
+            y: numberTextField.frame.height - 0.75,
+            width: numberTextField.frame.width + padding * 2,
+            height: 0.75
+        )
         borderBottom.backgroundColor = UIColor.systemGray2.cgColor
         
         numberTextField.layer.addSublayer(borderTop)
         numberTextField.layer.addSublayer(borderBottom)
     }
+}
+
+extension AuthEnterNumberViewController: UITextFieldDelegate {
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        let maxLength = 16
+        let currentString: NSString = textField.text! as NSString
+        let newString: NSString =
+            currentString.replacingCharacters(in: range, with: string) as NSString
+        return newString.length <= maxLength
+    }
+    
 }
 
 extension AuthEnterNumberViewController: AuthEnterNumberViewControllerProtocol {
@@ -69,5 +92,14 @@ extension AuthEnterNumberViewController: AuthEnterNumberViewControllerProtocol {
         alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: nil))
 
         self.present(alert, animated: true)
+    }
+}
+
+class AuthPhoneNumberTextField: PhoneNumberTextField {
+    override var defaultRegion: String {
+        get {
+            "RU"
+        }
+        set {}
     }
 }

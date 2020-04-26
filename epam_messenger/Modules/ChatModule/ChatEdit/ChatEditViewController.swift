@@ -15,8 +15,9 @@ class ChatEditViewController: UIViewController, ChatEditViewControllerProtocol {
 
     // MARK: - Outlets
     
-    @IBOutlet var avatar: AvatarEditView!
-    @IBOutlet var titleField: UITextField!
+    @IBOutlet var stack: UIStackView!
+    @IBOutlet var contactNameField: UITextField!
+    @IBOutlet var chatTitleField: UITextField!
     lazy var imagePickerService: ImagePickerServiceProtocol =
         ImagePickerService(viewController: self, cameraDevice: .rear)
     
@@ -24,44 +25,77 @@ class ChatEditViewController: UIViewController, ChatEditViewControllerProtocol {
     
     var viewModel: ChatEditViewModelProtocol!
     
+    var chatAvatar: AvatarEditView = .init()
+    var contactAvatar: AvatarView = .init()
+    
     // MARK: - Init
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         setupNavigationBar()
-        setupTitleField()
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        setupAvatar()
-    }
-    
-    private func setupTitleField() {
-        if case .chat(let title, _, _, _) = viewModel.chatModel.type {
-            titleField.text = title
-        }
-    }
-    
-    private func setupAvatar() {
-        if case .chat(let title, _, let hexColor, let isAvatarExists) = viewModel.chatModel.type {
-            avatar.imagePickerService = imagePickerService
-            let placeholderText = String(title.first!)
-            let placeholderColor = UIColor(hexString: hexColor) ?? .accent
-            if isAvatarExists != nil {
-                avatar.setup(
-                    withRef: viewModel.chatModel.avatarRef!,
-                    text: placeholderText,
-                    color: placeholderColor
-                )
-            } else {
-                avatar.setup(
-                    withPlaceholder: placeholderText,
-                    color: placeholderColor
-                )
+        switch viewModel.chatModel.type {
+        case .personalCorr:
+            viewModel.contactGroup.notify(queue: .main) { [weak self] in
+                guard let self = self else { return }
+                self.setupContactAvatar()
+                self.setupContactNameField()
             }
-            avatar.delegate = self
+        case .chat(let chatData):
+            setupChatAvatar(chatData)
+            setupChatTitleField(chatData)
+        default: break
         }
+    }
+    
+    private func setupChatTitleField(
+        _ chatData: (title: String, adminId: String, hexColor: String?, avatarPath: String?)
+    ) {
+        chatTitleField.text = chatData.title
+        chatTitleField.isHidden = false
+    }
+    
+    private func setupContactNameField() {
+        contactNameField.text = viewModel.chatModel.friendName
+        contactNameField.isHidden = false
+    }
+    
+    private func setupContactAvatar() {
+        stack.insertArrangedSubview(contactAvatar, at: 0)
+        contactAvatar.size(.init(width: 120, height: 120))
+        viewModel.loadFriend { [weak self] userModel in
+            guard let self = self else { return }
+            self.contactAvatar.setup(withUser: userModel ?? .deleted())
+        }
+    }
+    
+    private func setupChatAvatar(
+        _ chatData: (title: String, adminId: String, hexColor: String?, avatarPath: String?)
+    ) {
+        stack.insertArrangedSubview(chatAvatar, at: 0)
+        chatAvatar.size(.init(width: 120, height: 120))
+        
+        chatAvatar.imagePickerService = imagePickerService
+        let placeholderText = String(chatData.title.first!)
+        let placeholderColor = UIColor(hexString: chatData.hexColor) ?? .accent
+        if chatData.avatarPath != nil {
+            chatAvatar.setup(
+                withRef: viewModel.chatModel.avatarRef!,
+                text: placeholderText,
+                color: placeholderColor,
+                cornerRadius: 60
+            )
+        } else {
+            chatAvatar.setup(
+                withPlaceholder: placeholderText,
+                color: placeholderColor,
+                cornerRadius: 60
+            )
+        }
+        chatAvatar.delegate = self
     }
     
     private func setupNavigationBar() {
@@ -82,18 +116,22 @@ class ChatEditViewController: UIViewController, ChatEditViewControllerProtocol {
 
     // MARK: - Actions
     
-    @IBAction func didTitleChange(_ sender: Any) {
+    @IBAction func didContactNameChange(_ sender: Any) {
+        viewModel.contactModel.localName = contactNameField.text ?? ""
+    }
+    
+    @IBAction func didChatTitleChange(_ sender: Any?) {
         guard case .chat(_, _, let chatColorHex, _) = viewModel.chatModel.type else { return }
-        avatar.setup(
-            withPlaceholder: titleField.text?.first != nil ? String(titleField.text!.first!) : nil,
+        chatAvatar.setup(
+            withPlaceholder: chatTitleField.text?.first != nil ? String(chatTitleField.text!.first!) : nil,
             color: UIColor(hexString: chatColorHex) ?? .accent
         )
-        viewModel.chatModel.type.changeChat(newTitle: titleField.text)
+        viewModel.chatModel.type.changeChat(newTitle: chatTitleField.text)
     }
     
     @objc func didApplyTap() {
         presentActivityAlert()
-        viewModel.updateChat { [weak self] err in
+        viewModel.applyChanges { [weak self] err in
             guard let self = self else { return }
             self.dismissActivityAlert {
                 if let err = err {
@@ -116,6 +154,9 @@ extension ChatEditViewController: AvatarEditViewDelegate {
     func didChangeImage(_ image: UIImage?) {
         viewModel.chatAvatar = image
         viewModel.chatModel.type.changeChat(clearAvatarPath: image == nil)
+        if image == nil {
+            didChatTitleChange(nil)
+        }
     }
     
     func didChangeColor(_ color: UIColor) {

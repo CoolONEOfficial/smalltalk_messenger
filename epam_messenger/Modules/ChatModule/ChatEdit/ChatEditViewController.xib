@@ -7,10 +7,11 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ChatEditViewController" customModule="epam_messenger" customModuleProvider="target">
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ChatEditViewController" customModule="SmallTalk" customModuleProvider="target">
             <connections>
-                <outlet property="avatar" destination="Jgq-QF-3KD" id="ZJf-1e-U8h"/>
-                <outlet property="titleField" destination="yZt-D3-jYP" id="fNm-QJ-Jf0"/>
+                <outlet property="chatTitleField" destination="yZt-D3-jYP" id="fNm-QJ-Jf0"/>
+                <outlet property="contactNameField" destination="UV0-7L-JpU" id="4Z4-TW-ukw"/>
+                <outlet property="stack" destination="hN5-xC-LXs" id="NSz-xb-RFO"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -20,21 +21,22 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="hN5-xC-LXs">
-                    <rect key="frame" x="0.0" y="44" width="414" height="168"/>
+                    <rect key="frame" x="0.0" y="44" width="414" height="48"/>
                     <subviews>
-                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Jgq-QF-3KD" customClass="AvatarEditView" customModule="epam_messenger" customModuleProvider="target">
-                            <rect key="frame" x="24" y="24" width="120" height="120"/>
-                            <constraints>
-                                <constraint firstAttribute="height" constant="120" id="j7R-Th-zL9"/>
-                                <constraint firstAttribute="width" constant="120" id="zYX-YL-qSd"/>
-                            </constraints>
-                        </imageView>
-                        <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Title" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="yZt-D3-jYP">
-                            <rect key="frame" x="159" y="75" width="231" height="18.5"/>
+                        <textField hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Contact name" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="UV0-7L-JpU" userLabel="Contact Name">
+                            <rect key="frame" x="0.0" y="0.0" width="0.0" height="21"/>
                             <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="16"/>
                             <textInputTraits key="textInputTraits"/>
                             <connections>
-                                <action selector="didTitleChange:" destination="-1" eventType="editingChanged" id="bzA-Cm-osB"/>
+                                <action selector="didContactNameChange:" destination="-1" eventType="editingChanged" id="Qjp-oW-kMl"/>
+                            </connections>
+                        </textField>
+                        <textField hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Chat title" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="yZt-D3-jYP" userLabel="Chat Title">
+                            <rect key="frame" x="0.0" y="0.0" width="0.0" height="21"/>
+                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="16"/>
+                            <textInputTraits key="textInputTraits"/>
+                            <connections>
+                                <action selector="didChatTitleChange:" destination="-1" eventType="editingChanged" id="bzA-Cm-osB"/>
                             </connections>
                         </textField>
                     </subviews>

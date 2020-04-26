@@ -17,7 +17,7 @@ protocol ChatViewModelProtocol: ViewModelProtocol, AutoMockable, MessageCellDele
         completion: @escaping (Error?) -> Void
     )
     func forwardMessage(
-        _ chatModel: ChatModel,
+        _ chatId: String,
         _ messageModel: MessageProtocol,
         completion: @escaping (Error?) -> Void
     )
@@ -35,7 +35,7 @@ protocol ChatViewModelProtocol: ViewModelProtocol, AutoMockable, MessageCellDele
         selectDelegate: ChatSelectDelegate
     )
     func goToChat(
-        _ chatModel: ChatProtocol
+        _ chatId: String
     )
     func listenUserListData(
         completion: @escaping ([UserModel]?) -> Void
@@ -140,7 +140,32 @@ class ChatViewModel: ChatViewModelProtocol {
                   firestoreService, storageService)
         
         chatGroup.enter()
-        firestoreService.getChatData(userId: userId, completion: didChatLoad(_:))
+        firestoreService.getChatData(userId: userId) { [weak self] chat in
+            guard let self = self else { return }
+            if chat != nil {
+                self.didChatLoad(chat)
+            } else {
+                self.firestoreService.getUserData(userId) { user in
+                    self.viewController.defaultTitle = user?.fullName ?? "DELETED"
+                    self.didChatLoad(ChatModel.fromUserId(userId, friendName: user?.fullName))
+                }
+            }
+        }
+    }
+    
+    convenience init(
+        router: RouterProtocol,
+        viewController: ChatViewControllerProtocol,
+        chatId: String,
+        firestoreService: FirestoreServiceProtocol = FirestoreService(),
+        storageService: StorageServiceProtocol = StorageService()
+    ) {
+        self.init(router, viewController,
+                  ChatModel.empty(documentId: chatId),
+                  firestoreService, storageService)
+        
+        chatGroup.enter()
+        firestoreService.getChatData(chatId, completion: didChatLoad(_:))
     }
     
     private func didChatLoad(_ chat: ChatModel?) {
@@ -212,12 +237,12 @@ class ChatViewModel: ChatViewModelProtocol {
     }
     
     func forwardMessage(
-        _ chatModel: ChatModel,
+        _ chatId: String,
         _ messageModel: MessageProtocol,
         completion: @escaping (Error?) -> Void
     ) {
         self.firestoreService.sendMessage(
-            chatId: chatModel.documentId,
+            chatId: chatId,
             messageKind: messageModel.forwardedKind(),
             completion: completion
         )
@@ -247,17 +272,22 @@ class ChatViewModel: ChatViewModelProtocol {
     }
     
     func listenChatData(completion: @escaping (ChatModel?) -> Void) {
-        guard let chatId = chat.documentId else {
-            completion(.fromUserId(chat.friendId!))
-            return
-        }
-        
-        firestoreService.listenChatData(chatId) { [weak self] chatModel in
-            guard let self = self else { return }
-            if let chatModel = chatModel {
-                self.chat = chatModel
+        if let chatId = chat.documentId {
+            firestoreService.listenChatData(chatId) { [weak self] chatModel in
+                guard let self = self else { return }
+                if let chatModel = chatModel {
+                    self.chat = chatModel
+                }
+                completion(chatModel)
             }
-            completion(chatModel)
+        } else {
+            firestoreService.listenChatData(userId: chat.friendId!) { [weak self] chatModel in
+                guard let self = self else { return }
+                if let chatModel = chatModel {
+                    self.chat = chatModel
+                }
+                completion(chatModel)
+            }
         }
     }
     
@@ -279,10 +309,10 @@ class ChatViewModel: ChatViewModelProtocol {
         chat.documentId = firestoreService.createChat(chat as! ChatModel, completion: completion)
     }
     
-    func goToChat(_ chatModel: ChatProtocol) {
+    func goToChat(_ chatId: String) {
         guard let router = router as? ChatRouter else { return }
         
-        router.showChat(chatModel)
+        router.showChat(chatId: chatId)
     }
     
     func goToDetails() {
