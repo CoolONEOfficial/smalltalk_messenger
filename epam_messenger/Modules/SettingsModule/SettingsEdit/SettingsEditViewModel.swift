@@ -1,5 +1,5 @@
 //
-//  UserInfoEditViewModel.swift
+//  SettingsEditViewModel.swift
 //  epam_messenger
 //
 //  Created by Anna Krasilnikova on 23.04.2020.
@@ -10,30 +10,31 @@ import Firebase
 import CodableFirebase
 import SDWebImage
 
-protocol UserInfoEditViewModelProtocol: ViewModelProtocol {
-    
+protocol SettingsEditViewModelProtocol: ViewModelProtocol {
     var userAvatar: UIImage? { get set }
     var userModel: UserModel { get set }
-    var userColor: UIColor? { get set }
-    
+
     func goToInitialView()
     func updateUser(completion: @escaping (Error?) -> Void)
 }
 
-class UserInfoEditViewModel: UserInfoEditViewModelProtocol {
+class SettingsEditViewModel: SettingsEditViewModelProtocol {
+    
+    // MARK: - Vars
     
     var userAvatar: UIImage?
     var userModel: UserModel
-    var userColor: UIColor?
     
     let router: RouterProtocol
-    let viewController: UserInfoEditViewControllerProtocol
+    let viewController: SettingsEditViewControllerProtocol
     let firestoreService: FirestoreService
     let storageService: StorageServiceProtocol
     
+    // MARK: - Init
+    
     init(
         router: RouterProtocol,
-        viewController: UserInfoEditViewControllerProtocol,
+        viewController: SettingsEditViewControllerProtocol,
         firestoreService: FirestoreService = FirestoreService(),
         userModel: UserModel,
         storageService: StorageServiceProtocol = StorageService()
@@ -41,8 +42,8 @@ class UserInfoEditViewModel: UserInfoEditViewModelProtocol {
         self.router = router
         self.viewController = viewController
         self.firestoreService = firestoreService
-        self.userModel = userModel
         self.storageService = storageService
+        self.userModel = userModel
     }
     
     func goToInitialView() {
@@ -54,7 +55,6 @@ class UserInfoEditViewModel: UserInfoEditViewModelProtocol {
         let updateGroup = DispatchGroup()
         var err: Error?
         let avatarTimestamp = userAvatar != nil ? Date() : nil
-        userModel.color = userColor ?? .accent
         if let userAvatar = userAvatar {
             updateGroup.enter()
             storageService.uploadUserAvatar(

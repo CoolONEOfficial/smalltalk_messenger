@@ -70,7 +70,7 @@ extension UIColor {
         }
     }
     
-    // MARK: - UserSettings
+    // MARK: - SettingsStart
     
     static let userBackground = UIColor { (UITraitCollection: UITraitCollection) -> UIColor in
         if UITraitCollection.userInterfaceStyle == .dark {

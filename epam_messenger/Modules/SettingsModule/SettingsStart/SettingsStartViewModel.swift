@@ -1,5 +1,5 @@
 //
-//  UserSettingsViewModel.swift
+//  SettingsStartViewModel.swift
 //  epam_messenger
 //
 //  Created by Anna Krasilnikova on 03.04.2020.
@@ -8,31 +8,31 @@ import Foundation
 import Firebase
 import CodableFirebase
 
-protocol UserSettingsViewModelProtocol: ViewModelProtocol {
+protocol SettingsStartViewModelProtocol: ViewModelProtocol {
     
     var userModel: UserModel! { get set }
     
     func currentUserData(completion: @escaping (UserModel?) -> Void)
-    func showUserInfoEdit()
+    func showSettingsEdit()
     
 }
 
-class UserSettingsViewModel: UserSettingsViewModelProtocol {
+class SettingsStartViewModel: SettingsStartViewModelProtocol {
     
     var userModel: UserModel! {
         didSet {
             viewController.userDidUpdate()
         }
     }
-        
+    
     let router: RouterProtocol
-    let viewController: UserSettingsViewControllerProtocol
+    let viewController: SettingsStartViewControllerProtocol
     let firestoreService: FirestoreService   
     let algoliaService: AlgoliaService
     
     init(
         router: RouterProtocol,
-        viewController: UserSettingsViewControllerProtocol,
+        viewController: SettingsStartViewControllerProtocol,
         firestoreService: FirestoreService = FirestoreService(),
         algoliaService: AlgoliaService = AlgoliaService()
     ) {
@@ -43,7 +43,9 @@ class UserSettingsViewModel: UserSettingsViewModelProtocol {
     }
     
     func viewDidLoad() {
-        firestoreService.listenUserData(Auth.auth().currentUser!.uid){ userModel in
+        firestoreService.listenUserData(
+            Auth.auth().currentUser!.uid
+        ) { userModel in
             if let userModel = userModel {
                 self.userModel = userModel
             }
@@ -60,8 +62,8 @@ class UserSettingsViewModel: UserSettingsViewModelProtocol {
         router.initialViewController()
     }
     
-    func showUserInfoEdit() {
+    func showSettingsEdit() {
         guard let router = router as? SettingsRouter else { return }
-        router.showUserInfoEdit(userModel)
+        router.showSettingsEdit(userModel)
     }
 }

@@ -292,18 +292,6 @@ class FirestoreService: FirestoreServiceProtocol {
         )
     }
     
-    func updateUser(
-        _ userModel: UserModel,
-        completion: @escaping (Error?) -> Void
-    ) {
-        db.collection("users")
-            .document(userModel.documentId!)
-            .updateData(
-                try! FirestoreEncoder().encode(userModel),
-                completion: completion
-        )
-    }
-    
     private func clearSavedMessages(
         chatId: String,
         completion: @escaping (Error?) -> Void = {_ in}
@@ -492,6 +480,18 @@ class FirestoreService: FirestoreServiceProtocol {
             completion(error)
         }
         return newDoc.documentID
+    }
+    
+    func updateUser(
+        _ userModel: UserModel,
+        completion: @escaping (Error?) -> Void
+    ) {
+        db.collection("users")
+            .document(userModel.documentId!)
+            .setData(
+                try! FirestoreEncoder().encode(userModel),
+                completion: completion
+        )
     }
     
     func listenUserData(

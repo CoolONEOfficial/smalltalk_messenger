@@ -34,7 +34,7 @@ class AvatarView: UIImageView {
             : 0
         layer.masksToBounds = true
         placeholderLabel.removeFromSuperview()
-        set(image: nil, focusOnFaces: true)
+        image = nil
         backgroundColor = nil
     }
     
@@ -60,7 +60,8 @@ class AvatarView: UIImageView {
     func setup(
         withUser user: UserProtocol,
         savedMessagesSupport: Bool = false,
-        roundCorners: Bool = true
+        roundCorners: Bool = true,
+        cornerRadius: CGFloat? = nil
     ) {
         if let userId = user.documentId, !user.deleted {
             if savedMessagesSupport && userId == Auth.auth().currentUser!.uid {
@@ -70,24 +71,31 @@ class AvatarView: UIImageView {
                    withRef: avatarRef,
                    text: user.placeholderName,
                    color: user.color,
-                   roundCorners: roundCorners
+                   roundCorners: roundCorners,
+                   cornerRadius: cornerRadius
                )
             } else {
                 setup(
                     withPlaceholder: user.placeholderName,
                     color: user.color,
-                    roundCorners: roundCorners
+                    roundCorners: roundCorners,
+                    cornerRadius: cornerRadius
                 )
             }
         } else {
-            setup(withImage: #imageLiteral(resourceName: "ic_unknown_user"))
+            setup(
+                withImage: #imageLiteral(resourceName: "ic_unknown_user"),
+                roundCorners: roundCorners,
+                cornerRadius: cornerRadius
+            )
         }
     }
     
     func setup(
         withChat chat: (title: String, adminId: String, hexColor: String?, avatarPath: String?),
         avatarRef: StorageReference?,
-        roundCorners: Bool = true
+        roundCorners: Bool = true,
+        cornerRadius: CGFloat? = nil
     ) {
         let placeholderText = String(chat.title.first!)
         let placeholderColor = UIColor(hexString: chat.hexColor) ?? .accent
@@ -97,13 +105,15 @@ class AvatarView: UIImageView {
                 withRef: avatarRef,
                 text: placeholderText,
                 color: placeholderColor,
-                roundCorners: roundCorners
+                roundCorners: roundCorners,
+                cornerRadius: cornerRadius
             )
         } else {
             setup(
                 withPlaceholder: placeholderText,
                 color: placeholderColor,
-                roundCorners: roundCorners
+                roundCorners: roundCorners,
+                cornerRadius: cornerRadius
             )
         }
     }
@@ -160,8 +170,12 @@ class AvatarView: UIImageView {
         setupPlaceholder(text, color)
     }
     
-    func setup(withImage image: UIImage? = nil) {
-        baseSetup()
+    func setup(
+        withImage image: UIImage? = nil,
+        roundCorners: Bool = true,
+        cornerRadius: CGFloat? = nil
+    ) {
+        baseSetup(roundCorners: roundCorners, cornerRadius: cornerRadius)
         
         loading.removeFromSuperview()
         self.image = image

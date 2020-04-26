@@ -10,7 +10,7 @@ import UIKit
 protocol AssemblyBuilderProtocol {
     func createBottomBarModule(router: RouterProtocol) -> UIViewController
     func createContactsListModule(router: RouterProtocol, selectDelegate: ContactsSelectDelegate?) -> UIViewController
-    func createUserSettingsModule(router: RouterProtocol, userSettingsDelegate: UserSettingsDelegateProtocol?) -> UIViewController
+    func createSettingsStartModule(router: RouterProtocol) -> UIViewController
 }
 
 class AssemblyBuilder: AssemblyBuilderProtocol {
@@ -20,7 +20,7 @@ class AssemblyBuilder: AssemblyBuilderProtocol {
         let view = BottomBarViewController()
         view.chatList = createChatListModule(router: router)
         view.contacts = createContactsListModule(router: router)
-        view.settings = createUserSettingsModule(router: router)
+        view.settings = createSettingsStartModule(router: router)
         view.viewControllers = view.controllers
         view.selectedIndex = 1
         return view
@@ -40,10 +40,9 @@ class AssemblyBuilder: AssemblyBuilderProtocol {
         return view
     }
     
-    func createUserSettingsModule(router: RouterProtocol, userSettingsDelegate: UserSettingsDelegateProtocol? = nil) -> UIViewController {
-        let view = UserSettingsViewController()
-        view.userSettingsDelegate = userSettingsDelegate
-        let viewModel = UserSettingsViewModel(router: router, viewController: view)
+    func createSettingsStartModule(router: RouterProtocol) -> UIViewController {
+        let view = SettingsStartViewController()
+        let viewModel = SettingsStartViewModel(router: router, viewController: view)
         view.viewModel = viewModel
         return view
     }

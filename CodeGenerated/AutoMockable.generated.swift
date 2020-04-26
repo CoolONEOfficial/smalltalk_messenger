@@ -259,6 +259,23 @@ class ChatViewModelProtocolMock: ChatViewModelProtocol {
         listenUserListDataCompletionClosure?(completion)
     }
 
+    //MARK: - listenUserData
+
+    var listenUserDataCompletionCallsCount = 0
+    var listenUserDataCompletionCalled: Bool {
+        return listenUserDataCompletionCallsCount > 0
+    }
+    var listenUserDataCompletionReceivedCompletion: ((UserModel?) -> Void)?
+    var listenUserDataCompletionReceivedInvocations: [((UserModel?) -> Void)] = []
+    var listenUserDataCompletionClosure: ((@escaping (UserModel?) -> Void) -> Void)?
+
+    func listenUserData(        completion: @escaping (UserModel?) -> Void    ) {
+        listenUserDataCompletionCallsCount += 1
+        listenUserDataCompletionReceivedCompletion = completion
+        listenUserDataCompletionReceivedInvocations.append(completion)
+        listenUserDataCompletionClosure?(completion)
+    }
+
     //MARK: - listenChatData
 
     var listenChatDataCompletionCallsCount = 0
