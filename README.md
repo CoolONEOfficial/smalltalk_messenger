@@ -2,7 +2,7 @@
 
 # SmallTalk messenger
 
-[![Build Status](https://travis-ci.com/CoolONEOfficial/epam_messenger.svg?token=wfz5f29VzkAUQiKYXcZQ&branch=master)](https://travis-ci.com/CoolONEOfficial/epam_messenger)[![swift-version](https://img.shields.io/badge/swift-5.1-brightgreen.svg)](https://github.com/apple/swift)[![license](https://img.shields.io/badge/license-mit-brightgreen.svg)](https://en.wikipedia.org/wiki/MIT_License)
+[![Build Status](https://travis-ci.com/CoolONEOfficial/epam_messenger.svg?token=wfz5f29VzkAUQiKYXcZQ&branch=master)](https://travis-ci.com/CoolONEOfficial/epam_messenger) [![swift-version](https://img.shields.io/badge/swift-5.1-brightgreen.svg)](https://github.com/apple/swift) [![license](https://img.shields.io/badge/license-mit-brightgreen.svg)](https://en.wikipedia.org/wiki/MIT_License)
 
 Fast and small iOS messenger written on Swift using Firebase
 
