@@ -44,7 +44,7 @@ extension ChatType {
         if container.allKeys.contains(.personalCorr), try container.decodeNil(forKey: .personalCorr) == false {
             let associatedValues = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: .personalCorr)
             let between = try associatedValues.decode([String].self, forKey: .between)
-            let betweenNames = try associatedValues.decode([String].self, forKey: .betweenNames)
+            let betweenNames = try associatedValues.decode([String?].self, forKey: .betweenNames)
             self = .personalCorr(between: between, betweenNames: betweenNames)
             return
         }

@@ -55,11 +55,10 @@ public struct ChatModel: AutoCodable, AutoEquatable {
                         userId
                     ],
                     betweenNames: [
-                        "",
-                        friendName ?? "..."
+                        nil,
+                        friendName
                     ]
-                    )
-                : .savedMessages
+                ) : .savedMessages
         )
     }
     
@@ -144,7 +143,7 @@ extension ChatModel: ChatProtocol {
                 firestoreService.listenUserData(friendId) { user in
                     let maybeDeletedUser = user ?? .deleted(friendId)
                     completion(
-                        self.friendName ?? user?.fullName ?? "...",
+                        self.friendName ?? maybeDeletedUser.fullName,
                         self.documentId != nil && maybeDeletedUser.typing == self.documentId
                             ? "\(maybeDeletedUser.name) typing..."
                             : maybeDeletedUser.onlineText,

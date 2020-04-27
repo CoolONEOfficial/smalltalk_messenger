@@ -217,8 +217,10 @@ class ChatViewController: UIViewController {
             ))
             avatar.hero.id = "avatar"
             
-            navigationItem.setRightBarButton(UIBarButtonItem(customView: avatar), animated: true)
-            
+            if !(tableView?.isEditing ?? false) {
+                navigationItem.setRightBarButton(UIBarButtonItem(customView: avatar), animated: true)
+            }
+                
             switch viewModel.chat.type {
             case .personalCorr:
                 viewModel.listenUserData { [weak self] user in
@@ -345,7 +347,7 @@ class ChatViewController: UIViewController {
     }
     
     internal func didStartSendMessage() {
-        (inputBar.rightStackView.subviews.first as! InputBarSendButton).startAnimating()
+        (inputBar.rightStackView.subviews.first as? InputBarSendButton)?.startAnimating()
         inputBar.inputTextView.text = String()
         inputBar.inputTextView.placeholder = "Sending..."
     }

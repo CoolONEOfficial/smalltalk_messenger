@@ -30,7 +30,7 @@ protocol ChatProtocol {
 public enum ChatType: AutoCodable, AutoEquatable {
     case personalCorr(
         between: [String],
-        betweenNames: [String]
+        betweenNames: [String?]
     )
     case savedMessages
     case chat(
