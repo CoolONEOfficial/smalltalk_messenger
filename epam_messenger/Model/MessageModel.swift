@@ -67,7 +67,7 @@ public struct MessageModel: AutoCodable, AutoEquatable {
     }
     
     static func decodeTimestamp(from container: KeyedDecodingContainer<CodingKeys>) -> Timestamp {
-        Timestamp.decodeTimestamp(from: container, forKey: CodingKeys.timestamp)
+        Timestamp.decodeTimestamp(from: container, forKey: CodingKeys.timestamp)!
     }
     
     static func checkMerge(

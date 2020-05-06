@@ -129,6 +129,13 @@ extension ChatModel: ChatProtocol {
         return nil
     }
     
+    private func subtitle(_ user: inout UserModel) -> String {
+        self.documentId != nil
+        && user.typing == self.documentId
+            ? "\(user.name) typing..."
+            : user.onlineText
+    }
+    
     func listenInfo(completion: @escaping (
         _ title: String, _ subtitle: String,
         _ placeholderText: String?, _ placeholderColor: UIColor?
@@ -141,15 +148,25 @@ extension ChatModel: ChatProtocol {
         case .personalCorr:
             if let friendId = friendId {
                 firestoreService.listenUserData(friendId) { user in
-                    let maybeDeletedUser = user ?? .deleted(friendId)
+                    var maybeDeletedUser = user ?? .deleted(friendId)
+                    let title = self.friendName ?? maybeDeletedUser.fullName
+                    
                     completion(
-                        self.friendName ?? maybeDeletedUser.fullName,
-                        self.documentId != nil && maybeDeletedUser.typing == self.documentId
-                            ? "\(maybeDeletedUser.name) typing..."
-                            : maybeDeletedUser.onlineText,
+                        title,
+                        self.subtitle(&maybeDeletedUser),
                         user?.placeholderName,
                         user?.color
                     )
+                    if maybeDeletedUser.onlineTimestamp != nil {
+                        Timer.scheduledTimer(withTimeInterval: 3, repeats: true) { _ in
+                            completion(
+                                title,
+                                self.subtitle(&maybeDeletedUser),
+                                user?.placeholderName,
+                                user?.color
+                            )
+                        }
+                    }
                 }
             }
         case .chat(let title, _, let color, _):

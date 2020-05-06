@@ -18,8 +18,13 @@ public struct UserModel: AutoCodable, AutoEquatable {
     var hexColor: String?
     var avatarPath: String?
     let online: Bool
+    let onlineTimestamp: FireTimestamp?
     let typing: String?
     let deleted: Bool
+    
+    static func decodeOnlineTimestamp(from container: KeyedDecodingContainer<CodingKeys>) -> FireTimestamp? {
+        FireTimestamp.decodeTimestamp(from: container, forKey: CodingKeys.onlineTimestamp)
+    }
     
     static let defaultDeleted: Bool = false
     static let defaultOnline: Bool = false
@@ -27,18 +32,19 @@ public struct UserModel: AutoCodable, AutoEquatable {
     static func empty() -> UserModel {
         .init(documentId: nil, name: "", surname: "",
               phoneNumber: Auth.auth().currentUser!.phoneNumber!,
-              avatarPath: nil, online: true, typing: nil, deleted: false)
+              avatarPath: nil, online: true, onlineTimestamp: .init(), typing: nil, deleted: false)
     }
     
     static func deleted(_ documentId: String? = nil) -> UserModel {
         .init(documentId: documentId, name: "DELETED", surname: "", phoneNumber: "",
-              hexColor: "#7d7d7d", avatarPath: nil, online: false, typing: nil, deleted: true)
+              hexColor: "#7d7d7d", avatarPath: nil, online: false,
+              onlineTimestamp: .init(), typing: nil, deleted: true)
     }
     
     static func saved() -> UserModel {
         .init(documentId: Auth.auth().currentUser!.uid, name: "Saved messages",
               surname: "", phoneNumber: Auth.auth().currentUser!.phoneNumber!,
-              hexColor: nil, avatarPath: nil, online: true, typing: nil, deleted: false)
+              hexColor: nil, avatarPath: nil, online: true, onlineTimestamp: .init(), typing: nil, deleted: false)
     }
     
     static func fromSnapshot(_ snapshot: DocumentSnapshot) -> UserModel? {
@@ -56,8 +62,16 @@ public struct UserModel: AutoCodable, AutoEquatable {
             return nil
         }
     }
-
+    
 }
+
+// MARK: Formatter for online text
+
+var onlineTextFormatter: RelativeDateTimeFormatter = {
+    let formatter = RelativeDateTimeFormatter()
+    formatter.dateTimeStyle = .named
+    return formatter
+}()
 
 extension UserModel: UserProtocol {
     
@@ -79,9 +93,9 @@ extension UserModel: UserProtocol {
     }
     
     var onlineText: String {
-        return online
+        online
             ? "Online"
-            : "Offline"
+            : "last seen \(onlineTimestamp != nil ? onlineTextFormatter.string(for: onlineTimestamp!.dateValue())! : "recently")"
     }
     
     var avatarRef: StorageReference? {

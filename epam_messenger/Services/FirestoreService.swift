@@ -593,11 +593,10 @@ class FirestoreService: FirestoreServiceProtocol {
     private func updateOnlineStatus(_ online: Bool) {
         currentUserQuery
             .updateData([
-                "online": online
+                "online": online,
+                "onlineTimestamp": FireTimestamp.init()
             ])
     }
-    
-    
     
     func startTypingCurrentUser(_ chatId: String) {
         updateTypingStatus(chatId)

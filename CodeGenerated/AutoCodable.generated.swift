@@ -188,6 +188,7 @@ extension UserModel {
         case hexColor
         case avatarPath
         case online
+        case onlineTimestamp
         case typing
         case deleted
     }
@@ -202,6 +203,7 @@ extension UserModel {
         hexColor = try container.decodeIfPresent(String.self, forKey: .hexColor)
         avatarPath = try container.decodeIfPresent(String.self, forKey: .avatarPath)
         online = (try? container.decode(Bool.self, forKey: .online)) ?? UserModel.defaultOnline
+        onlineTimestamp = UserModel.decodeOnlineTimestamp(from: container)
         typing = try container.decodeIfPresent(String.self, forKey: .typing)
         deleted = (try? container.decode(Bool.self, forKey: .deleted)) ?? UserModel.defaultDeleted
     }

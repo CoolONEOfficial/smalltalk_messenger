@@ -14,8 +14,8 @@ extension GeoPoint: GeoPointType {}
 extension FieldValue: FieldValueType {}
 extension Timestamp: TimestampType {}
 
-extension Timestamp {
-    static func decodeTimestamp<T: CodingKey>(from container: KeyedDecodingContainer<T>, forKey key: T) -> Timestamp {
+extension FireTimestamp {
+    static func decodeTimestamp<T: CodingKey>(from container: KeyedDecodingContainer<T>, forKey key: T) -> FireTimestamp? {
         if let dict = try? container.decode([String: Int64].self, forKey: key) {
             return Timestamp.init(
                 seconds: dict["_seconds"]!,
@@ -23,6 +23,6 @@ extension Timestamp {
             )
         }
         
-        return try! container.decode(Timestamp.self, forKey: key)
+        return try? container.decode(Timestamp.self, forKey: key)
     }
 }

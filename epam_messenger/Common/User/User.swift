@@ -21,6 +21,7 @@ protocol UserProtocol {
     var phoneNumber: String { get }
     var avatarPath: String? { get set }
     var online: Bool { get }
+    var onlineTimestamp: FireTimestamp? { get }
     var typing: String? { get }
     var deleted: Bool { get }
 }

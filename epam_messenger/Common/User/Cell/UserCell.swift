@@ -22,11 +22,27 @@ class UserCell: UITableViewCell, NibReusable {
     var user: UserProtocol? {
         didSet {
             self.titleLabel.text = user?.fullName
-            self.subtitleLabel.text = user?.onlineText
+            if user?.onlineTimestamp != nil {
+                refreshSubtitle()
+                Timer.scheduledTimer(
+                    timeInterval: 30.0, target: self, selector: #selector(refreshSubtitle),
+                    userInfo: nil, repeats: true
+                )
+            } else {
+                refreshSubtitle()
+            }
             self.subtitleLabel.textColor = user?.online ?? false
                 ? .plainText
                 : .secondaryLabel
         }
+    }
+    
+    deinit {
+        Timer.cancelPreviousPerformRequests(withTarget: refreshSubtitle)
+    }
+    
+    @objc private func refreshSubtitle() {
+        self.subtitleLabel.text = user?.onlineText
     }
     
     // MARK: - Init
