@@ -1,6 +1,0 @@
-framework module Pods_epam_messenger {
-  umbrella header "Pods-epam_messenger-umbrella.h"
-
-  export *
-  module * { export * }
-}

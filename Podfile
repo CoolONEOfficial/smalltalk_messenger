@@ -1,7 +1,7 @@
 # Uncomment the next line to define a global platform for your project
 platform :ios, '10.0'
 
-target 'epam_messenger' do
+target 'SmallTalk' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
 
@@ -30,7 +30,7 @@ target 'epam_messenger' do
   pod 'ChromaColorPicker'
   pod 'PhoneNumberKit', '~> 3.1'
 
-  target 'epam_messengerTests' do
+  target 'SmallTalkTests' do
       inherit! :search_paths
       pod 'Firebase'
   end
