@@ -1,4 +1,4 @@
-<img src="epam_messenger/Assets.xcassets/AppIcon.appiconset/Icon-60%403x.png" width=120>
+<img src="SmallTalk/Assets.xcassets/AppIcon.appiconset/Icon-60%403x.png" width=120>
 
 # SmallTalk messenger
 
