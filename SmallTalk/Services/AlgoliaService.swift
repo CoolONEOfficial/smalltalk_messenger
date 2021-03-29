@@ -24,17 +24,17 @@ class AlgoliaService: AlgoliaServiceProtocol {
     // MARK: - Vars
     
     lazy var searchClient: SearchClient = {
-//        #if DEBUG
-//        return .init(
-//            appID: "0T6YXW26KA",
-//            apiKey: "b1c53722d5d6ed72d666ecfd14cb00a6"
-//        )
-//        #else
+        #if DEBUG
+        return .init(
+            appID: "0T6YXW26KA",
+            apiKey: "b1c53722d5d6ed72d666ecfd14cb00a6"
+        )
+        #else
         return .init(
             appID: "V6J5G69XKH",
             apiKey: "c4ef45194a085992c251be8be124e796"
         )
-        //#endif
+        #endif
     }()
     
     lazy var chatsIndex: Index! = {
