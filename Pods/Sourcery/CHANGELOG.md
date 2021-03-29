@@ -1,13 +1,171 @@
 # Sourcery CHANGELOG
 
 ---
+## 1.3.4
+## Fixes
+- `isClosure` / `isArray` / `isTuple` / `isDictionary` should now consistently report correct values, this code broke in few cases in 1.3.2
+- Trivia (comments etc) will be ignored when parsing attribute description
+
+## 1.3.3
+## Fixes
+- Fixes information being lost when extending unknown type more than once
+- Multiple configuration files can be now passed through command line arguments
+
+## Templates
+- AutoEquatable will use type.accessLevel for it's function, closes #675
+## Internal changes
+- If you are using `.swifttemplate` in your configuration you might notice performance degradation, this is due to new composer added in `1.3.2` that can create memory graph cycles between AST with which our current persistence doesn't deal properly, to workaround this we need to perform additional work for storing copy of parsed AST and compose it later on when running SwiftTemplates. This will be fixed in future release when AST changes are brought in, if you notice too much of a performance drop you can just switch to `1.3.1`.  
+
+## 1.3.2
+## New Features
+- Configuration file now supports multiple configurations at once
+
+## Fixes
+- When resolving extensions inherit their access level for methods/subscripts/variables and sub-types fixes #910
+- When resolving Parent.ChildGenericType<Type> properly parses generic information
+
+## Internal changes
+- Faster composing phase
+
+## 1.3.1
+## Internal changes
+- SwiftSyntax dylib is now bundled with the binary
+
+## 1.3.0
+## Internal changes
+- Sourcery is now using SwiftSyntax not SourceKit
+- Performance is significantly improved
+- Memory usage for common case (cached) is drastically lowered
+- If you want to use Sourcery as framework you'll need to use SPM integration since SwiftSyntax doesn't have Podspec
+
+## Configuration changes
+- added `logAST` that will cause AST warnings and errors to be logged, default `false`
+- added `logBenchmarks` that will cause benchmark informations to be logged, default `false`
+
+## AST Data Changes
+- initializers are now considered as static method not instance
+- typealiases and protocol compositions now provide proper `accessLevel`
+- if a tuple arguments are unnamed their `name` will be automatically set to index
+- default `accessLevel` when not provided in code is internal everywhere
+- Added `modifiers` to everything that had `attributes` and split them across, in sync with Swift naming
+- block annotations will be applied to associated values that are inside them
+- extensions of unknown types will not have the definition module name added in their `globalName` property. (You can still access it via `module`)
+- if you had some weird formatting around syntax declarations (newlines in-between etc) the AST data should be cleaned up rather than trying to reproduce that style
+- Imports are now proper types, with additional information
+- Protocol now has `genericRequirements`, it will also inherit `associatedType` from it's parent if it's not present
+- Single value tuples will be automatically unwrapped when parsing
+
+### Attributes
+- Attributes are now of stored in dictionary of arrays `[String: [Attribute]]` since you can have multiple attributes of the same name e.g. `@available`
+- Name when not named will be using index same as associated value do e.g. objc(name) will have `0: name` as argument 
+- spaces will no longer be replaced with `_`
+
+## 1.2.1
+
+## Internal Changes
+Tweaks some warnings into info logs to not generate Xcode warnings
+
+## 1.2.0
+
+### New Features
+- `Self` reference is resolved to correct type. [Enchancement Request](https://github.com/krzysztofzablocki/Sourcery/issues/900)
+- Sourcery will now attempt to resolve local type names across modules when it can be done without ambiguity. Previously we only supported fully qualified names. [Enchancement Request](https://github.com/krzysztofzablocki/Sourcery/issues/899)
+
+## Internal Changes
+- Sourcery is now always distributed via SPM, this creates much nicer diffs when using CocoaPods distribution.
+
+## 1.1.1
+
+- Updates StencilSwiftKit to 2.8.0
+
+## 1.1.0
+
+### New Features
+- [PR](https://github.com/krzysztofzablocki/Sourcery/pull/897) Methods, Variables and Subscripts are now uniqued in all accessors:
+  - `methods` and `allMethods` 
+  - `variables` and `allVariables`
+  - `subscripts` and `allSubscripts`
+  - New accessor is introduced that doesn't get rid of duplicates `rawMethods`, `rawVariables`, `rawSubscripts`s. 
+  - The deduping process works by priority order (highest to lowest):
+    - base declaration
+    - inheritance
+    - protocol conformance
+    - extensions
+
+## 1.0.3
+
+### Internal Changes
+- updated xcodeproj, Stencil and StencilSwiftKit to newest versions
+
+### Bug fixes
+- [Fixes type resolution when using xcode project integration](https://github.com/krzysztofzablocki/Sourcery/issues/887)
+- Matches the behaviour of `allMethods` to `allVariables` by only listing the same method once, even if defined in both base protocol and extended class. You could still walk the inheritance tree if you need to (to get all original methods), but for purpose of majority of codegen this is unneccessary.
+
+## 1.0.2
+
+### Bug fixes
+- Fixes an issue when a very complicated variable initialization that contained `.init` call to unrelated case would cause the parser to assume the whole codeblock was a type and that could lead to mistakes in processing and even stack overflows
+
+## 1.0.1
+
+### Internal Changes
+
+- Updated project and CI to Xcode 12.1
+- Updated SourceKitten, Commander.
+
+### Bug fixes
+
+- Fix multiline method declarations parsing
+- Fix an issue, where "types.implementing.<protocolName>" did not work due to an additional module name.
+- Using tuple for associated values in enum case is deprecated since Swift 5.2. Fix AutoEquatable and AutoHashable templates to avoid the warning (#842)
+
+## 1.0.0
+
+### New Features
+
+- Added support for associated types (#539)
+
+### Bug fixes
+
+- Disallow protocol compositions from being considered as the `rawType` of an `enum` (#830)
+- Add missing documentation for the `ProtocolComposition` type.
+- Fix incorrectly taking closure optional return value as sign that whole variable is optional (#823) 
+- Fix incorrectly taking return values with closure as generic type as sign that whole variable is a closure (#845)
+- Fix empty error at build time when using SwiftTemplate on Xcode 11.4 and higher (#817)
+
+## 0.18.0
+
+### New Features
+
+- Added `optional` filter for variables
+- Added `json` filter to output raw JSON objects
+- Added `.defaultValue` to `AssociatedValue`
+- Added support for parsing [Protocol Compositions](https://docs.swift.org/swift-book/ReferenceManual/Types.html#ID454)
+- Added support for parsing free functions
+- Added support for indirect enum cases
+- Added support for accessing all typealiases via `typealiases` and `typesaliasesByName`
+- Added support for parsing global typealiases
+
+### Internal Changes
+
+- Improved error logging when running with `--watch` option
+- Updated CI to Xcode 11.4.1
+
+### Bug fixes
+
+- Fixed expansion of undefined environment variables (now consistent with command line behaviour, where such args are empty strings)
+- Fixed a bug in inferring extensions of Dictionary and Array types
+- Fixed a bug that was including default values as part of AssociatedValues type names
+- Fixed an issue with AutoMockable.stencil template when mocked function's return type was closure
+- Fixed missing SourceryRuntime dependency of SourceryFramework (SPM)
+
 ## 0.17.0
 
 ### Internal Changes
 
 - Parallelized combining phase that yields 5-10x speed improvement for New York Times codebase
 - Switched cache logic to rely on file modification date instead of content Sha256
-- Additional benchmark logs showing how long does each phase take 
+- Additional benchmark logs showing how long does each phase take
 - update dependencies to fix cocoapods setup when using Swift 5.0 everywhere. Update Quick to 2.1.0, SourceKitten to 0.23.1 and Yams to 2.0.0
 
 ## 0.16.2
@@ -43,7 +201,7 @@
 - Updated Stencil to 0.13.1 and SwiftStencilKit to 2.7.0
 - In Swift templates CLI arguments should now be accessed via `argument` instead of `arguments`, to be consistent with Stencil and JS templates.
 - Now in swift templates you can define types, extensions and use other Swift features that require file scope, without using separate files. All templates code is now placed at the top level of the template executable code, instead of being placed inside an extension of `TemplateContext` type.
-- Fixed missing generated code annotated with `inline` annotation when corresponding annotation in sources are missing. This generated code will be now present in `*.generated.swift` file.  
+- Fixed missing generated code annotated with `inline` annotation when corresponding annotation in sources are missing. This generated code will be now present in `*.generated.swift` file.
 - Updated AutoHashable template to use Swift 4.2's `hash(into:)` method from `Hashable`, and enable support for inheritance.
 - Record all method invocations in the `AutoMockable` template.
 - Replace `swiftc` with the Swift Package Manager to build Swift templates
@@ -64,14 +222,14 @@
 - You can now use AutoEquatable with annotations
 - Content from multiple file annotations will now be concatenated instead of writing only the latest generated content.
 
-For example content generated by two following templates 
+For example content generated by two following templates
 
 ```
 // sourcery:file:Generated/Foo.swift
 line one
 // sourcery:end
 ```
-and 
+and
 
 ```
 // sourcery:file:Generated/Foo.swift
@@ -94,7 +252,7 @@ line two
 
 ### Bug fixes
 
-- Fixed parsing associated enum cases in Xcode 10 
+- Fixed parsing associated enum cases in Xcode 10
 - Fixed AutoEquatable access level for `==` func
 - Fixed path of generated files when linked to Xcode project
 - Fixed extraction of inline annotations in multi line comments with documentation style
@@ -168,7 +326,7 @@ line two
 ** Breaking **
 
 - @objc attribute now has a `name` argument that contains Objective-C name of attributed declaration
-- Type collections `types.based`, `types.implementing` and `types.inheriting` now return non-optional array. If no types found, empty array will be returned. 
+- Type collections `types.based`, `types.implementing` and `types.inheriting` now return non-optional array. If no types found, empty array will be returned.
 This is a breaking change for template code like this:
 
  ```swift
@@ -189,16 +347,16 @@ This is a breaking change for template code like this:
 - Improved compile time of AutoHashable template
 - Updated StencilSwiftKit and Stencil to 0.10.1
 
-### Bug fixes 
+### Bug fixes
 
 - Fixes FSEvents errors reported in #465 that happen on Sierra
-- JS exceptions no more override syntax errors in JS templates 
+- JS exceptions no more override syntax errors in JS templates
 - Accessing unknown property on `types` now results in a better error than `undefined is not an object` in JS templates
 - Fixed issue in AutoMockable, where generated non-optional variables wouldn't meet protocol's requirements. For this purpose, underlying variable was introduced
 - Fixed `inline:auto` not inserting code if Sourcery is run with cache enabled #467
-- Fixed parsing @objc attributes on types  
+- Fixed parsing @objc attributes on types
 - Fixed parsing void return type in methods without spaces between method name and body open curly brace and in protocols
-- Fixed AutoMockable template generating throwing method with void return type 
+- Fixed AutoMockable template generating throwing method with void return type
 - Fixed parsing throwing initializers
 - Fixed trying to process files which do not exist
 - Automockable will not generate mocks for methods defined in protocol extensions
@@ -213,7 +371,7 @@ This is a breaking change for template code like this:
 
 ## 0.10.1
 
-* When installing Sourcery via CocoaPods, the unneeded `file.zip` is not kept in `Pods/Sourcery/` anymore _(freeing ~12MB on each install of Sourcery made via CocoaPods!)_.  
+* When installing Sourcery via CocoaPods, the unneeded `file.zip` is not kept in `Pods/Sourcery/` anymore _(freeing ~12MB on each install of Sourcery made via CocoaPods!)_.
 
 ## 0.10.0
 

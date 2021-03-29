@@ -13,7 +13,7 @@
     <a title="Types  Reference"></a>
     <header>
       <div class="content-wrapper">
-        <p><a href="index.html">Sourcery Docs</a> (100% documented)</p>
+        <p><a href="index.html">Sourcery Docs</a> (90% documented)</p>
         <p class="header-right"><a href="https://github.com/krzysztofzablocki/Sourcery"><img src="img/gh.png"/>View on GitHub</a></p>
       </div>
     </header>
@@ -138,6 +138,48 @@
               </li>
               <li class="nav-group-task">
                 <a href="Classes/Attribute.html">Attribute</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/ProtocolComposition.html">ProtocolComposition</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="Other Classes.html">Other Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="Classes/AssociatedType.html">AssociatedType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/GenericRequirement.html">GenericRequirement</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/Import.html">Import</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/Modifier.html">Modifier</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="Other Enums.html">Other Enums</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="Enums/Composer.html">Composer</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="Other Extensions.html">Other Extensions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="Extensions/Array.html">Array</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Extensions/String.html">String</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Extensions/StringProtocol.html">StringProtocol</a>
               </li>
             </ul>
           </li>
@@ -495,7 +537,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">@objcMembers</span> <span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="kt">MethodParameter</span><span class="p">:</span> <span class="kt">NSObject</span><span class="p">,</span> <span class="kt">SourceryModel</span><span class="p">,</span> <span class="kt"><a href="Protocols/Typed.html">Typed</a></span><span class="p">,</span> <span class="kt"><a href="Protocols/Annotated.html">Annotated</a></span></code></pre>
+                          <pre class="highlight"><code><span class="kd">@objcMembers</span> <span class="kd">public</span> <span class="kd">class</span> <span class="kt">MethodParameter</span><span class="p">:</span> <span class="kt">NSObject</span><span class="p">,</span> <span class="kt">SourceryModel</span><span class="p">,</span> <span class="kt"><a href="Protocols/Typed.html">Typed</a></span><span class="p">,</span> <span class="kt"><a href="Protocols/Annotated.html">Annotated</a></span></code></pre>
 
                         </div>
                       </div>
@@ -559,13 +601,17 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">@objcMembers</span> <span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="kt">TypeName</span><span class="p">:</span> <span class="kt">NSObject</span><span class="p">,</span> <span class="kt">AutoCoding</span><span class="p">,</span> <span class="kt">AutoEquatable</span><span class="p">,</span> <span class="kt">AutoDiffable</span><span class="p">,</span> <span class="kt">AutoJSExport</span><span class="p">,</span> <span class="kt">LosslessStringConvertible</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">@objcMembers</span> <span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="kt">TypeName</span><span class="p">:</span> <span class="kt">NSObject</span><span class="p">,</span> <span class="kt">SourceryModelWithoutDescription</span><span class="p">,</span> <span class="kt">LosslessStringConvertible</span></code></pre>
 
                         </div>
                       </div>
                     </section>
                   </div>
                 </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul>
                 <li class="item">
                   <div>
                     <code>
@@ -622,6 +668,10 @@
                     </section>
                   </div>
                 </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul>
                 <li class="item">
                   <div>
                     <code>
@@ -650,6 +700,10 @@
                     </section>
                   </div>
                 </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul>
                 <li class="item">
                   <div>
                     <code>
@@ -678,6 +732,10 @@
                     </section>
                   </div>
                 </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul>
                 <li class="item">
                   <div>
                     <code>
@@ -706,6 +764,10 @@
                     </section>
                   </div>
                 </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul>
                 <li class="item">
                   <div>
                     <code>
@@ -727,7 +789,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight"><code><span class="kd">@objcMembers</span> <span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="kt">GenericType</span><span class="p">:</span> <span class="kt">NSObject</span><span class="p">,</span> <span class="kt">SourceryModel</span></code></pre>
+                          <pre class="highlight"><code><span class="kd">@objcMembers</span> <span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="kt">GenericType</span><span class="p">:</span> <span class="kt">NSObject</span><span class="p">,</span> <span class="kt">SourceryModelWithoutDescription</span></code></pre>
 
                         </div>
                       </div>
@@ -796,10 +858,42 @@
                 </li>
               </ul>
             </div>
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@SourceryRuntime@objc(cs)ProtocolComposition"></a>
+                    <a name="//apple_ref/swift/Class/ProtocolComposition" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@SourceryRuntime@objc(cs)ProtocolComposition">ProtocolComposition</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Describes a Swift <a href="https://docs.swift.org/swift-book/ReferenceManual/Types.html#ID454">protocol composition</a>.</p>
+
+                        <a href="Classes/ProtocolComposition.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">@objcMembers</span> <span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="kt">ProtocolComposition</span><span class="p">:</span> <span class="k">Type</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
           </section>
         </section>
         <section id="footer">
-          <p>Copyright © 2016 Pixle. All rights reserved.</p>
+          <p>Copyright © 2016-2021 Pixle. All rights reserved.</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.8.2</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

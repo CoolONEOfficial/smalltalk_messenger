@@ -6,8 +6,9 @@
 //
 
 import Foundation
-import InstantSearchClient
+import AlgoliaSearchClient
 import FirebaseAuth
+import AnyCodable
 
 typealias AlgoliaQuery = Query
 typealias SearchChatsCompletion = ([ChatModel]?) -> Void
@@ -22,14 +23,14 @@ class AlgoliaService: AlgoliaServiceProtocol {
     
     // MARK: - Vars
     
-    lazy var searchClient: Client = {
+    lazy var searchClient: SearchClient = {
         #if DEBUG
-        return Client(
+        return .init(
             appID: "0T6YXW26KA",
             apiKey: "b1c53722d5d6ed72d666ecfd14cb00a6"
         )
         #else
-        return Client(
+        return .init(
             appID: "V6J5G69XKH",
             apiKey: "c4ef45194a085992c251be8be124e796"
         )
@@ -51,52 +52,52 @@ class AlgoliaService: AlgoliaServiceProtocol {
     // MARK: - Functions
     
     func searchChats(_ searchString: String, completion: @escaping SearchChatsCompletion) {
-        let query = Query()
+        var query = Query()
         query.hitsPerPage = 20
         query.filters = "users:\(Auth.auth().currentUser!.uid)"
         query.query = searchString
-        chatsIndex.search(query) { (content, error) in
-            completion(self.parseContent(content: content, error: error))
+        chatsIndex.search(query: query) { result in
+            completion(self.parseContent(result))
         }
     }
     
     typealias SearchUsersCompletion = ([UserModel]?) -> Void
     func searchUsers(_ searchString: String, completion: @escaping SearchUsersCompletion) {
-        let query = Query()
+        var query = Query()
         query.hitsPerPage = 20
         query.query = searchString
         query.filters = "NOT objectID:\(Auth.auth().currentUser!.uid)"
-        usersIndex.search(query) { (content, error) in
-            completion(self.parseContent(content: content, error: error))
+        usersIndex.search(query: query) { result in
+            completion(self.parseContent(result))
         }
     }
     
     func searchMessages(_ searchString: String, completion: @escaping SearchMessagesCompletion) {
-        let query = Query()
+        var query = Query()
         query.hitsPerPage = 20
         query.filters = "chatUsers:\(Auth.auth().currentUser!.uid)"
         query.query = searchString
-        messagesIndex.search(query) { (content, error) in
-            completion(self.parseContent(content: content, error: error))
+        messagesIndex.search(query: query) { result in
+            completion(self.parseContent(result))
         }
     }
     
     // MARK: - Helpers
     
-    private func parseContent<T: Decodable>(content: [String: Any]?, error: Error?) -> [T]? {
-        guard let content = content else {
-            if let error = error {
-                print(error.localizedDescription)
-            }
+    private func parseContent<T: Decodable>(_ result: Result<SearchResponse, Error>) -> [T]? {
+        switch result {
+        case let .success(content):
+            guard let chats: [[String: AnyCodable]] = try? content.extractHits() else { return nil }
+            
+            return chats.map { record in
+                var model = record
+                model["documentId"] = record["objectID"]
+                return try? JSONDecoder().decode(T.self, from: JSONSerialization.data(withJSONObject: model))
+            }.compactMap {$0}
+            
+        case let .failure(error):
+            print(error.localizedDescription)
             return nil
         }
-        
-        guard let chats = content["hits"] as? [[String: Any]] else { return nil }
-        
-        return chats.map { record in
-            var model = record
-            model["documentId"] = record["objectID"]
-            return try? JSONDecoder().decode(T.self, from: JSONSerialization.data(withJSONObject: model))
-        }.compactMap {$0}
     }
 }

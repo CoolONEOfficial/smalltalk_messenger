@@ -32,27 +32,23 @@ protocol AssetsViewControllerDelegate: class {
 class AssetsViewController: UIViewController {
     weak var delegate: AssetsViewControllerDelegate?
     var settings: Settings! {
-        didSet { dataSource?.settings = settings }
+        didSet { dataSource.settings = settings }
     }
 
     private let store: AssetStore
     private let collectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
     private var fetchResult: PHFetchResult<PHAsset> = PHFetchResult<PHAsset>() {
         didSet {
-            dataSource = AssetsCollectionViewDataSource(fetchResult: fetchResult, store: store)
+            dataSource.fetchResult = fetchResult
         }
     }
-    private var dataSource: AssetsCollectionViewDataSource? {
-        didSet {
-            dataSource?.settings = settings
-            collectionView.dataSource = dataSource
-        }
-    }
+    private let dataSource: AssetsCollectionViewDataSource
 
     private let selectionFeedback = UISelectionFeedbackGenerator()
 
     init(store: AssetStore) {
         self.store = store
+        dataSource = AssetsCollectionViewDataSource(fetchResult: fetchResult, store: store)
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -79,11 +75,15 @@ class AssetsViewController: UIViewController {
         collectionView.alwaysBounceVertical = true
         collectionView.backgroundColor = settings.theme.backgroundColor
         collectionView.delegate = self
+        collectionView.dataSource = dataSource
+        collectionView.prefetchDataSource = dataSource
         AssetsCollectionViewDataSource.registerCellIdentifiersForCollectionView(collectionView)
 
         let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(AssetsViewController.collectionViewLongPressed(_:)))
         longPressRecognizer.minimumPressDuration = 0.5
         collectionView.addGestureRecognizer(longPressRecognizer)
+
+        syncSelections(store.assets)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -159,6 +159,8 @@ class AssetsViewController: UIViewController {
         collectionViewFlowLayout.minimumLineSpacing = itemSpacing
         collectionViewFlowLayout.minimumInteritemSpacing = itemSpacing
         collectionViewFlowLayout.itemSize = itemSize
+
+        dataSource.imageSize = itemSize.resize(by: UIScreen.main.scale)
     }
 
     private func updateSelectionIndexForCell(at indexPath: IndexPath) {
@@ -210,7 +212,7 @@ extension AssetsViewController: PHPhotoLibraryChangeObserver {
                     self.fetchResult = changes.fetchResultAfterChanges
 
                     // For indexes to make sense, updates must be in this order:
-                    // delete, insert, reload, move
+                    // delete, insert, move
                     if let removed = changes.removedIndexes, removed.count > 0 {
                         let removedItems = removed.map { IndexPath(item: $0, section:0) }
                         let removedSelections = self.collectionView.indexPathsForSelectedItems?.filter { return removedItems.contains($0) }
@@ -222,14 +224,17 @@ extension AssetsViewController: PHPhotoLibraryChangeObserver {
                     if let inserted = changes.insertedIndexes, inserted.count > 0 {
                         self.collectionView.insertItems(at: inserted.map { IndexPath(item: $0, section:0) })
                     }
-                    if let changed = changes.changedIndexes, changed.count > 0 {
-                        self.collectionView.reloadItems(at: changed.map { IndexPath(item: $0, section:0) })
-                    }
                     changes.enumerateMoves { fromIndex, toIndex in
                         self.collectionView.moveItem(at: IndexPath(item: fromIndex, section: 0),
                                                      to: IndexPath(item: toIndex, section: 0))
                     }
                 })
+
+                // "Use these indices to reconfigure the corresponding cells after performBatchUpdates"
+                // https://developer.apple.com/documentation/photokit/phobjectchangedetails
+                if let changed = changes.changedIndexes, changed.count > 0 {
+                    self.collectionView.reloadItems(at: changed.map { IndexPath(item: $0, section:0) })
+                }
             } else {
                 self.fetchResult = changes.fetchResultAfterChanges
                 self.collectionView.reloadData()

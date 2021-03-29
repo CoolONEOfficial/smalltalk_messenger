@@ -7,7 +7,7 @@
 
 import Foundation
 import Firebase
-import InstantSearchClient
+import AlgoliaSearchClient
 import CodableFirebase
 
 protocol ChatListViewModelProtocol: ViewModelProtocol {

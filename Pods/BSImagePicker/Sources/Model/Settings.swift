@@ -23,23 +23,23 @@
 import UIKit
 import Photos
 
-/// Settings for BSImagePicker
+@objc(BSImagePickerSettings) // Fix for ObjC header name conflicting.
 @objcMembers public class Settings : NSObject {
     public static let shared = Settings()
 
     // Move all theme related stuff to UIAppearance
-    public class Theme {
+    public class Theme : NSObject {
         /// Main background color
-        public lazy var backgroundColor: UIColor = .white
+        public lazy var backgroundColor: UIColor = .systemBackgroundColor
         
         /// What color to fill the circle with
         public lazy var selectionFillColor: UIColor = UIView().tintColor
         
-        /// Color for the actual selection icon
+        /// Color for the actual checkmark
         public lazy var selectionStrokeColor: UIColor = .white
         
         /// Shadow color for the circle
-        public lazy var selectionShadowColor: UIColor = .black
+        public lazy var selectionShadowColor: UIColor = .systemShadowColor
         
         public enum SelectionStyle {
             case checked
@@ -51,21 +51,21 @@ import Photos
         
         public lazy var previewTitleAttributes : [NSAttributedString.Key: Any] = [
             NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16),
-            NSAttributedString.Key.foregroundColor: UIColor.black
+            NSAttributedString.Key.foregroundColor: UIColor.systemPrimaryTextColor
         ]
         
         public lazy var previewSubtitleAttributes: [NSAttributedString.Key: Any] = [
             NSAttributedString.Key.font: UIFont.systemFont(ofSize: 12),
-            NSAttributedString.Key.foregroundColor: UIColor.black
+            NSAttributedString.Key.foregroundColor: UIColor.systemSecondaryTextColor
         ]
         
         public lazy var albumTitleAttributes: [NSAttributedString.Key: Any] = [
             NSAttributedString.Key.font: UIFont.systemFont(ofSize: 18),
-            NSAttributedString.Key.foregroundColor: UIColor.black
+            NSAttributedString.Key.foregroundColor: UIColor.systemPrimaryTextColor
         ]
     }
 
-    public class Selection {
+    public class Selection : NSObject {
         /// Max number of selections allowed
         public lazy var max: Int = Int.max
         
@@ -73,10 +73,10 @@ import Photos
         public lazy var min: Int = 1
         
         /// If it reaches the max limit, unselect the first selection, and allow the new selection
-        public lazy var unselectOnReachingMax : Bool = false
+        @objc public lazy var unselectOnReachingMax : Bool = false
     }
 
-    public class List {
+    public class List : NSObject {
         /// How much spacing between cells
         public lazy var spacing: CGFloat = 2
         
@@ -95,13 +95,13 @@ import Photos
         }
     }
 
-    public class Preview {
+    public class Preview : NSObject {
         /// Is preview enabled?
         public lazy var enabled: Bool = true
     }
 
-    public class Fetch {
-        public class Album {
+    public class Fetch : NSObject {
+        public class Album : NSObject {
             /// Fetch options for albums/collections
             public lazy var options: PHFetchOptions = {
                 let fetchOptions = PHFetchOptions()
@@ -120,7 +120,7 @@ import Photos
             ]
         }
 
-        public class Assets {
+        public class Assets : NSObject {
             /// Fetch options for assets
 
             /// Simple wrapper around PHAssetMediaType to ensure we only expose the supported types.
@@ -153,7 +153,7 @@ import Photos
             }()
         }
 
-        public class Preview {
+        public class Preview : NSObject {
             public lazy var photoOptions: PHImageRequestOptions = {
                 let options = PHImageRequestOptions()
                 options.isNetworkAccessAllowed = true
@@ -184,9 +184,12 @@ import Photos
         public lazy var preview = Preview()
     }
     
-    public class Dismiss {
+    public class Dismiss : NSObject {
         /// Should the image picker dismiss when done/cancelled
         public lazy var enabled = true
+
+        /// Allow the user to dismiss the image picker by swiping down
+        public lazy var allowSwipe = false
     }
 
     /// Theme settings

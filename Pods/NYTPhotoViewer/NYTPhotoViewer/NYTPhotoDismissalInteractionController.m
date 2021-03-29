@@ -26,7 +26,20 @@ static const CGFloat NYTPhotoDismissalInteractionControllerReturnToCenterVelocit
     UIView *fromView = [self.transitionContext viewForKey:UITransitionContextFromViewKey];
     CGPoint translatedPanGesturePoint = [panGestureRecognizer translationInView:fromView];
     CGPoint newCenterPoint = CGPointMake(anchorPoint.x, anchorPoint.y + translatedPanGesturePoint.y);
-    
+
+    // If we are presenting fullscreen, the presenting view controller's view will have been removed from the view
+    // hierarchy when the presentation animation finished. We need to put it back in the view hierarchy in order for
+    // it to appear behind the interactive dismissal animation.
+    UIView *toView = [self.transitionContext viewForKey:UITransitionContextToViewKey];
+    if (!toView.superview) {
+        UIViewController *toViewController = [self.transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
+        toView.frame = [self.transitionContext finalFrameForViewController:toViewController];
+        if (![toView isDescendantOfView:self.transitionContext.containerView]) {
+            [self.transitionContext.containerView addSubview:toView];
+        }
+        [self.transitionContext.containerView bringSubviewToFront:fromView];
+    }
+
     // Pan the view on pace with the pan gesture.
     viewToPan.center = newCenterPoint;
     
@@ -76,6 +89,14 @@ static const CGFloat NYTPhotoDismissalInteractionControllerReturnToCenterVelocit
             finalBackgroundAlpha = 0.0;
         }
     }
+    else {
+        // Interactive transition was canceled (i.e. the user changed their mind and decided not to finish the
+        // dismissal), so if we are presenting fullscreen, remove the presenting view controller's view.
+        if (self.transitionContext.presentationStyle == UIModalPresentationFullScreen) {
+            UIView *toView = [self.transitionContext viewForKey:UITransitionContextToViewKey];
+            [toView removeFromSuperview];
+        }
+    }
     
     if (!didAnimateUsingAnimator) {
         [UIView animateWithDuration:animationDuration delay:0 options:animationCurve animations:^{
@@ -88,12 +109,8 @@ static const CGFloat NYTPhotoDismissalInteractionControllerReturnToCenterVelocit
             }
             else {
                 [self.transitionContext cancelInteractiveTransition];
-                
-                if (![[self class] isRadar20070670Fixed]) {
-                    [self fixCancellationStatusBarAppearanceBug];
-                }
             }
-            
+
             self.viewToHideWhenBeginningTransition.alpha = 1.0;
             
             [self.transitionContext completeTransition:isDismissing && !self.transitionContext.transitionWasCancelled];
@@ -115,44 +132,6 @@ static const CGFloat NYTPhotoDismissalInteractionControllerReturnToCenterVelocit
     CGFloat deltaAsPercentageOfMaximum = MIN(ABS(verticalDelta) / maximumDelta, 1.0);
     
     return startingAlpha - (deltaAsPercentageOfMaximum * totalAvailableAlpha);
-}
-
-#pragma mark - Bug Fix
-
-- (void)fixCancellationStatusBarAppearanceBug {
-    UIViewController *toViewController = [self.transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
-    UIViewController *fromViewController = [self.transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
-    
-    NSString *statusBarViewControllerSelectorPart1 = @"_setPresentedSta";
-    NSString *statusBarViewControllerSelectorPart2 = @"tusBarViewController:";
-    SEL setStatusBarViewControllerSelector = NSSelectorFromString([statusBarViewControllerSelectorPart1 stringByAppendingString:statusBarViewControllerSelectorPart2]);
-    
-    if ([toViewController respondsToSelector:setStatusBarViewControllerSelector] && fromViewController.modalPresentationCapturesStatusBarAppearance) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-        [toViewController performSelector:setStatusBarViewControllerSelector withObject:fromViewController];
-#pragma clang diagnostic pop
-    }
-}
-
-+ (BOOL)isRadar20070670Fixed {
-    // per @bcapps, this was fixed in iOS 8.3 but not marked as such on bugreport.apple.com
-    // https://github.com/NYTimes/NYTPhotoViewer/issues/131#issue-126923817
-
-    static BOOL isRadar20070670Fixed;
-
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        NSOperatingSystemVersion const iOSVersion8Point3 = (NSOperatingSystemVersion) {
-            .majorVersion = 8,
-            .minorVersion = 3,
-            .patchVersion = 0
-        };
-
-        isRadar20070670Fixed = [[NSProcessInfo processInfo] isOperatingSystemAtLeastVersion:iOSVersion8Point3];
-    });
-
-    return isRadar20070670Fixed;
 }
 
 #pragma mark - UIViewControllerInteractiveTransitioning
