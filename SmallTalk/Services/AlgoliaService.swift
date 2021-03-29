@@ -24,17 +24,17 @@ class AlgoliaService: AlgoliaServiceProtocol {
     // MARK: - Vars
     
     lazy var searchClient: SearchClient = {
-        #if DEBUG
-        return .init(
-            appID: "0T6YXW26KA",
-            apiKey: "b1c53722d5d6ed72d666ecfd14cb00a6"
-        )
-        #else
+//        #if DEBUG
+//        return .init(
+//            appID: "0T6YXW26KA",
+//            apiKey: "b1c53722d5d6ed72d666ecfd14cb00a6"
+//        )
+//        #else
         return .init(
             appID: "V6J5G69XKH",
             apiKey: "c4ef45194a085992c251be8be124e796"
         )
-        #endif
+        //#endif
     }()
     
     lazy var chatsIndex: Index! = {
@@ -83,17 +83,19 @@ class AlgoliaService: AlgoliaServiceProtocol {
     }
     
     // MARK: - Helpers
-    
+
     private func parseContent<T: Decodable>(_ result: Result<SearchResponse, Error>) -> [T]? {
         switch result {
         case let .success(content):
             guard let chats: [[String: AnyCodable]] = try? content.extractHits() else { return nil }
             
-            return chats.map { record in
-                var model = record
-                model["documentId"] = record["objectID"]
-                return try? JSONDecoder().decode(T.self, from: JSONSerialization.data(withJSONObject: model))
-            }.compactMap {$0}
+            return chats
+                .map { $0.mapValues { $0.value } }
+                .map { record in
+                    var model = record
+                    model["documentId"] = record["objectID"]
+                    return try? JSONDecoder().decode(T.self, from: JSONSerialization.data(withJSONObject: model))
+                }.compactMap {$0}
             
         case let .failure(error):
             print(error.localizedDescription)
